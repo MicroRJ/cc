@@ -112,19 +112,19 @@ const char *gen_typename(kttcc_type *t)
 
 void emit_typename(char **out, kttcc_type *t)
 {
-  ccstr__catf(out,"%s",gen_typename(t));
+  ccstr_catf(out,"%s",gen_typename(t));
 }
 
 void emit_modifier(char **out, kttcc_typekind modifier)
 {
-  if(modifier==kttcc_typekind_ptr) ccstr__catf(out,"*");
-  if(modifier==kttcc_typekind_ref) ccstr__catf(out,"&");
-  if(modifier==kttcc_typekind_arr) ccstr__catf(out,"[]");
+  if(modifier==kttcc_typekind_ptr) ccstr_catf(out,"*");
+  if(modifier==kttcc_typekind_ref) ccstr_catf(out,"&");
+  if(modifier==kttcc_typekind_arr) ccstr_catf(out,"[]");
 }
 
 void emit_vardecl_ex(char **out, kttcc_type *t, kttcc_typekind override_modifier, char name)
 {
-  ccstr__catf(out,"%s ",gen_typename(t));
+  ccstr_catf(out,"%s ",gen_typename(t));
 
   if((override_modifier==kttcc_typekind_ptr) ||
      (override_modifier==kttcc_typekind_ref))
@@ -139,7 +139,7 @@ void emit_vardecl_ex(char **out, kttcc_type *t, kttcc_typekind override_modifier
     } else break;
   }
 
-  ccstr__catf(out,"%c",name);
+  ccstr_catf(out,"%c",name);
 
   if((override_modifier==kttcc_typekind_arr))
   {
@@ -161,20 +161,20 @@ void emit_vardecl(char **out, kttcc_type *t, char name)
 
 void emit_fundecl(char **out, kttcc_type *t, int l, kttcc_type *r, char *n)
 {
-  ccstr__catf(out,"static ");
+  ccstr_catf(out,"static ");
   if(r)
   { emit_typename(out,r);
   } else
-  { ccstr__catf(out,"void");
+  { ccstr_catf(out,"void");
   }
-  ccstr__catf(out,"\r\n%s",n);
+  ccstr_catf(out,"\r\n%s",n);
 
-  ccstr__catf(out,"(");
+  ccstr_catf(out,"(");
   for(int i=0;i<l;++i)
-  { if(i) ccstr__catf(out,",");
+  { if(i) ccstr_catf(out,",");
     emit_vardecl(out,t,fn[i]);
   }
-  ccstr__catf(out,")");
+  ccstr_catf(out,")");
 
 }
 
@@ -184,23 +184,23 @@ void genmake(char **out, kttcc_type *t)
   emit_fundecl(out,t->element,t->length,t,
     ccformat("%sm",gen_typename(t)));
 
-  ccstr__catf(out,"\r\n");
-  ccstr__catf(out,"{ ");
+  ccstr_catf(out,"\r\n");
+  ccstr_catf(out,"{ ");
 
   emit_vardecl(out,t,'r');
-  ccstr__catf(out,";");
+  ccstr_catf(out,";");
 
   for(int i=0;i<t->length;++i)
-  { ccstr__catf(out,"\r\n  r.%c=%c;",fn[i],fn[i]);
+  { ccstr_catf(out,"\r\n  r.%c=%c;",fn[i],fn[i]);
   }
 
-  ccstr__catf(out,"\r\n  return r;\r\n");
-  ccstr__catf(out,"}\r\n");
+  ccstr_catf(out,"\r\n  return r;\r\n");
+  ccstr_catf(out,"}\r\n");
 }
 
 void emit_vecoprari(char **out, kttcc_type *t, const char *opr)
 {
-  ccstr__catf(out,"static %s operator %s (", gen_typename(t), opr);
+  ccstr_catf(out,"static %s operator %s (", gen_typename(t), opr);
 
   if(strlen(opr)==2 && opr[1]=='=')
   {
@@ -210,99 +210,99 @@ void emit_vecoprari(char **out, kttcc_type *t, const char *opr)
     emit_vardecl(out,t,'a');
   }
 
-  ccstr__catf(out,",");
+  ccstr_catf(out,",");
   emit_vardecl(out,t,'b');
 
-  ccstr__catf(out,")\r\n");
+  ccstr_catf(out,")\r\n");
 
-  ccstr__catf(out,"{ ");
+  ccstr_catf(out,"{ ");
   emit_vardecl(out,t,'r');
-  ccstr__catf(out,";");
+  ccstr_catf(out,";");
 
   for(int i=0;i<t->length;++i)
-  { ccstr__catf(out,"\r\n  r.%c=a.%c%cb.%c;",fn[i],fn[i],opr[0],fn[i]);
+  { ccstr_catf(out,"\r\n  r.%c=a.%c%cb.%c;",fn[i],fn[i],opr[0],fn[i]);
   }
-  ccstr__catf(out,"\r\n  return r;\r\n");
-  ccstr__catf(out,"}\r\n");
+  ccstr_catf(out,"\r\n  return r;\r\n");
+  ccstr_catf(out,"}\r\n");
 }
 
 #if 0
 void gentostring(char **out, kttcc_type *t)
 {
-  ccstr__catf(out,"static const char *");
-  ccstr__catf(out,"\r\n");
+  ccstr_catf(out,"static const char *");
+  ccstr_catf(out,"\r\n");
   emit_typename(out,t);
-  ccstr__catf(out,"tos(");
+  ccstr_catf(out,"tos(");
   emit_vardecl(out,t,'a');
-  ccstr__catf(out,")\r\n");
-  ccstr__catf(out,"{ return ccformat(\"");
+  ccstr_catf(out,")\r\n");
+  ccstr_catf(out,"{ return ccformat(\"");
   for(int i=0;i<cc;++i)
-  { ccstr__catf(out,".%c:%%i",fn[i]);
+  { ccstr_catf(out,".%c:%%i",fn[i]);
   }
-  ccstr__catf(out,"\"");
+  ccstr_catf(out,"\"");
 
   for(int i=0;i<cc;++i)
-  { ccstr__catf(out,",a.%c",fn[i]);
+  { ccstr_catf(out,",a.%c",fn[i]);
   }
-  ccstr__catf(out,");");
+  ccstr_catf(out,");");
 
-  ccstr__catf(out,"\r\n}\r\n");
+  ccstr_catf(out,"\r\n}\r\n");
 }
 void genoperdot(char **out, kttcc_type t,int bl,int cc)
 {
-  ccstr__catf(out,"static ");
+  ccstr_catf(out,"static ");
   emit_typename(out,t);
-  ccstr__catf(out,"\r\n");
+  ccstr_catf(out,"\r\n");
   emit_typename(out,t);
-  ccstr__catf(out,"dot(");
+  ccstr_catf(out,"dot(");
   emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'a');
-  ccstr__catf(out,",");
+  ccstr_catf(out,",");
   emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'b');
-  ccstr__catf(out,")\r\n");
-  ccstr__catf(out,"{ ");
-  ccstr__catf(out,"return ");
+  ccstr_catf(out,")\r\n");
+  ccstr_catf(out,"{ ");
+  ccstr_catf(out,"return ");
   for(int i=0;i<cc;++i)
-  { if(i) ccstr__catf(out,"+");
-    ccstr__catf(out,"(a.%c*b.%c)",fn[i],fn[i]);
+  { if(i) ccstr_catf(out,"+");
+    ccstr_catf(out,"(a.%c*b.%c)",fn[i],fn[i]);
   }
-  ccstr__catf(out,";\r\n}\r\n");
+  ccstr_catf(out,";\r\n}\r\n");
 }
 void genoperrel(char **out, kttcc_type t,int bl,int cc,const char *opr)
 {
-  ccstr__catf(out,"static i32\r\noperator %s (", opr);
+  ccstr_catf(out,"static i32\r\noperator %s (", opr);
   emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'a');
-  ccstr__catf(out,",");
+  ccstr_catf(out,",");
   emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'b');
-  ccstr__catf(out,")\r\n");
-  ccstr__catf(out,"{ ");
+  ccstr_catf(out,")\r\n");
+  ccstr_catf(out,"{ ");
 
-  ccstr__catf(out,"return ");
+  ccstr_catf(out,"return ");
 
   for(int i=0;i<cc;++i)
-  { if(i) ccstr__catf(out,"&&");
-    ccstr__catf(out,"(a.%c%sb.%c)",fn[i],opr,fn[i]);
+  { if(i) ccstr_catf(out,"&&");
+    ccstr_catf(out,"(a.%c%sb.%c)",fn[i],opr,fn[i]);
   }
-  ccstr__catf(out,";");
-  ccstr__catf(out,"\r\n}\r\n");
+  ccstr_catf(out,";");
+  ccstr_catf(out,"\r\n}\r\n");
 }
 
 #endif
 void emit_vectype(char **out, kttcc_type *t)
 {
   if(t->typekind==kttcc_typekind_vec)
-  { ccstr__catf(out,"typedef struct ");
+  { ccstr_catf(out,"typedef struct ");
     emit_typename(out,t);
-    ccstr__catf(out,"\r\n");
-    ccstr__catf(out,"{");
+    ccstr_catf(out,"\r\n");
+    ccstr_catf(out,"{");
     for(int i=0;i<t->length;++i)
-    { ccstr__catf(out,"\r\n  ");
+    { ccstr_catf(out,"\r\n  ");
       emit_vardecl(out,t->element,fn[i]);
-      ccstr__catf(out,";");
+      ccstr_catf(out,";");
     }
-    ccstr__catf(out,"\r\n");
-    ccstr__catf(out,"} ");
+    ccstr_catf(out,"\r\n");
+    ccstr_catf(out,"} ");
     emit_typename(out,t);
-    ccstr__catf(out,";\r\n");
+    ccstr_catf(out,";\r\n");
   }
 
   genmake(out,t);
@@ -356,7 +356,7 @@ int main(int argc, char **argv)
 
   { char *out = ktt__nullptr;
 
-    ccstr_cat(out,
+    ccstrcat(out,
       "#define f64 double\r\n"
       "#define f32 float\r\n"
       "#ifdef _MSC_VER\r\n"
@@ -394,7 +394,7 @@ int main(int argc, char **argv)
     }
 
     void *file=ccopenfile("gen.ktt.c");
-    ccpushfile(file,0,ccstr_len(out),out);
+    ccpushfile(file,0,ccstrlen(out),out);
     ccclosefile(file);
   }
 

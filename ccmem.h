@@ -38,29 +38,29 @@ typedef struct ccblc
 #ifndef ccarr_add
 # define ccarr_add(ccm,com) ((ccm)+ccblc_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),com,com))
 #endif
-#ifndef ccstr_del
-# define ccstr_del ccblc_del
+#ifndef ccstrdel
+# define ccstrdel ccblc_del
 #endif
-#ifndef ccstr_len
-# define ccstr_len(str) (ccblc_min(str)/sizeof(*(str)))
+#ifndef ccstrlen
+# define ccstrlen(str) (ccblc_min(str)/sizeof(*(str)))
 #endif
-#ifndef ccstr_add
-# define ccstr_add(ccm,res,com) ((ccm)+ccblc_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),res,com))
+#ifndef ccstradd
+# define ccstradd(ccm,res,com) ((ccm)+ccblc_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),res,com))
 #endif
-#ifndef ccstr_catl
-# define ccstr_catl(ccm,str,len) ((ccm)+ccblc_stradd(&(ccm),len+1,len+0,str))
+#ifndef ccstrcatl
+# define ccstrcatl(ccm,str,len) ((ccm)+ccblc_stradd(&(ccm),len+1,len+0,str))
 #endif
-#ifndef ccstr_putl
-# define ccstr_putl(ccm,str,len) ((ccm)+ccblc_stradd(&(ccm),len+1,len+1,str))
+#ifndef ccstrputl
+# define ccstrputl(ccm,str,len) ((ccm)+ccblc_stradd(&(ccm),len+1,len+1,str))
 #endif
-#ifndef ccstr_cat
-# define ccstr_cat(ccm,str) ccstr_catl(ccm,str,cccast(unsigned int,strlen(str)))
+#ifndef ccstrcat
+# define ccstrcat(ccm,str) ccstrcatl(ccm,str,cccast(unsigned int,strlen(str)))
 #endif
-#ifndef ccstr_put
-# define ccstr_put(ccm,str) ccstr_putl(ccm,str,cccast(unsigned int,strlen(str)))
+#ifndef ccstrput
+# define ccstrput(ccm,str) ccstrputl(ccm,str,cccast(unsigned int,strlen(str)))
 #endif
-#ifndef ccstr_catf
-# define ccstr_catf(ccm,fmt,...) ccstr__catf(&ccm,fmt,__VA_ARGS__)
+#ifndef ccstrcatf
+# define ccstrcatf(ccm,fmt,...) ccstr_catf(&ccm,fmt,__VA_ARGS__)
 #endif
 
 ccfunc unsigned int
@@ -110,7 +110,7 @@ ccblc_stradd(char **ccm, unsigned int cres, unsigned int ccom, const char *cpy)
 }
 
 ccfunc unsigned int
-ccstr__vcatf(char **ccm, const char *fmt, va_list vli)
+ccstr_vcatf(char **ccm, const char *fmt, va_list vli)
 {
   int len=stbsp_vsnprintf(0,0,fmt,vli);
   unsigned int res=ccblc_arradd(cccast(void**,ccm),1,len+1,len);
@@ -119,13 +119,13 @@ ccstr__vcatf(char **ccm, const char *fmt, va_list vli)
 }
 
 ccfunc unsigned int
-ccstr__catf(char **ccm, const char *fmt, ...)
+ccstr_catf(char **ccm, const char *fmt, ...)
 {
   va_list vli;
   va_start(vli,fmt);
 
   unsigned int res;
-  res=ccstr__vcatf(ccm,fmt,vli);
+  res=ccstr_vcatf(ccm,fmt,vli);
 
   va_end(vli);
 

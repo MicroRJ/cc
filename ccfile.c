@@ -1,5 +1,7 @@
-#ifdef _WIN32
+#ifndef _CCFILE
+#define _CCFILE
 
+#ifdef _WIN32
 ccfunc int
 ccrealfile(void *file)
 { return (HANDLE)file!=INVALID_HANDLE_VALUE;
@@ -44,5 +46,6 @@ ccpushfile(void *file, unsigned long int offset, unsigned long int length, void 
   if(!WriteFile((HANDLE)file,file_data,length,0x00,0x00)) return 0;
   return length;
 }
+#endif
 
 #endif

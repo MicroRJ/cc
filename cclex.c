@@ -159,7 +159,7 @@ cclex_init(cclex_t *l)
   memset(l->tbl, 0, sizeof(ccentry_t) * l->tbl_max);
 
   // commit the first 0-16 block to signify an invalid address.
-  ccstr_put(l->buf,"invalid string!");
+  ccstrput(l->buf,"invalid string!");
 
   cclex_hash_init(l);
 }
@@ -215,10 +215,10 @@ cclex_identifier(cclex_t *l, const char *str)
   int len=cclex_idenlen(str);
 
   l->tok.bit=cctokentype_literal_identifier;
-  l->tok.str=ccstr_len(l->buf);
+  l->tok.str=ccstrlen(l->buf);
 
   if(!cclex_hash(l,len,str,&l->tok.bit,&l->tok.str))
-  { ccstr_putl(l->buf,str,len);
+  { ccstrputl(l->buf,str,len);
   }
   return str+len;
 }
@@ -227,14 +227,14 @@ ccfunc const char *
 cclex_readstr(cclex_t *l, const char *str)
 {
   l->tok.bit=cctokentype_literal_string_unterminated;
-  l->tok.str=ccstr_len(l->buf);
+  l->tok.str=ccstrlen(l->buf);
 
   char end=*str++;
   (void)end;
 
   char *cur;
   unsigned int res,com;
-  for(res=0x20,com=0;cur=ccstr_add(l->buf,res,0);res+=0x20)
+  for(res=0x20,com=0;cur=ccstradd(l->buf,res,0);res+=0x20)
   {
     for(;com<res;++com)
     {
@@ -244,7 +244,7 @@ cclex_readstr(cclex_t *l, const char *str)
           com++; // Note: account for the null terminator
 
         l->tok.bit=cctokentype_literal_string;
-        ccstr_add(l->buf,0,com);
+        ccstradd(l->buf,0,com);
         return str;
       } else
       if(*str=='\\')
