@@ -1,65 +1,5 @@
 #include "kttc.h"
-#include "gen.ktt.c"
-
-#if 0
-ccfunc ktt_u32
-write_file_data(ktt_u32 BytesToWrite, void *FileData, const char *Name)
-{
-  HANDLE FileHandle = CreateFileA(Name,
-    GENERIC_WRITE, FILE_SHARE_WRITE|FILE_SHARE_READ, 0x00, CREATE_ALWAYS, 0x00, 0x00);
-
-  DWORD BytesWritten = 0;
-
-  if(INVALID_HANDLE_VALUE != FileHandle)
-  {
-    if(! WriteFile(FileHandle, FileData, BytesToWrite, &BytesWritten, 0x00))
-    { cctraceerr("failed to read file [%s]", Name);
-    }
-
-    CloseHandle(FileHandle);
-  } else
-  {
-    cctraceerr("failed to write to file [%s]", Name);
-  }
-  return BytesWritten;
-}
-
-
-
-ccfunc void *
-load_file_data(ktt_u64_32 *BytesRead, const char *Name)
-{
-  HANDLE FileHandle = CreateFileA(Name,
-    GENERIC_READ, FILE_SHARE_WRITE|FILE_SHARE_READ, 0x00, OPEN_EXISTING, 0x00, 0x00);
-
-  void *FileData = NULL;
-
-  if(INVALID_HANDLE_VALUE != FileHandle)
-  { DWORD FileSize = 0, FileSizeHI = 0, FileRead = 0;
-    FileSize = GetFileSize(FileHandle, & FileSizeHI);
-
-    // TODO(RJ):
-    // ; Use the context allocator?
-    FileData = VirtualAlloc(NULL, FileSize, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
-
-    if(! ReadFile(FileHandle, FileData, FileSize, &FileRead, 0x00))
-    {
-      FileData = NULL;
-
-      cctraceerr("Failed To Read File [%s]", (Name));
-    }
-
-    if(BytesRead)
-    { *BytesRead = FileRead;
-    }
-    CloseHandle(FileHandle);
-  } else
-  {
-    cctraceerr("Failed To Load File [%s]", (Name));
-  }
-  return FileData;
-}
-#endif
+// #include "gen.ktt.c"
 
 typedef enum
 { kttcc_declspec_signed,
@@ -401,14 +341,10 @@ int main(int argc, char **argv)
   ++ argv;
   -- argc;
 
-  void *test_file=ccopenfile("test.ktt");
-  unsigned long int test_file_size;
-  void *test_file_data=ccpullfile(test_file,0,&test_file_size);
-  ccclosefile(test_file);
-
   ccreader_t reader;
   ccreader_init(& reader);
-  ccreader_move(& reader, test_file_size,(char *)test_file_data);
+  ccreader_file(& reader, "test.ktt");
+
   cctree_t *tree = ccread_statement_list(& reader);
 
   char *strbuf = ktt__nullptr;
@@ -456,8 +392,10 @@ int main(int argc, char **argv)
     for(int i=0;i<ARRAYSIZE(ts);++i)
     { emit_type(&out,&ts[i]);
     }
+
     void *file=ccopenfile("gen.ktt.c");
     ccpushfile(file,0,ccstr_len(out),out);
+    ccclosefile(file);
   }
 
 }

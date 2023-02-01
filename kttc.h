@@ -94,7 +94,6 @@ extern "C"
 #endif
 #endif
 
-
 #ifndef cccast
 # define cccast(type,mem) ((type)(mem))
 #endif
@@ -141,8 +140,8 @@ extern "C"
 # define ccfree(mem) free(mem)
 #endif
 
-ccfunc int ccisfile(void *);
-ccfunc void ccclosefile(void *);
+ccfunc int   ccrealfile(void *);
+ccfunc void  ccclosefile(void *);
 ccfunc void *ccopenfile(const char *);
 ccfunc void *ccpullfile(void *,unsigned long int,unsigned long int *);
 ccfunc unsigned long int ccpushfile(void *,unsigned long int,unsigned long int,void*);

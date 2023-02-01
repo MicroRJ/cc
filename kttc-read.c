@@ -31,6 +31,19 @@ ccreader_move(ccreader_t *parser, size_t len, const char *min)
 }
 
 ccfunc void
+ccreader_file(ccreader_t *reader, const char *name)
+{
+  unsigned long int size;
+	void *file=ccopenfile(name);
+  void *data=ccpullfile(file,0,&(size=0));
+  ccclosefile(file);
+
+  ccreader_move(reader,size,(char*)data);
+
+  ccfree(data);
+}
+
+ccfunc void
 ccread_all_tokens(ccreader_t *parser)
 { while(cclex_next_token(& parser->lex))
   {
