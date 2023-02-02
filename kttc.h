@@ -81,51 +81,46 @@ extern "C"
 # define ktt_f64_32 ktt_f64
 #endif
 
+#ifndef ccglobal
+# define ccglobal static
+#endif
 #ifndef ccfunc
 # define ccfunc static
 #endif
-
-#ifndef ccinle
 // Todo:
-#ifdef __forceinline
-# define ccinle __forceinline
-#else
-# define ccinle inline
+#ifndef ccinle
+# ifdef __forceinline
+#  define ccinle __forceinline
+# else
+#  define ccinle inline
+# endif
 #endif
-#endif
-
 #ifndef cccast
 # define cccast(type,mem) ((type)(mem))
 #endif
-
-#ifndef ktt__global
-# define ktt__global static
+#ifndef ccnil
+# define ccnil cccast(int,0)
 #endif
-
-#ifndef ktt__nullptr
-# define ktt__nullptr (0)
+#ifndef cctrue
+# define cctrue cccast(int,1)
 #endif
-
-#ifndef cclit
-# define cclit(lit) cccast(unsigned int,sizeof(lit)-1),(lit)
+#ifndef ccfalse
+# define ccfalse cccast(int,0)
 #endif
-
-#ifndef ktt__true
-# define ktt__true cccast(ktt_i32, 1)
-#endif
-
-#ifndef ktt__false
-# define ktt__false cccast(ktt_i32, 0)
-#endif
-
 #ifndef ccbreak
 # define ccbreak __debugbreak
+#endif
+#ifndef cclit
+# define cclit(lit) cccast(unsigned int,sizeof(lit)-1),(lit)
 #endif
 
 #ifdef _DEBUG
 # define ccassert(is_true) if(!(is_true)) ccbreak()
 #else
 # define ccassert(is_true) 0
+#endif
+#ifndef _CCASSERT
+#define _CCASSERT(x) typedef char __STATIC__ASSERT__[((x)?1:-1)]
 #endif
 
 #ifndef ccmalloc
@@ -140,8 +135,13 @@ extern "C"
 # define ccfree(mem) free(mem)
 #endif
 
-ccfunc int   ccrealfile(void *);
-ccfunc void  ccclosefile(void *);
+
+// Todo:
+_CCASSERT(sizeof(long long int)==sizeof(size_t));
+
+
+ccfunc int  ccrealfile(void *);
+ccfunc void ccclosefile(void *);
 ccfunc void *ccopenfile(const char *);
 ccfunc void *ccpullfile(void *,unsigned long int,unsigned long int *);
 ccfunc unsigned long int ccpushfile(void *,unsigned long int,unsigned long int,void*);
@@ -150,20 +150,19 @@ ccfunc unsigned long int ccfilesize(void *);
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb_sprintf.h"
 
-#include "ccmem.h"
+#include "ccdlb.h"
 #include "cclog.h"
-#include "ccfile.c"
+#include "ccread.h"
 
-#include "kttc-read.h"
-#include "kttc-read.c"
-
+#include "ccfio.c"
+#include "ccread.c"
 #include "cclex.c"
-
-#include "kttc-read-expression.c"
-#include "kttc-read-declaration.c"
-#include "kttc-read-statement.c"
-
+#include "ccreadexpr.c"
+#include "ccreaddecl.c"
+#include "ccreadstat.c"
 #include "ktt-s.c"
+#include "ccemit.c"
+#include "ccsvm.c"
 
 }
 #endif

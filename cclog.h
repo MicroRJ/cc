@@ -13,6 +13,13 @@ ccout(const char *string)
   printf(string);
 }
 
+ccfunc void
+ccoutnl(const char *string)
+{
+	ccout(string);
+	ccout("\r\n");
+}
+
 #ifndef cctrace
 # define cctrace(tag,fmt,...) cctrace_(__COUNTER__,__FILE__,__LINE__,__FUNC__,tag,fmt,__VA_ARGS__)
 #endif

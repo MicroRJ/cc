@@ -2,9 +2,12 @@
 /** Copyright(C) J. Dayan Rodriguez, 2022, All rights reserved. **/
 /*****************************************************************/
 
-ccfunc cctree_t * // <-- will return null if there wasn't an identifier token.
+
+
+
+ccfunc cctree_t *
 ccread_identifier(ccreader_t *parser)
-{ return cctree_new_identifier(cceat(parser, cctokentype_literal_identifier));
+{ return cctree_new_identifier(cceat(parser,cctoken_Kliteral_identifier));
 }
 //
 //  primary-expression:
@@ -17,26 +20,26 @@ ccread_identifier(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_primary_expr(ccreader_t *parser)
 {
-  if(ccsee(parser, cctokentype_literal_identifier))
+  if(ccsee(parser, cctoken_Kliteral_identifier))
   { return ccread_identifier(parser);
   } else
-  if(ccsee(parser, cctokentype_literal_integer))
+  if(ccsee(parser, cctoken_Kliteral_integer))
   { return cctree_new_constant(ctype_int64, ccgobble(parser));
   } else
-  if(ccsee(parser, cctokentype_literal_float))
+  if(ccsee(parser, cctoken_Kliteral_float))
   { return cctree_new_constant(ctype_flo64, ccgobble(parser));
   } else
-  if(ccsee(parser, cctokentype_literal_string))
+  if(ccsee(parser, cctoken_Kliteral_string))
   { return cctree_new_constant(cctype_new_arr(ctype_int8), ccgobble(parser));
   } else
-  if(cceat(parser, cctokentype_lparen))
+  if(cceat(parser, cctoken_Klparen))
   { cctree_t *result = ccread_expression(parser);
-    if(! cceat(parser, cctokentype_lparen))
+    if(! cceat(parser, cctoken_Klparen))
     { ccsynerr(parser, 0, "expected ')' for primary expression");
     }
     return result;
   }
-  return ktt__nullptr;
+  return ccnil;
 }
 /**
  * argument-expression-list:
@@ -45,12 +48,12 @@ ccread_primary_expr(ccreader_t *parser)
  **/
 ccfunc cctree_t *
 ccread_arglist_expr(ccreader_t *reader) // <-- TODO(RJ): return list instead! like other functions!
-{ cctree_t *list=ccarr_empty,*next;
-	do
-	{ next=ccread_assignment_expr(reader);
-		if(next) *ccarr_add(list,1)=*next;
-		cctree_del(next);
-	} while(next!=0&&cceat(reader,cctokentype_comma));
+{ cctree_t *list=ccarrnil,*next;
+  do
+  { next=ccread_assignment_expr(reader);
+    if(next) *ccarradd(list,1)=*next;
+    cctree_del(next);
+  } while(next!=0&&cceat(reader,cctoken_Kcomma));
   return list;
 }
 /**
@@ -70,29 +73,29 @@ ccread_postfix_expr(ccreader_t *parser)
 {
   cctree_t *lhs = ccread_primary_expr(parser);
 
-  if(cceat(parser, cctokentype_lparen))
+  if(cceat(parser, cctoken_Klparen))
   { cctree_t *arglist = ccread_arglist_expr(parser);
     (void) arglist;
 
-    if(! cceat(parser, cctokentype_rparen))
+    if(! cceat(parser, cctoken_Krparen))
     { ccsynerr(parser, 0, "expected ')', in postfix expression!");
     }
   } else
-  if(ccsee(parser, cctokentype_lsquare))
+  if(ccsee(parser, cctoken_Klsquare))
   { cctree_t *expression = ccread_expression(parser);
     (void) expression;
-    if(! cceat(parser, cctokentype_rsquare))
+    if(! cceat(parser, cctoken_Krsquare))
     { ccsynerr(parser, 0, "expected ']', in postfix expression!");
     }
   } else
-  if(ccsee(parser, cctokentype_mso) ||
-     ccsee(parser, cctokentype_msp))
+  if(ccsee(parser, cctoken_Kmso) ||
+     ccsee(parser, cctoken_Kmsp))
   { lhs = cctree_new_uop(ccgobble(parser), lhs);
   } else
-  if(cctok_t *inc = cceat(parser, cctokentype_pos_increment))
+  if(cctoken_t *inc = cceat(parser, cctoken_Kpos_increment))
   { lhs = cctree_new_uop(inc, lhs);
   } else
-  if(cctok_t *dec = cceat(parser, cctokentype_pos_decrement))
+  if(cctoken_t *dec = cceat(parser, cctoken_Kpos_decrement))
   { lhs = cctree_new_uop(dec, lhs);
   }
   return lhs;
@@ -112,41 +115,41 @@ ccread_postfix_expr(ccreader_t *parser)
  **/
 ccfunc cctree_t *
 ccread_unary_expr(ccreader_t *parser)
-{ cctree_t *result = ktt__nullptr;
+{ cctree_t *result = ccnil;
 
-  if(ccsee(parser,cctokentype_add))
-  { cctok_t *tok=ccgobble(parser);
-    if(cceat(parser,cctokentype_add))
+  if(ccsee(parser,cctoken_Kadd))
+  { cctoken_t *tok=ccgobble(parser);
+    if(cceat(parser,cctoken_Kadd))
     { // TODO(RJ): this is dumb, remove...
-      cctok_t clo=*tok;
-      clo.sig=cctokentype_pre_increment;
+      cctoken_t clo=*tok;
+      clo.sig=cctoken_Kpre_increment;
       result=cctree_new_uop(& clo, ccread_cast_expr(parser));
     } else
     { result=cctree_new_uop(tok, ccread_cast_expr(parser));
     }
   } else
-  if(ccsee(parser,cctokentype_sub))
-  { cctok_t *tok=ccgobble(parser);
-    if(cceat(parser,cctokentype_sub))
+  if(ccsee(parser,cctoken_Ksub))
+  { cctoken_t *tok=ccgobble(parser);
+    if(cceat(parser,cctoken_Ksub))
     { // TODO(RJ): this is dumb, remove...
-      cctok_t clo=*tok;
-      clo.sig=cctokentype_pre_decrement;
+      cctoken_t clo=*tok;
+      clo.sig=cctoken_Kpre_decrement;
       result=cctree_new_uop(& clo, ccread_cast_expr(parser));
     } else
     { result=cctree_new_uop(tok, ccread_cast_expr(parser));
     }
   } else
-  if(ccsee(parser, cctokentype_mul))
+  if(ccsee(parser, cctoken_Kmul))
   {
     // TODO(RJ): this is dumb, remove...
-    cctok_t *tok = ccgobble(parser);
-    cctok_t clo = *tok;
-    clo.sig = cctokentype_ptr_dereference;
+    cctoken_t *tok = ccgobble(parser);
+    cctoken_t clo = *tok;
+    clo.sig = cctoken_Kptr_dereference;
 
     result = cctree_new_uop(& clo, ccread_cast_expr(parser));
   } else
-  if(ccsee(parser, cctokentype_bitwise_invert) ||
-     ccsee(parser, cctokentype_negate))
+  if(ccsee(parser, cctoken_Kbitwise_invert) ||
+     ccsee(parser, cctoken_Knegate))
   { result = cctree_new_uop(ccgobble(parser), ccread_cast_expr(parser));
   } else
   { result = ccread_postfix_expr(parser);
@@ -161,11 +164,11 @@ ccread_unary_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_cast_expr(ccreader_t *parser)
 { cctree_t *result = 0;
-  if(cctok_t *tok = cceat(parser, cctokentype_lparen))
+  if(cctoken_t *tok = cceat(parser, cctoken_Klparen))
   { // TODO(RJ):
     result = 0;
 
-    if(! cceat(parser, cctokentype_rparen))
+    if(! cceat(parser, cctoken_Krparen))
     { ccsynerr(parser, 0, "expected ')'");
     }
   } else
@@ -183,13 +186,13 @@ ccread_cast_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_multiplicative_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_unary_expr(parser);
-  while(  ccsee(parser, cctokentype_mul) ||
-          ccsee(parser, cctokentype_div) ||
-          ccsee(parser, cctokentype_mod) )
+  while(  ccsee(parser, cctoken_Kmul) ||
+          ccsee(parser, cctoken_Kdiv) ||
+          ccsee(parser, cctoken_Kmod) )
   {
-    cctok_t *tok = ccgobble(parser);
+    cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_unary_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -202,12 +205,12 @@ ccread_multiplicative_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_additive_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_multiplicative_expr(parser);
-  while (ccsee(parser, cctokentype_add) ||
-         ccsee(parser, cctokentype_sub))
+  while (ccsee(parser, cctoken_Kadd) ||
+         ccsee(parser, cctoken_Ksub))
   {
-    cctok_t *tok = ccgobble(parser);
+    cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_multiplicative_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -220,11 +223,11 @@ ccread_additive_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_shift_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_additive_expr(parser);
-  while(ccsee(parser, cctokentype_bitwise_shl) ||
-        ccsee(parser, cctokentype_bitwise_shr))
-  { cctok_t *tok = ccgobble(parser);
+  while(ccsee(parser, cctoken_Kbitwise_shl) ||
+        ccsee(parser, cctoken_Kbitwise_shr))
+  { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_additive_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -240,13 +243,13 @@ ccread_shift_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_relational_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_shift_expr(parser);
-  while ( ccsee(parser, cctokentype_less_than)      ||
-          ccsee(parser, cctokentype_less_than_eql)  ||
-          ccsee(parser, cctokentype_greater_than)   ||
-          ccsee(parser, cctokentype_greater_than_eql) )
-  { cctok_t *tok = ccgobble(parser);
+  while ( ccsee(parser, cctoken_Kless_than)      ||
+          ccsee(parser, cctoken_Kless_than_eql)  ||
+          ccsee(parser, cctoken_Kgreater_than)   ||
+          ccsee(parser, cctoken_Kgreater_than_eql) )
+  { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_shift_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -259,11 +262,11 @@ ccread_relational_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_equality_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_relational_expr(parser);
-  if(ccsee(parser, cctokentype_equals)     ||
-     ccsee(parser, cctokentype_not_equals))
-  { cctok_t *tok = ccgobble(parser);
+  if(ccsee(parser, cctoken_Kequals)     ||
+     ccsee(parser, cctoken_Knot_equals))
+  { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_equality_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -276,10 +279,10 @@ ccread_equality_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_bitwise_and_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_equality_expr(parser);
-  while(ccsee(parser, cctokentype_bitwise_and))
-  { cctok_t *tok = ccgobble(parser);
+  while(ccsee(parser, cctoken_Kbitwise_and))
+  { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_equality_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -291,10 +294,10 @@ ccread_bitwise_and_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_bitwise_xor_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_bitwise_and_expr(parser);
-  while(ccsee(parser, cctokentype_bitwise_and))
-  { cctok_t *tok = ccgobble(parser);
+  while(ccsee(parser, cctoken_Kbitwise_and))
+  { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_bitwise_and_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -306,10 +309,10 @@ ccread_bitwise_xor_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_bitwise_or_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_bitwise_xor_expr(parser);
-  while(ccsee(parser, cctokentype_bitwise_or))
-  { cctok_t *tok = ccgobble(parser);
+  while(ccsee(parser, cctoken_Kbitwise_or))
+  { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_bitwise_xor_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -321,10 +324,10 @@ ccread_bitwise_or_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_logical_and_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_bitwise_or_expr(parser);
-  while(ccsee(parser, cctokentype_logical_and))
-  { cctok_t *tok = ccgobble(parser);
+  while(ccsee(parser, cctoken_Klogical_and))
+  { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_bitwise_or_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -336,10 +339,10 @@ ccread_logical_and_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_logical_or_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_logical_and_expr(parser);
-  while(ccsee(parser, cctokentype_logical_or))
-  { cctok_t *tok = ccgobble(parser);
+  while(ccsee(parser, cctoken_Klogical_or))
+  { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_logical_and_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -352,12 +355,12 @@ ccfunc cctree_t *
 ccread_conditional_expr(ccreader_t *parser)
 { cctree_t *rad = ccread_logical_or_expr(parser);
 
-  if(cctok_t *tok = cceat(parser, cctokentype_conditional))
+  if(cctoken_t *tok = cceat(parser, cctoken_Kconditional))
   {
     cctree_t *lhs = 0, *rhs = 0;
     lhs = ccread_logical_or_expr(parser);
 
-    if(cceat(parser, cctokentype_colon)) // <-- some compilers allow omitting this.
+    if(cceat(parser, cctoken_Kcolon)) // <-- some compilers allow omitting this.
     { rhs = ccread_conditional_expr(parser);
     } else
     { ccsynerr(parser, 0, "expected ':' invalid conditional expression"); // <-- but we issue a syntax error anyways.
@@ -379,9 +382,9 @@ ccread_conditional_expr(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_assignment_expr(ccreader_t *parser)
 { cctree_t *lhs = ccread_conditional_expr(parser);
-  if(cctok_t *tok = cceat(parser, cctokentype_assign))
+  if(cctoken_t *tok = cceat(parser, cctoken_Kassign))
   { cctree_t *rhs = ccread_assignment_expr(parser);
-    lhs = cctree_new_bop(tok, lhs, rhs);
+    lhs = cctree_binary(tok, lhs, rhs);
   }
   return lhs;
 }
@@ -402,8 +405,8 @@ ccread_constant_expression(ccreader_t *parser)
 ccfunc cctree_t *
 ccread_expression(ccreader_t *parser)
 { cctree_t *result = ccread_assignment_expr(parser);
-  if(ccsee(parser, cctokentype_comma))
-  { result = cctree_new_bop(ccgobble(parser), result, ccread_expression(parser));
+  if(ccsee(parser, cctoken_Kcomma))
+  { result = cctree_binary(ccgobble(parser), result, ccread_expression(parser));
   }
   return result;
 }

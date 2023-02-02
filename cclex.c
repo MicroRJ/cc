@@ -11,17 +11,17 @@ cclex_hashfunc(int len, const char *str)
   return h;
 }
 
-ccfunc ktt_i32
-cclex_hashex(cclex_t *l, int len, const char *key, unsigned int hash, cctokentype_kind *bit, int *off)
+ccfunc char *
+cclex_hash(cclex_t *l, int len, const char *key, int cpy, int *bit, int *fnd)
 {
-  ccassert((l->tbl_max & 0x1) == 0);
-  ccassert(bit != ktt__nullptr);
-  ccassert(off != ktt__nullptr);
+  ccassert((l->tbl_max&0x1)==0);
+  ccassert(bit!=0);
 
-  ccentry_t *slot = l->tbl + (hash & (l->tbl_max - 1));
+  unsigned int hash=cclex_hashfunc(len,key);
+  ccentry_t *slot=l->tbl+(hash&(l->tbl_max-1));
 
-  int eql;
-  eql=0;
+  int eql=0;
+
   do
   { if(eql=(slot->len==len))
     { const char *m,*k;
@@ -31,34 +31,36 @@ cclex_hashex(cclex_t *l, int len, const char *key, unsigned int hash, cctokentyp
     }
   } while((!eql) && (slot->nex) && (slot = slot->nex));
 
+  if(fnd) *fnd=eql;
+
   if(! eql)
-  { if(slot->key) // <-- otherwise this was the first slot and there wasn't a key set.
-      slot=slot->nex=(ccentry_t *)ccmalloc(sizeof(ccentry_t));
-    slot->nex = 0;
-    slot->key = key;
-    slot->len = len;
-    slot->bit = * bit;
-    slot->off = * off;
+  { // Note: this is either the first slot, or the last slot ... If no key, first slot, otherwise, last ...
+  	if(slot->key) slot=slot->nex=(ccentry_t *)ccmalloc(sizeof(ccentry_t));
+
+    slot->nex=0;
+    slot->key=ccstrnil;
+    slot->len=len;
+    slot->bit=*bit;
+
+    // Todo: replace this with a legit string arena ...
+    if(cpy) ccstrputl((char*)slot->key,key,len);
+    else slot->key=(char*)key;
+
     ++ l->tbl_min;
-    return false;
+  } else
+  {
+	  if(bit) *bit=slot->bit;
   }
-
-  * off = slot->off;
-  * bit = slot->bit;
-
-  return true;
-}
-
-ccfunc ktt_i32
-cclex_hash(cclex_t *l, int len, const char *key, cctokentype_kind *bit, int *off)
-{
-  return cclex_hashex(l,len,key,cclex_hashfunc(len,key),bit,off);
+  return slot->key;
 }
 
 ccfunc void
-cclex_hashonly(cclex_t *l, int len, const char *key, cctokentype_kind bit, int off)
+cclex_hashonly(cclex_t *l, int len, const char *key, cctoken_Kkind bit)
 {
-  if(cclex_hash(l,len,key,&bit,&off)) cctraceerr("invalid key, already in hash table");
+	int fnd;
+	const char *okey=cclex_hash(l,len,key,ccfalse,(int*)&bit,&fnd);
+	ccassert(okey==key);
+  if(fnd) cctraceerr("invalid key, already in hash table");
 }
 
 // I don't like this! Remove!
@@ -70,74 +72,90 @@ cclex_hash_init(cclex_t *lexer)
    *
    *  ** these are reserved keywords **
    **/
-  cclex_hashonly(lexer,cclit("__asm"),cctokentype_msvc_attr_asm,0);
-  cclex_hashonly(lexer,cclit("__based"),cctokentype_msvc_attr_based,0);
-  cclex_hashonly(lexer,cclit("__cdecl"),cctokentype_msvc_attr_cdecl,0);
-  cclex_hashonly(lexer,cclit("__clrcall"),cctokentype_msvc_attr_clrcall,0);
-  cclex_hashonly(lexer,cclit("__fastcall"),cctokentype_msvc_attr_fastcall,0);
-  cclex_hashonly(lexer,cclit("__inline"),cctokentype_msvc_attr_inline,0);
-  cclex_hashonly(lexer,cclit("__stdcall"),cctokentype_msvc_attr_stdcall,0);
-  cclex_hashonly(lexer,cclit("__thiscall"),cctokentype_msvc_attr_thiscall,0);
-  cclex_hashonly(lexer,cclit("__vectorcal"),cctokentype_msvc_attr_vectorcal,0);
+  cclex_hashonly(lexer,cclit("__asm"),cctoken_Kmsvc_attr_asm);
+  cclex_hashonly(lexer,cclit("__based"),cctoken_Kmsvc_attr_based);
+  cclex_hashonly(lexer,cclit("__cdecl"),cctoken_Kmsvc_attr_cdecl);
+  cclex_hashonly(lexer,cclit("__clrcall"),cctoken_Kmsvc_attr_clrcall);
+  cclex_hashonly(lexer,cclit("__fastcall"),cctoken_Kmsvc_attr_fastcall);
+  cclex_hashonly(lexer,cclit("__inline"),cctoken_Kmsvc_attr_inline);
+  cclex_hashonly(lexer,cclit("__stdcall"),cctoken_Kmsvc_attr_stdcall);
+  cclex_hashonly(lexer,cclit("__thiscall"),cctoken_Kmsvc_attr_thiscall);
+  cclex_hashonly(lexer,cclit("__vectorcal"),cctoken_Kmsvc_attr_vectorcal);
   /**
    * Group: alignment specifiers
    *
    * ** these are reserved keywords **
    **/
-  cclex_hashonly(lexer,cclit("_Alignof"),cctokentype_align_of,0);
-  cclex_hashonly(lexer,cclit("_Alignas"),cctokentype_align_as,0);
+  cclex_hashonly(lexer,cclit("_Alignof"),cctoken_Kalign_of);
+  cclex_hashonly(lexer,cclit("_Alignas"),cctoken_Kalign_as);
    /**
    * Group: type qualifiers
    *
    * ** these are reserved keywords **
    **/
-  cclex_hashonly(lexer,cclit("const"),cctokentype_const,0);
-  cclex_hashonly(lexer,cclit("restrict"),cctokentype_restrict,0);
-  cclex_hashonly(lexer,cclit("volatile"),cctokentype_volatile,0);
+  cclex_hashonly(lexer,cclit("const"),cctoken_Kconst);
+  cclex_hashonly(lexer,cclit("restrict"),cctoken_Krestrict);
+  cclex_hashonly(lexer,cclit("volatile"),cctoken_Kvolatile);
   /**
    * Group: function specifiers.
    *
    * ** these are reseverd keywords **
    **/
-  cclex_hashonly(lexer,cclit("inline"),cctokentype_inline,0);
-  cclex_hashonly(lexer,cclit("_Noreturn"),cctokentype_no_return,0);
+  cclex_hashonly(lexer,cclit("inline"),cctoken_Kinline);
+  cclex_hashonly(lexer,cclit("_Noreturn"),cctoken_Kno_return);
   /**
    * Group: type specifiers.
    *
    * ** these are reseverd keywords **
    **/
-  cclex_hashonly(lexer,cclit("signed"),cctokentype_signed,0);
-  cclex_hashonly(lexer,cclit("unsigned"),cctokentype_unsigned,0);
-  cclex_hashonly(lexer,cclit("__int8"),cctokentype_msvc_int8,0);
-  cclex_hashonly(lexer,cclit("__int16"),cctokentype_msvc_int16,0);
-  cclex_hashonly(lexer,cclit("__int32"),cctokentype_msvc_int32,0);
-  cclex_hashonly(lexer,cclit("__int64"),cctokentype_msvc_int64,0);
-  cclex_hashonly(lexer,cclit("double"),cctokentype_double,0);
-  cclex_hashonly(lexer,cclit("float"),cctokentype_float,0);
-  cclex_hashonly(lexer,cclit("long"),cctokentype_long,0);
-  cclex_hashonly(lexer,cclit("int"),cctokentype_int,0);
-  cclex_hashonly(lexer,cclit("short"),cctokentype_short,0);
-  cclex_hashonly(lexer,cclit("char"),cctokentype_char,0);
-  cclex_hashonly(lexer,cclit("void"),cctokentype_void,0);
-  cclex_hashonly(lexer,cclit("_Bool"),cctokentype_bool,0);
-  cclex_hashonly(lexer,cclit("_Complex"),cctokentype_complex,0);
-  cclex_hashonly(lexer,cclit("_Atomic"),cctokentype_atomic,0);
-  cclex_hashonly(lexer,cclit("enum"),cctokentype_enum,0);
-  cclex_hashonly(lexer,cclit("struct"),cctokentype_struct,0);
+  cclex_hashonly(lexer,cclit("signed"),cctoken_Ksigned);
+  cclex_hashonly(lexer,cclit("unsigned"),cctoken_Kunsigned);
+  cclex_hashonly(lexer,cclit("__int8"),cctoken_Kmsvc_int8);
+  cclex_hashonly(lexer,cclit("__int16"),cctoken_Kmsvc_int16);
+  cclex_hashonly(lexer,cclit("__int32"),cctoken_Kmsvc_int32);
+  cclex_hashonly(lexer,cclit("__int64"),cctoken_Kmsvc_int64);
+  cclex_hashonly(lexer,cclit("double"),cctoken_Kdouble);
+  cclex_hashonly(lexer,cclit("float"),cctoken_Kfloat);
+  cclex_hashonly(lexer,cclit("long"),cctoken_Klong);
+  cclex_hashonly(lexer,cclit("int"),cctoken_Kint);
+  cclex_hashonly(lexer,cclit("short"),cctoken_Kshort);
+  cclex_hashonly(lexer,cclit("char"),cctoken_Kchar);
+  cclex_hashonly(lexer,cclit("void"),cctoken_Kvoid);
+  cclex_hashonly(lexer,cclit("_Bool"),cctoken_Kbool);
+  cclex_hashonly(lexer,cclit("_Complex"),cctoken_Kcomplex);
+  cclex_hashonly(lexer,cclit("_Atomic"),cctoken_Katomic);
+  cclex_hashonly(lexer,cclit("enum"),cctoken_Kenum);
+  cclex_hashonly(lexer,cclit("struct"),cctoken_Kstruct);
   /**
    * Group: type specifier & storage class.
    **/
-  cclex_hashonly(lexer,cclit("typedef"),cctokentype_typedef,0);
+  cclex_hashonly(lexer,cclit("typedef"),cctoken_Ktypedef);
   /*
    * Group: storage class.
    * ** these are reseverd keywords **
    **/
-  cclex_hashonly(lexer,cclit("auto"),cctokentype_auto,0);
-  cclex_hashonly(lexer,cclit("extern"),cctokentype_extern,0);
-  cclex_hashonly(lexer,cclit("register"),cctokentype_register,0);
-  cclex_hashonly(lexer,cclit("static"),cctokentype_static,0);
-  cclex_hashonly(lexer,cclit("_Thread_local"),cctokentype_thread_local,0);
-  cclex_hashonly(lexer,cclit("__declspec"),cctokentype_msvc_declspec,0);
+  cclex_hashonly(lexer,cclit("auto"),cctoken_Kauto);
+  cclex_hashonly(lexer,cclit("extern"),cctoken_Kextern);
+  cclex_hashonly(lexer,cclit("register"),cctoken_Kregister);
+  cclex_hashonly(lexer,cclit("static"),cctoken_Kstatic);
+  cclex_hashonly(lexer,cclit("_Thread_local"),cctoken_Kthread_local);
+  cclex_hashonly(lexer,cclit("__declspec"),cctoken_Kmsvc_declspec);
+  /**
+   * Group: control statements.
+   * ** these are reseverd keywords **
+   **/
+  cclex_hashonly(lexer,cclit("if"),cctoken_Kif);
+  cclex_hashonly(lexer,cclit("switch"),cctoken_Kswitch);
+  cclex_hashonly(lexer,cclit("else"),cctoken_Kelse);
+  cclex_hashonly(lexer,cclit("case"),cctoken_Kcase);
+  cclex_hashonly(lexer,cclit("default"),cctoken_Kdefault);
+  cclex_hashonly(lexer,cclit("for"),cctoken_Kfor);
+  cclex_hashonly(lexer,cclit("while"),cctoken_Kwhile);
+  cclex_hashonly(lexer,cclit("do"),cctoken_Kdo);
+  cclex_hashonly(lexer,cclit("goto"),cctoken_Kgoto);
+  cclex_hashonly(lexer,cclit("return"),cctoken_Kreturn);
+  cclex_hashonly(lexer,cclit("break"),cctoken_Kbreak);
+  cclex_hashonly(lexer,cclit("continue"),cctoken_Kcontinue);
 }
 
 ccfunc void
@@ -151,15 +169,11 @@ ccfunc void
 cclex_init(cclex_t *l)
 {
   l->tok = {};
-  l->buf = {};
 
   l->tbl_max = 1024; // <-- for now this is fixed.
   l->tbl_min = 0;
   l->tbl     = (ccentry_t *) ccmalloc(sizeof(ccentry_t) * l->tbl_max);
   memset(l->tbl, 0, sizeof(ccentry_t) * l->tbl_max);
-
-  // commit the first 0-16 block to signify an invalid address.
-  ccstrput(l->buf,"invalid string!");
 
   cclex_hash_init(l);
 }
@@ -167,11 +181,13 @@ cclex_init(cclex_t *l)
 ccfunc void
 cclex_uninit(cclex_t *l)
 {
-  ccarr_del(l->buf);
+	(void)l;
+  // ccarrdel(l->buf);
 }
 
 #define CCLEX_WITHIN(x,l,r) (((x)>=(l))&&((x)<=(r)))
 
+// Todo: if would be could if you'd hash at the same time ...
 static int
 cclex_idenlen(const char *s)
 { int l;
@@ -181,14 +197,8 @@ cclex_idenlen(const char *s)
   return l;
 }
 
-ccfunc const char *
-cclex_tokstr(cclex_t *l, cctok_t *token)
-{
-  return l->buf + token->str;
-}
-
 ccfunc void
-cclex_token(cclex_t *l, cctok_t *token)
+cclex_token(cclex_t *l, cctoken_t *token)
 { *token = l->tok;
   l->tok = {};
 }
@@ -200,10 +210,10 @@ cclex_next_token(cclex_t *l)
 {
   do
   { cclex_next_token_internal(l);
-  } while(l->tok.bit == cctokentype_literal_comment ||
-          l->tok.bit == cctokentype_space   ||
-          l->tok.bit == cctokentype_endimpl ||
-          l->tok.bit == cctokentype_endexpl );
+  } while(l->tok.bit == cctoken_Kliteral_comment ||
+          l->tok.bit == cctoken_Kspace   ||
+          l->tok.bit == cctoken_Kendimpl ||
+          l->tok.bit == cctoken_Kendexpl );
 
   return l->tok.bit > 0;
 }
@@ -211,40 +221,35 @@ cclex_next_token(cclex_t *l)
 // Note:
 ccfunc const char *
 cclex_identifier(cclex_t *l, const char *str)
-{
-  int len=cclex_idenlen(str);
-
-  l->tok.bit=cctokentype_literal_identifier;
-  l->tok.str=ccstrlen(l->buf);
-
-  if(!cclex_hash(l,len,str,&l->tok.bit,&l->tok.str))
-  { ccstrputl(l->buf,str,len);
-  }
+{ int len=cclex_idenlen(str);
+  l->tok.bit=cctoken_Kliteral_identifier;
+  l->tok.str=cclex_hash(l,len,str,cctrue,(int*)&l->tok.bit,ccnil);
   return str+len;
 }
 
 ccfunc const char *
 cclex_readstr(cclex_t *l, const char *str)
 {
-  l->tok.bit=cctokentype_literal_string_unterminated;
-  l->tok.str=ccstrlen(l->buf);
+	// Todo: re-use this buffer ...
+	// Todo: replace this with a legit string arena ... nothing too fancy ...
+  l->tok.bit=cctoken_Kliteral_string_unterminated;
+  l->tok.str=ccstrnil;
 
   char end=*str++;
-  (void)end;
 
   char *cur;
   unsigned int res,com;
-  for(res=0x20,com=0;cur=ccstradd(l->buf,res,0);res+=0x20)
+  for(res=0x20,com=0;cur=ccstradd((char*)l->tok.str,res,0);res+=0x20)
   {
     for(;com<res;++com)
     {
-      if(*str=='"')
+      if(*str==end)
       { * cur++=0;
           str++;
           com++; // Note: account for the null terminator
 
-        l->tok.bit=cctokentype_literal_string;
-        ccstradd(l->buf,0,com);
+        l->tok.bit=cctoken_Kliteral_string;
+        ccstradd((char*)l->tok.str,0,com);
         return str;
       } else
       if(*str=='\\')
@@ -287,12 +292,12 @@ cclex_next_token_internal(cclex_t *l)
   l->tok.doc = l->min;
 
   if(l->max >= l->doc_max)
-  { l->tok.bit = cctokentype_end;
+  { l->tok.bit = cctoken_Kend;
     return;
   }
   switch(* l->max)
   { default:
-    { ++ l->max, l->tok.bit = cctokentype_invalid;
+    { ++ l->max, l->tok.bit = cctoken_Kinvalid;
     } break;
     // NOTE(RJ):
     // ; Numbers!
@@ -360,10 +365,10 @@ cclex_next_token_internal(cclex_t *l)
           { break;
           }
         }
-        l->tok.bit = cctokentype_literal_float;
+        l->tok.bit = cctoken_Kliteral_float;
         l->tok.flo = u + d / p;
       } else
-      { l->tok.bit = cctokentype_literal_integer;
+      { l->tok.bit = cctoken_Kliteral_integer;
         l->tok.uns = u;
       }
     } break;
@@ -385,43 +390,43 @@ cclex_next_token_internal(cclex_t *l)
     { l->max = cclex_readstr(l, l->max);
     } break;
     case ':':
-    { ++ l->max, l->tok.bit = cctokentype_colon;
+    { ++ l->max, l->tok.bit = cctoken_Kcolon;
     } break;
     case ',':
-    { ++ l->max, l->tok.bit = cctokentype_comma;
+    { ++ l->max, l->tok.bit = cctoken_Kcomma;
     } break;
     // case '#':
-    // { ++ l->max, l->tok.bit = cctokentype_pound;
+    // { ++ l->max, l->tok.bit = cctoken_Kpound;
     // } break;
     case '(':
-    { ++ l->max, l->tok.bit = cctokentype_lparen;
+    { ++ l->max, l->tok.bit = cctoken_Klparen;
     } break;
     case ')':
-    { ++ l->max, l->tok.bit = cctokentype_rparen;
+    { ++ l->max, l->tok.bit = cctoken_Krparen;
     } break;
     case '[':
-    { ++ l->max, l->tok.bit = cctokentype_lsquare;
+    { ++ l->max, l->tok.bit = cctoken_Klsquare;
     } break;
     case ']':
-    { ++ l->max, l->tok.bit = cctokentype_rsquare;
+    { ++ l->max, l->tok.bit = cctoken_Krsquare;
     } break;
     case '{':
-    { ++ l->max, l->tok.bit = cctokentype_lcurly;
+    { ++ l->max, l->tok.bit = cctoken_Klcurly;
     } break;
     case '}':
-    { ++ l->max, l->tok.bit = cctokentype_rcurly;
+    { ++ l->max, l->tok.bit = cctoken_Krcurly;
     } break;
     case '~':
     {
-      l->max += 1, l->tok.bit = cctokentype_bitwise_invert;
+      l->max += 1, l->tok.bit = cctoken_Kbitwise_invert;
     } break;
     // .
     // ...
     case '.':
     { if(l->max[1] == '.' && l->max[2] == '.')
-      { l->max += 3, l->tok.bit = cctokentype_literal_ellipsis;
+      { l->max += 3, l->tok.bit = cctoken_Kliteral_ellipsis;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_mso;
+      { l->max += 1, l->tok.bit = cctoken_Kmso;
       }
     } break;
     // ^
@@ -429,9 +434,9 @@ cclex_next_token_internal(cclex_t *l)
     case '^':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_bitwise_xor_eql;
+      { l->max += 2, l->tok.bit = cctoken_Kbitwise_xor_eql;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_bitwise_xor;
+      { l->max += 1, l->tok.bit = cctoken_Kbitwise_xor;
       }
     } break;
     // ||
@@ -440,12 +445,12 @@ cclex_next_token_internal(cclex_t *l)
     case '|':
     {
       if(l->max[1]=='|')
-      { l->max += 2, l->tok.bit = cctokentype_logical_or;
+      { l->max += 2, l->tok.bit = cctoken_Klogical_or;
       } else
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_bitwise_or_eql;
+      { l->max += 2, l->tok.bit = cctoken_Kbitwise_or_eql;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_bitwise_or;
+      { l->max += 1, l->tok.bit = cctoken_Kbitwise_or;
       }
     } break;
     // &&
@@ -454,12 +459,12 @@ cclex_next_token_internal(cclex_t *l)
     case '&':
     {
       if(l->max[1]=='&')
-      { l->max += 2, l->tok.bit = cctokentype_logical_and;
+      { l->max += 2, l->tok.bit = cctoken_Klogical_and;
       } else
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_bitwise_and_eql;
+      { l->max += 2, l->tok.bit = cctoken_Kbitwise_and_eql;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_bitwise_and;
+      { l->max += 1, l->tok.bit = cctoken_Kbitwise_and;
       }
     } break;
     // /=
@@ -467,9 +472,9 @@ cclex_next_token_internal(cclex_t *l)
     case '/':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_div_eql;
+      { l->max += 2, l->tok.bit = cctoken_Kdiv_eql;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_div;
+      { l->max += 1, l->tok.bit = cctoken_Kdiv;
       }
     } break;
     // *=
@@ -477,9 +482,9 @@ cclex_next_token_internal(cclex_t *l)
     case '*':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_mul_eql;
+      { l->max += 2, l->tok.bit = cctoken_Kmul_eql;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_mul;
+      { l->max += 1, l->tok.bit = cctoken_Kmul;
       }
     } break;
     // ++
@@ -492,12 +497,12 @@ cclex_next_token_internal(cclex_t *l)
       // these tokens, I'd rather it compose them.
 
       // if(l->max[1]=='+')
-      // { l->max += 2, l->tok.bit = cctokentype_increment;
+      // { l->max += 2, l->tok.bit = cctoken_Kincrement;
       // } else
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_add_eql;
+      { l->max += 2, l->tok.bit = cctoken_Kadd_eql;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_add;
+      { l->max += 1, l->tok.bit = cctoken_Kadd;
       }
     } break;
     // --
@@ -510,15 +515,15 @@ cclex_next_token_internal(cclex_t *l)
       // these tokens, I'd rather it compose them.
 
       // if(l->max[1]=='-')
-      // { l->max += 2, l->tok.bit = cctokentype_decrement;
+      // { l->max += 2, l->tok.bit = cctoken_Kdecrement;
       // } else
       if(l->max[1]=='>')
-      { l->max += 2, l->tok.bit = cctokentype_msp;
+      { l->max += 2, l->tok.bit = cctoken_Kmsp;
       } else
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_sub_eql;
+      { l->max += 2, l->tok.bit = cctoken_Ksub_eql;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_sub;
+      { l->max += 1, l->tok.bit = cctoken_Ksub;
       }
     } break;
     // ==
@@ -526,9 +531,9 @@ cclex_next_token_internal(cclex_t *l)
     case '=':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_equals;
+      { l->max += 2, l->tok.bit = cctoken_Kequals;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_assign;
+      { l->max += 1, l->tok.bit = cctoken_Kassign;
       }
     } break;
     // !=
@@ -536,9 +541,9 @@ cclex_next_token_internal(cclex_t *l)
     case '!':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_not_equals;
+      { l->max += 2, l->tok.bit = cctoken_Knot_equals;
       } else
-      { l->max += 2, l->tok.bit = cctokentype_negate;
+      { l->max += 2, l->tok.bit = cctoken_Knegate;
       }
     } break;
     // >=
@@ -546,9 +551,9 @@ cclex_next_token_internal(cclex_t *l)
     case '>':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_greater_than_eql;
+      { l->max += 2, l->tok.bit = cctoken_Kgreater_than_eql;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_greater_than;
+      { l->max += 1, l->tok.bit = cctoken_Kgreater_than;
       }
     } break;
     // <=
@@ -556,9 +561,9 @@ cclex_next_token_internal(cclex_t *l)
     case '<':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_less_than_eql;
+      { l->max += 2, l->tok.bit = cctoken_Kless_than_eql;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_less_than;
+      { l->max += 1, l->tok.bit = cctoken_Kless_than;
       }
     } break;
     // %=
@@ -566,41 +571,41 @@ cclex_next_token_internal(cclex_t *l)
     case '%':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_mod_eql;
+      { l->max += 2, l->tok.bit = cctoken_Kmod_eql;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_mod;
+      { l->max += 1, l->tok.bit = cctoken_Kmod;
       }
     } break;
 
     case '?':
     { if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctokentype_invalid;
+      { l->max += 2, l->tok.bit = cctoken_Kinvalid;
       } else
-      { l->max += 2, l->tok.bit = cctokentype_invalid;
+      { l->max += 2, l->tok.bit = cctoken_Kinvalid;
       }
     } break;
 
     case '\0':
-    { l->max += 1, l->tok.bit = cctokentype_end;
+    { l->max += 1, l->tok.bit = cctoken_Kend;
     } break;
 
     // NOTE(RJ):
     // ; Handle trailing tokens!
     case  ' ': case '\t': case '\f': case '\v': case '\b':
-    { l->max += 1, l->tok.bit = cctokentype_space;
+    { l->max += 1, l->tok.bit = cctoken_Kspace;
     } break;
     case '\r':
     { if(l->max[1] == '\n')
-      { l->max += 2, l->tok.bit = cctokentype_endimpl;
+      { l->max += 2, l->tok.bit = cctoken_Kendimpl;
       } else
-      { l->max += 1, l->tok.bit = cctokentype_endimpl;
+      { l->max += 1, l->tok.bit = cctoken_Kendimpl;
       }
     } break;
     case '\n':
-    { l->max += 1, l->tok.bit = cctokentype_endimpl;
+    { l->max += 1, l->tok.bit = cctoken_Kendimpl;
     } break;
     case ';':
-    { l->max += 1, l->tok.bit = cctokentype_endexpl;
+    { l->max += 1, l->tok.bit = cctoken_Kendexpl;
     } break;
   }
 

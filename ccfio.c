@@ -1,5 +1,5 @@
-#ifndef _CCFILE
-#define _CCFILE
+#ifndef _CCFIO
+#define _CCFIO
 
 #ifdef _WIN32
 ccfunc int

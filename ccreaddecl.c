@@ -33,17 +33,17 @@ ccread_parameter_type_list(ccreader_t *parser, ktt_i32 *is_variadic);
 
 ccfunc cctree_t *
 ccread_designator(ccreader_t *parser)
-{ if(ccsee(parser, cctokentype_lsquare))
-  { cctok_t *tok = ccgobble(parser);
+{ if(ccsee(parser, cctoken_Klsquare))
+  { cctoken_t *tok = ccgobble(parser);
     cctree_t  *cex = ccread_constant_expression(parser);
     return cctree_new_designator(tok, cex);
   } else
-  if(ccsee(parser, cctokentype_mso))
-  { cctok_t *tok = ccgobble(parser);
+  if(ccsee(parser, cctoken_Kmso))
+  { cctoken_t *tok = ccgobble(parser);
     cctree_t  *cex = ccread_identifier(parser);
     return cctree_new_designator(tok, cex);
   }
-  return ktt__nullptr;
+  return ccnil;
 }
 
 ccfunc cctree_t *
@@ -59,7 +59,7 @@ ccfunc cctree_t *
 ccread_init_designation(ccreader_t *parser)
 { cctree_t *list = ccread_designator_list(parser);
   if(list)
-  { if(! cceat(parser, cctokentype_assign))
+  { if(! cceat(parser, cctoken_Kassign))
     { ccsynerr(parser, 0, "expected '=' for designation");
     }
   }
@@ -76,7 +76,7 @@ ccfunc cctree_t *
 ccread_initializer_list(ccreader_t *parser)
 { cctree_t *desi = ccread_init_designation(parser);
 
-  if(cceat(parser, cctokentype_comma))
+  if(cceat(parser, cctoken_Kcomma))
   { if(! desi)
     { ccsynerr(parser, 0, "unexpected ',' in initializer list");
     }
@@ -88,11 +88,11 @@ ccread_initializer_list(ccreader_t *parser)
 
 ccfunc cctree_t *
 ccread_initializer(ccreader_t *parser)
-{ if(cceat(parser, cctokentype_lcurly))
+{ if(cceat(parser, cctoken_Klcurly))
   {
     cctree_t *list = ccread_initializer_list(parser);
 
-    if(! cceat(parser, cctokentype_rcurly))
+    if(! cceat(parser, cctoken_Krcurly))
     { ccsynerr(parser, 0, "expected '}' for initializer list");
     }
     return list;
@@ -113,13 +113,13 @@ ccread_initializer(ccreader_t *parser)
 ccfunc cctype_t *
 ccread_direct_decl_name_modifier(ccreader_t *reader, cctype_t *type)
 {
-  if(cceat(reader, cctokentype_lparen))
+  if(cceat(reader, cctoken_Klparen))
   {
     ktt_i32 is_vari;
     cctree_t *list = ccread_parameter_type_list(reader, & is_vari);
     (void)list;
 
-    if(!cceat(reader, cctokentype_rparen)) ccsynerr(reader, 0, "expected closing ')' for function modifier");
+    if(!cceat(reader, cctoken_Krparen)) ccsynerr(reader, 0, "expected closing ')' for function modifier");
 
     cctype_t *modifier = ccread_direct_decl_name_modifier(reader, type);
 
@@ -128,12 +128,12 @@ ccread_direct_decl_name_modifier(ccreader_t *reader, cctype_t *type)
 
     return cctype_new_fun(modifier);
   } else
-  if(cceat(reader, cctokentype_lsquare))
+  if(cceat(reader, cctoken_Klsquare))
   {
     cctree_t *expression = ccread_expression(reader);
     (void) expression;
 
-    if(! cceat(reader, cctokentype_rsquare))
+    if(! cceat(reader, cctoken_Krsquare))
     { ccsynerr(reader, 0, "expected ']' for array modifier");
     }
 
@@ -150,18 +150,18 @@ ccread_direct_decl_name_modifier(ccreader_t *reader, cctype_t *type)
 //
 ccfunc cctree_t *
 ccread_direct_decl_name(ccreader_t *reader, cctype_t *type)
-{ if(cceat(reader,cctokentype_lparen))
+{ if(cceat(reader,cctoken_Klparen))
   { cctype_t *mod,*tmp;
     cctree_t *res;
     mod=cctype_clone(type);
     res=ccread_decl_name(reader,mod);
-    if(!cceat(reader, cctokentype_rparen)) ccsynerr(reader, 0, "expected closing ')' for declarator");
+    if(!cceat(reader, cctoken_Krparen)) ccsynerr(reader, 0, "expected closing ')' for declarator");
     tmp=ccread_direct_decl_name_modifier(reader,type);
     *mod=*tmp;
     cctype_del(tmp);
     return res;
   } else
-  if(ccsee(reader, cctokentype_literal_identifier))
+  if(ccsee(reader, cctoken_Kliteral_identifier))
   { cctree_t *nam=ccread_identifier(reader);
     cctype_t *mod=ccread_direct_decl_name_modifier(reader,type);
     return cctree_new_decl_name(mod,nam);
@@ -178,7 +178,7 @@ ccread_direct_decl_name(ccreader_t *reader, cctype_t *type)
 ccfunc cctype_t *
 ccread_decl_name_modifier_maybe(ccreader_t *parser, cctype_t *type)
 {
-  if(cceat(parser, cctokentype_mul))
+  if(cceat(parser, cctoken_Kmul))
     return cctype_new_ptr(ccread_decl_name_modifier_maybe(parser, type));
 
   return type;
@@ -207,7 +207,7 @@ ccread_init_decl_name(ccreader_t *reader, cctype_t *type)
   cctree_t *decl=ccread_decl_name(reader, type);
   cctree_t *init=0;
 
-  if(cceat(reader,cctokentype_assign))
+  if(cceat(reader,cctoken_Kassign))
   { init=ccread_initializer(reader);
   }
 
@@ -220,12 +220,12 @@ ccread_init_decl_name(ccreader_t *reader, cctype_t *type)
 //
 ccfunc cctree_t *
 ccread_init_decl_name_list(ccreader_t *reader, cctype_t *type)
-{ cctree_t *next,*list=ccarr_empty;
+{ cctree_t *next,*list=ccarrnil;
   do
   { next=ccread_init_decl_name(reader,type);
-    if(next) *ccarr_add(list,1)=*next;
+    if(next) *ccarradd(list,1)=*next;
     cctree_del(next);
-  } while(cceat(reader,cctokentype_comma));
+  } while(cceat(reader,cctoken_Kcomma));
   return list;
 }
 //
@@ -254,9 +254,9 @@ ccread_init_decl(ccreader_t *reader)
 //
 ccfunc cctree_t *
 ccread_struct_decl_name(ccreader_t *reader, cctype_t *type)
-{ cctree_t *decl,*cexp=ccarr_empty;
+{ cctree_t *decl,*cexp=ccarrnil;
   decl=ccread_decl_name(reader,type);
-  if(cceat(reader,cctokentype_colon))
+  if(cceat(reader,cctoken_Kcolon))
   { cexp=ccread_constant_expression(reader);
   }
   return cctree_new_struct_decl_name(decl,cexp);
@@ -268,12 +268,12 @@ ccread_struct_decl_name(ccreader_t *reader, cctype_t *type)
 //
 ccfunc cctree_t *
 ccread_struct_decl_name_list(ccreader_t *parser, cctype_t *type)
-{ cctree_t *next,*list=ccarr_empty;
+{ cctree_t *next,*list=ccarrnil;
   do
   { next=ccread_struct_decl_name(parser,type);
-    if(next) *ccarr_add(list,1)=*next;
+    if(next) *ccarradd(list,1)=*next;
     cctree_del(next);
-  } while(next!=0&&cceat(parser,cctokentype_comma));
+  } while(next!=0&&cceat(parser,cctoken_Kcomma));
   return list;
 }
 //
@@ -290,7 +290,7 @@ ccread_struct_decl(ccreader_t *parser)
     if(!parser->bed->term_expl) ccsynerr(parser, 0, "expected ';' at end of struct-declaration");
     return cctree_new_struct_decl(type,list);
   }
-  return ktt__nullptr;
+  return ccnil;
 }
 //
 // struct-declaration-list:
@@ -299,10 +299,10 @@ ccread_struct_decl(ccreader_t *parser)
 //
 ccfunc cctree_t *
 ccread_struct_decl_list(ccreader_t *parser)
-{ cctree_t *next,*list=ccarr_empty;
+{ cctree_t *next,*list=ccarrnil;
   while(next=ccread_struct_decl(parser))
   { // Todo:
-   *ccarr_add(list,1)=*next;
+   *ccarradd(list,1)=*next;
     cctree_del(next);
   }
   return list;
@@ -316,25 +316,21 @@ ccread_struct_decl_list(ccreader_t *parser)
 //    struct-or-union identifier
 ccfunc cctype_t *
 ccread_struct_or_union_specifier(ccreader_t *reader)
-{ if(cceat(reader, cctokentype_struct))
+{ if(cceat(reader, cctoken_Kstruct))
   { cctree_t *name,*list;
     cctype_t *type;
     name=ccread_identifier(reader);
-    if(!cceat(reader, cctokentype_lcurly))
+    if(!cceat(reader, cctoken_Klcurly))
       ccsynerr(reader, 0, "expected '{' for struct specifier");
     list=ccread_struct_decl_list(reader);
-    if(!cceat(reader, cctokentype_rcurly))
+    if(!cceat(reader, cctoken_Krcurly))
       ccsynerr(reader, 0, "expected '}' for struct specifier");
-    type=cctype_new_struct_spec(name,list);
+    type=cctype_new_struct_spec(list,name);
     return type;
   } else
-  // if(cceat(reader, cctokentype_enum))
+  // if(cceat(reader, cctoken_Kenum))
   {
     ccassert(!"notimpl");
-
-    if(cctree_t *name = ccread_identifier(reader))
-    { return cctree_new_enum_specifier(name);
-    }
   }
   return 0;
 }
@@ -363,21 +359,21 @@ ccread_struct_or_union_specifier(ccreader_t *reader)
 ccfunc cctype_t *
 ccread_type_specifier(ccreader_t *parser)
 { // Todo: make this proper ....
-  if(cctok_t *tok = ccsee_typespec(parser))
+  if(cctoken_t *tok = ccsee_typespec(parser))
   { switch(tok->bit)
-    { case cctokentype_enum:
-      case cctokentype_struct:     return ccread_struct_or_union_specifier(parser);
-      case cctokentype_msvc_int8:  return ccgobble(parser), ctype_int8;
-      case cctokentype_msvc_int16: return ccgobble(parser), ctype_int16;
-      case cctokentype_msvc_int32: return ccgobble(parser), ctype_int32;
-      case cctokentype_msvc_int64: return ccgobble(parser), ctype_int64;
-      case cctokentype_bool:       return ccgobble(parser), ctype_int8;
-      case cctokentype_void:       return ccgobble(parser), ctype_void;
-      case cctokentype_char:       return ccgobble(parser), ctype_int8;
-      case cctokentype_short:      return ccgobble(parser), ctype_int16;
-      case cctokentype_int:        return ccgobble(parser), ctype_int32;
-      case cctokentype_float:      return ccgobble(parser), ctype_flo32;
-      case cctokentype_double:     return ccgobble(parser), ctype_flo64;
+    { case cctoken_Kenum:
+      case cctoken_Kstruct:     return ccread_struct_or_union_specifier(parser);
+      case cctoken_Kmsvc_int8:  return ccgobble(parser), ctype_int8;
+      case cctoken_Kmsvc_int16: return ccgobble(parser), ctype_int16;
+      case cctoken_Kmsvc_int32: return ccgobble(parser), ctype_int32;
+      case cctoken_Kmsvc_int64: return ccgobble(parser), ctype_int64;
+      case cctoken_Kbool:       return ccgobble(parser), ctype_int8;
+      case cctoken_Kvoid:       return ccgobble(parser), ctype_void;
+      case cctoken_Kchar:       return ccgobble(parser), ctype_int8;
+      case cctoken_Kshort:      return ccgobble(parser), ctype_int16;
+      case cctoken_Kint:        return ccgobble(parser), ctype_int32;
+      case cctoken_Kfloat:      return ccgobble(parser), ctype_flo32;
+      case cctoken_Kdouble:     return ccgobble(parser), ctype_flo64;
     }
   }
   return 0;
@@ -397,7 +393,7 @@ ccread_storage_class_specifier(ccreader_t *parser)
 {
   if(kttc__peek_storage_class(parser))
   {
-    cctok_t *tok = ccgobble(parser);
+    cctoken_t *tok = ccgobble(parser);
     (void) tok;
 
     return true;
@@ -414,7 +410,7 @@ ccread_storage_class_specifier(ccreader_t *parser)
 ccfunc ktt_i32
 ccread_type_qualifier(ccreader_t *parser)
 { if(kttc__peek_type_qualifier(parser))
-  { cctok_t *tok = ccgobble(parser);
+  { cctoken_t *tok = ccgobble(parser);
     (void) tok;
     return true;
   }
@@ -428,7 +424,7 @@ ccread_type_qualifier(ccreader_t *parser)
 ccfunc ktt_i32
 ccread_function_specifier(ccreader_t *parser)
 { if(kttc__peek_func_specifier(parser))
-  { cctok_t *tok = ccgobble(parser);
+  { cctoken_t *tok = ccgobble(parser);
     (void) tok;
     return true;
   }
@@ -442,7 +438,7 @@ ccread_function_specifier(ccreader_t *parser)
 ccfunc ktt_i32
 ccread_alignment_specifier(ccreader_t *parser)
 { if(kttc__peek_alignment_specifier(parser))
-  { cctok_t *tok = ccgobble(parser);
+  { cctoken_t *tok = ccgobble(parser);
     (void) tok;
     return true;
   }
@@ -517,33 +513,33 @@ ccread_parameter_declaration(ccreader_t *parser)
     // Just make every decl have next pointer.
     return kttc__make_parameter_declaration(decl);
   }
-  return ktt__nullptr;
+  return ccnil;
 }
 
 ccfunc cctree_t *
 ccread_parameter_list(ccreader_t *parser)
 {
   // Try a little harder here to check for misplaced commas ...
-  while(cceat(parser, cctokentype_comma))
+  while(cceat(parser, cctoken_Kcomma))
   { ccsynerr(parser, 0, "misplaced or too many ',' in parameter list");
   }
 
   // Todo: check here for misplaced ellipsis
   // Todo: replace with array ...
   if(cctree_t *list = ccread_parameter_declaration(parser))
-  { if(cceat(parser, cctokentype_comma))
+  { if(cceat(parser, cctoken_Kcomma))
     { list->parameter_declaration.next = ccread_parameter_list(parser);
     }
     return list;
   }
-  return ktt__nullptr;
+  return ccnil;
 }
 
 ccfunc cctree_t *
 ccread_parameter_type_list(ccreader_t *parser, ktt_i32 *is_variadic)
 { if(is_variadic) * is_variadic = false;
   cctree_t *list = ccread_parameter_list(parser);
-  if(cceat(parser, cctokentype_literal_ellipsis))
+  if(cceat(parser, cctoken_Kliteral_ellipsis))
   { if(is_variadic) * is_variadic = true;
   }
   return list;

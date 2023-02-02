@@ -1,42 +1,46 @@
-/*****************************************************************/
-/** Copyright(C) J. Dayan Rodriguez, 2022, All rights reserved. **/
-/*****************************************************************/
-#ifndef _CCMEM
-#define _CCMEM
+#ifndef _CCDLB
+#define _CCDLB
 
 // Note:
-typedef struct ccblc
+typedef struct ccblc_t
 {
   unsigned int size_max;
   unsigned int size_min;
-} ccblc;
+} ccblc_t;
 
 #ifndef ccblc_raw
-# define ccblc_raw(mem) ((mem)?(cccast(ccblc*,mem)-1):0)
+# define ccblc_raw(mem) ((mem)?(cccast(ccblc_t*,mem)-1):0)
 #endif
 #ifndef ccblc_max
-# define ccblc_max(mem) ((unsigned int *)mem)[-2]
+# define ccblc_max(mem) ((mem)?cccast(unsigned int *,mem)[-2]:0)
 #endif
 #ifndef ccblc_min
-# define ccblc_min(mem) ((unsigned int *)mem)[-1]
+# define ccblc_min(mem) ((mem)?cccast(unsigned int *,mem)[-1]:0)
 #endif
 #ifndef ccblc_del
 # define ccblc_del(ccm) ccfree(ccblc_raw(ccm))
 #endif
-#ifndef ccarr_empty
-# define ccarr_empty 0
+#ifndef ccarrnil
+# define ccarrnil 0
 #endif
-#ifndef ccarr_del
-# define ccarr_del ccblc_del
+#ifndef ccarrdel
+# define ccarrdel ccblc_del
 #endif
-#ifndef ccarr_len
-# define ccarr_len(arr) (ccblc_min(arr)/sizeof(*(arr)))
+#ifndef ccarrlen
+# define ccarrlen(arr) (ccblc_min(arr)/sizeof(*(arr)))
 #endif
-#ifndef ccarr_for
-# define ccarr_for(arr,itr) for(itr=arr;itr<arr+ccarr_len(arr);++itr)
+#ifndef ccarrfor
+# define ccarrfor(arr,itr) for(itr=arr;itr<arr+ccarrlen(arr);++itr)
 #endif
-#ifndef ccarr_add
-# define ccarr_add(ccm,com) ((ccm)+ccblc_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),com,com))
+#ifndef ccarrres
+# define ccarrres(ccm,com) ((ccm)+ccblc_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),com,ccnil))
+#endif
+#ifndef ccarradd
+# define ccarradd(ccm,com) ((ccm)+ccblc_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),com,com))
+#endif
+typedef char *ccstr_t;
+#ifndef ccstrnil
+# define ccstrnil ccnil
 #endif
 #ifndef ccstrdel
 # define ccstrdel ccblc_del
@@ -64,9 +68,9 @@ typedef struct ccblc
 #endif
 
 ccfunc unsigned int
-ccblc_add(ccblc **dlb_ptr, unsigned int res_size, unsigned int com_size)
+ccblc_add(ccblc_t **dlb_ptr, unsigned int res_size, unsigned int com_size)
 {
-  ccblc *dlb;
+  ccblc_t *dlb;
   dlb=*dlb_ptr;
   unsigned int size_max,size_min;
   size_max=dlb?dlb->size_max:0;
@@ -80,7 +84,7 @@ ccblc_add(ccblc **dlb_ptr, unsigned int res_size, unsigned int com_size)
     if(size_max<size_min+res_size)
     { size_max=size_min+res_size;
     }
-    dlb=(ccblc*)ccrealloc(dlb,sizeof(*dlb)+size_max);
+    dlb=(ccblc_t*)ccrealloc(dlb,sizeof(*dlb)+size_max);
     *dlb_ptr=dlb;
   }
   dlb->size_max=size_max;
@@ -90,7 +94,7 @@ ccblc_add(ccblc **dlb_ptr, unsigned int res_size, unsigned int com_size)
 
 ccfunc ccinle unsigned int
 ccblc_arradd(void **ccm, unsigned int isze, unsigned int cres, unsigned int ccom)
-{ ccblc *dlb=ccblc_raw(*ccm);
+{ ccblc_t *dlb=ccblc_raw(*ccm);
   unsigned int res=ccblc_add(&dlb,isze*cres,isze*ccom);
   *ccm=dlb+1;
   return res/isze;
