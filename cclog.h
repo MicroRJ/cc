@@ -89,7 +89,7 @@ cctrace_(int guid, const char  *file, int line, const char *func, const char *ta
   char buf[0xff];
   ccformatvex(buf,0xff,fmt,vli);
 
-  ccout(ccformat("%s[%i] %s() %s: %s\n", file,line,func,tag,buf));
+  ccout(ccformat("%s: %s[%i] %s() %s\n", tag,file,line,func,buf));
 
   va_end(vli);
 }

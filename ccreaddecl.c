@@ -101,21 +101,11 @@ ccread_initializer(ccreader_t *parser)
     return ccread_assignment_expr(parser);
   }
 }
-/**
- * direct-declarator-modifier:
- *   direct-declarator-modifier [ type-qualifier-list(opt) assignment-expression(opt) ]
- *   direct-declarator-modifier [ static type-qualifier-list(opt) assignment-expression ]
- *   direct-declarator-modifier [ type-qualifier-list static assignment-expression ]
- *   direct-declarator-modifier [ type-qualifier-list(opt) * ]
- *   direct-declarator-modifier ( parameter-type-list )
- *   direct-declarator-modifier ( identifier-list(opt) )    ** obsolete **
- **/
+
 ccfunc cctype_t *
 ccread_direct_decl_name_modifier(ccreader_t *reader, cctype_t *type)
-{
-  if(cceat(reader, cctoken_Klparen))
-  {
-    ktt_i32 is_vari;
+{ if(cceat(reader, cctoken_Klparen))
+  { int is_vari;
     cctree_t *list = ccread_parameter_type_list(reader, & is_vari);
     (void)list;
 
@@ -123,7 +113,7 @@ ccread_direct_decl_name_modifier(ccreader_t *reader, cctype_t *type)
 
     cctype_t *modifier = ccread_direct_decl_name_modifier(reader, type);
 
-    if(modifier->kind==cctype_fun) ccsynwar(reader,0,"function that returns function");
+    if(modifier->kind==cctype_Kfunc) ccsynwar(reader,0,"function that returns function");
     if(modifier->kind==cctype_arr) ccsynwar(reader,0,"function that returns array");
 
     return cctype_new_fun(modifier);
@@ -142,12 +132,6 @@ ccread_direct_decl_name_modifier(ccreader_t *reader, cctype_t *type)
   }
   return type;
 }
-//
-// direct-declarator:
-//   identifier
-//   ( declarator )
-//   direct-declarator direct-declarator-modifier
-//
 ccfunc cctree_t *
 ccread_direct_decl_name(ccreader_t *reader, cctype_t *type)
 { if(cceat(reader,cctoken_Klparen))
@@ -155,7 +139,7 @@ ccread_direct_decl_name(ccreader_t *reader, cctype_t *type)
     cctree_t *res;
     mod=cctype_clone(type);
     res=ccread_decl_name(reader,mod);
-    if(!cceat(reader, cctoken_Krparen)) ccsynerr(reader, 0, "expected closing ')' for declarator");
+    if(!cceat(reader, cctoken_Krparen)) ccsynerr(reader, 0, "expected ')'");
     tmp=ccread_direct_decl_name_modifier(reader,type);
     *mod=*tmp;
     cctype_del(tmp);
@@ -164,17 +148,13 @@ ccread_direct_decl_name(ccreader_t *reader, cctype_t *type)
   if(ccsee(reader, cctoken_Kliteral_identifier))
   { cctree_t *nam=ccread_identifier(reader);
     cctype_t *mod=ccread_direct_decl_name_modifier(reader,type);
-    return cctree_new_decl_name(mod,nam);
+    return cctree_decl_name(mod,nam,ccnil,ccnil);
   } else // Note: abstract declarator then ...
   { cctype_t *mod=ccread_direct_decl_name_modifier(reader,type);
-    return cctree_new_decl_name(mod,0);
+    return cctree_decl_name(mod,0,ccnil,ccnil);
   }
 }
-/**
- * declarator-pointer:
- *  type-qualifier-list(opt)
- *  type-qualifier-list(opt) declarator-pointer
- **/
+
 ccfunc cctype_t *
 ccread_decl_name_modifier_maybe(ccreader_t *parser, cctype_t *type)
 {
@@ -183,10 +163,7 @@ ccread_decl_name_modifier_maybe(ccreader_t *parser, cctype_t *type)
 
   return type;
 }
-//
-// declarator:
-//   pointer(opt) direct-declarator
-//
+
 ccfunc cctree_t *
 ccread_decl_name(ccreader_t *reader, cctype_t *type)
 {
@@ -194,30 +171,33 @@ ccread_decl_name(ccreader_t *reader, cctype_t *type)
 
   return ccread_direct_decl_name(reader,ccread_decl_name_modifier_maybe(reader,type));
 }
-//
-//  init-declarator:
-//    declarator
-//    declarator = initializer
-//
+
 ccfunc cctree_t *
 ccread_init_decl_name(ccreader_t *reader, cctype_t *type)
-{
-  ccassert(type!=0);
-
+{ ccassert(type!=0);
   cctree_t *decl=ccread_decl_name(reader, type);
-  cctree_t *init=0;
-
-  if(cceat(reader,cctoken_Kassign))
-  { init=ccread_initializer(reader);
+  if(decl)
+  { if(cceat(reader,cctoken_Kassign))
+    { decl->decl_name_init=ccread_initializer(reader);
+      if(!decl->decl_name_init) ccsynerr(reader,0,"expected initializer after '='");
+    }
   }
-
-  return cctree_new_init_decl_name(decl,init);
+  return decl;
 }
-//
-// init-declarator-list:
-//   init-declarator
-//   init-declarator-list , init-declarator
-//
+
+ccfunc cctree_t *
+ccread_struct_decl_name(ccreader_t *reader, cctype_t *type)
+{ ccassert(type!=0);
+  cctree_t *decl=ccread_decl_name(reader,type);
+  if(decl)
+  { if(cceat(reader,cctoken_Kcolon))
+    { decl->decl_name_expr=ccread_constant_expression(reader);
+      if(!decl->decl_name_expr) ccsynerr(reader,0,"expected constant expression after ':'");
+    }
+  }
+  return decl;
+}
+
 ccfunc cctree_t *
 ccread_init_decl_name_list(ccreader_t *reader, cctype_t *type)
 { cctree_t *next,*list=ccarrnil;
@@ -225,95 +205,53 @@ ccread_init_decl_name_list(ccreader_t *reader, cctype_t *type)
   { next=ccread_init_decl_name(reader,type);
     if(next) *ccarradd(list,1)=*next;
     cctree_del(next);
-  } while(cceat(reader,cctoken_Kcomma));
+  } while(next!=0&&cceat(reader,cctoken_Kcomma));
   return list;
 }
-//
-// declaration:
-//   declaration-specifiers attribute-seq (opt) init-declarator-list (opt) ;
-//   static_assert-declaration
-//
+
 ccfunc cctree_t *
-ccread_init_decl(ccreader_t *reader)
-{ cctype_t *type;
-  type=ccread_declaration_specifiers(reader);
-
-  if(!type) return 0;
-
-  ccread_attribute_seq(reader);
-
-  cctree_t *list;
-  list=ccread_init_decl_name_list(reader,type);
-
-  return cctree_new_init_decl(type,list);
-}
-//
-// struct-declarator:
-//   declarator
-//   declarator(opt) : constant-expression
-//
-ccfunc cctree_t *
-ccread_struct_decl_name(ccreader_t *reader, cctype_t *type)
-{ cctree_t *decl,*cexp=ccarrnil;
-  decl=ccread_decl_name(reader,type);
-  if(cceat(reader,cctoken_Kcolon))
-  { cexp=ccread_constant_expression(reader);
-  }
-  return cctree_new_struct_decl_name(decl,cexp);
-}
-//
-// struct-declarator-list:
-//   struct-declarator
-//   struct-declarator-list , struct-declarator
-//
-ccfunc cctree_t *
-ccread_struct_decl_name_list(ccreader_t *parser, cctype_t *type)
+ccread_struct_decl_name_list(ccreader_t *reader, cctype_t *type)
 { cctree_t *next,*list=ccarrnil;
   do
-  { next=ccread_struct_decl_name(parser,type);
+  { next=ccread_struct_decl_name(reader,type);
     if(next) *ccarradd(list,1)=*next;
     cctree_del(next);
-  } while(next!=0&&cceat(parser,cctoken_Kcomma));
+  } while(next!=0&&cceat(reader,cctoken_Kcomma));
   return list;
 }
-//
-// struct-declaration:
-//   specifier-qualifier-list struct-declarator-list(opt);
-//   static_assert-declaration
-//
+
 ccfunc cctree_t *
-ccread_struct_decl(ccreader_t *parser)
-{ cctype_t *type;
-  cctree_t *list;
-  if(type=ccread_specifier_qualifier_list(parser))
-  { list=ccread_struct_decl_name_list(parser,type);
-    if(!parser->bed->term_expl) ccsynerr(parser, 0, "expected ';' at end of struct-declaration");
-    return cctree_new_struct_decl(type,list);
+ccread_init_decl(ccreader_t *reader)
+{ cctype_t *type; cctree_t *list;
+  if(type=ccread_declaration_specifiers(reader))
+  { ccread_attribute_seq(reader);
+    if(list=ccread_init_decl_name_list(reader,type))
+    { return cctree_decl(type,list);
+    } else ccsynerr(reader,0,"expected declarator");
   }
   return ccnil;
 }
-//
-// struct-declaration-list:
-//   struct-declaration
-//   struct-declaration-list struct-declaration
-//
+
+ccfunc cctree_t *
+ccread_struct_decl(ccreader_t *parser)
+{ cctype_t *type; cctree_t *list;
+  if(type=ccread_specifier_qualifier_list(parser))
+  { if(list=ccread_struct_decl_name_list(parser,type))
+    { return cctree_decl(type,list);
+    } else ccsynerr(readerm,0,"expected declarator");
+  }
+  return ccnil;
+}
+
 ccfunc cctree_t *
 ccread_struct_decl_list(ccreader_t *parser)
 { cctree_t *next,*list=ccarrnil;
   while(next=ccread_struct_decl(parser))
-  { // Todo:
-   *ccarradd(list,1)=*next;
-    cctree_del(next);
+  { *ccarradd(list,1)=*next; cctree_del(next);
   }
   return list;
 }
 
-// struct-or-union:
-//    struct
-//    union
-//  struct-or-union-specifier:
-//    struct-or-union identifier(opt) { struct-declaration-list }
-//    struct-or-union identifier
 ccfunc cctype_t *
 ccread_struct_or_union_specifier(ccreader_t *reader)
 { if(cceat(reader, cctoken_Kstruct))

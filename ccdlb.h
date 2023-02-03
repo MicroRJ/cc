@@ -27,7 +27,10 @@ typedef struct ccblc_t
 # define ccarrdel ccblc_del
 #endif
 #ifndef ccarrlen
-# define ccarrlen(arr) (ccblc_min(arr)/sizeof(*(arr)))
+# define ccarrlen(arr) (ccblc_min(arr)/sizeof(*(arr))) // Note: null safe
+#endif
+#ifndef ccarrend
+# define ccarrend(arr) ((arr)?((arr)+ccarrlen(arr)):(arr))
 #endif
 #ifndef ccarrfor
 # define ccarrfor(arr,itr) for(itr=arr;itr<arr+ccarrlen(arr);++itr)
@@ -52,16 +55,19 @@ typedef char *ccstr_t;
 # define ccstradd(ccm,res,com) ((ccm)+ccblc_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),res,com))
 #endif
 #ifndef ccstrcatl
-# define ccstrcatl(ccm,str,len) ((ccm)+ccblc_stradd(&(ccm),len+1,len+0,str))
+# define ccstrcatl(ccm,len,str) ((ccm)+ccblc_stradd(&(ccm),len+1,len+0,str))
 #endif
 #ifndef ccstrputl
-# define ccstrputl(ccm,str,len) ((ccm)+ccblc_stradd(&(ccm),len+1,len+1,str))
+# define ccstrputl(ccm,len,str) ((ccm)+ccblc_stradd(&(ccm),len+1,len+1,str))
 #endif
 #ifndef ccstrcat
-# define ccstrcat(ccm,str) ccstrcatl(ccm,str,cccast(unsigned int,strlen(str)))
+# define ccstrcat(ccm,str) ccstrcatl(ccm,cccast(unsigned int,strlen(str)),str)
+#endif
+#ifndef ccstrcatnl
+# define ccstrcatnl(ccm) ccstrput(ccm,"\r\n") // Todo:
 #endif
 #ifndef ccstrput
-# define ccstrput(ccm,str) ccstrputl(ccm,str,cccast(unsigned int,strlen(str)))
+# define ccstrput(ccm,str) ccstrputl(ccm,cccast(unsigned int,strlen(str)),str)
 #endif
 #ifndef ccstrcatf
 # define ccstrcatf(ccm,fmt,...) ccstr_catf(&ccm,fmt,__VA_ARGS__)

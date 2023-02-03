@@ -1,338 +1,583 @@
-#ifndef _CCEMIT
-#define _CCEMIT
+// #ifndef _CCSVM
+// #define _CCSVM
 
-typedef enum
-{ kttcc_declspec_signed,
-  kttcc_declspec_unsigned,
-  kttcc_declspec_host,
-  kttcc_declspec_float,
-} kttcc_declspec;
-typedef enum
-{
-  kttcc_typekind_nil=0,
-  kttcc_typekind_mmx,
-  kttcc_typekind_var,
-  kttcc_typekind_fix,
-  kttcc_typekind_vec,
-  kttcc_typekind_ptr,
-  kttcc_typekind_ref,
-  kttcc_typekind_arr,
-} kttcc_typekind;
-typedef struct kttcc_type
-{ kttcc_typekind typekind;
-  kttcc_declspec declspec;
-  int            bitlen_max;
-  int            bitlen_min;
-  int            bitlen;
-  int            length;
-  kttcc_type *   element;
-} kttcc_type;
+// typedef enum ccvm_instr_K ccvm_instr_K;
+// typedef enum ccvm_value_K ccvm_value_K;
+// typedef struct ccvm_value_t ccvm_value_t;
+// typedef struct ccvm_instr_t ccvm_instr_t;
+// typedef struct ccvm_block_t ccvm_block_t;
+// typedef struct ccvm_routine_t ccvm_routine_t;
+// typedef struct ccvm_frame_t ccvm_frame_t;
 
-kttcc_type *gen_type(kttcc_typekind k)
-{
-  kttcc_type *type=(kttcc_type *)malloc(sizeof(*type));
+// typedef enum ccvm_instr_K
+// { ccvm_instr_Kstore = 0,
+//   ccvm_instr_Kbinop,
+//   ccvm_instr_Kblock,
+//   ccvm_instr_Kcondi,
+//   ccvm_instr_Kenter,
+//   ccvm_instr_Kleave,
+// } ccvm_instr_K;
+// typedef enum ccvm_value_K
+// { ccvm_value_Kleaf = 0,
+//   ccvm_value_Kglobal,
+//   ccvm_value_Kblock,
+//   ccvm_value_Kinstr,
+// } ccvm_value_K;
+// typedef struct ccvm_value_t
+// { ccvm_value_K    kind;
+//   ccstr_t         name;
 
-  type->typekind=k;
-  type->element=type;
+//   // Todo: replace leaf with an actual pointer, should be address instead ...
+//   // Real store/load instructions ...
+//   cctype_t       *type;
+//   cctoken_t       leaf;
 
-  return type;
-}
+//   ccvm_block_t    *block;
+//   ccvm_instr_t    *instr;
+//   ccvm_routine_t  *routine;
+// } ccvm_value_t;
+// typedef struct ccvm_instr_t
+// { ccvm_instr_K  type;
+//   ccvm_value_t *res;
 
-kttcc_type *gen_vectype(kttcc_type *t, int length)
-{
-  kttcc_type *type=gen_type(kttcc_typekind_vec);
+//   // Todo: make union ...
+//   cctoken_t     oper;
+//   ccvm_value_t *lhs;
+//   ccvm_value_t *rhs;
 
-  type->element=t;
-  type->length=length;
+//   ccvm_value_t *condi;
+//   ccvm_block_t *block[4];
+// } ccvm_instr_t;
+// // Note: a block itself does not have a label and thus may not be referenced, a value however, may have a label,
+// // and it may be a block type ... labeled blocks are value<block> ...
+// typedef struct ccvm_block_t
+// { const char     *debug_label;
+//   ccvm_routine_t *owner;
+//   ccvm_block_t   *super;
+//   ccvm_value_t   *local;
+//   ccvm_instr_t   *instr;
+// } ccvm_block_t;
+// typedef struct ccvm_routine_t
+// { const char   *debug_label;
+// 	cctype_t     *type;
+// 	ccvm_block_t *block;
+// 	ccvm_block_t *enter;
+//   ccvm_block_t *leave;
+// } ccvm_routine_t;
+// typedef struct ccvm_frame_t
+// { const char     *debug_label;
+// 	ccvm_frame_t   *caller;
+// 	ccvm_value_t   *arguments;
+// 	ccvm_routine_t *routine;
+//   ccvm_block_t   *prevblc;
+// 	ccvm_block_t   *currblc;
+//   int             curirix;
+// } ccvm_frame_t;
+// typedef struct ccvm_t
+// { ccvm_value_t   *globals;
+//   ccvm_routine_t *routine;
+// 	ccvm_frame_t   *current;
+// } ccvm_t;
 
-  return type;
-}
+// ccfunc ccstr_t ccvmir_tos(ccvm_instr_t *ir);
 
-kttcc_type *gen_ptrtype(kttcc_type *t)
-{
-  kttcc_type *type=gen_type(kttcc_typekind_ptr);
+// ccfunc ccvm_value_t *
+// ccvm_findglobal(ccvm_t *vm, const char *name)
+// {
+//   ccvm_value_t *it;
+//   ccarrfor(vm->globals,it)
+//   {
+//     if(strcmp(name,it->name)==0)
+//     {
+//       return it;
+//     }
+//   }
+//   return ccnil;
+// }
 
-  type->element=t;
+// ccfunc ccvm_value_t *
+// ccvm_value_init(ccvm_value_t *value, ccvm_value_K kind, const char *name)
+// { memset(value,ccnil,sizeof(*value));
+//   value->kind=kind;
+//   value->name=(ccstr_t)name;
+//   return value;
+// }
 
-  return type;
-}
+// ccfunc ccvm_block_t *
+// ccvm_block_init(ccvm_block_t *block, ccvm_block_t *super, const char *debug_label)
+// { memset(block,0,sizeof(*block));
+//   // Todo:
+//   ccarrres(block->local,0xff);
+//   ccarrres(block->instr,0xff);
+//   block->super=super;
+//   block->debug_label=debug_label;
+//   return block;
+// }
 
-kttcc_type *gen_vartype(kttcc_declspec d,int i,int a)
-{
-  kttcc_type *type=gen_type(kttcc_typekind_var);
+// ccfunc ccvm_value_t *
+// ccvm_global_ex(ccvm_t *vm, ccvm_value_K kind, const char *name)
+// { ccvm_value_t *value=ccarradd(vm->globals,1);
+//   ccvm_value_init(value,kind,name);
+//   return value;
+// }
 
-  type->declspec=d;
-  type->bitlen_min=i;
-  type->bitlen_max=a;
+// ccfunc ccvm_value_t *
+// ccvm_global(ccvm_t *vm, cctype_t *type, ccstr_t name)
+// {
+//   ccvm_value_t *val=ccvm_global_ex(vm,ccvm_value_Kglobal,name);
+//   val->type=type;
+//   return val;
+// }
 
-  return type;
-}
+// ccfunc ccvm_value_t *
+// ccvm_local(ccvm_block_t *block, ccvm_value_K kind, const char *name)
+// {
+//   ccvm_value_t *val=ccarradd(block->local,1);
+//   ccvm_value_init(val,kind,name);
+//   return val;
+// }
 
-kttcc_type *gen_fixtype(kttcc_declspec d,int b)
-{
-  kttcc_type *type=gen_type(kttcc_typekind_fix);
+// ccfunc ccvm_block_t *
+// ccvm_block(ccvm_block_t *super, const char *debug_label)
+// {
+//   ccvm_block_t *block=(ccvm_block_t *)ccmalloc(sizeof(*block));
+//   return ccvm_block_init(block,super,debug_label);
+// }
 
-  type->declspec=d;
-  type->bitlen=b;
+// ccfunc ccvm_block_t *
+// ccvm_label(ccvm_t *vm, ccvm_block_t *super, const char *name)
+// {
+//   ccvm_value_t *value=ccvm_findglobal(vm,name);
+//   ccvm_block_t *block=ccnil;
 
-  return type;
-}
+//   if(!value)
+//   { block=ccvm_block(super,name);
+//     value=ccvm_local(super,ccvm_value_Kblock,name);
+//     value->block=block;
 
-static const char  vn[]={'r','a','b','c','d','e','f','g','h','i'};
-static const char  pf[]={'i','u','c','f'};
-static const char  fn[]={'x','y','z','w'};
-static const char *fm[]={"i","lli","c","f"};
+//     // Todo:
+//     ccvm_value_t *global=ccvm_global_ex(vm,ccvm_value_Kblock,name);
+//     global->block=block;
+//   } else block=value->block; // ccassert(value->kind==ccvm_value_Kblock);
 
-const int gen_typename_ex(kttcc_type *t, char *buf, int len)
-{
-  if(t->typekind==kttcc_typekind_fix)
-  {
-    return ccformatex(buf,len,"%c%i",pf[t->declspec],t->bitlen);
-  } else
-  if(t->typekind==kttcc_typekind_mmx)
-  {
-    return ccformatex(buf,len,"%c%i_%i",pf[t->declspec],t->bitlen_max,t->bitlen_min);
-  } else
-  if(t->typekind==kttcc_typekind_vec)
-  {
-    int p=gen_typename_ex(t->element,buf,len);
-    return ccformatex(buf+p,len-p,"x%i",t->length);
-  } else
-  {
-    return 0;
-  }
-}
+//   return block;
+// }
 
-const char *gen_typename(kttcc_type *t)
-{
-  static char buf[0x20];
-  gen_typename_ex(t,buf,0x20);
-  return buf;
-}
+// ccfunc ccvm_value_t *
+// ccvm_leafvalue(ccvm_block_t *block, cctoken_t leaf)
+// { ccvm_value_t *value=ccvm_local(block,ccvm_value_Kleaf,"$0");
+//   value->leaf=leaf;
+//   return value;
+// }
 
-void emit_typename(char **out, kttcc_type *t)
-{
-  ccstr_catf(out,"%s",gen_typename(t));
-}
+// ccfunc ccvm_value_t *
+// ccvm_intvalue(ccvm_block_t *block, signed long long int val)
+// { ccvm_value_t *value=ccvm_local(block,ccvm_value_Kleaf,"$0");
+//   value->leaf.bit=cctoken_Kliteral_integer;
+//   value->leaf.sig=val;
+//   return value;
+// }
 
-void emit_modifier(char **out, kttcc_typekind modifier)
-{
-  if(modifier==kttcc_typekind_ptr) ccstr_catf(out,"*");
-  if(modifier==kttcc_typekind_ref) ccstr_catf(out,"&");
-  if(modifier==kttcc_typekind_arr) ccstr_catf(out,"[]");
-}
+// ccfunc ccvm_value_t *
+// ccvm_instrvalue(ccvm_block_t *block, ccvm_instr_t *instr)
+// { ccvm_value_t *value=ccvm_local(block,ccvm_value_Kinstr,"$0");
+//   value->instr=instr;
+//   return value;
+// }
 
-void emit_vardecl_ex(char **out, kttcc_type *t, kttcc_typekind override_modifier, char name)
-{
-  ccstr_catf(out,"%s ",gen_typename(t));
+// ccfunc ccvm_instr_t *
+// ccvm_addir(ccvm_block_t *block)
+// {
+//   ccvm_instr_t *res=ccarradd(block->instr,1);
+//   memset(res,0,sizeof(*res));
+//   return res;
+// }
 
-  if((override_modifier==kttcc_typekind_ptr) ||
-     (override_modifier==kttcc_typekind_ref))
-  {
-    emit_modifier(out,override_modifier);
-  } else
-  for(;;)
-  { if((t->typekind==kttcc_typekind_ptr) ||
-       (t->typekind==kttcc_typekind_ref))
-    {
-      emit_modifier(out,t->typekind);
-    } else break;
-  }
+// ccfunc ccvm_value_t *
+// ccemit_binary(ccvm_block_t *block, cctoken_t oper, ccvm_value_t *lhs, ccvm_value_t *rhs)
+// { ccvm_instr_t *i=ccvm_addir(block);
+//   i->type=ccvm_instr_Kbinop;
+//   i->oper=oper;
+//   i->lhs =lhs;
+//   i->rhs =rhs;
+//   return ccvm_instrvalue(block,i);
+// }
 
-  ccstr_catf(out,"%c",name);
+// ccfunc ccvm_value_t *
+// ccemit_store(ccvm_block_t *block, ccvm_value_t *lhs, ccvm_value_t *rhs)
+// { ccvm_instr_t *i=ccvm_addir(block);
+//   i->type=ccvm_instr_Kstore;
+//   i->lhs=lhs;
+//   i->rhs=rhs;
+//   return ccvm_instrvalue(block,i);
+// }
 
-  if((override_modifier==kttcc_typekind_arr))
-  {
-    emit_modifier(out,override_modifier);
-  } else
-  for(;;)
-  {
-    if((t->typekind==kttcc_typekind_arr))
-    {
-      emit_modifier(out,t->typekind);
-    } else break;
-  }
-}
+// ccfunc ccvm_value_t *
+// ccemit_condi(ccvm_block_t *irset, ccvm_value_t *check_value, ccvm_block_t *then_block, ccvm_block_t *else_block)
+// { ccvm_instr_t *i=ccvm_addir(irset);
+//   i->type=ccvm_instr_Kcondi;
+//   i->condi=check_value;
+//   i->block[0]=then_block;
+//   i->block[1]=else_block;
+//   return ccvm_instrvalue(irset,i);
+// }
 
-void emit_vardecl(char **out, kttcc_type *t, char name)
-{
-  emit_vardecl_ex(out,t,kttcc_typekind_nil,name);
-}
+// ccfunc ccvm_value_t *
+// ccemit_block(ccvm_block_t *irset, ccvm_block_t *block)
+// { ccvm_instr_t *i=ccvm_addir(irset);
+//   i->type=ccvm_instr_Kblock;
+//   i->block[0]=block;
+//   return ccvm_instrvalue(irset,i);
+// }
 
-void emit_fundecl(char **out, kttcc_type *t, int l, kttcc_type *r, char *n)
-{
-  ccstr_catf(out,"static ");
-  if(r)
-  { emit_typename(out,r);
-  } else
-  { ccstr_catf(out,"void");
-  }
-  ccstr_catf(out,"\r\n%s",n);
+// ccfunc ccvm_value_t *
+// ccemit_enter(ccvm_block_t *irset, ccvm_block_t *block)
+// { ccvm_instr_t *i=ccvm_addir(irset);
+//   i->type=ccvm_instr_Kenter;
+//   i->block[0]=block;
+//   return ccvm_instrvalue(irset,i);
+// }
 
-  ccstr_catf(out,"(");
-  for(int i=0;i<l;++i)
-  { if(i) ccstr_catf(out,",");
-    emit_vardecl(out,t,fn[i]);
-  }
-  ccstr_catf(out,")");
+// ccfunc ccvm_value_t *
+// ccemit_leave(ccvm_block_t *irset, ccvm_block_t *block)
+// { ccvm_instr_t *i=ccvm_addir(irset);
+//   i->type=ccvm_instr_Kleave;
+//   i->block[0]=block;
+//   return ccvm_instrvalue(irset,i);
+// }
 
-}
+// ccfunc ccvm_value_t *
+// ccsvm_resolvevalue(ccvm_t *vm, ccvm_block_t *irset, cctree_t *tree)
+// { ccvm_value_t *value=ccnil;
+//   if(tree->kind==cctree_Kbinary)
+//   { ccvm_value_t *lhs=ccsvm_resolvevalue(vm,irset,tree->binary.lhs);
+//     ccvm_value_t *rhs=ccsvm_resolvevalue(vm,irset,tree->binary.rhs);
+//     return ccemit_binary(irset,tree->binary.opr,lhs,rhs);
+//   } else
+//   if(tree->kind==cctree_Kidentifier)
+//   { value=ccvm_findglobal(vm,tree->constant.token.str);
+//   } else
+//   if(tree->kind==cctree_Kint)
+//   { value=ccvm_leafvalue(irset,tree->constant.token);
+//   }
+//   return value;
+// }
 
+// ccfunc ccvm_value_t *
+// ccemit_tree(ccvm_t *vm, ccvm_block_t *irset, cctree_t *tree)
+// {
+//   ccvm_value_t *result=ccnil;
 
-void genmake(char **out, kttcc_type *t)
-{
-  emit_fundecl(out,t->element,t->length,t,
-    ccformat("%sm",gen_typename(t)));
+//   if(tree->kind==cctree_Kmixed_statement)
+//   {
+//     // Note: aside from containing a set of instructions, blocks also contain local values ...
+//     // this may change in the future ...
+//     ccvm_block_t *child=ccvm_block(irset,"mixed");
+//     cctree_t *it;
+//     ccarrfor(tree->mix_statement.stat,it)
+//     {
+//       ccemit_tree(vm,child,it);
+//     }
+//     ccemit_block(irset,child);
+//   } else
+//   if(tree->kind==cctree_Klabel_statement)
+//   {
+//     // Note: I'm expecting the parser to generate a hierarchy of labels, as supposed to a list,
+//     // so after this label, there will be no more instructions ... therefore I don't have to switch the current block ...
 
-  ccstr_catf(out,"\r\n");
-  ccstr_catf(out,"{ ");
+//     irset=ccvm_label(vm,irset,tree->label_statement.name);
 
-  emit_vardecl(out,t,'r');
-  ccstr_catf(out,";");
+//     cctree_t *stat;
+//     ccarrfor(tree->label_statement.list,stat)
+//     {
+//       ccemit_tree(vm,irset,stat);
+//     }
+//   } else
+//   if(tree->kind==cctree_Kgoto_statement)
+//   {
+//     ccvm_block_t *label_block=ccvm_label(vm,irset,tree->goto_statement.name);
+//     ccemit_enter(irset,label_block);
+//   } else
+//   if(tree->kind==cctree_Kint)
+//   {
+//     result=ccvm_leafvalue(irset,tree->constant.token);
+//   } else
+//   if(tree->kind==cctree_Kdecl)
+//   {
+//     cctree_t *it;
+//   	ccnotnil(tree->decl_name);
 
-  for(int i=0;i<t->length;++i)
-  { ccstr_catf(out,"\r\n  r.%c=%c;",fn[i],fn[i]);
-  }
+//     ccarrfor(tree->decl_name,it)
+//     {
+//     	if(it->decl_name_type->kind==cctype_Kfunc)
+//     	{
+//     		ccvm_value_t *func_value=ccvm_global(vm,it->decl_name_type,it->decl_name_iden);
+//     		ccassert(it->body_tree);
+//     		func_value->block=ccvm_block(irset,"procedure::entry");
+//   			ccemit_tree(vm,func_value->block,it->body_tree);
 
-  ccstr_catf(out,"\r\n  return r;\r\n");
-  ccstr_catf(out,"}\r\n");
-}
+//     	} else
+//     	{
+// 	      ccvm_value_t *address,*value=ccnil;
+// 	      address=ccvm_global(vm,
+// 	        it->decl_name_type,
+// 	        it->decl_name_iden);
 
-void emit_vecoprari(char **out, kttcc_type *t, const char *opr)
-{
-  ccstr_catf(out,"static %s operator %s (", gen_typename(t), opr);
+// 	      cctree_t *init=it->decl_name_init;
+// 	      if(init)
+// 	      { if(init->kind==cctree_Kint)
+// 	        { value=ccvm_leafvalue(irset,init->constant.token);
+// 	        } else ccassert(!"error");
+// 	        ccemit_store(irset,address,value);
+// 	      }
+//     	}
+//     }
+//     // Note: don't return anything here ...
+//   } else
+//   if(tree->kind==cctree_Kbinary)
+//   {
+//     cctree_t *lhs,*rhs;
+//     lhs=tree->binary.lhs; ccnotnil(lhs!=0);
+//     rhs=tree->binary.rhs; ccnotnil(rhs!=0);
 
-  if(strlen(opr)==2 && opr[1]=='=')
-  {
-    emit_vardecl_ex(out,t,kttcc_typekind_ref,'a');
-  } else
-  {
-    emit_vardecl(out,t,'a');
-  }
+//     ccvm_value_t *lval,*rval;
+//     lval=ccsvm_resolvevalue(vm,irset,lhs);
+//     rval=ccsvm_resolvevalue(vm,irset,rhs);
 
-  ccstr_catf(out,",");
-  emit_vardecl(out,t,'b');
+//     ccnotnil(lval!=0);
+//     ccnotnil(rval!=0);
+//     cctoken_t tok=tree->binary.opr;
+//     if(tok.bit==cctoken_Kassign)
+//     { return ccemit_store(irset,lval,rval);
+//     } else
+//     { return ccemit_binary(irset,tok,lval,rval);
+//     }
+//   } else
+//   if(tree->kind==cctree_Kwhile_statement)
+//   { ccvm_block_t *cond_block=ccvm_block(irset,"$while::cond");
+//     ccvm_block_t *then_block=ccvm_block(cond_block,"$while::then");
+//     ccvm_block_t *else_block=ccvm_block(irset,"$while::else");
+//     ccvm_value_t *cond_value=ccemit_tree(vm,cond_block,tree->cond_tree);
+//     ccemit_condi(cond_block,cond_value,then_block,else_block);
+//     if(tree->then_tree) ccemit_tree(vm,then_block,tree->then_tree);
+//     ccemit_enter(then_block,cond_block);
+//     ccemit_block(irset,cond_block);
 
-  ccstr_catf(out,")\r\n");
+//     vm->current=else_block;
+//     vm->curirix=0;
+//   } else
+//   if(tree->kind==cctree_Kconditional_statement)
+//   { ccvm_value_t *cond_value=ccemit_tree(vm,irset,tree->cond_tree);
+//     ccvm_block_t *then_block=ccnil,*else_block=ccnil;
+//     ccvm_block_t *done_block=ccvm_block(irset,"$local");
+//     if(tree->then_tree)
+//     { then_block=ccvm_block(irset,"$if::then");
+//       ccemit_tree(vm,then_block,tree->then_tree);
+//       ccemit_enter(then_block,done_block);
+//     }
+//     if(tree->else_tree)
+//     { irset=else_block=ccvm_block(irset,"$if::else");
+//       ccemit_tree(vm,else_block,tree->else_tree);
+//       ccemit_enter(else_block,done_block);
+//     }
+//     ccemit_condi(irset,cond_value,then_block,else_block);
+//     vm->current=done_block;
+//     vm->curirix=0;
+//   } else
+//   { ccassert(!"error");
+//   }
 
-  ccstr_catf(out,"{ ");
-  emit_vardecl(out,t,'r');
-  ccstr_catf(out,";");
+//   return result;
+// }
 
-  for(int i=0;i<t->length;++i)
-  { ccstr_catf(out,"\r\n  r.%c=a.%c%cb.%c;",fn[i],fn[i],opr[0],fn[i]);
-  }
-  ccstr_catf(out,"\r\n  return r;\r\n");
-  ccstr_catf(out,"}\r\n");
-}
+// ccfunc ccvm_value_t *
+// ccsvm_execbinary(ccvm_block_t *irset, cctoken_t oper, ccvm_value_t *lval, ccvm_value_t *rval)
+// {
+//   if(!lval) cctraceerr("undefined lhs value"); // Todo: to string ...
+//   if(!rval) cctraceerr("undefined rhs value"); // Todo: to string ...
 
-#if 0
-void gentostring(char **out, kttcc_type *t)
-{
-  ccstr_catf(out,"static const char *");
-  ccstr_catf(out,"\r\n");
-  emit_typename(out,t);
-  ccstr_catf(out,"tos(");
-  emit_vardecl(out,t,'a');
-  ccstr_catf(out,")\r\n");
-  ccstr_catf(out,"{ return ccformat(\"");
-  for(int i=0;i<cc;++i)
-  { ccstr_catf(out,".%c:%%i",fn[i]);
-  }
-  ccstr_catf(out,"\"");
+//   ccassert(lval->kind==ccvm_value_Kleaf||lval->kind==ccvm_value_Kglobal);
+//   ccassert(rval->kind==ccvm_value_Kleaf||rval->kind==ccvm_value_Kglobal);
 
-  for(int i=0;i<cc;++i)
-  { ccstr_catf(out,",a.%c",fn[i]);
-  }
-  ccstr_catf(out,");");
+//   if(oper.bit==cctoken_Kassign)
+//   { lval->leaf=rval->leaf;
+//     return lval;
+//   } else
+//   if(oper.bit==cctoken_Kequals)
+//   { return ccvm_intvalue(irset,lval->leaf.sig==rval->leaf.sig);
+//   } else
+//   if(oper.bit==cctoken_Kgreater_than)
+//   { return ccvm_intvalue(irset,lval->leaf.sig>rval->leaf.sig);
+//   } else
+//   if(oper.bit==cctoken_Kgreater_than_eql)
+//   { return ccvm_intvalue(irset,lval->leaf.sig>=rval->leaf.sig);
+//   } else
+//   if(oper.bit==cctoken_Kless_than)
+//   { return ccvm_intvalue(irset,lval->leaf.sig<rval->leaf.sig);
+//   } else
+//   if(oper.bit==cctoken_Kless_than_eql)
+//   { return ccvm_intvalue(irset,lval->leaf.sig<=rval->leaf.sig);
+//   } else
+//   if(oper.bit==cctoken_Kadd)
+//   { return ccvm_intvalue(irset,lval->leaf.sig+rval->leaf.sig);
+//   } else
+//   { ccassert(!"error");
+//     return ccnil;
+//   }
+// }
 
-  ccstr_catf(out,"\r\n}\r\n");
-}
-void genoperdot(char **out, kttcc_type t,int bl,int cc)
-{
-  ccstr_catf(out,"static ");
-  emit_typename(out,t);
-  ccstr_catf(out,"\r\n");
-  emit_typename(out,t);
-  ccstr_catf(out,"dot(");
-  emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'a');
-  ccstr_catf(out,",");
-  emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'b');
-  ccstr_catf(out,")\r\n");
-  ccstr_catf(out,"{ ");
-  ccstr_catf(out,"return ");
-  for(int i=0;i<cc;++i)
-  { if(i) ccstr_catf(out,"+");
-    ccstr_catf(out,"(a.%c*b.%c)",fn[i],fn[i]);
-  }
-  ccstr_catf(out,";\r\n}\r\n");
-}
-void genoperrel(char **out, kttcc_type t,int bl,int cc,const char *opr)
-{
-  ccstr_catf(out,"static i32\r\noperator %s (", opr);
-  emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'a');
-  ccstr_catf(out,",");
-  emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'b');
-  ccstr_catf(out,")\r\n");
-  ccstr_catf(out,"{ ");
+// ccfunc void
+// ccvm_enter(ccvm_t *vm, ccvm_block_t *block)
+// {
+//   ccnotnil(block);
 
-  ccstr_catf(out,"return ");
+//   vm->prevblc=block;
+//   vm->current=block;
+//   vm->curirix=0;
+// }
 
-  for(int i=0;i<cc;++i)
-  { if(i) ccstr_catf(out,"&&");
-    ccstr_catf(out,"(a.%c%sb.%c)",fn[i],opr,fn[i]);
-  }
-  ccstr_catf(out,";");
-  ccstr_catf(out,"\r\n}\r\n");
-}
+// ccfunc void
+// ccvm_leave(ccvm_t *vm, ccvm_block_t *block)
+// {
+//   ccnotnil(block);
 
-#endif
-void emit_vectype(char **out, kttcc_type *t)
-{
-  if(t->typekind==kttcc_typekind_vec)
-  { ccstr_catf(out,"typedef struct ");
-    emit_typename(out,t);
-    ccstr_catf(out,"\r\n");
-    ccstr_catf(out,"{");
-    for(int i=0;i<t->length;++i)
-    { ccstr_catf(out,"\r\n  ");
-      emit_vardecl(out,t->element,fn[i]);
-      ccstr_catf(out,";");
-    }
-    ccstr_catf(out,"\r\n");
-    ccstr_catf(out,"} ");
-    emit_typename(out,t);
-    ccstr_catf(out,";\r\n");
-  }
+//   vm->current=block->super;
+// }
 
-  genmake(out,t);
-  emit_vecoprari(out,t,"*");emit_vecoprari(out,t,"*=");
-  emit_vecoprari(out,t,"/");emit_vecoprari(out,t,"/=");
-  emit_vecoprari(out,t,"+");emit_vecoprari(out,t,"+=");
-  emit_vecoprari(out,t,"-");emit_vecoprari(out,t,"-=");
-#if 0
-  genoperrel(out,t,bl,cc,"==");genoperrel(out,t,bl,cc,"!=");
-  genoperrel(out,t,bl,cc,"<=");genoperrel(out,t,bl,cc,">=");
-  if(t.declspec==kttcc_declspec_float)
-  { genoperdot(out,t,bl,cc);
-  }
-  gentostring(out,t,bl,cc);
-#endif
-}
+// ccfunc void
+// ccvm_exec_instr(ccvm_t *vm, ccvm_block_t *irset, ccvm_instr_t *instr)
+// {
+//   ccvmir_tos(instr);
 
-void emit_type(char **out, const kttcc_type *t)
-{
-  if(t->typekind==kttcc_typekind_var)
-  {
-    for(int i=t->bitlen_min;i<=t->bitlen_max;i<<=1)
-    { kttcc_type *fix;
-      fix=gen_fixtype(t->declspec,i);
+//   switch(instr->type)
+//   { case ccvm_instr_Kblock:
+//     { ccvm_instr_t *it;
+//       ccarrfor(instr->block[0]->instr,it)
+//       {
+//         ccvm_exec_instr(vm,irset,it);
+//       }
+//     } break;
+//     case ccvm_instr_Kstore:
+//     { ccvm_value_t *lhs,*rhs;
+//       lhs=instr->lhs;
+//       rhs=instr->rhs;
+//       ccassert(lhs->kind==ccvm_value_Kglobal);
+//       if(rhs->kind==ccvm_value_Kleaf)
+//       { lhs->leaf=rhs->leaf;
+//       } else
+//       if(rhs->kind==ccvm_value_Kinstr)
+//       { lhs->leaf=rhs->instr->res->leaf;
+//       }
+//       instr->res=lhs;
+//     } break;
+//     case ccvm_instr_Kenter:
+//     { ccvm_enter(vm,instr->block[0]);
+//     } break;
+//     case ccvm_instr_Kcondi:
+//     {
+//       if(instr->condi->instr->res->leaf.sig)
+//       {
+//         ccvm_enter(vm,instr->block[0]);
+//       } else
+//       {
+//         ccvm_enter(vm,instr->block[1]);
+//       }
+//     } break;
+//     case ccvm_instr_Kbinop:
+//     {
+//       instr->res=ccsvm_execbinary(irset,instr->oper,instr->lhs,instr->rhs);
+//     } break;
+//     default: ccassert(!"error");
+//   }
+// }
 
-      emit_vectype(out,gen_vectype(fix,2));
-      emit_vectype(out,gen_vectype(fix,3));
-      emit_vectype(out,gen_vectype(fix,4));
-    }
-  }
+// ccfunc void
+// ccvm_exit(ccvm_t *vm)
+// {
+//   vm->current=ccnil;
+// }
 
-}
-#endif
+// ccfunc void
+// ccvm_exec(ccvm_t *vm, ccvm_block_t *block)
+// { ccvm_enter(vm,block);
+//   do
+//   { if(vm->curirix<ccarrlen(vm->current->instr))
+//     { ccvm_instr_t *ir=vm->current->instr+vm->curirix++;
+//       ccvm_exec_instr(vm,vm->current,ir);
+//     } else ccvm_exit(vm);
+//   } while(vm->current);
+// }
+
+// ccfunc int
+// ccvm_init(ccvm_t *vm)
+// { memset(vm,ccnil,sizeof(*vm));
+
+//   ccarrres(vm->globals,0xff);
+
+//   vm->current=ccmalloc_T(ccvm_frame_t);
+
+//   // vm->entrybl=ccvm_block(ccnil,"main");
+//   // vm->current=vm->entrybl;
+//   // vm->curirix=0;
+//   return 1;
+// }
+
+// ccfunc int
+// ccsvm_exectree(cctree_t *tree)
+// {
+//   ccvm_t vm;
+//   ccvm_init(&vm);
+
+//   for(cctree_t *stat=tree; stat<ccarrend(tree); stat++)
+//   {
+//   	ccemit_tree(&vm,vm.current,stat);
+//   }
+
+//   ccvm_exec(&vm,vm.entrybl);
+
+//   ccout("Globals\n");
+//   { ccvm_value_t *it;
+//     ccarrfor(vm.globals,it) ccout(ccformat("%s=%i\n",it->name,it->leaf.sig));
+//   }
+//   return 1;
+// }
+
+// const char *ccvm_instr_S[]=
+// { "STORE","BINOP","BLOCK","CONDI","ENTER","LEAVE"
+// };
+// const char *ccvm_value_S[]=
+// { "LEAF","GLOBAL","BLOCK","INSTR",
+// };
+
+// ccfunc void
+// ccvmir_tos_(ccstr_t *buf, ccvm_instr_t *ir)
+// {
+//   if((ir->type==ccvm_instr_Kenter)||
+//      (ir->type==ccvm_instr_Kleave))
+//   {
+//     ccstrcatf(*buf,"%s: %s::%s", ccvm_instr_S[ir->type],
+//       ir->block[0]->super?ir->block[0]->super->debug_label:"",ir->block[0]->debug_label);
+//   } else
+//   if((ir->type==ccvm_instr_Kblock))
+//   {
+//     ccstrcatf(*buf,"%s: %s", ccvm_instr_S[ir->type], ir->block[0]->debug_label);
+//   } else
+//   { ccstrcat(*buf,ccvm_instr_S[ir->type]);
+//   }
+
+// }
+
+// ccfunc ccstr_t
+// ccvmir_tos(ccvm_instr_t *ir)
+// {
+//   ccstr_t buf=ccnil;
+//   ccvmir_tos_(&buf,ir);
+//   ccstrcatnl(buf);
+
+//   ccout(buf);
+
+//   ccstrdel(buf);
+
+//   return buf;
+// }
+// #endif

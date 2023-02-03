@@ -9,15 +9,13 @@ int main(int argc, char **argv)
 
   ccreader_t reader;
   ccreader_init(& reader);
-  ccreader_file(& reader, "test.ktt");
+  ccreader_file(& reader, "test.svm.c");
 
-  cctree_t *stats = ccread_statement_list(& reader);
-  ccsvm_execstats(stats);
+  cctree_t *stats=ccread_translation_unit(& reader);
+
+  ccsvm_exectree(stats);
+
   ccreader_uninit(& reader);
-
-
-
-
 
 
 

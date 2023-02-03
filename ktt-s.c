@@ -117,7 +117,7 @@ ccfunc void
 kttc__type2s(ccreader_t *parser, char **buf, cctype_t *type)
 { switch(type->kind)
   { case cctype_arr: ccstr_catf(buf, "(arr: "); kttc__type2s(parser, buf, type->modifier_of); ccstr_catf(buf, ")"); break;
-    case cctype_fun: ccstr_catf(buf, "(fun: "); kttc__type2s(parser, buf, type->modifier_of); ccstr_catf(buf, ")"); break;
+    case cctype_Kfunc: ccstr_catf(buf, "(fun: "); kttc__type2s(parser, buf, type->modifier_of); ccstr_catf(buf, ")"); break;
     case cctype_ptr: ccstr_catf(buf, "(ptr: "); kttc__type2s(parser, buf, type->modifier_of); ccstr_catf(buf, ")"); break;
     case cctype_float32: ccstr_catf(buf, "float32"); break;
     case cctype_float64: ccstr_catf(buf, "float64"); break;

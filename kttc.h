@@ -122,21 +122,26 @@ extern "C"
 #ifndef _CCASSERT
 #define _CCASSERT(x) typedef char __STATIC__ASSERT__[((x)?1:-1)]
 #endif
-
+#ifndef ccnotnil
+# define ccnotnil(val) ccassert((val)!=ccnil)
+#endif
 #ifndef ccmalloc
 # define ccmalloc(len) malloc(len)
 #endif
-
 #ifndef ccrealloc
 # define ccrealloc(mem,len) realloc(mem,len)
 #endif
-
+#ifndef ccmalloc_T
+# define ccmalloc_T(type) cccast(type*,ccmalloc(sizeof(type)))
+#endif
+#ifndef ccrealloc_T
+# define ccrealloc_T(mem,type) cccast(type*,ccrealloc(mem,sizeof(type)))
+#endif
 #ifndef ccfree
 # define ccfree(mem) free(mem)
 #endif
 
-
-// Todo:
+// Todo: use size_t instead ...
 _CCASSERT(sizeof(long long int)==sizeof(size_t));
 
 
@@ -155,13 +160,14 @@ ccfunc unsigned long int ccfilesize(void *);
 #include "ccread.h"
 
 #include "ccfio.c"
-#include "ccread.c"
 #include "cclex.c"
 #include "ccreadexpr.c"
 #include "ccreaddecl.c"
 #include "ccreadstat.c"
+#include "ccread.c"
 #include "ktt-s.c"
 #include "ccemit.c"
+#include "ccemit-c.c"
 #include "ccsvm.c"
 
 }

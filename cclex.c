@@ -43,7 +43,7 @@ cclex_hash(cclex_t *l, int len, const char *key, int cpy, int *bit, int *fnd)
     slot->bit=*bit;
 
     // Todo: replace this with a legit string arena ...
-    if(cpy) ccstrputl((char*)slot->key,key,len);
+    if(cpy) ccstrputl((char*)slot->key,len,key);
     else slot->key=(char*)key;
 
     ++ l->tbl_min;
