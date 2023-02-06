@@ -3,26 +3,35 @@
 
 int main(int argc, char **argv)
 {
-
   ++ argv;
   -- argc;
 
-  ccreader_t reader;
-  ccreader_init(& reader);
-  ccreader_file(& reader, "test.svm.c");
+  cctracelog("log test 1");
+  cctracelog("log test 2");
+  cctracelog("log test 3");
 
-  cctree_t *stats=ccread_translation_unit(& reader);
+	ccdlb_test();
 
-  ccsvm_exectree(stats);
+  ccread_t read;
+  ccread_init(&read);
+  ccread_include(& read, "test.svm.c");
 
-  ccreader_uninit(& reader);
+  ccemit_t emit;
+	ccemit_init(&emit);
+	ccemit_translation_unit(&emit,ccread_translation_unit(&read));
+
+  ccexec_t exec;
+  ccexec_init(&exec);
+  ccexec_translation_unit(&exec,&emit);
+
+  ccread_uninit(&read);
 
 
 
   // Todo:
-  { char *out = ccstrnil;
+  { char *out = ccnil;
 
-    ccstrcat(out,
+    ccstrcatS(out,
       "#define f64 double\r\n"
       "#define f32 float\r\n"
       "#ifdef _MSC_VER\r\n"

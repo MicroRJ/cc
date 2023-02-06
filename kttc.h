@@ -4,19 +4,7 @@
 #ifndef KTT_HEADER_FILE_C
 #define KTT_HEADER_FILE_C
 
-/**
- * Things to improve on are definitely speed, worst case scenario, every time you parse some expression you end up calling
- * 16 other functions.
- *
- * Also memory management, trees shouldn't have direct pointers to other trees, instead use a handle, or some offset into
- * some dynamic memory, since trees are all the same size we could employ free lists with no de-fragmentation, or reduce the size
- * of each tree by only allocating the necessary data?
- *
- * I'd also like to make the lexer as fast as possible, although it is not a priority right now.
- * #define haszero(v) (((v) - 0x01010101LL) & ~(v) & 0x80808080LL)
- * #define hasvalue(x,n) (haszero((x) ^ (~0LL/255 * (n))))
- **/
-
+// Todo: speed, as always ...
 
 #ifdef _DEBUG
 #ifdef _WIN32
@@ -61,6 +49,19 @@ extern "C"
 # error 'missing __COUNTER__'
 #endif
 
+
+// Todo: MSVC specific
+#define cci64 __int64
+#define cci32 __int32
+#define cci16 __int16
+#define cci8  __int8
+
+#define ccu64 unsigned cci64
+#define ccu32 unsigned cci32
+#define ccu16 unsigned cci16
+#define ccu8  unsigned cci8
+
+
 #ifdef _MSC_VER
 # pragma warning(disable:4505) // un-referenced function with internal usage
 # pragma warning(disable:4706) // assignment within conditional expression
@@ -94,6 +95,12 @@ extern "C"
 # else
 #  define ccinle inline
 # endif
+#endif
+#ifndef ccaddr
+# define ccaddr(mem) (&(mem))
+#endif
+#ifndef ccdref
+# define ccdref(mem) (*(mem))
 #endif
 #ifndef cccast
 # define cccast(type,mem) ((type)(mem))
@@ -155,8 +162,9 @@ ccfunc unsigned long int ccfilesize(void *);
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb_sprintf.h"
 
-#include "ccdlb.h"
 #include "cclog.h"
+#include "ccdlb.h"
+
 #include "ccread.h"
 
 #include "ccfio.c"
@@ -168,7 +176,6 @@ ccfunc unsigned long int ccfilesize(void *);
 #include "ktt-s.c"
 #include "ccemit.c"
 #include "ccemit-c.c"
-#include "ccsvm.c"
-
+#include "ccexec.c"
 }
 #endif

@@ -1,13 +1,32 @@
 /*****************************************************************/
 /** Copyright(C) J. Dayan Rodriguez, 2022, All rights reserved. **/
 /*****************************************************************/
-
-
+ccfunc cctree_t *
+ccread_arglist_expr(ccread_t *reader);
 
 
 ccfunc cctree_t *
-ccread_identifier(ccreader_t *parser)
-{ return cctree_new_identifier(cceat(parser,cctoken_Kliteral_identifier));
+cctree_paren_expr(cctree_t *body)
+{
+	cctree_t *tree=cctree_new(cctree_Kparen_expr);
+	tree->body_tree=body;
+	return tree;
+}
+
+ccfunc cctree_t *
+cctree_call_expr(cctree_t *expr, cctree_t *args)
+{
+	cctree_t *tree=cctree_new(cctree_Kcall_expr);
+	tree->expr_tree=expr;
+	tree->args_tree=args;
+	return tree;
+}
+
+
+ccfunc cctree_t *
+ccread_identifier(ccread_t *parser)
+{
+	return cctree_new_identifier(cceat(parser,cctoken_Kliteral_identifier));
 }
 //
 //  primary-expression:
@@ -18,7 +37,7 @@ ccread_identifier(ccreader_t *parser)
 //    generic-selection
 //
 ccfunc cctree_t *
-ccread_primary_expr(ccreader_t *parser)
+ccread_primary_expr(ccread_t *parser)
 {
   if(ccsee(parser, cctoken_Kliteral_identifier))
   { return ccread_identifier(parser);
@@ -33,28 +52,11 @@ ccread_primary_expr(ccreader_t *parser)
   { return cctree_new_constant(cctype_new_arr(ctype_int8), ccgobble(parser));
   } else
   if(cceat(parser, cctoken_Klparen))
-  { cctree_t *result = ccread_expression(parser);
-    if(! cceat(parser, cctoken_Klparen))
-    { ccsynerr(parser, 0, "expected ')' for primary expression");
-    }
-    return result;
+  { cctree_t *inner=ccread_expression(parser);
+    if(!cceat(parser,cctoken_Klparen)) ccsynerr(parser, 0, "expected ')'");
+    return cctree_paren_expr(inner);
   }
   return ccnil;
-}
-/**
- * argument-expression-list:
- *   assignment-expression
- *   argument-expression-list , assignment-expression
- **/
-ccfunc cctree_t *
-ccread_arglist_expr(ccreader_t *reader) // <-- TODO(RJ): return list instead! like other functions!
-{ cctree_t *list=ccarrnil,*next;
-  do
-  { next=ccread_assignment_expr(reader);
-    if(next) *ccarradd(list,1)=*next;
-    cctree_del(next);
-  } while(next!=0&&cceat(reader,cctoken_Kcomma));
-  return list;
 }
 /**
  * postfix-expression:
@@ -69,17 +71,14 @@ ccread_arglist_expr(ccreader_t *reader) // <-- TODO(RJ): return list instead! li
  *   ( type-name ) { initializer-list , }
  **/
 ccfunc cctree_t *
-ccread_postfix_expr(ccreader_t *parser)
+ccread_postfix_expr(ccread_t *parser)
 {
   cctree_t *lhs = ccread_primary_expr(parser);
 
   if(cceat(parser, cctoken_Klparen))
-  { cctree_t *arglist = ccread_arglist_expr(parser);
-    (void) arglist;
-
-    if(! cceat(parser, cctoken_Krparen))
-    { ccsynerr(parser, 0, "expected ')', in postfix expression!");
-    }
+  { cctree_t *args = ccread_arglist_expr(parser);
+    if(!cceat(parser,cctoken_Krparen)) ccsynerr(parser, 0, "expected ')'");
+    return cctree_call_expr(lhs,args);
   } else
   if(ccsee(parser, cctoken_Klsquare))
   { cctree_t *expression = ccread_expression(parser);
@@ -114,7 +113,7 @@ ccread_postfix_expr(ccreader_t *parser)
  *   & * + - ~ !
  **/
 ccfunc cctree_t *
-ccread_unary_expr(ccreader_t *parser)
+ccread_unary_expr(ccread_t *parser)
 { cctree_t *result = ccnil;
 
   if(ccsee(parser,cctoken_Kadd))
@@ -162,7 +161,7 @@ ccread_unary_expr(ccreader_t *parser)
  *   ( type-name ) cast-expression
  **/
 ccfunc cctree_t *
-ccread_cast_expr(ccreader_t *parser)
+ccread_cast_expr(ccread_t *parser)
 { cctree_t *result = 0;
   if(cctoken_t *tok = cceat(parser, cctoken_Klparen))
   { // TODO(RJ):
@@ -184,7 +183,7 @@ ccread_cast_expr(ccreader_t *parser)
  *   multiplicative-expression % cast-expression
  **/
 ccfunc cctree_t *
-ccread_multiplicative_expr(ccreader_t *parser)
+ccread_multiplicative_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_unary_expr(parser);
   while(  ccsee(parser, cctoken_Kmul) ||
           ccsee(parser, cctoken_Kdiv) ||
@@ -203,7 +202,7 @@ ccread_multiplicative_expr(ccreader_t *parser)
  *   additive-expression - multiplicative-expression
  **/
 ccfunc cctree_t *
-ccread_additive_expr(ccreader_t *parser)
+ccread_additive_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_multiplicative_expr(parser);
   while (ccsee(parser, cctoken_Kadd) ||
          ccsee(parser, cctoken_Ksub))
@@ -221,7 +220,7 @@ ccread_additive_expr(ccreader_t *parser)
  *   shift-expression >> additive-expression
  **/
 ccfunc cctree_t *
-ccread_shift_expr(ccreader_t *parser)
+ccread_shift_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_additive_expr(parser);
   while(ccsee(parser, cctoken_Kbitwise_shl) ||
         ccsee(parser, cctoken_Kbitwise_shr))
@@ -241,7 +240,7 @@ ccread_shift_expr(ccreader_t *parser)
  **/
 // for the greater than, you can instead use the less than with the operands flipped...
 ccfunc cctree_t *
-ccread_relational_expr(ccreader_t *parser)
+ccread_relational_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_shift_expr(parser);
   while ( ccsee(parser, cctoken_Kless_than)      ||
           ccsee(parser, cctoken_Kless_than_eql)  ||
@@ -260,7 +259,7 @@ ccread_relational_expr(ccreader_t *parser)
  *  equality-expression != relational-expression
  **/
 ccfunc cctree_t *
-ccread_equality_expr(ccreader_t *parser)
+ccread_equality_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_relational_expr(parser);
   if(ccsee(parser, cctoken_Kequals)     ||
      ccsee(parser, cctoken_Knot_equals))
@@ -277,7 +276,7 @@ ccread_equality_expr(ccreader_t *parser)
  *   AND-expression & equality-expression
  **/
 ccfunc cctree_t *
-ccread_bitwise_and_expr(ccreader_t *parser)
+ccread_bitwise_and_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_equality_expr(parser);
   while(ccsee(parser, cctoken_Kbitwise_and))
   { cctoken_t *tok = ccgobble(parser);
@@ -292,7 +291,7 @@ ccread_bitwise_and_expr(ccreader_t *parser)
  *   exclusive-OR-expression ^ AND-expression
  **/
 ccfunc cctree_t *
-ccread_bitwise_xor_expr(ccreader_t *parser)
+ccread_bitwise_xor_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_bitwise_and_expr(parser);
   while(ccsee(parser, cctoken_Kbitwise_and))
   { cctoken_t *tok = ccgobble(parser);
@@ -307,7 +306,7 @@ ccread_bitwise_xor_expr(ccreader_t *parser)
  *   inclusive-OR-expression | exclusive-OR-expression
  **/
 ccfunc cctree_t *
-ccread_bitwise_or_expr(ccreader_t *parser)
+ccread_bitwise_or_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_bitwise_xor_expr(parser);
   while(ccsee(parser, cctoken_Kbitwise_or))
   { cctoken_t *tok = ccgobble(parser);
@@ -322,7 +321,7 @@ ccread_bitwise_or_expr(ccreader_t *parser)
  *   logical-AND-expression && inclusive-OR-expression
  **/
 ccfunc cctree_t *
-ccread_logical_and_expr(ccreader_t *parser)
+ccread_logical_and_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_bitwise_or_expr(parser);
   while(ccsee(parser, cctoken_Klogical_and))
   { cctoken_t *tok = ccgobble(parser);
@@ -337,7 +336,7 @@ ccread_logical_and_expr(ccreader_t *parser)
  *   logical-OR-expression || logical-AND-expression
  **/
 ccfunc cctree_t *
-ccread_logical_or_expr(ccreader_t *parser)
+ccread_logical_or_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_logical_and_expr(parser);
   while(ccsee(parser, cctoken_Klogical_or))
   { cctoken_t *tok = ccgobble(parser);
@@ -352,7 +351,7 @@ ccread_logical_or_expr(ccreader_t *parser)
  *   logical-OR-expression ? expression : conditional-expression
  **/
 ccfunc cctree_t *
-ccread_conditional_expr(ccreader_t *parser)
+ccread_conditional_expr(ccread_t *parser)
 { cctree_t *rad = ccread_logical_or_expr(parser);
 
   if(cctoken_t *tok = cceat(parser, cctoken_Kconditional))
@@ -380,7 +379,7 @@ ccread_conditional_expr(ccreader_t *parser)
  *   = *= /= %= += -= <<= >>= &= ^= |=
  **/
 ccfunc cctree_t *
-ccread_assignment_expr(ccreader_t *parser)
+ccread_assignment_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_conditional_expr(parser);
   if(cctoken_t *tok = cceat(parser, cctoken_Kassign))
   { cctree_t *rhs = ccread_assignment_expr(parser);
@@ -393,7 +392,7 @@ ccread_assignment_expr(ccreader_t *parser)
  *   conditional-expression
  **/
 ccfunc cctree_t *
-ccread_constant_expression(ccreader_t *parser)
+ccread_constant_expression(ccread_t *parser)
 {
   return ccread_conditional_expr(parser);
 }
@@ -403,10 +402,25 @@ ccread_constant_expression(ccreader_t *parser)
  *   expression , assignment-expression
  **/
 ccfunc cctree_t *
-ccread_expression(ccreader_t *parser)
+ccread_expression(ccread_t *parser)
 { cctree_t *result = ccread_assignment_expr(parser);
   if(ccsee(parser, cctoken_Kcomma))
   { result = cctree_binary(ccgobble(parser), result, ccread_expression(parser));
   }
   return result;
+}
+/**
+ * argument-expression-list:
+ *   assignment-expression
+ *   argument-expression-list , assignment-expression
+ **/
+ccfunc cctree_t *
+ccread_arglist_expr(ccread_t *reader) // <-- TODO(RJ): return list instead! like other functions!
+{ cctree_t *list=ccnil,*next;
+  do
+  { next=ccread_assignment_expr(reader);
+    if(next) *ccarradd(list,1)=*next;
+    cctree_del(next);
+  } while(next!=0&&cceat(reader,cctoken_Kcomma));
+  return list;
 }

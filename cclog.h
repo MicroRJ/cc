@@ -86,10 +86,11 @@ cctrace_(int guid, const char  *file, int line, const char *func, const char *ta
   va_list vli;
   va_start(vli, fmt);
 
-  char buf[0xff];
-  ccformatvex(buf,0xff,fmt,vli);
-
-  ccout(ccformat("%s: %s[%i] %s() %s\n", tag,file,line,func,buf));
+  static char buf[0xfff];
+  int len=1+ccformatvex(buf,0xff,fmt,vli);
+  int rem=sizeof(buf)-len;
+  ccformatex(buf+len,rem,"%s: %s[%i] %s() %s\n",tag,file,line,func,buf);
+  ccout(buf+len);
 
   va_end(vli);
 }

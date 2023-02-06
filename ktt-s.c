@@ -67,13 +67,13 @@ kttc__token2s(char **buf, cctoken_t *token)
 }
 
 ccfunc void
-cctree_t2s(ccreader_t *parser, char **buf, cctree_t *tree);
+cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree);
 ccfunc void
-kttc__type2s(ccreader_t *parser, char **buf, cctype_t *type);
+kttc__type2s(ccread_t *parser, char **buf, cctype_t *type);
 
 
 ccfunc void
-ccstructdecl_tos(ccreader_t *reader, char **buf, cctree_t *tree)
+ccstructdecl_tos(ccread_t *reader, char **buf, cctree_t *tree)
 {
   ccstr_catf(buf,"decl: ");
 	kttc__type2s(reader,buf,tree->struct_decl.type);
@@ -90,7 +90,7 @@ ccstructdecl_tos(ccreader_t *reader, char **buf, cctree_t *tree)
 }
 
 ccfunc void
-cctypestruct_tos(ccreader_t *reader, char **buf, cctype_t *type)
+cctypestruct_tos(ccread_t *reader, char **buf, cctype_t *type)
 {
   if(type->kind==cctype_struct_spec)
   {
@@ -114,7 +114,7 @@ cctypestruct_tos(ccreader_t *reader, char **buf, cctype_t *type)
 
 
 ccfunc void
-kttc__type2s(ccreader_t *parser, char **buf, cctype_t *type)
+kttc__type2s(ccread_t *parser, char **buf, cctype_t *type)
 { switch(type->kind)
   { case cctype_arr: ccstr_catf(buf, "(arr: "); kttc__type2s(parser, buf, type->modifier_of); ccstr_catf(buf, ")"); break;
     case cctype_Kfunc: ccstr_catf(buf, "(fun: "); kttc__type2s(parser, buf, type->modifier_of); ccstr_catf(buf, ")"); break;
@@ -135,7 +135,7 @@ kttc__type2s(ccreader_t *parser, char **buf, cctype_t *type)
 }
 
 ccfunc void
-cctree_t2s(ccreader_t *parser, char **buf, cctree_t *tree)
+cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree)
 { if(tree == ccnil)
   {
     ccstr_catf(buf, "cctree_t::nil");
@@ -144,7 +144,7 @@ cctree_t2s(ccreader_t *parser, char **buf, cctree_t *tree)
 
   switch(tree->kind)
   {
-    case cctree_Kmixed_statement:
+    case cctree_Kblock_stmt:
     {
       // ccstr_catf(buf, "(compound_statement\n");
       cctree_t *it;

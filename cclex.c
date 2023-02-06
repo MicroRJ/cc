@@ -38,12 +38,12 @@ cclex_hash(cclex_t *l, int len, const char *key, int cpy, int *bit, int *fnd)
   	if(slot->key) slot=slot->nex=(ccentry_t *)ccmalloc(sizeof(ccentry_t));
 
     slot->nex=0;
-    slot->key=ccstrnil;
+    slot->key=ccnil;
     slot->len=len;
     slot->bit=*bit;
 
     // Todo: replace this with a legit string arena ...
-    if(cpy) ccstrputl((char*)slot->key,len,key);
+    if(cpy) ccstrputN((char*)slot->key,len,key);
     else slot->key=(char*)key;
 
     ++ l->tbl_min;
@@ -233,7 +233,7 @@ cclex_readstr(cclex_t *l, const char *str)
 	// Todo: re-use this buffer ...
 	// Todo: replace this with a legit string arena ... nothing too fancy ...
   l->tok.bit=cctoken_Kliteral_string_unterminated;
-  l->tok.str=ccstrnil;
+  l->tok.str=ccnil;
 
   char end=*str++;
 
