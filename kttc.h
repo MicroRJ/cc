@@ -4,7 +4,14 @@
 #ifndef KTT_HEADER_FILE_C
 #define KTT_HEADER_FILE_C
 
+
+
 // Todo: speed, as always ...
+
+// annoying
+#ifdef _DEBUG
+# pragma warning(disable:4100)
+#endif
 
 #ifdef _DEBUG
 #ifdef _WIN32
@@ -122,7 +129,7 @@ extern "C"
 #endif
 
 #ifdef _DEBUG
-# define ccassert(is_true) if(!(is_true)) ccbreak()
+# define ccassert(is_true) (!(is_true)?ccbreak():ccnil)
 #else
 # define ccassert(is_true) 0
 #endif
@@ -130,7 +137,7 @@ extern "C"
 #define _CCASSERT(x) typedef char __STATIC__ASSERT__[((x)?1:-1)]
 #endif
 #ifndef ccnotnil
-# define ccnotnil(val) ccassert((val)!=ccnil)
+# define ccnotnil(val) (ccassert((val)!=ccnil),val)
 #endif
 #ifndef ccmalloc
 # define ccmalloc(len) malloc(len)

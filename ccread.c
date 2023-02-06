@@ -22,7 +22,7 @@ ccread_external_declaration(ccread_t *reader)
   if(!decl) return ccnil;
 
 
-  ccassert(decl->kind==cctree_Kdecl);
+  ccassert(decl->kind==cctree_kDECL);
 
   ccnotnil(decl->decl_list);
   ccassert(decl->decl_list->kind==cctree_Kdecl_name);

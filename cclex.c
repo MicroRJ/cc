@@ -55,7 +55,7 @@ cclex_hash(cclex_t *l, int len, const char *key, int cpy, int *bit, int *fnd)
 }
 
 ccfunc void
-cclex_hashonly(cclex_t *l, int len, const char *key, cctoken_Kkind bit)
+cclex_hashonly(cclex_t *l, int len, const char *key, cctoken_k bit)
 {
 	int fnd;
 	const char *okey=cclex_hash(l,len,key,ccfalse,(int*)&bit,&fnd);
@@ -533,7 +533,7 @@ cclex_next_token_internal(cclex_t *l)
       if(l->max[1]=='=')
       { l->max += 2, l->tok.bit = cctoken_Kequals;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kassign;
+      { l->max += 1, l->tok.bit = cctoken_kASSIGN;
       }
     } break;
     // !=

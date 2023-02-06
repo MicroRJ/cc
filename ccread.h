@@ -8,7 +8,7 @@
 // https://learn.microsoft.com/en-us/cpp/c-language/c-language-reference
 //
 
-typedef enum cctoken_Kkind
+typedef enum cctoken_k
 {
   cctoken_Kinvalid = - 1, // <-- for the hash table this means that it wasn't there before.
   /**
@@ -212,7 +212,7 @@ typedef enum cctoken_Kkind
   cctoken_Kconditional,
 
   // Group: assignment
-  cctoken_Kassign,
+  cctoken_kASSIGN,
   cctoken_Kmul_eql,
   cctoken_Kdiv_eql,
   cctoken_Kmod_eql,
@@ -232,7 +232,7 @@ typedef enum cctoken_Kkind
   cctoken_Kpos_decrement,
   cctoken_Kpos_increment,
 
-} cctoken_Kkind;
+} cctoken_k;
 
 typedef enum cctypekind_t
 { cctype_invalid = 0,
@@ -264,23 +264,23 @@ typedef enum cctreetype_t
   cctree_t_unknown = 0,
   cctree_t_tname,
 
-  cctree_Kidentifier,
+  cctree_kIDENTIFIER,
 
-  cctree_Klabel_stmt,
-  cctree_Kreturn_statement,
+  cctree_kLABEL,
+  cctree_kRETRN,
   cctree_Kgoto_statement,
   cctree_Kconditional_statement,
   cctree_Kwhile_statement,
 
   cctree_Kdecl_name,
-  cctree_Kdecl,
+  cctree_kDECL,
 
   cctree_Kstruct_spec,
 
   cctree_t_designator,
   cctree_t_designation,
 
-  cctree_Kblock_stmt,
+  cctree_kBLOCK,
 
 // Todo: remove
   cctree_Kint,
@@ -327,7 +327,7 @@ typedef struct ccentry_t
 // the lexer however, will check for keywords and format strings.
 typedef struct cctoken_t
 {
-  cctoken_Kkind bit;
+  cctoken_k bit;
 
   union
   { unsigned long long int sig;
@@ -449,14 +449,18 @@ typedef struct cctree_t
 
 typedef enum ccedict_K ccedict_K;
 typedef enum ccvalue_K ccvalue_K;
-typedef struct ccvalue_t ccvalue_t;
+typedef struct ccemit_value_t ccemit_value_t;
+typedef struct ccexec_value_t ccexec_value_t;
 typedef struct ccedict_t ccedict_t;
 typedef struct ccblock_t ccblock_t;
 typedef struct ccfunction_t ccfunction_t;
 
 typedef enum ccedict_K
-{ ccedict_Kstore = 0,
-  ccedict_Klocal,
+{
+	ccedict_kSTORE = 0,
+  ccedict_kLOCAL,
+  ccedict_kLOAD,
+
   ccedict_Kbinop,
   ccedict_Kblock,
   ccedict_Kcondi,
@@ -466,56 +470,81 @@ typedef enum ccedict_K
   ccedict_Kreturn,
 } ccedict_K;
 
+// Note: boil this down to a function, constant value or instruction, local value, global value
 typedef enum ccvalue_K
-{
-  ccvalue_Ktyped = 0,
+{ ccvalue_Kinvalid=0,
   ccvalue_Kblock,
-  ccvalue_Kinstr,
-
-	// Todo: remove this!
-	ccvalue_Kleaf,
-  ccvalue_Kglobal,
+  ccvalue_kCONST,
+  ccvalue_kGLOBAL,
+  ccvalue_kFUNC,
+  ccvalue_kEDICT,
 } ccvalue_K;
 
-typedef struct ccvalue_t
-{ ccvalue_K     kind;
-  ccstr_t       name;
-  cctoken_t     leaf;
-  cctype_t     *type;
-  ccblock_t    *block;
-  ccedict_t    *instr;
+// Todo: boil this down to either a constant value or an instruction ...
+typedef struct ccemit_value_t
+{
+	ccvalue_K kind;
+
+	// Todo: remove the name
+  ccstr_t   name;
+
+	struct
+	{ cctype_t   * type;
+		ccclassic_t  clsc;
+	} constant;
   ccfunction_t *function;
-  ccclassic_t   classic;
-
-  void         *address;
-
-  unsigned is_constant: 1;
-  unsigned is_global:   1;
-  unsigned is_local:    1;
-} ccvalue_t;
+  ccedict_t    *edict;
+  ccblock_t    *block;
+} ccemit_value_t;
 
 typedef struct ccedict_t
-{ ccedict_K   type;
-	int         result;
-
-	ccvalue_t * address;
-	ccvalue_t * value;
-	ccvalue_t * local;
-  ccvalue_t * res;
-  cctoken_t   oper;
-  ccvalue_t * lhs;
-  ccvalue_t * rhs;
-  ccvalue_t * condi;
-  ccblock_t * block[4];
+{ ccedict_K   kind;
+	struct
+	{
+		cctype_t   *type;
+		const char *debug_label;
+	} local;
+	struct
+	{ ccedict_t      *adr;
+		ccemit_value_t *val;
+	} store;
+	struct
+	{ ccedict_t *adr; // Note: the instruction that loaded the memory ...
+	} load;
+	struct
+	{ ccemit_value_t * cnd;
+  	ccblock_t      * then_blc;
+  	ccblock_t      * else_blc;
+	} condi;
+	struct
+	{ ccblock_t      * blc;
+	} enter;
+	struct
+	{ cctoken_k        opr;
+	  ccemit_value_t * lhs;
+	  ccemit_value_t * rhs;
+	} binary;
 } ccedict_t;
+
+typedef struct ccexec_value_t
+{ const char *debug_label;
+
+	cctype_t     *type;
+
+  ccclassic_t   clsc;
+  void         *addr;
+
+  unsigned      is_const: 		  1;
+  unsigned      is_edict_value: 1;
+} ccexec_value_t;
 
 typedef struct ccblock_t
 { const char  *debug_label;
 
-	ccvalue_t    result_value;
+	ccemit_value_t    result_value;
 
   ccblock_t   *super;
-  ccvalue_t   *local;
+  ccemit_value_t   *local;
   ccedict_t   *instr;
 } ccblock_t;
 
@@ -529,17 +558,17 @@ typedef struct ccfunction_t
 } ccfunction_t;
 
 typedef struct ccemit_t
-{ ccvalue_t    *globals;
+{ ccemit_value_t    *globals;
   ccblock_t    *current;
   int           curirix;
 } ccemit_t;
 
 typedef struct ccexec_t
-{ ccemit_t     *emit;
-
-  ccfunction_t *routine;
-  ccblock_t    *current;
-  int           curirix;
+{ ccemit_t       *emit;
+	ccexec_value_t *values;
+  ccfunction_t   *routine;
+  ccblock_t      *current;
+  int             curirix;
 } ccexec_t;
 
 
@@ -581,7 +610,7 @@ ccfunc cctoken_t *
 ccpeep(ccread_t *parser);
 
 ccfunc ktt_i32
-ccsee(ccread_t *parser, cctoken_Kkind kind);
+ccsee(ccread_t *parser, cctoken_k kind);
 
 ccfunc cctoken_t *
 ccgobble(ccread_t *parser);
@@ -766,7 +795,7 @@ ccpeep(ccread_t *parser)
 }
 
 ccfunc ktt_i32
-ccsee(ccread_t *parser, cctoken_Kkind kind)
+ccsee(ccread_t *parser, cctoken_k kind)
 { return ccpeep(parser)->bit == kind;
 }
 
@@ -792,7 +821,7 @@ kttc__peek_oper_decrement(ccread_t *parser)
 }
 
 ccfunc cctoken_t *
-kttc__consume_oper_increment(ccread_t *parser, cctoken_Kkind new_sig)
+kttc__consume_oper_increment(ccread_t *parser, cctoken_k new_sig)
 {
   if(kttc__peek_oper_increment(parser))
   { cctoken_t *tok = ccgobble(parser);
@@ -805,7 +834,7 @@ kttc__consume_oper_increment(ccread_t *parser, cctoken_Kkind new_sig)
 }
 
 ccfunc cctoken_t *
-kttc__consume_oper_decrement(ccread_t *parser, cctoken_Kkind new_sig)
+kttc__consume_oper_decrement(ccread_t *parser, cctoken_k new_sig)
 {
   if(kttc__peek_oper_decrement(parser))
   { cctoken_t *tok = ccgobble(parser);
@@ -891,7 +920,7 @@ ccgobble(ccread_t *reader)
 // NOTE(RJ): gotta be careful with how you inline this in a function call, order of execution my not be what you'd
 // expect, especially if one of the arguments is recursive.
 ccfunc cctoken_t *
-cceat(ccread_t *parser, cctoken_Kkind kind)
+cceat(ccread_t *parser, cctoken_k kind)
 { if(ccsee(parser,kind)) return ccgobble(parser);
   return 0;
 }
@@ -974,7 +1003,7 @@ cctree_decl_name(cctype_t *type, cctree_t *name, cctree_t *size, cctree_t *init)
 
 ccfunc cctree_t *
 cctree_decl(cctype_t *type, cctree_t *list)
-{ cctree_t *tree = cctree_new(cctree_Kdecl);
+{ cctree_t *tree = cctree_new(cctree_kDECL);
   tree->decl_type=type;
   tree->decl_list=list;
   return tree;
@@ -1030,7 +1059,7 @@ cctree_new_identifier(cctoken_t *token)
   // depend on it for convenience.
   if(token)
   {
-    cctree_t *tree = cctree_new(cctree_Kidentifier);
+    cctree_t *tree = cctree_new(cctree_kIDENTIFIER);
     tree->constant.token = * token;
     return tree;
   }

@@ -51,7 +51,7 @@ kttc__token2s(char **buf, cctoken_t *token)
     case cctoken_Klogical_and: ccstr_catf(buf, "&&"); break;
     case cctoken_Kequals: ccstr_catf(buf, "=="); break;
     case cctoken_Knot_equals: ccstr_catf(buf, "!="); break;
-    case cctoken_Kassign: ccstr_catf(buf, "=" ); break;
+    case cctoken_kASSIGN: ccstr_catf(buf, "=" ); break;
     case cctoken_Kmul_eql: ccstr_catf(buf, "*="); break;
     case cctoken_Kdiv_eql: ccstr_catf(buf, "/="); break;
     case cctoken_Kmod_eql: ccstr_catf(buf, "%="); break;
@@ -144,7 +144,7 @@ cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree)
 
   switch(tree->kind)
   {
-    case cctree_Kblock_stmt:
+    case cctree_kBLOCK:
     {
       // ccstr_catf(buf, "(compound_statement\n");
       cctree_t *it;
@@ -195,7 +195,7 @@ cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree)
       cctree_t2s(parser, buf, tree->uop.mhs);
       ccstr_catf(buf, ")");
     } break;
-    case cctree_Kidentifier:
+    case cctree_kIDENTIFIER:
     case cctree_t_tname:
     case cctree_Kint:
     case cctree_t_float:

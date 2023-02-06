@@ -2,7 +2,7 @@
 // Note: this is C's compound statement, where declarations and statements are split ...
 ccfunc cctree_t *
 cctree_block_stmt(cctree_t *decl, cctree_t *stmt)
-{ cctree_t *tree=cctree_new(cctree_Kblock_stmt);
+{ cctree_t *tree=cctree_new(cctree_kBLOCK);
   tree->decl_list=decl;
   tree->stmt_list=stmt;
   return tree;
@@ -29,8 +29,8 @@ cctree_while_statement(cctree_t *cond_tree, cctree_t *then_tree)
 
 ccfunc cctree_t *
 cctree_label_statement(cctree_t *name, cctree_t *list)
-{ ccassert(name!=0&&name->kind==cctree_Kidentifier);
-  cctree_t *tree=cctree_new(cctree_Klabel_stmt);
+{ ccassert(name!=0&&name->kind==cctree_kIDENTIFIER);
+  cctree_t *tree=cctree_new(cctree_kLABEL);
   tree->label_name=cctree_idenname(name);
   tree->stmt_list=list;
   return tree;
@@ -38,7 +38,7 @@ cctree_label_statement(cctree_t *name, cctree_t *list)
 
 ccfunc cctree_t *
 cctree_goto_statement(cctree_t *name)
-{ ccassert(name!=0&&name->kind==cctree_Kidentifier);
+{ ccassert(name!=0&&name->kind==cctree_kIDENTIFIER);
   cctree_t *tree=cctree_new(cctree_Kgoto_statement);
   tree->label_name=cctree_idenname(name);
   return tree;
@@ -46,7 +46,7 @@ cctree_goto_statement(cctree_t *name)
 
 ccfunc cctree_t *
 cctree_return_statement(cctree_t *expr_tree)
-{ cctree_t *tree=cctree_new(cctree_Kreturn_statement);
+{ cctree_t *tree=cctree_new(cctree_kRETRN);
   tree->expr_tree=expr_tree;
   return tree;
 }
@@ -150,7 +150,7 @@ ccread_stmt(ccread_t *reader)
     // Todo: better way of doing this?
     if(!reader->bed->term_expl)
     {
-      if(child->kind==cctree_Kidentifier)
+      if(child->kind==cctree_kIDENTIFIER)
       {
         if(cceat(reader,cctoken_Kcolon))
         {

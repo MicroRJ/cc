@@ -381,7 +381,7 @@ ccread_conditional_expr(ccread_t *parser)
 ccfunc cctree_t *
 ccread_assignment_expr(ccread_t *parser)
 { cctree_t *lhs = ccread_conditional_expr(parser);
-  if(cctoken_t *tok = cceat(parser, cctoken_Kassign))
+  if(cctoken_t *tok = cceat(parser, cctoken_kASSIGN))
   { cctree_t *rhs = ccread_assignment_expr(parser);
     lhs = cctree_binary(tok, lhs, rhs);
   }

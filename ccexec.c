@@ -3,126 +3,238 @@
 
 ccfunc ccstr_t ccvmir_tos(ccedict_t *ir);
 
-ccfunc ccvalue_t *
-ccsvm_execbinary(ccblock_t *irset, cctoken_t oper, ccvalue_t *lval, ccvalue_t *rval)
-{
-  (void) irset;
 
-  if(!lval) cctraceerr("undefined lhs value"); // Todo: to string ...
-  if(!rval) cctraceerr("undefined rhs value"); // Todo: to string ...
-
-  ccassert(lval->kind==ccvalue_Kleaf||lval->kind==ccvalue_Kglobal);
-  ccassert(rval->kind==ccvalue_Kleaf||rval->kind==ccvalue_Kglobal);
-
-  if(oper.bit==cctoken_Kassign)
-  { lval->leaf=rval->leaf;
-    return lval;
-  } else
-  if(oper.bit==cctoken_Kequals)
-  { return ccemit_const_i32(ccnil,lval->leaf.sig==rval->leaf.sig);
-  } else
-  if(oper.bit==cctoken_Kgreater_than)
-  { return ccemit_const_i32(ccnil,lval->leaf.sig>rval->leaf.sig);
-  } else
-  if(oper.bit==cctoken_Kgreater_than_eql)
-  { return ccemit_const_i32(ccnil,lval->leaf.sig>=rval->leaf.sig);
-  } else
-  if(oper.bit==cctoken_Kless_than)
-  { return ccemit_const_i32(ccnil,lval->leaf.sig<rval->leaf.sig);
-  } else
-  if(oper.bit==cctoken_Kless_than_eql)
-  { return ccemit_const_i32(ccnil,lval->leaf.sig<=rval->leaf.sig);
-  } else
-  if(oper.bit==cctoken_Kadd)
-  { return ccemit_const_i32(ccnil,lval->leaf.sig+rval->leaf.sig);
-  } else
-  { ccassert(!"error");
-    return ccnil;
-  }
+ccfunc int
+ccexec_edict_value(ccexec_t *exec, ccexec_value_t *val, ccedict_t *edict)
+{ int i;
+  ccexec_value_t *v=cctblgetP(exec->values,edict,&i);
+  if(i) memcpy(val,v,sizeof(*v));
+  return i;
 }
 
+ccfunc ccexec_value_t *
+ccexec_save_edict_value(ccexec_t *exec, ccedict_t *edict)
+{ int in_table;
+  ccexec_value_t *store=cctblputP(exec->values,edict,&in_table);
+  ccassert(!in_table);
+
+  store->is_edict_value=cctrue;
+  return store;
+}
+
+ccfunc ccexec_value_t *
+ccexec_reset_edict_value(ccexec_t *exec, ccedict_t *edict)
+{
+  int in_table;
+  ccexec_value_t *store=cctblgetP(exec->values,edict,&in_table);
+  ccassert(!in_table);
+
+  return store;
+}
+
+ccfunc int
+ccexec_rvalue(ccexec_t *exec, ccexec_value_t *rval, ccemit_value_t *val)
+{
+  switch(val->kind)
+  { case ccvalue_kEDICT:
+    { ccedict_t *edict=val->edict;
+      switch(edict->kind)
+      { case ccedict_kLOAD:
+          ccassert(ccexec_edict_value(exec,rval,edict));
+        break;
+        default:
+          ccassert(!"internal");
+        return ccfalse;
+      }
+    } break;
+    case ccvalue_kGLOBAL:
+      ccassert(!"noimpl");
+    break;
+    case ccvalue_kCONST:
+      rval->clsc=val->constant.clsc;
+    break;
+    default:
+      ccassert(!"internal");
+    return ccfalse;
+  }
+  return cctrue;
+}
+
+ccfunc int
+ccexec_lvalue(ccexec_t *exec, ccexec_value_t *lval, ccedict_t *val)
+{
+  (void)exec;
+
+  { ccedict_t *edict=val;
+
+    switch(edict->kind)
+    { case ccedict_kLOCAL:
+      {
+        if(!ccexec_edict_value(exec,lval,edict))
+          cctraceerr("invalid instruction, not executed yet");
+
+      } return cctrue;
+      case ccedict_kSTORE:
+      {
+        if(!ccexec_edict_value(exec,lval,edict->store.adr))
+          cctraceerr("invalid instruction, not executed yet");
+
+      } return cctrue;
+    }
+
+    cctraceerr("invalid lvalue, invalid instruction");
+  }
+  return ccfalse;
+#if 0
+  (void)exec;
+  if(val->kind==ccvalue_kEDICT)
+  { ccedict_t *edict=val->edict;
+
+    switch(edict->kind)
+    { case ccedict_kLOCAL:
+      {
+        if(!ccexec_edict_value(exec,lval,edict))
+          cctraceerr("invalid instruction, not executed yet");
+
+      } return cctrue;
+      case ccedict_kSTORE:
+      {
+        if(!ccexec_edict_value(exec,lval,edict->store.adr))
+          cctraceerr("invalid instruction, not executed yet");
+
+      } return cctrue;
+    }
+
+    cctraceerr("invalid lvalue, invalid instruction");
+
+  } else
+  if(val->kind==ccvalue_kGLOBAL)
+  {
+    ccassert(!"noimpl");
+  } else cctraceerr("invalid lvalue");
+
+  return ccfalse;
+#endif
+}
+
+
+
+
+
 ccfunc void
-ccvm_enter(ccexec_t *vm, ccblock_t *block)
+ccexec_enter(ccexec_t *vm, ccblock_t *block)
 {
   ccnotnil(block);
-
   vm->current=block;
   vm->curirix=0;
 }
 
-ccfunc void
-ccvm_leave(ccexec_t *vm, ccblock_t *block)
+ccfunc ccexec_value_t
+ccexec_edict_arith(ccexec_t *exec, cctoken_k opr, ccemit_value_t *lval, ccemit_value_t *rval)
 {
-  ccnotnil(block);
+  ccnotnil(lval);
+  ccnotnil(rval);
 
-  vm->current=block->super;
+  ccexec_value_t result={};
+
+  if(opr==cctoken_kASSIGN)
+  { ccassert(!"internal");
+    // lval->leaf=rval->leaf;
+  } else
+  if(opr==cctoken_Kequals)
+  { // return ccemit_const_i32(ccnil,lval->leaf.sig==rval->leaf.sig);
+  } else
+  if(opr==cctoken_Kgreater_than)
+  { // return ccemit_const_i32(ccnil,lval->leaf.sig>rval->leaf.sig);
+  } else
+  if(opr==cctoken_Kgreater_than_eql)
+  { // return ccemit_const_i32(ccnil,lval->leaf.sig>=rval->leaf.sig);
+  } else
+  if(opr==cctoken_Kless_than)
+  { // return ccemit_const_i32(ccnil,lval->leaf.sig<rval->leaf.sig);
+  } else
+  if(opr==cctoken_Kless_than_eql)
+  { // return ccemit_const_i32(ccnil,lval->leaf.sig<=rval->leaf.sig);
+  } else
+  if(opr==cctoken_Kadd)
+  {
+#if 0
+    ccexec_value_t value=ccexec_edict_value(exec,lval->edict);
+    ccclassic_t rcns=rval->constant.clsc;
+    result.clsc.as_i32=value.clsc.as_i32+rcns.as_i32;
+#endif
+    // return ccemit_const_i32(ccnil,lval->leaf.sig+rval->leaf.sig);
+  } else
+  { ccassert(!"error");
+  }
 }
 
 ccfunc void
-ccvm_exec_instr(ccexec_t *vm, ccblock_t *irset, ccedict_t *instr)
+ccexec_edict(ccexec_t *exec, ccblock_t *irset, ccedict_t *edict)
 {
-  switch(instr->type)
-  {
-    case ccedict_Klocal:
-    {
-    	// Todo:
-    	ccvalue_t *local=instr->local;
-    	ccnotnil(local);
-    	ccassert(local->is_local);
+  (void)irset;
 
-    	local->address=ccmalloc(sizeof(ccclassic_t));
-
-    	cctracelog("%s]LOCAL] [s:32] %s, %p", irset->debug_label,local->name,local->address);
+  switch(edict->kind)
+  { case ccedict_kLOCAL:
+    { // Todo: stack alloc
+      ccexec_value_t *saved=ccexec_save_edict_value(exec,edict);
+      saved->addr=ccmalloc(sizeof(ccclassic_t));
+      saved->type=edict->local.type;
+      saved->debug_label=edict->local.debug_label;
+      cctracelog("LOCAL: $%s %p: {%p}=%p", saved->debug_label,edict,saved,saved->addr);
     } break;
-    case ccedict_Kstore:
+    case ccedict_kLOAD:
     {
-    	ccvalue_t *lhs,*rhs;
-      lhs=instr->address;
-      rhs=instr->value;
+      ccexec_value_t addrv;
+      ccassert(ccexec_edict_value(exec,&addrv,edict->load.adr));
 
-      ccassert(lhs->kind==ccvalue_Ktyped);
-      ccnotnil(lhs);
-      ccnotnil(rhs);
-
-      ccclassic_t *address = ( ccclassic_t * )lhs->address;
-      *address=rhs->classic;
-
-    	cctracelog("%s::STORE($%s@%p,%p=%i)",
-    		irset->debug_label,lhs->name,lhs->address,rhs,rhs->classic.as_i32);
-
-      // if(rhs->kind==ccvalue_Kleaf)
-      // { lhs->leaf=rhs->leaf;
-      // } else
-      // if(rhs->kind==ccvalue_Kinstr)
-      // { lhs->leaf=rhs->instr->res->leaf;
-      // }
-      // instr->res=lhs;
+      ccexec_value_t *saved=ccexec_save_edict_value(exec,edict);
+      saved->type=addrv.type; // Todo:
+      saved->addr=addrv.addr;
     } break;
+     case ccedict_Kenter:
+    { ccnotnil(edict->enter.blc);
+      ccexec_enter(exec,edict->enter.blc);
+    } break;
+    case ccedict_kSTORE:
+    { ccexec_value_t lval,rval;
+      ccexec_lvalue(exec,&lval,ccnotnil(edict->store.adr));
+      ccexec_rvalue(exec,&rval,ccnotnil(edict->store.val));
+
+      cctracelog("STORE: $%s %p, %i",lval.debug_label,lval.addr,rval.clsc.as_i32);
+
+      // Todo:
+      *cccast(cci32*,lval.addr)=rval.clsc.as_i32;
+
+      ccexec_value_t *saved=ccexec_save_edict_value(exec,edict);
+      saved->type=lval.type;
+      saved->clsc=rval.clsc;
+    } break;
+#if 0
 
     case ccedict_Kblock:
     { ccedict_t *it;
       ccarrfor(instr->block[0]->instr,it)
       {
-        ccvm_exec_instr(vm,irset,it);
+        ccexec_edict(vm,irset,it);
       }
     } break;
-    case ccedict_Kenter:
-    { ccvm_enter(vm,instr->block[0]);
-    } break;
+
     case ccedict_Kcondi:
     {
       if(instr->condi->instr->res->leaf.sig)
       {
-        ccvm_enter(vm,instr->block[0]);
+        ccexec_enter(vm,instr->block[0]);
       } else
       {
-        ccvm_enter(vm,instr->block[1]);
+        ccexec_enter(vm,instr->block[1]);
       }
     } break;
     case ccedict_Kbinop:
     {
-      instr->res=ccsvm_execbinary(irset,instr->oper,instr->lhs,instr->rhs);
+      instr->res=ccexec_edict_arith(irset,instr->oper,instr->lhs,instr->rhs);
     } break;
+#endif
     default: ccassert(!"error");
   }
 }
@@ -133,20 +245,19 @@ ccvm_exit(ccexec_t *vm)
   vm->current=ccnil;
 }
 
+
 ccfunc void
 ccvm_exec(ccexec_t *vm, ccblock_t *block)
 { cctracelog("%s] l: %i, i: %i",block->debug_label,ccarrlen(block->local),ccarrlen(block->instr));
-
-  ccvm_enter(vm,block);
+  ccexec_enter(vm,block);
   do
-  {
-    if(vm->curirix<ccarrlen(vm->current->instr))
+  { if(vm->curirix<ccarrlen(vm->current->instr))
     { ccedict_t *ir=vm->current->instr+vm->curirix++;
-      ccvm_exec_instr(vm,vm->current,ir);
+      ccexec_edict(vm,vm->current,ir);
     } else ccvm_exit(vm);
-
   } while(vm->current);
 }
+
 
 ccfunc int
 ccexec_init(ccexec_t *exec)
@@ -159,15 +270,18 @@ ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
 {
   exec->emit=emit;
 
-  ccvalue_t *entryV=ccmapget(emit->globals,"main");
-  if(!entryV) cctraceerr("missing entry point");
+  int in_table;
+  ccemit_value_t *entryV=cctblgetL(emit->globals,"main",&in_table);
 
-  ccfunction_t *entryF=entryV->function;
-
-  ccvm_exec(exec,entryF->decls);
+  if(in_table)
+  { ccfunction_t *entryF=entryV->function;
+    ccvm_exec(exec,entryF->decls);
+  } else cctraceerr("missing entry point");
 
   return 1;
 }
+
+#if 0
 
 const char *ccvm_instr_S[]=
 { "STORE","LOCAL","BINOP","BLOCK","CONDI","ENTER","LEAVE","CALL","RETURN",
@@ -207,4 +321,7 @@ ccvmir_tos(ccedict_t *ir)
 
   return buf;
 }
+
+#endif
+
 #endif

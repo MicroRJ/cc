@@ -36,7 +36,7 @@ ccfunc cctree_t *
 ccread_init_designation(ccread_t *parser)
 { cctree_t *list = ccread_designator_list(parser);
   if(list)
-  { if(! cceat(parser, cctoken_Kassign))
+  { if(! cceat(parser, cctoken_kASSIGN))
     { ccsynerr(parser, 0, "expected '=' for designation");
     }
   }
@@ -154,7 +154,7 @@ ccread_init_decl_name(ccread_t *reader, cctype_t *type)
 { ccassert(type!=0);
   cctree_t *decl=ccread_decl_name(reader, type);
   if(decl)
-  { if(cceat(reader,cctoken_Kassign))
+  { if(cceat(reader,cctoken_kASSIGN))
     { decl->decl_init=ccread_initializer(reader);
       if(!decl->decl_init) ccsynerr(reader,0,"expected initializer after '='");
     }
