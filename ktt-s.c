@@ -177,7 +177,7 @@ cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree)
       cctree_t2s(parser, buf, tree->top.rhs);
       ccstr_catf(buf, ")");
     } break;
-    case cctree_Kbinary:
+    case cctree_kBINARY:
     {
       ccstr_catf(buf, "(");
       cctree_t2s(parser, buf, tree->binary.lhs);
@@ -197,7 +197,7 @@ cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree)
     } break;
     case cctree_kIDENTIFIER:
     case cctree_t_tname:
-    case cctree_Kint:
+    case cctree_kINTEGER:
     case cctree_t_float:
     case cctree_t_string:
     { kttc__token2s(buf, & tree->constant.token);

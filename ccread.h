@@ -283,12 +283,12 @@ typedef enum cctreetype_t
   cctree_kBLOCK,
 
 // Todo: remove
-  cctree_Kint,
+  cctree_kINTEGER,
   cctree_t_float,
   cctree_t_string,
 
   cctree_t_top,
-  cctree_Kbinary,
+  cctree_kBINARY,
   cctree_t_uop,
 
 
@@ -461,10 +461,10 @@ typedef enum ccedict_K
   ccedict_kLOCAL,
   ccedict_kLOAD,
 
-  ccedict_Kbinop,
+  ccedict_kBINARY,
   ccedict_Kblock,
   ccedict_Kcondi,
-  ccedict_Kenter,
+  ccedict_kENTER,
   ccedict_Kleave,
   ccedict_Kcall,
   ccedict_Kreturn,
@@ -1019,7 +1019,7 @@ cctree_new_designator(cctoken_t *token, cctree_t *expr)
 
 ccfunc cctree_t *
 cctree_new_constant(cctype_t *type, cctoken_t *token)
-{ cctree_t *result = cctree_new(cctree_Kint);
+{ cctree_t *result = cctree_new(cctree_kINTEGER);
   result->constant.type  = type;
   result->constant.token = *token;
   return result;
@@ -1027,7 +1027,7 @@ cctree_new_constant(cctype_t *type, cctoken_t *token)
 
 ccfunc cctree_t *
 cctree_new_top(cctoken_t *token, cctree_t *lhs, cctree_t *mhs, cctree_t *rhs)
-{ cctree_t *result = cctree_new(cctree_Kbinary);
+{ cctree_t *result = cctree_new(cctree_kBINARY);
   result->top.opr = * token;
   result->top.lhs = lhs;
   result->top.mhs = mhs;
@@ -1037,7 +1037,7 @@ cctree_new_top(cctoken_t *token, cctree_t *lhs, cctree_t *mhs, cctree_t *rhs)
 
 ccfunc cctree_t *
 cctree_binary(cctoken_t *token, cctree_t *lhs, cctree_t *rhs)
-{ cctree_t *result = cctree_new(cctree_Kbinary);
+{ cctree_t *result = cctree_new(cctree_kBINARY);
   result->binary.opr = * token;
   result->binary.lhs = lhs;
   result->binary.rhs = rhs;

@@ -10,19 +10,15 @@
 // ccarrres,ccstrres = ccres
 // ccarrfor,ccstrfor = ccfor
 
-
-// Not in table, n.i.t
 #define CCNIT 0xffffffff
-// Already in table, a.i.t
 #define CCAIT 0xffffffff
 
 // Note: if the length is negative then key should be interpreted as integer
 typedef struct ccdlb_entry_t
-{ ccdlb_entry_t *nex;
-  cci32        len;
-  char        *key;
-
-  ccu32        val;
+{ ccdlb_entry_t * nex;
+  cci32           len;
+  char          * key;
+  ccu32           val;
 } ccdlb_entry_t;
 
 // Note: we don't store this ...

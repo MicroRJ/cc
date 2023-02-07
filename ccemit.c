@@ -150,7 +150,7 @@ ccemit_load(ccblock_t *block, ccedict_t *adr)
 ccfunc ccedict_t *
 ccemit_binary(ccblock_t *block, cctoken_k opr, ccemit_value_t *lhs, ccemit_value_t *rhs)
 { ccedict_t *i=ccemit_edict(block);
-  i->kind=ccedict_Kbinop;
+  i->kind=ccedict_kBINARY;
   i->binary.opr=opr;
   i->binary.lhs=lhs;
   i->binary.rhs=rhs;
@@ -170,7 +170,7 @@ ccemit_condi(ccblock_t *block, ccemit_value_t *cnd, ccblock_t *then_blc, ccblock
 ccfunc ccedict_t *
 ccemit_enter(ccblock_t *block, ccblock_t *blc)
 { ccedict_t *i=ccemit_edict(block);
-  i->kind=ccedict_Kenter;
+  i->kind=ccedict_kENTER;
   i->enter.blc=blc;
   return i;
 }
@@ -207,7 +207,7 @@ ccsvm_resolve_identifier(ccemit_t *emit, ccfunction_t *func, const char *iden)
 ccfunc ccemit_value_t *
 ccsvm_resolvevalue(ccemit_t *emit, ccfunction_t *func, ccblock_t *irset, cctree_t *tree)
 { ccemit_value_t *value=ccnil;
-  if(tree->kind==cctree_Kbinary)
+  if(tree->kind==cctree_kBINARY)
   {
     ccemit_value_t *lhs=ccsvm_resolvevalue(emit,func,irset,tree->binary.lhs);
     ccemit_value_t *rhs=ccsvm_resolvevalue(emit,func,irset,tree->binary.rhs);
@@ -218,7 +218,7 @@ ccsvm_resolvevalue(ccemit_t *emit, ccfunction_t *func, ccblock_t *irset, cctree_
   {
     return ccsvm_resolve_identifier(emit,func,tree->constant.token.str);
   } else
-  if(tree->kind==cctree_Kint)
+  if(tree->kind==cctree_kINTEGER)
   { value=ccemit_const_i32(emit,tree->constant.token.sig);
   }
   return value;
@@ -268,7 +268,7 @@ ccemit_tree(
   { ccblock_t *label_block=ccemit_label(irset,tree->label_name);
     return ccemit_value_edict(ccemit_enter(irset,label_block));
   } else
-  if(tree->kind==cctree_Kint)
+  if(tree->kind==cctree_kINTEGER)
   {
     return ccemit_value_const_i32((cci32)tree->constant.token.sig);
   } else
@@ -283,7 +283,7 @@ ccemit_tree(
     } else cctraceerr("undefined function");
 #endif
   } else
-  if(tree->kind==cctree_Kbinary)
+  if(tree->kind==cctree_kBINARY)
   {
     cctree_t *lhs,*rhs;
     lhs=tree->binary.lhs; ccnotnil(lhs!=0);
@@ -298,7 +298,7 @@ ccemit_tree(
 #endif
     lval=ccsvm_resolve_identifier(emit,func,lhs->constant.token.str);
 
-    if(rhs->kind==cctree_Kint)
+    if(rhs->kind==cctree_kINTEGER)
     { rval=ccemit_const_i32(emit,rhs->constant.token.sig);
     }
 
@@ -311,18 +311,18 @@ ccemit_tree(
     if(tok.bit==cctoken_kASSIGN)
     {
 #if 0
-    	return ccemit_value_edict(ccemit_store(irset,lval,rval));
+      return ccemit_value_edict(ccemit_store(irset,lval,rval));
 #endif
     } else
     {
-    	return ccemit_value_edict(ccemit_binary(irset,tok.bit,lval,rval));
+      return ccemit_value_edict(ccemit_binary(irset,tok.bit,lval,rval));
     }
 
   } else
   if(tree->kind==cctree_Kwhile_statement)
   {
 #if 0
-  	ccblock_t *cond_block=ccvm_block(irset,"$while::cond");
+    ccblock_t *cond_block=ccvm_block(irset,"$while::cond");
     ccblock_t *then_block=ccvm_block(cond_block,"$while::then");
     ccblock_t *else_block=ccvm_block(irset,"$while::else");
     ccemit_value_t cond_value=ccemit_tree(emit,func,cond_block,tree->cond_tree);
@@ -338,7 +338,7 @@ ccemit_tree(
   if(tree->kind==cctree_Kconditional_statement)
   {
 #if 0
-  	ccemit_value_t *cond_value=ccemit_tree(emit,func,irset,tree->cond_tree);
+    ccemit_value_t *cond_value=ccemit_tree(emit,func,irset,tree->cond_tree);
     ccblock_t *then_block=ccnil,*else_block=ccnil;
     ccblock_t *done_block=ccvm_block(irset,"$local");
     if(tree->then_tree)
@@ -357,8 +357,37 @@ ccemit_tree(
 #endif
   }
 
-	ccassert(!"error");
+  ccassert(!"error");
   return {};
+}
+
+ccfunc ccemit_value_t *
+ccemit_rvalue(ccemit_t *emit, ccfunction_t *func, ccblock_t *block, ccedict_t *lval, cctree_t *rtree)
+{
+  ccemit_value_t *value=ccnil;
+  switch(rtree->kind)
+  {
+    case cctree_kINTEGER:
+    {
+      value=ccemit_const_i32(emit,rtree->constant.token.sig);
+    } break;
+    case cctree_kBINARY:
+    { value=
+        ccemit_edict_value(emit,
+          ccemit_binary(block,rtree->binary.opr.bit,
+            ccemit_rvalue(emit,func,block,lval,rtree->binary.lhs),
+            ccemit_rvalue(emit,func,block,lval,rtree->binary.rhs)));
+    } break;
+    case cctree_kIDENTIFIER:
+    {
+      ccemit_value_t *raddr;
+      raddr=
+        ccsvm_resolve_identifier(emit,func,rtree->constant.token.str);
+      value=
+        ccemit_edict_value(emit,ccemit_load(block,raddr->edict));
+    } break;
+  }
+  return value;
 }
 
 ccfunc void
@@ -370,24 +399,9 @@ ccemit_decl_name(ccemit_t *emit, ccfunction_t *func, cctree_t *decl)
   ccassert(!decl->decl_list);
 
   ccedict_t *local=ccemit_local(func->decls,decl->decl_type,decl->decl_name);
+  ccemit_value_t *value=ccemit_rvalue(emit,func,func->enter,local,decl->decl_init);
 
-  cctree_t *init=decl->decl_init;
-  if(init)
-  { if(init->kind==cctree_kIDENTIFIER)
-		{
-			ccemit_value_t *value=ccsvm_resolve_identifier(emit,func,init->constant.token.str);
-      ccedict_t *load=ccemit_load(func->enter,value->edict);
-      ccemit_store(func->enter,local,ccemit_edict_value(emit,load));
-
-		} else
-  	if(init->kind==cctree_Kint)
-    {
-      ccemit_value_t *value=ccemit_const_i32(emit,init->constant.token.sig);
-
-      ccemit_store(func->enter,local,value);
-
-    } else ccassert(!"error");
-  }
+  ccemit_store(func->enter,local,value);
 }
 
 ccfunc void
@@ -526,10 +540,10 @@ ccemit_init(ccemit_t *emit)
 
 // typedef enum ccedict_K
 // { ccedict_kSTORE = 0,
-//   ccedict_Kbinop,
+//   ccedict_kBINARY,
 //   ccedict_Kblock,
 //   ccedict_Kcondi,
-//   ccedict_Kenter,
+//   ccedict_kENTER,
 //   ccedict_Kleave,
 // } ccedict_K;
 // typedef enum ccvalue_K
@@ -711,7 +725,7 @@ ccemit_init(ccemit_t *emit)
 // ccfunc ccemit_value_t *
 // ccemit_binary(ccblock_t *block, cctoken_t oper, ccemit_value_t *lhs, ccemit_value_t *rhs)
 // { ccedict_t *i=ccemit_edict(block);
-//   i->type=ccedict_Kbinop;
+//   i->type=ccedict_kBINARY;
 //   i->oper=oper;
 //   i->lhs =lhs;
 //   i->rhs =rhs;
@@ -748,7 +762,7 @@ ccemit_init(ccemit_t *emit)
 // ccfunc ccemit_value_t *
 // ccemit_enter(ccblock_t *irset, ccblock_t *block)
 // { ccedict_t *i=ccemit_edict(irset);
-//   i->type=ccedict_Kenter;
+//   i->type=ccedict_kENTER;
 //   i->block[0]=block;
 //   return ccemit_edictvalue(irset,i);
 // }
@@ -764,7 +778,7 @@ ccemit_init(ccemit_t *emit)
 // ccfunc ccemit_value_t *
 // ccsvm_resolvevalue(ccexec_t *vm, ccblock_t *irset, cctree_t *tree)
 // { ccemit_value_t *value=ccnil;
-//   if(tree->kind==cctree_Kbinary)
+//   if(tree->kind==cctree_kBINARY)
 //   { ccemit_value_t *lhs=ccsvm_resolvevalue(vm,irset,tree->binary.lhs);
 //     ccemit_value_t *rhs=ccsvm_resolvevalue(vm,irset,tree->binary.rhs);
 //     return ccemit_binary(irset,tree->binary.opr,lhs,rhs);
@@ -772,7 +786,7 @@ ccemit_init(ccemit_t *emit)
 //   if(tree->kind==cctree_kIDENTIFIER)
 //   { value=ccmapget(vm,tree->constant.token.str);
 //   } else
-//   if(tree->kind==cctree_Kint)
+//   if(tree->kind==cctree_kINTEGER)
 //   { value=ccvm_leafvalue(irset,tree->constant.token);
 //   }
 //   return value;
@@ -813,7 +827,7 @@ ccemit_init(ccemit_t *emit)
 //     ccblock_t *label_block=ccemit_label(vm,irset,tree->goto_statement.name);
 //     ccemit_enter(irset,label_block);
 //   } else
-//   if(tree->kind==cctree_Kint)
+//   if(tree->kind==cctree_kINTEGER)
 //   {
 //     result=ccvm_leafvalue(irset,tree->constant.token);
 //   } else
@@ -840,7 +854,7 @@ ccemit_init(ccemit_t *emit)
 
 //        cctree_t *init=it->decl_name_init;
 //        if(init)
-//        { if(init->kind==cctree_Kint)
+//        { if(init->kind==cctree_kINTEGER)
 //          { value=ccvm_leafvalue(irset,init->constant.token);
 //          } else ccassert(!"error");
 //          ccemit_store(irset,address,value);
@@ -849,7 +863,7 @@ ccemit_init(ccemit_t *emit)
 //     }
 //     // Note: don't return anything here ...
 //   } else
-//   if(tree->kind==cctree_Kbinary)
+//   if(tree->kind==cctree_kBINARY)
 //   {
 //     cctree_t *lhs,*rhs;
 //     lhs=tree->binary.lhs; ccnotnil(lhs!=0);
@@ -985,7 +999,7 @@ ccemit_init(ccemit_t *emit)
 //       }
 //       instr->res=lhs;
 //     } break;
-//     case ccedict_Kenter:
+//     case ccedict_kENTER:
 //     { ccvm_enter(vm,instr->block[0]);
 //     } break;
 //     case ccedict_Kcondi:
@@ -998,7 +1012,7 @@ ccemit_init(ccemit_t *emit)
 //         ccvm_enter(vm,instr->block[1]);
 //       }
 //     } break;
-//     case ccedict_Kbinop:
+//     case ccedict_kBINARY:
 //     {
 //       instr->res=ccsvm_execbinary(irset,instr->oper,instr->lhs,instr->rhs);
 //     } break;
@@ -1067,7 +1081,7 @@ ccemit_init(ccemit_t *emit)
 // ccfunc void
 // ccvmir_tos_(ccstr_t *buf, ccedict_t *ir)
 // {
-//   if((ir->type==ccedict_Kenter)||
+//   if((ir->type==ccedict_kENTER)||
 //      (ir->type==ccedict_Kleave))
 //   {
 //     ccstrcatf(*buf,"%s: %s::%s", ccvm_instr_S[ir->type],
