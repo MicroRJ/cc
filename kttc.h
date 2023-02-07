@@ -11,6 +11,7 @@
 // annoying
 #ifdef _DEBUG
 # pragma warning(disable:4100)
+# pragma warning(disable:4201)
 #endif
 
 #ifdef _DEBUG

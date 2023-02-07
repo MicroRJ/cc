@@ -301,12 +301,12 @@ typedef union ccclassic_t
   cci64 as_i64;
   cci32 as_i32;
   cci16 as_i16;
-	cci8  as_i8;
+  cci8  as_i8;
 
-	ccu64 as_u64;
+  ccu64 as_u64;
   ccu32 as_u32;
   ccu16 as_u16;
-	ccu8  as_u8;
+  ccu8  as_u8;
 } ccclassic_t;
 
 typedef struct ccloc_t
@@ -447,7 +447,7 @@ typedef struct cctree_t
   };
 } cctree_t;
 
-typedef enum ccedict_K ccedict_K;
+typedef enum ccedict_k ccedict_k;
 typedef enum ccvalue_K ccvalue_K;
 typedef struct ccemit_value_t ccemit_value_t;
 typedef struct ccexec_value_t ccexec_value_t;
@@ -455,120 +455,34 @@ typedef struct ccedict_t ccedict_t;
 typedef struct ccblock_t ccblock_t;
 typedef struct ccfunction_t ccfunction_t;
 
-typedef enum ccedict_K
-{
-	ccedict_kSTORE = 0,
-  ccedict_kLOCAL,
-  ccedict_kLOAD,
-
-  ccedict_kBINARY,
-  ccedict_Kblock,
-  ccedict_Kcondi,
-  ccedict_kENTER,
-  ccedict_Kleave,
-  ccedict_Kcall,
-  ccedict_Kreturn,
-} ccedict_K;
-
-// Note: boil this down to a function, constant value or instruction, local value, global value
-typedef enum ccvalue_K
-{ ccvalue_Kinvalid=0,
-  ccvalue_Kblock,
-  ccvalue_kCONST,
-  ccvalue_kGLOBAL,
-  ccvalue_kFUNC,
-  ccvalue_kEDICT,
-} ccvalue_K;
-
-// Todo: boil this down to either a constant value or an instruction ...
-typedef struct ccemit_value_t
-{
-	ccvalue_K kind;
-
-	// Todo: remove the name
-  ccstr_t   name;
-
-	struct
-	{ cctype_t   * type;
-		ccclassic_t  clsc;
-	} constant;
-  ccfunction_t *function;
-  ccedict_t    *edict;
-  ccblock_t    *block;
-} ccemit_value_t;
-
-typedef struct ccedict_t
-{ ccedict_K   kind;
-	struct
-	{
-		cctype_t   *type;
-		const char *debug_label;
-	} local;
-	struct
-	{ ccedict_t      *adr;
-		ccemit_value_t *val;
-	} store;
-	struct
-	{ ccedict_t *adr; // Note: the instruction that loaded the memory ...
-	} load;
-	struct
-	{ ccemit_value_t * cnd;
-  	ccblock_t      * then_blc;
-  	ccblock_t      * else_blc;
-	} condi;
-	struct
-	{ ccblock_t      * blc;
-	} enter;
-	struct
-	{ cctoken_k        opr;
-	  ccemit_value_t * lhs;
-	  ccemit_value_t * rhs;
-	} binary;
-} ccedict_t;
-
-typedef struct ccexec_value_t
-{ const char *debug_label;
-
-	cctype_t     *type;
-
-  ccclassic_t   clsc;
-  void         *addr;
-
-  unsigned      is_const: 		  1;
-  unsigned      is_edict_value: 1;
-} ccexec_value_t;
-
-typedef struct ccblock_t
-{ const char  *debug_label;
-
-	ccemit_value_t    result_value;
-
-  ccblock_t   *super;
-  ccemit_value_t   *local;
-  ccedict_t   *instr;
-} ccblock_t;
+#include "ccedict.h"
+#include "ccemit-value.h"
+#include "ccexec-value.h"
+#include "ccemit-block.h"
 
 typedef struct ccfunction_t
 { const char  *debug_label;
-	cctype_t    *type;
-	ccblock_t   *block;
-	ccblock_t   *decls;
-	ccblock_t   *enter;
+  cctype_t    *type;
+  ccblock_t   *block;
+  ccblock_t   *decls;
+  ccblock_t   *enter;
   ccblock_t   *leave;
 } ccfunction_t;
 
 typedef struct ccemit_t
-{ ccemit_value_t    *globals;
-  ccblock_t    *current;
-  int           curirix;
+{ ccemit_value_t * globals;
+  ccblock_t      * current;
+  int              curirix;
+
+  ccedict_t      * edict_alloc;
 } ccemit_t;
 
 typedef struct ccexec_t
-{ ccemit_t       *emit;
-	ccexec_value_t *values;
-  ccfunction_t   *routine;
-  ccblock_t      *current;
-  int             curirix;
+{ ccemit_t       * emit;
+  ccexec_value_t * values;
+  ccfunction_t   * routine;
+  ccblock_t      * current;
+  int              curirix;
 } ccexec_t;
 
 
@@ -748,7 +662,7 @@ ccread_all_tokens(ccread_t *parser);
 ccfunc void
 ccreader_move(ccread_t *parser, size_t len, const char *min)
 {
-	cclex_move(& parser->lex, len, min);
+  cclex_move(& parser->lex, len, min);
   ccread_all_tokens(parser);
 
   parser->bed = 0;
