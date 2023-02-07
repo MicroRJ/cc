@@ -3,27 +3,27 @@
 ccfunc cctree_t *
 cctree_block_stmt(cctree_t *decl, cctree_t *stmt)
 { cctree_t *tree=cctree_new(cctree_kBLOCK);
-  tree->decl_list=decl;
-  tree->stmt_list=stmt;
+  // tree->list=decl;
+  tree->list=stmt;
   return tree;
 }
 
 ccfunc cctree_t *
 cctree_conditional_statement(cctree_t *cond_tree, cctree_t *then_tree, cctree_t *else_tree)
 { ccnotnil(cond_tree);
-  cctree_t *tree=cctree_new(cctree_Kconditional_statement);
-  tree->cond_tree=cond_tree;
-  tree->then_tree=then_tree;
-  tree->else_tree=else_tree;
+  cctree_t *tree=cctree_new(cctree_kIFEL);
+  tree->init=cond_tree;
+  tree->lval=then_tree;
+  tree->rval=else_tree;
   return tree;
 }
 
 ccfunc cctree_t *
 cctree_while_statement(cctree_t *cond_tree, cctree_t *then_tree)
 { ccnotnil(cond_tree);
-  cctree_t *tree=cctree_new(cctree_Kwhile_statement);
-  tree->cond_tree=cond_tree;
-  tree->then_tree=then_tree;
+  cctree_t *tree=cctree_new(cctree_kWHILE);
+  tree->init=cond_tree;
+  tree->lval=then_tree;
   return tree;
 }
 
@@ -31,23 +31,23 @@ ccfunc cctree_t *
 cctree_label_statement(cctree_t *name, cctree_t *list)
 { ccassert(name!=0&&name->kind==cctree_kIDENTIFIER);
   cctree_t *tree=cctree_new(cctree_kLABEL);
-  tree->label_name=cctree_idenname(name);
-  tree->stmt_list=list;
+  tree->name=cctree_idenname(name);
+  tree->list=list;
   return tree;
 }
 
 ccfunc cctree_t *
 cctree_goto_statement(cctree_t *name)
 { ccassert(name!=0&&name->kind==cctree_kIDENTIFIER);
-  cctree_t *tree=cctree_new(cctree_Kgoto_statement);
-  tree->label_name=cctree_idenname(name);
+  cctree_t *tree=cctree_new(cctree_kGOTO);
+  tree->name=cctree_idenname(name);
   return tree;
 }
 
 ccfunc cctree_t *
-cctree_return_statement(cctree_t *expr_tree)
-{ cctree_t *tree=cctree_new(cctree_kRETRN);
-  tree->expr_tree=expr_tree;
+cctree_return_statement(cctree_t *rval)
+{ cctree_t *tree=cctree_new(cctree_kRETURN);
+  tree->rval=rval;
   return tree;
 }
 

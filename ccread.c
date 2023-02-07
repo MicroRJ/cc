@@ -24,19 +24,19 @@ ccread_external_declaration(ccread_t *reader)
 
   ccassert(decl->kind==cctree_kDECL);
 
-  ccnotnil(decl->decl_list);
-  ccassert(decl->decl_list->kind==cctree_Kdecl_name);
-  ccnotnil(decl->decl_list->decl_type);
-  ccnotnil(decl->decl_list->decl_name);
+  ccnotnil(decl->list);
+  ccassert(decl->list->kind==cctree_kDECLNAME);
+  ccnotnil(decl->list->type);
+  ccnotnil(decl->list->name);
 
-  if(decl->decl_list->decl_type->kind==cctype_Kfunc)
+  if(decl->list->type->kind==cctype_Kfunc)
   {
     // You can't declare multiple functions within the same declaration ...
-    ccassert(ccarrlen(decl->decl_list)==1);
+    ccassert(ccarrlen(decl->list)==1);
 
-    decl->decl_list->body_tree=ccread_block_stmt(reader);
+    decl->list->blob=ccread_block_stmt(reader);
 
-    if(!decl->decl_list->body_tree&&!reader->bed->term_expl) ccsynerr(reader,0,"expected ';'");
+    if(!decl->list->blob&&!reader->bed->term_expl) ccsynerr(reader,0,"expected ';'");
   } else
   {
     // Note: applies to every declaration other than a function definition, with its definition ...

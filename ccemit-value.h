@@ -12,7 +12,6 @@ typedef enum ccvalue_K
   ccvalue_kEDICT,
 } ccvalue_K;
 
-// Todo: boil this down to either a constant value or an instruction ...
 typedef struct ccemit_value_t
 {
 	ccvalue_K kind;

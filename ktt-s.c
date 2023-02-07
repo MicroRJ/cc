@@ -167,7 +167,7 @@ cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree)
         cctree_t2s(parser, buf, it->init_decl_name.init);
       }
     } break;
-    case cctree_t_top:
+    case cctree_kTERNARY:
     {
       ccstr_catf(buf, "(");
       cctree_t2s(parser, buf, tree->top.lhs);
@@ -187,7 +187,7 @@ cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree)
       cctree_t2s(parser, buf, tree->binary.rhs);
       ccstr_catf(buf, ")");
     } break;
-    case cctree_t_uop:
+    case cctree_kUNARY:
     {
       ccstr_catf(buf, "(");
       kttc__token2s(buf, & tree->uop.opr);
@@ -198,8 +198,8 @@ cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree)
     case cctree_kIDENTIFIER:
     case cctree_t_tname:
     case cctree_kINTEGER:
-    case cctree_t_float:
-    case cctree_t_string:
+    case cctree_kFLOAT:
+    case cctree_kSTRING:
     { kttc__token2s(buf, & tree->constant.token);
     } break;
   }

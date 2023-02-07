@@ -259,43 +259,6 @@ typedef enum cctypekind_t
   cctype_enum_specifier,
 } cctypekind_t;
 
-typedef enum cctreetype_t
-{ cctree_t_invalid = -1,
-  cctree_t_unknown = 0,
-  cctree_t_tname,
-
-  cctree_kIDENTIFIER,
-
-  cctree_kLABEL,
-  cctree_kRETRN,
-  cctree_Kgoto_statement,
-  cctree_Kconditional_statement,
-  cctree_Kwhile_statement,
-
-  cctree_Kdecl_name,
-  cctree_kDECL,
-
-  cctree_Kstruct_spec,
-
-  cctree_t_designator,
-  cctree_t_designation,
-
-  cctree_kBLOCK,
-
-// Todo: remove
-  cctree_kINTEGER,
-  cctree_t_float,
-  cctree_t_string,
-
-  cctree_t_top,
-  cctree_kBINARY,
-  cctree_t_uop,
-
-
-  cctree_Kparen_expr,
-  cctree_Kcall_expr,
-} cctreetype_t;
-
 typedef union ccclassic_t
 {
   cci64 as_i64;
@@ -391,61 +354,7 @@ typedef struct cctype_t
   unsigned    is_variadic: 1;
 } cctype_t;
 
-typedef struct cctree_t
-{
-  cctreetype_t kind;
-
-  unsigned is_variadic: 1;
-  unsigned is_abstract: 1;
-  unsigned is_constant: 1;
-
-  ccstr_t   label_name;
-  ccstr_t    decl_name;
-  cctree_t  *init_tree;
-  cctree_t  *cond_tree;
-  cctree_t  *then_tree;
-  cctree_t  *else_tree;
-  cctree_t  *expr_tree;
-  cctree_t  *body_tree;
-  cctree_t  *args_tree;
-  cctree_t  *stmt_list;
-  cctype_t  *decl_type;
-  cctree_t  *decl_size;
-  cctree_t  *decl_init;
-  cctree_t  *decl_list;
-
-  union
-  { struct
-    { cctype_t * type;
-      cctoken_t  token;
-    } constant;
-    struct
-    { cctoken_t   token;
-      cctree_t  * expr; // <-- either a const expression or an identifier.
-      cctree_t  * next; // <-- part of the designator list.
-    } designator;
-    struct
-    { cctree_t  * list;
-      cctree_t  * init;
-      cctree_t  * next; // <-- if part of an initializer list.
-    } designation;
-    struct
-    { cctoken_t   opr;
-      cctree_t  * lhs;
-      cctree_t  * mhs;
-      cctree_t  * rhs;
-    } top;
-    struct
-    { cctoken_t   opr;
-      cctree_t  * lhs;
-      cctree_t  * rhs;
-    } binary;
-    struct
-    { cctoken_t   opr;
-      cctree_t  * mhs;
-    } uop;
-  };
-} cctree_t;
+#include "cctree.h"
 
 typedef enum ccedict_k ccedict_k;
 typedef enum ccvalue_K ccvalue_K;
@@ -502,7 +411,7 @@ typedef struct ccexec_t
 ccfunc ccstr_t
 cctree_idenname(cctree_t *name)
 {
-  return name?name->constant.token.str:0;
+  return name?name->name:0;
 }
 
 ccfunc void
@@ -596,7 +505,7 @@ ccfunc void
 cctree_del(cctree_t *tree);
 
 ccfunc cctree_t *
-cctree_new(cctreetype_t kind);
+cctree_new(cctree_k kind);
 
 ccfunc cctree_t *
 cctree_new_constant(cctype_t *type, cctoken_t *token);
@@ -851,7 +760,7 @@ cctype_new(cctypekind_t kind, const char *name)
 }
 
 ccfunc cctree_t *
-cctree_new(cctreetype_t kind)
+cctree_new(cctree_k kind)
 { cctree_t *result = (cctree_t *) ccmalloc(sizeof(cctree_t));
   memset(result, 0, sizeof(*result));
   result->kind = kind;
@@ -907,19 +816,19 @@ cctype_new_struct_spec(cctree_t *list, cctree_t *name)
 
 ccfunc cctree_t *
 cctree_decl_name(cctype_t *type, cctree_t *name, cctree_t *size, cctree_t *init)
-{ cctree_t *tree = cctree_new(cctree_Kdecl_name);
-  tree->decl_type=type;
-  tree->decl_name=cctree_idenname(name);
-  tree->decl_size=size;
-  tree->decl_init=init;
+{ cctree_t *tree = cctree_new(cctree_kDECLNAME);
+  tree->type=type;
+  tree->name=cctree_idenname(name);
+  tree->size=size;
+  tree->init=init;
   return tree;
 }
 
 ccfunc cctree_t *
 cctree_decl(cctype_t *type, cctree_t *list)
 { cctree_t *tree = cctree_new(cctree_kDECL);
-  tree->decl_type=type;
-  tree->decl_list=list;
+  tree->type=type;
+  tree->list=list;
   return tree;
 }
 
@@ -934,35 +843,35 @@ cctree_new_designator(cctoken_t *token, cctree_t *expr)
 ccfunc cctree_t *
 cctree_new_constant(cctype_t *type, cctoken_t *token)
 { cctree_t *result = cctree_new(cctree_kINTEGER);
-  result->constant.type  = type;
-  result->constant.token = *token;
+  result->type  =  type;
+  result->as_i64=token->sig;
   return result;
 }
 
 ccfunc cctree_t *
-cctree_new_top(cctoken_t *token, cctree_t *lhs, cctree_t *mhs, cctree_t *rhs)
-{ cctree_t *result = cctree_new(cctree_kBINARY);
-  result->top.opr = * token;
-  result->top.lhs = lhs;
-  result->top.mhs = mhs;
-  result->top.rhs = rhs;
+cctree_new_top(cctoken_t *token, cctree_t *cond_tree, cctree_t *then_tree, cctree_t *else_tree)
+{ cctree_t *result = cctree_new(cctree_kTERNARY);
+  result->oper=token->bit;
+  result->init=cond_tree;
+  result->lval=then_tree;
+  result->rval=else_tree;
   return result;
 }
 
 ccfunc cctree_t *
 cctree_binary(cctoken_t *token, cctree_t *lhs, cctree_t *rhs)
 { cctree_t *result = cctree_new(cctree_kBINARY);
-  result->binary.opr = * token;
-  result->binary.lhs = lhs;
-  result->binary.rhs = rhs;
+	result->oper=token->bit;
+  result->lval=lhs;
+  result->rval=rhs;
   return result;
 }
 
 ccfunc cctree_t *
 cctree_new_uop(cctoken_t *token, cctree_t *mhs)
-{ cctree_t *result = cctree_new(cctree_t_uop);
-  result->uop.opr = * token;
-  result->uop.mhs = mhs;
+{ cctree_t *result = cctree_new(cctree_kUNARY);
+  result->oper = token->bit;
+  result->rval = mhs;
   return result;
 }
 
@@ -974,7 +883,7 @@ cctree_new_identifier(cctoken_t *token)
   if(token)
   {
     cctree_t *tree = cctree_new(cctree_kIDENTIFIER);
-    tree->constant.token = * token;
+    tree->name=token->str;
     return tree;
   }
   return ccnil;

@@ -6,19 +6,17 @@ ccread_arglist_expr(ccread_t *reader);
 
 
 ccfunc cctree_t *
-cctree_paren_expr(cctree_t *body)
-{
-	cctree_t *tree=cctree_new(cctree_Kparen_expr);
-	tree->body_tree=body;
+cctree_paren_expr(cctree_t *init)
+{ cctree_t *tree=cctree_new(cctree_kGROUP);
+	tree->init=init;
 	return tree;
 }
 
 ccfunc cctree_t *
-cctree_call_expr(cctree_t *expr, cctree_t *args)
-{
-	cctree_t *tree=cctree_new(cctree_Kcall_expr);
-	tree->expr_tree=expr;
-	tree->args_tree=args;
+cctree_call_expr(cctree_t *lval, cctree_t *rval)
+{ cctree_t *tree=cctree_new(cctree_kCALL);
+	tree->lval=lval;
+	tree->rval=rval;
 	return tree;
 }
 

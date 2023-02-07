@@ -155,8 +155,8 @@ ccread_init_decl_name(ccread_t *reader, cctype_t *type)
   cctree_t *decl=ccread_decl_name(reader, type);
   if(decl)
   { if(cceat(reader,cctoken_kASSIGN))
-    { decl->decl_init=ccread_initializer(reader);
-      if(!decl->decl_init) ccsynerr(reader,0,"expected initializer after '='");
+    { decl->init=ccread_initializer(reader);
+      if(!decl->init) ccsynerr(reader,0,"expected initializer after '='");
     }
   }
   return decl;
@@ -168,8 +168,8 @@ ccread_struct_decl_name(ccread_t *reader, cctype_t *type)
   cctree_t *decl=ccread_decl_name(reader,type);
   if(decl)
   { if(cceat(reader,cctoken_Kcolon))
-    { decl->decl_size=ccread_constant_expression(reader);
-      if(!decl->decl_size) ccsynerr(reader,0,"expected constant expression after ':'");
+    { decl->size=ccread_constant_expression(reader);
+      if(!decl->size) ccsynerr(reader,0,"expected constant expression after ':'");
     }
   }
   return decl;
