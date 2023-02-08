@@ -1,70 +1,17 @@
-
-// Note: this is C's compound statement, where declarations and statements are split ...
-ccfunc cctree_t *
-cctree_block_stmt(cctree_t *decl, cctree_t *stmt)
-{ cctree_t *tree=cctree_new(cctree_kBLOCK);
-  // tree->list=decl;
-  tree->list=stmt;
-  return tree;
-}
+ccfunc cctree_t *ccread_block(ccread_t *reader, cctree_t *root, cci32_t mark);
+ccfunc cctree_t **ccread_statement_list(ccread_t *reader, cctree_t *root, cci32_t mark);
+ccfunc cctree_t *ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark);
 
 ccfunc cctree_t *
-cctree_conditional_statement(cctree_t *cond_tree, cctree_t *then_tree, cctree_t *else_tree)
-{ ccnotnil(cond_tree);
-  cctree_t *tree=cctree_new(cctree_kIFEL);
-  tree->init=cond_tree;
-  tree->lval=then_tree;
-  tree->rval=else_tree;
-  return tree;
-}
-
-ccfunc cctree_t *
-cctree_while_statement(cctree_t *cond_tree, cctree_t *then_tree)
-{ ccnotnil(cond_tree);
-  cctree_t *tree=cctree_new(cctree_kWHILE);
-  tree->init=cond_tree;
-  tree->lval=then_tree;
-  return tree;
-}
-
-ccfunc cctree_t *
-cctree_label_statement(cctree_t *name, cctree_t *list)
-{ ccassert(name!=0&&name->kind==cctree_kIDENTIFIER);
-  cctree_t *tree=cctree_new(cctree_kLABEL);
-  tree->name=cctree_idenname(name);
-  tree->list=list;
-  return tree;
-}
-
-ccfunc cctree_t *
-cctree_goto_statement(cctree_t *name)
-{ ccassert(name!=0&&name->kind==cctree_kIDENTIFIER);
-  cctree_t *tree=cctree_new(cctree_kGOTO);
-  tree->name=cctree_idenname(name);
-  return tree;
-}
-
-ccfunc cctree_t *
-cctree_return_statement(cctree_t *rval)
-{ cctree_t *tree=cctree_new(cctree_kRETURN);
-  tree->rval=rval;
-  return tree;
-}
-
-ccfunc cctree_t *ccread_block_stmt(ccread_t *reader);
-ccfunc cctree_t *ccread_stmt_list(ccread_t *reader);
-ccfunc cctree_t *ccread_stmt(ccread_t *reader);
-
-ccfunc cctree_t *
-ccread_block_or_single_stmt(ccread_t *reader)
-{ cctree_t *stmt=ccread_block_stmt(reader);
-  if(!stmt) stmt=ccread_stmt(reader);
+ccread_block_or_single_stmt(ccread_t *reader, cctree_t *root, cci32_t mark)
+{ cctree_t *stmt=ccread_block(reader,root,mark);
+  if(!stmt) stmt=ccread_statement(reader,root,mark);
   return stmt;
 }
 
 // Badger Tadger
 ccfunc cctree_t *
-ccread_stmt(ccread_t *reader)
+ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
   cctree_t *child=ccnil;
 
@@ -73,18 +20,18 @@ ccread_stmt(ccread_t *reader)
     // Note: don't do anything ...
   } else
   if(cceat(reader,cctoken_Klcurly))
-  { child=ccread_block_stmt(reader);
+  { child=ccread_block(reader,root,mark);
     if(!cceat(reader,cctoken_Krcurly)) ccsynerr(reader, 0, "expected '}'");
     return child;
   } else
-  if(child=ccread_init_decl(reader))
+  if(child=ccread_init_decl(reader,root,mark))
   { if(!reader->bed->term_expl) ccsynerr(reader, 0, "expected ';'");
     return child;
   } else
   if(cceat(reader,cctoken_Kreturn))
   {
-  	cctree_t *expr_tree=ccread_expression(reader);
-  	child=cctree_return_statement(expr_tree);
+  	cctree_t *expr_tree=ccread_expression(reader,root,mark);
+  	child=cctree_return(root,mark,expr_tree);
 
     if(!expr_tree) ccsynerr(reader,0,"expected expression");
 
@@ -95,24 +42,24 @@ ccread_stmt(ccread_t *reader)
     cctree_t *cond_tree=ccnil,*then_tree=ccnil;
 
     if(!cceat(reader,cctoken_Klparen)) ccsynerr(reader,0,"expected '('");
-    cond_tree=ccread_expression(reader);
+    cond_tree=ccread_expression(reader,root,mark);
     if(!cceat(reader,cctoken_Krparen)) ccsynerr(reader,0,"expected ')'");
 
     if(!cond_tree) ccsynerr(reader,0,"expected expression");
 
     if(!reader->bed->term_expl)
     {
-      then_tree=ccread_block_or_single_stmt(reader);
+      then_tree=ccread_block_or_single_stmt(reader,root,mark);
       if(!then_tree) ccsynerr(reader,0,"expected statement");
     }
-    child=cctree_while_statement(cond_tree,then_tree);
+    child=cctree_while(root,mark,cond_tree,then_tree);
   } else
   if(cceat(reader,cctoken_Kgoto))
   {
-    cctree_t *ident=ccread_identifier(reader);
+    cctree_t *ident=ccread_identifier(reader,root,mark);
     if(!ident) ccsynerr(reader,0,"missing goto label identifier");
 
-    child=cctree_goto_statement(ident);
+    child=cctree_goto(root,mark,ident);
 
     if(!reader->bed->term_expl) ccsynerr(reader, 0, "expected ';'");
   } else
@@ -127,25 +74,25 @@ ccread_stmt(ccread_t *reader)
     cctree_t *else_tree=ccnil;
 
     if(!cceat(reader,cctoken_Klparen)) ccsynerr(reader,0,"expected '('");
-    cond_tree=ccread_expression(reader);
+    cond_tree=ccread_expression(reader,root,mark);
     if(!cceat(reader,cctoken_Krparen)) ccsynerr(reader,0,"expected ')'");
 
     if(!cond_tree) ccsynerr(reader,0,"expected expression");
 
     if(!reader->bed->term_expl)
-    { then_tree=ccread_block_or_single_stmt(reader);
+    { then_tree=ccread_block_or_single_stmt(reader,root,mark);
       if(!then_tree) ccsynerr(reader,0,"expected statement");
     }
     if(cceat(reader,cctoken_Kelse)&&!reader->bed->term_expl)
-    { else_tree=ccread_block_or_single_stmt(reader);
+    { else_tree=ccread_block_or_single_stmt(reader,root,mark);
       if(!else_tree) ccsynerr(reader,0,"expected statement");
     }
 
-    child=cctree_conditional_statement(cond_tree,then_tree,else_tree);
+    child=cctree_ternary(root,mark,cond_tree,then_tree,else_tree);
 
   } else
   // Note: make sure you call this last, simply because this is a rather expensive function ... not that I care ...
-  if(child=ccread_expression(reader))
+  if(child=ccread_expression(reader,root,mark))
   {
     // Todo: better way of doing this?
     if(!reader->bed->term_expl)
@@ -155,11 +102,11 @@ ccread_stmt(ccread_t *reader)
         if(cceat(reader,cctoken_Kcolon))
         {
 
-        	cctree_t *list=ccnil;
+        	cctree_t **list=ccnil;
         	if(!reader->bed->term_expl)
-        	{ list=ccread_stmt_list(reader);
+        	{ list=ccread_statement_list(reader,root,mark);
         	}
-          child=cctree_label_statement(child,list);
+          child=cctree_label(root,mark,child,list);
         } else
           ccsynerr(reader, 0, "invalid statement, missing ':' for label statement?");
       } else
@@ -171,27 +118,24 @@ ccread_stmt(ccread_t *reader)
   return child;
 }
 
-ccfunc cctree_t *
-ccread_stmt_list(ccread_t *reader)
-{
-  cctree_t *next,*list=ccnil;
-  while(next=ccread_stmt(reader))
-  {
-    *ccarradd(list,1)=*next;
-    cctree_del(next);
-
+ccfunc cctree_t **
+ccread_statement_list(ccread_t *reader, cctree_t *root, cci32_t mark)
+{ cctree_t *next,**list=ccnil;
+  while(next=ccread_statement(reader,root,mark))
+  { *ccarradd(list,1)=next;
     if(ccsee_end(reader)) break;
   }
   return list;
 }
 
 ccfunc cctree_t *
-ccread_block_stmt(ccread_t *reader)
-{ if(cceat(reader,cctoken_Klcurly))
-  { cctree_t *stmt=ccread_stmt_list(reader);
+ccread_block(ccread_t *reader, cctree_t *root, cci32_t mark)
+{ cctree_t *tree=ccnil;
+	if(cceat(reader,cctoken_Klcurly))
+  { tree=cctree_block(root,mark,ccnil,ccnil);
+  	tree->list=ccread_statement_list(reader,tree,mark);
     if(!cceat(reader,cctoken_Krcurly))
       ccsynerr(reader, 0, "expected '}'");
-    return cctree_block_stmt(ccnil,stmt);
   }
-  return ccnil;
+  return tree;
 }

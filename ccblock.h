@@ -1,9 +1,9 @@
 #ifndef _CCEMIT_BLOCK
 #define _CCEMIT_BLOCK
 
+typedef struct ccblock_t ccblock_t;
 typedef struct ccblock_t
-{ const char       *label;
-  ccemit_value_t **local;
+{ const char      *label;
   ccemit_value_t **edict;
 } ccblock_t;
 
@@ -12,13 +12,11 @@ ccblock_I(ccblock_t *block, const char *label)
 {
   block->label=label?label:"no-label";
 
-	// Todo:
-  block->local=ccnil;
+  // Todo: we don't have to this anymore
   block->edict=ccnil;
-
-	// Todo:
   ccarrres(block->edict,0xff);
   ccarrfix(block->edict);
+
   return block;
 }
 

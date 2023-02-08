@@ -127,7 +127,7 @@ extern "C" {
 #endif
 
 #ifdef _DEBUG
-# define ccassert(is_true) (!(is_true)?ccbreak():ccnil)
+# define ccassert(is_true,...) (!(is_true)?ccbreak():ccnil)
 #else
 # define ccassert(is_true) 0
 #endif

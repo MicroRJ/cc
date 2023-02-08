@@ -1,5 +1,5 @@
-#ifndef _CCSVM
-#define _CCSVM
+#ifndef _CCEXEC
+#define _CCEXEC
 
 ccfunc ccstr_t ccvmir_tos(ccedict_t *ir);
 
@@ -44,6 +44,7 @@ ccexec_rvalue(ccexec_t *exec, ccexec_value_t *rval, ccemit_value_t *val)
       ccassert(!"noimpl");
     break;
     case ccvalue_kCONST:
+		// Todo:
     	*rval=ccexec_value_I(ccexec_value_kCONST,
     		val->constant.type,
     		cccast(void*,val->constant.clsc.as_i64),
@@ -62,10 +63,7 @@ ccexec_lvalue(ccexec_t *exec, ccexec_value_t *lval, ccemit_value_t *val)
   if(val->kind==ccvalue_kEDICT)
   { switch(val->edict->kind)
     { case ccedict_kLOCAL:
-        ccexec_yield(exec,lval,val);
-      break;
-      case ccedict_kFETCH:
-      	ccassert(!"error");
+    	case ccedict_kPARAM:
         ccexec_yield(exec,lval,val);
       break;
       default: ccassert(!"internal");
@@ -146,6 +144,32 @@ ccexec_edict_arith(ccexec_t *exec, ccemit_value_t *val)
   return result;
 }
 
+ccfunc ccexec_value_t *
+ccexec_local(ccexec_t *exec, ccemit_value_t *value)
+{
+	ccnotnil((value));
+  ccassert((value->kind==ccvalue_kEDICT),
+  	"cannot create local from given value, expected a value of type EDICT and of subtype LOCAL or PARAM");
+
+  ccedict_t *edict=value->edict;
+
+	ccnotnil((edict));
+  ccassert((edict->kind==ccedict_kLOCAL)||(edict->kind==ccedict_kPARAM),
+    "cannot create local from given value, expected an edict of type LOCAL or PARAM");
+
+	// Todo: stack alloc
+	ccexec_value_t *saved=ccexec_save(exec,value);
+  saved->value       = ccmalloc(sizeof(ccclassic_t));
+  saved->kind        = ccexec_value_kADDRS;
+  saved->type        = edict->local.type;
+  saved->debug_label = edict->local.debug_label;
+
+  cctracelog("%s[0x%x: $%s 0x%x",
+  	ccedict_s[edict->kind],value,saved->debug_label,saved->value);
+
+  return saved;
+}
+
 ccfunc void
 ccexec_edict(ccexec_t *exec, ccblock_t *irset, ccemit_value_t *value)
 {
@@ -157,25 +181,20 @@ ccexec_edict(ccexec_t *exec, ccblock_t *irset, ccemit_value_t *value)
   ccedict_t *edict=value->edict;
 
   switch(edict->kind)
-  { case ccedict_kLOCAL:
-    { // Todo: stack alloc
-      ccexec_value_t *saved=ccexec_save(exec,value);
-      saved->kind=ccexec_value_kADDRS;
-      saved->value=ccmalloc(sizeof(ccclassic_t));
-      saved->type=edict->local.type;
-      saved->debug_label=edict->local.debug_label;
-
-      cctracelog("LOCAL[0x%x: $%s 0x%x",value,saved->debug_label,saved->value);
+  {
+  	case ccedict_kLOCAL:
+    { ccexec_local(exec,value);
+    } break;
+    // Note: this is simply to ensure we've set the parameters ...
+    case ccedict_kPARAM:
+    { ccexec_value_t lval;
+    	ccexec_yield(exec,&lval,value);
     } break;
     case ccedict_kFETCH:
     {
       ccexec_value_t lval;
+      ccexec_lvalue(exec,&lval,edict->fetch.lval);
 
-      ccnotnil(edict->fetch.rval);
-      ccassert(edict->fetch.rval->kind==ccvalue_kEDICT);
-      ccassert(edict->fetch.rval->edict->kind==ccedict_kLOCAL);
-
-      ccexec_yield(exec,&lval,edict->fetch.rval);
       ccassert(lval.kind==ccexec_value_kADDRS);
 
       ccexec_value_t *saved=ccexec_save(exec,value);
@@ -251,8 +270,7 @@ ccvm_exit(ccexec_t *vm)
 
 ccfunc void
 ccvm_exec(ccexec_t *vm, ccblock_t *block)
-{ cctracelog("%s] l: %i, i: %i",block->label,ccarrlen(block->local),ccarrlen(block->edict));
-  ccexec_enter(vm,block);
+{ ccexec_enter(vm,block);
   do
   { if(vm->curirix<ccarrlen(vm->current->edict))
     {
@@ -262,7 +280,6 @@ ccvm_exec(ccexec_t *vm, ccblock_t *block)
     } else ccvm_exit(vm);
   } while(vm->current);
 }
-
 
 ccfunc int
 ccexec_init(ccexec_t *exec)
@@ -279,52 +296,18 @@ ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
   if(!ccerrnon()) cctraceerr("missing entry point");
 
   ccfunction_t *entryF=entryV->function;
+
+  cctree_t **lval;
+  ccarrfor(entryF->tree->type->list,lval)
+  {
+  	ccemit_value_t *local=ccfunc_local(entryF,*lval);
+  	ccexec_value_t *rval=ccexec_local(exec,local);
+  	ccdref(cccast(cci32_t*,rval->value))=1;
+  }
+
   ccvm_exec(exec,entryF->decls);
 
   return 1;
 }
-
-#if 0
-
-const char *ccvm_instr_S[]=
-{ "STORE","LOCAL","BINOP","BLOCK","CONDI","ENTER","LEAVE","CALL","RETURN",
-};
-const char *ccvm_value_S[]=
-{ "LEAF","GLOBAL","BLOCK","INSTR",
-};
-
-ccfunc void
-ccvmir_tos_(ccstr_t *buf, ccedict_t *ir)
-{
-  if((ir->type==ccedict_kENTER)||
-     (ir->type==ccedict_Kleave))
-  {
-    ccstrcatf(*buf,"%s: %s::%s", ccvm_instr_S[ir->type],
-      ir->block[0]->super?ir->block[0]->super->debug_label:"",ir->block[0]->debug_label);
-  } else
-  if((ir->type==ccedict_kBLOCK))
-  {
-    ccstrcatf(*buf,"%s: %s", ccvm_instr_S[ir->type], ir->block[0]->debug_label);
-  } else
-  { ccstrcatS(*buf,ccvm_instr_S[ir->type]);
-  }
-
-}
-
-ccfunc ccstr_t
-ccvmir_tos(ccedict_t *ir)
-{
-  ccstr_t buf=ccnil;
-  ccvmir_tos_(&buf,ir);
-  ccstrcatnl(buf);
-
-  ccout(buf);
-
-  ccstrdel(buf);
-
-  return buf;
-}
-
-#endif
 
 #endif

@@ -4,6 +4,7 @@
 typedef enum ccedict_k
 {
 	ccedict_kLOCAL = 0,
+	ccedict_kPARAM,
 	ccedict_kSTORE,
 	ccedict_kFETCH,
   ccedict_kARITH,
@@ -15,9 +16,11 @@ typedef enum ccedict_k
 } ccedict_k;
 
 ccglobal const char *ccedict_s[]=
-{ "LOCAL","STORE","FETCH","ARITH","BLOCK","CONDI","ENTER","INVOKE","RETURN",
+{ "LOCAL","PARAM","STORE","FETCH","ARITH","BLOCK","CONDI","ENTER","INVOKE","RETURN",
 };
 
+
+// Note: perhas each edict should have a flag that indicates whether to produce a value or not.
 typedef struct ccedict_t
 { ccedict_k   kind;
 
@@ -31,13 +34,19 @@ union
 	{
 		const char *debug_label;
 		cctype_t   *type;
-	} local;
+	} local,param;
+
+	// Note: Produces a non-addressable rvalue ...
+	// Note: #lval is the lvalue to store to.
+	// Note: #rval is the rvalue to store.
 	struct
 	{ ccemit_value_t *lval;
 		ccemit_value_t *rval;
 	} store;
+	// Note: Produces an non-addressable rvalue,  ...
+	// Note: #lval is the lvalue to load.
 	struct
-	{ ccemit_value_t *rval;
+	{ ccemit_value_t *lval;
 	} fetch;
 	struct
 	{ ccemit_value_t * cnd;
@@ -56,14 +65,26 @@ union
 } ccedict_t;
 
 ccfunc ccinle ccedict_t *
-ccedict_local(cctype_t *type, const char *label)
+ccedict_local(cctree_t *tree)
 {
+	// Todo: check the tree
 	ccedict_t *e=ccmalloc_T(ccedict_t);
 	e->kind=ccedict_kLOCAL;
-	e->local.type=type;
-	e->local.debug_label=label;
+	e->local.type=tree->type;
+	e->local.debug_label=tree->name;
 
-	ccmem_check(e,sizeof(*e));
+	return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_param(cctree_t *tree)
+{
+	// Todo: check the tree
+	ccedict_t *e=ccmalloc_T(ccedict_t);
+	e->kind=ccedict_kPARAM;
+	e->local.type=tree->type;
+	e->local.debug_label=tree->name;
+
 	return e;
 }
 
@@ -78,11 +99,11 @@ ccedict_store(ccemit_value_t *lval, ccemit_value_t *rval)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_fetch(ccemit_value_t *rval)
+ccedict_fetch(ccemit_value_t *lval)
 {
 	ccedict_t *e=ccmalloc_T(ccedict_t);
 	e->kind=ccedict_kFETCH;
-	e->fetch.rval=rval;
+	e->fetch.lval=lval;
 	return e;
 }
 
