@@ -30,7 +30,7 @@ typedef struct kttcc_type
 
 kttcc_type *gen_type(kttcc_typekind k)
 {
-  kttcc_type *type=(kttcc_type *)malloc(sizeof(*type));
+  kttcc_type *type=(kttcc_type *)ccmalloc(sizeof(*type));
 
   type->typekind=k;
   type->element=type;

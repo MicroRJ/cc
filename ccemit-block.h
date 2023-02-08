@@ -3,8 +3,8 @@
 
 typedef struct ccblock_t
 { const char       *label;
-  ccemit_value_t   *local;
-  ccemit_value_t   *edict;
+  ccemit_value_t **local;
+  ccemit_value_t **edict;
 } ccblock_t;
 
 ccfunc ccblock_t *
@@ -24,9 +24,15 @@ ccblock_I(ccblock_t *block, const char *label)
 
 ccfunc ccemit_value_t *
 ccblock_add(ccblock_t *block)
-{ ccemit_value_t *value=ccarradd(block->edict,1);
-  memset(value,ccnil,sizeof(*value));
-  return value;
+{
+	ccemit_value_t  *v=ccmalloc_T(ccemit_value_t);
+	ccemit_value_t **t=ccarradd(block->edict,1);
+
+  memset(v,ccnil,sizeof(*v));
+
+  *t=v;
+
+  return v;
 }
 
 ccfunc ccemit_value_t *

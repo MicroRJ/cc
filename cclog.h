@@ -20,24 +20,7 @@ ccoutnl(const char *string)
 	ccout("\r\n");
 }
 
-#ifndef cctrace
-# define cctrace(tag,fmt,...) cctrace_(__COUNTER__,__FILE__,__LINE__,__FUNC__,tag,fmt,__VA_ARGS__)
-#endif
 
-#ifndef cctracelog
-# define cctracelog(fmt,...) cctrace("log",fmt,__VA_ARGS__)
-#endif
-
-#ifndef cctracewar
-# define cctracewar(fmt,...) cctrace("war",fmt,__VA_ARGS__)
-#endif
-
-#ifndef cctraceerr
-# define cctraceerr(fmt,...) cctrace("err",fmt,__VA_ARGS__)
-#endif
-
-ccfunc void
-cctrace_(int guid, const char  *file, int line, const char *func, const char *tag, const char *fmt, ...);
 
 ccfunc int
 ccformatvex(char *buf, int len, const char * fmt, va_list vli)

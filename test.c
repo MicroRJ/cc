@@ -1,4 +1,4 @@
-#include "kttc.h"
+#include "cc.c"
 
 
 int main(int argc, char **argv)

@@ -303,7 +303,7 @@ ccread_type_specifier(ccread_t *parser)
 //   typedef
 //   __declspec ( extended-decl-modifier-seq )
 //
-ccfunc ktt_i32
+ccfunc cci32_t
 ccread_storage_class_specifier(ccread_t *parser)
 {
   if(kttc__peek_storage_class(parser))
@@ -322,7 +322,7 @@ ccread_storage_class_specifier(ccread_t *parser)
 //   volatile
 //   _Atomic
 //
-ccfunc ktt_i32
+ccfunc cci32_t
 ccread_type_qualifier(ccread_t *parser)
 { if(kttc__peek_type_qualifier(parser))
   { cctoken_t *tok = ccgobble(parser);
@@ -336,7 +336,7 @@ ccread_type_qualifier(ccread_t *parser)
  *   inline
  *   _Noreturn
  **/
-ccfunc ktt_i32
+ccfunc cci32_t
 ccread_function_specifier(ccread_t *parser)
 { if(kttc__peek_func_specifier(parser))
   { cctoken_t *tok = ccgobble(parser);
@@ -350,7 +350,7 @@ ccread_function_specifier(ccread_t *parser)
 //   _Alignas ( type-name )
 //   _Alignas ( constant-expression )
 //
-ccfunc ktt_i32
+ccfunc cci32_t
 ccread_alignment_specifier(ccread_t *parser)
 { if(kttc__peek_alignment_specifier(parser))
   { cctoken_t *tok = ccgobble(parser);
@@ -380,7 +380,7 @@ ccread_specifier_qualifier_list(ccread_t *parser)
 // attribute: one of
 //   __asm __based __cdecl __clrcall __fastcall __inline __stdcall __thiscall __vectorcall
 //
-ccfunc ktt_i32
+ccfunc cci32_t
 ccread_attribute_seq(ccread_t *parser)
 {
   (void)parser;

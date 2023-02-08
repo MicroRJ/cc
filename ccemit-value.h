@@ -15,7 +15,6 @@ typedef enum ccvalue_K
 typedef struct ccemit_value_t
 {
 	ccvalue_K kind;
-
 #if defined(_DEBUG)
 struct
 #else
@@ -25,6 +24,7 @@ union
 	{ cctype_t   * type;
 		ccclassic_t  clsc;
 	} constant;
+
   ccfunction_t *function;
   ccedict_t    *edict;
   ccblock_t    *block;

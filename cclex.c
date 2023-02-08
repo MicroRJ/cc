@@ -205,7 +205,7 @@ cclex_token(cclex_t *l, cctoken_t *token)
 
 ccfunc void cclex_next_token_internal(cclex_t *l);
 
-ccfunc ktt_i32
+ccfunc cci32_t
 cclex_next_token(cclex_t *l)
 {
   do
@@ -304,7 +304,7 @@ cclex_next_token_internal(cclex_t *l)
     case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
     {
-      ktt_i32 b;
+      cci32_t b;
       if(l->max[0] == '0')
       { switch (l->max[1])
         { case 'h':
@@ -331,7 +331,7 @@ cclex_next_token_internal(cclex_t *l)
       } else
       { b = 0x0A;
       }
-      ktt_u64_32 u = 0;
+      ccu64_t u = 0;
       while(l->max < l->doc_max)
       { if((*l->max >= '0' && *l->max <= '9'))
         { u = u * b + 0x00 + *l->max++ - '0';
@@ -349,8 +349,8 @@ cclex_next_token_internal(cclex_t *l)
       { ++l->max;
         // NOTE(RJ):
         // ; Keep this in a fpu register!
-        ktt_f64_32 p = 1;
-        ktt_u64_32 d = 0;
+        ccf64_t p = 1;
+        ccu64_t d = 0;
 
         for(; l->max < l->doc_max; p *= b)
         { if((*l->max >= '0' && *l->max <= '9'))

@@ -14,6 +14,10 @@ typedef enum ccedict_k
   ccedict_kRETURN,
 } ccedict_k;
 
+ccglobal const char *ccedict_s[]=
+{ "LOCAL","STORE","FETCH","ARITH","BLOCK","CONDI","ENTER","INVOKE","RETURN",
+};
+
 typedef struct ccedict_t
 { ccedict_k   kind;
 
@@ -58,6 +62,8 @@ ccedict_local(cctype_t *type, const char *label)
 	e->kind=ccedict_kLOCAL;
 	e->local.type=type;
 	e->local.debug_label=label;
+
+	ccmem_check(e,sizeof(*e));
 	return e;
 }
 
@@ -97,6 +103,7 @@ ccedict_enter(ccblock_t *blc)
 	ccedict_t *e=ccmalloc_T(ccedict_t);
 	e->kind=ccedict_kENTER;
 	e->enter.blc=blc;
+
 	return e;
 }
 

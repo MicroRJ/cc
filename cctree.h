@@ -53,14 +53,14 @@ typedef struct cctree_t
 
   union
 	{ ccstr_t as_str;
-		cci64   as_i64;
-	  cci32   as_i32;
-	  cci16   as_i16;
-	  cci8    as_i8;
-	  ccu64   as_u64;
-	  ccu32   as_u32;
-	  ccu16   as_u16;
-	  ccu8    as_u8;
+		cci64_t   as_i64;
+	  cci32_t   as_i32;
+	  cci16_t   as_i16;
+	  cci8_t    as_i8;
+	  ccu64_t   as_u64;
+	  ccu32_t   as_u32;
+	  ccu16_t   as_u16;
+	  ccu8_t    as_u8;
 	};
 
 	// Todo: pending ...

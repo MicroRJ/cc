@@ -1,75 +1,65 @@
 #ifndef _CCDLB
 #define _CCDLB
 
-// Note:
-// ccarrdel,ccstrdel = ccdel
-// ccarrmin,ccstrmin = ccmin
-// ccarrmax,ccstrmax = ccmax
-// ccarrlen,ccstrlen = cclen
-// ccarradd,ccstradd = ccadd
-// ccarrres,ccstrres = ccres
-// ccarrfor,ccstrfor = ccfor
+typedef struct ccent_t ccent_t;
+typedef struct ccpad_t ccpad_t;
+// Note: dynamic length buffer
+typedef struct ccdlb_t ccdlb_t;
 
-#define CCNIT 0xffffffff
-#define CCAIT 0xffffffff
+typedef struct ccent_t
+{ ccent_t * nex;
+  cci32_t   len;
+  char     *key;
+  ccu32_t   val;
+} ccent_t;
 
-// Note: if the length is negative then key should be interpreted as integer
-typedef struct ccdlb_entry_t
-{ ccdlb_entry_t * nex;
-  cci32           len;
-  char          * key;
-  ccu32           val;
-} ccdlb_entry_t;
-
-// Note: we don't store this ...
-typedef struct cchsh_t
-{ ccu64  hsh;
-	cci32  len;
-} cchsh_t;
-
-// Todo: sorting ...
 typedef struct ccdlb_t
-{
-#ifdef _DEBUG
-  int debug_collisions;
-#endif
-  unsigned       can_rze: 1;
-  unsigned       sze_fxd: 1;
-  ccdlb_entry_t   *entries;
-  ccu32          sze_max;
-  ccu32          sze_min;
+{ unsigned    can_rze: 1;
+  ccent_t *   entries;
+  ccu32_t     sze_max;
+  ccu32_t     sze_min;
 } ccdlb_t;
 
+
 // Todo:
-#ifndef ccsub
-# define ccsub(x,y) ((x)-(y))
-#endif
-#ifndef ccadd
-# define ccadd(x,y) ((x)+(y))
-#endif
+// Hmm....
+
+typedef enum ccerr_k
+{
+  ccerr_kNON=0,
+  ccerr_kNIT=1,
+  ccerr_kAIT=2,
+} ccerr_k;
+
+ccglobal ccerr_k ccerr;
+
+#define ccerrset(err) (ccerr=err)
+#define ccerrnon()    ((ccerr)==ccerr_kNON)
+#define ccerrnit()    ((ccerr)==ccerr_kNIT)
+#define ccerrait()    ((ccerr)==ccerr_kAIT)
 
 
 // Note: C string utils ...
 #ifndef ccstrlenS
-# define ccstrlenS(cstr) cccast(ccu32,strlen(cstr))
+# define ccstrlenS(cstr) cccast(ccu32_t,strlen(cstr))
 #endif
 #ifndef ccstrlenL
-# define ccstrlenL(lstr) cccast(ccu32,sizeof(lstr)-1)
+# define ccstrlenL(lstr) cccast(ccu32_t,sizeof(lstr)-1)
 #endif
 
 
 #ifndef ccdlb_
-# define ccdlb_(ccm) ccsub(cccast(ccdlb_t*,ccm),1)
+# define ccdlb_(ccm) (cccast(ccdlb_t*,ccm)-1)
 #endif
 #ifndef ccdlb
-# define ccdlb(ccm) ((ccm)?ccdlb_(ccm):(ccnil))
+# define ccdlb(ccm) ((ccm)?ccdlb_(ccm):(cccast(ccdlb_t*,ccnil)))
 #endif
 
 #ifndef ccdlbmax
-# define ccdlbmax(ccm) ((ccm)?cccast(ccu32 *,ccm)[-2]:0)
+# define ccdlbmax(ccm) ((ccm)?cccast(ccu32_t *,ccm)[-2]:0)
 #endif
 #ifndef ccdlbmin
-# define ccdlbmin(ccm) ((ccm)?cccast(ccu32 *,ccm)[-1]:0)
+# define ccdlbmin(ccm) ((ccm)?cccast(ccu32_t *,ccm)[-1]:0)
 #endif
 #ifndef ccdlbdel
 # define ccdlbdel(ccm) ccfree(ccdlb(ccm))
@@ -90,12 +80,16 @@ typedef struct ccdlb_t
 # define ccarrlen ccarrmin
 #endif
 
+#ifndef ccarrend_max
+# define ccarrend_max(arr) ((arr)+ccarrmax(arr))
+#endif
+#ifndef ccarrend_min
+# define ccarrend_min(arr) ((arr)+ccarrmin(arr))
+#endif
 #ifndef ccarrend
-# define ccarrend(arr) ((arr)?((arr)+ccarrlen(arr)):(arr))
+# define ccarrend ccarrend_min
 #endif
-#ifndef ccarrfor
-# define ccarrfor(arr,itr) for(itr=arr;itr<ccarrend(arr);++itr)
-#endif
+
 #ifndef ccarrres
 # define ccarrres(ccm,com) ((ccm)+ccdlb_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),com,ccnil))
 #endif
@@ -108,42 +102,61 @@ typedef struct ccdlb_t
 #ifndef ccarrzro
 # define ccarrzro(ccm) memset(ccm,ccnil,ccdlbmax(ccm))
 #endif
-
 #ifndef ccarrfix
-# define ccarrfix(ccm) ((ccm)?ccdlb_(ccm)->sze_fxd=cctrue:(ccnil))
+# define ccarrfix(ccm) ((ccm)?ccdlb_(ccm)->can_rze=cctrue:(ccnil))
 #endif
+
+#ifndef ccarrfor
+# define ccarrfor(arr,itr) for(itr=arr;itr<ccarrend(arr);++itr)
+#endif
+
+
 
 // Note: Table
-//
+
+#ifndef cclithsh
+# define cclithsh(lit) ccstrlenL(lit),lit
+#endif
+#ifndef ccnsthsh
+# define ccntshsh(nts) ccstrlenS(nts),nts
+#endif
+#ifndef ccptrhsh
+# define ccptrhsh(ptr) -cccast(cci32_t,sizeof(ptr)),cccast(char*,ptr)
+#endif
+
+// Note: these use the global error code _ccerr_ ... something I'm not very fond of ...
+ccfunc ccu32_t ccdlb_tblget(void **, cci32_t, cci32_t, const char *);
+ccfunc ccu32_t ccdlb_tblput(void **, cci32_t, cci32_t, const char *);
+ccfunc ccu32_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 
 #ifndef cctblgetL
-# define cctblgetL(ccm,lit,ait) ((ccm)+ccdlb_tblget(ccdlb(ccm),sizeof(*(ccm)),ccstrlenL(lit),lit,ait))
+# define cctblgetL(ccm,lit) ((ccm)+ccdlb_tblget(cccast(void **,ccaddr(ccm)),sizeof(*(ccm)),cclithsh(lit)))
 #endif
 #ifndef cctblgetS
-# define cctblgetS(ccm,lit,ait) ((ccm)+ccdlb_tblget(ccdlb(ccm),sizeof(*(ccm)),ccstrlenS(lit),lit,ait))
+# define cctblgetS(ccm,nts) ((ccm)+ccdlb_tblget(cccast(void **,ccaddr(ccm)),sizeof(*(ccm)),ccntshsh(nts)))
 #endif
 #ifndef cctblgetP
-# define cctblgetP(ccm,ptr,ait) ((ccm)+ccdlb_tblget(ccdlb(ccm),sizeof(*(ccm)),-cccast(cci32,sizeof(ptr)),cccast(char*,ptr),ait))
+# define cctblgetP(ccm,ptr) ((ccm)+ccdlb_tblget(cccast(void **,ccaddr(ccm)),sizeof(*(ccm)),ccptrhsh(ptr)))
 #endif
 
 #ifndef cctblsetL
-# define cctblsetL(ccm,lit,ait) ((ccm)+ccdlb_tblset(cccast(void **,ccaddr(ccm)),sizeof(*ccm),ccstrlenL(lit),lit,ait))
+# define cctblsetL(ccm,lit) ((ccm)+ccdlb_tblset(cccast(void **,ccaddr(ccm)),sizeof(*ccm),cclithsh(lit)))
 #endif
 #ifndef cctblsetS
-# define cctblsetS(ccm,lit,ait) ((ccm)+ccdlb_tblset(cccast(void **,ccaddr(ccm)),sizeof(*ccm),ccstrlenS(lit),lit,ait))
+# define cctblsetS(ccm,nts) ((ccm)+ccdlb_tblset(cccast(void **,ccaddr(ccm)),sizeof(*ccm),ccntshsh(nts)))
 #endif
 #ifndef cctblsetP
-# define cctblsetP(ccm,ptr,ait) ((ccm)+ccdlb_tblset(cccast(void **,ccaddr(ccm)),sizeof(*ccm),-cccast(cci32,sizeof(ptr)),cccast(char*,ptr),ait))
+# define cctblsetP(ccm,ptr) ((ccm)+ccdlb_tblset(cccast(void **,ccaddr(ccm)),sizeof(*ccm),ccptrhsh(ptr)))
 #endif
 
 #ifndef cctblputL
-# define cctblputL(ccm,lit,ait) ((ccm)+ccdlb_tblput(cccast(void **,ccaddr(ccm)),sizeof(*ccm),ccstrlenL(lit),lit,ait))
+# define cctblputL(ccm,lit) ((ccm)+ccdlb_tblput(cccast(void **,ccaddr(ccm)),sizeof(*ccm),cclithsh(lit)))
 #endif
 #ifndef cctblputS
-# define cctblputS(ccm,lit,ait) ((ccm)+ccdlb_tblput(cccast(void **,ccaddr(ccm)),sizeof(*ccm),ccstrlenS(lit),lit,ait))
+# define cctblputS(ccm,nts) ((ccm)+ccdlb_tblput(cccast(void **,ccaddr(ccm)),sizeof(*ccm),ccntshsh(nts)))
 #endif
 #ifndef cctblputP
-# define cctblputP(ccm,ptr,ait) ((ccm)+ccdlb_tblput(cccast(void **,ccaddr(ccm)),sizeof(*ccm),-cccast(cci32,sizeof(ptr)),cccast(char*,ptr),ait))
+# define cctblputP(ccm,ptr) ((ccm)+ccdlb_tblput(cccast(void **,ccaddr(ccm)),sizeof(*ccm),ccptrhsh(ptr)))
 #endif
 
 // Note: String
@@ -195,8 +208,8 @@ typedef char *ccstr_t;
 # define ccstrcatf(ccm,fmt,...) ccstr_catf(&ccm,fmt,__VA_ARGS__)
 #endif
 
-ccfunc ccu32
-ccdlb_arradd_(ccdlb_t **dlb_, ccu32 rsze, ccu32 csze)
+ccfunc ccu32_t
+ccdlb_arradd_(ccdlb_t **dlb_, ccu32_t rsze, ccu32_t csze)
 {
 /* ccdlb_arradd_:
 **  rsze: size to reserve
@@ -214,16 +227,16 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32 rsze, ccu32 csze)
 
   int is_ini=!dlb;
 
-  ccu32
+  ccu32_t
     sze_max=ccnil,
     sze_min=ccnil;
-  cci32
-    sze_fxd=ccnil;
+  cci32_t
+    can_rze=ccnil;
 
   if(!is_ini)
   { sze_max=dlb->sze_max;
     sze_min=dlb->sze_min;
-    sze_fxd=dlb->sze_fxd;
+    can_rze=dlb->can_rze;
   }
 
 
@@ -233,7 +246,7 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32 rsze, ccu32 csze)
 
   if(sze_max<sze_min+rsze)
   {
-    ccassert(!sze_fxd);
+    ccassert(!can_rze);
 
     sze_max<<=1;
     if(sze_max<sze_min+rsze)
@@ -253,130 +266,91 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32 rsze, ccu32 csze)
   return sze_min;
 }
 
-ccfunc ccinle ccu32
-ccdlb_arradd(void **ccm, ccu32 isze, ccu32 cres, ccu32 ccom)
+ccfunc ccinle ccu32_t
+ccdlb_arradd(void **ccm, ccu32_t isze, ccu32_t cres, ccu32_t ccom)
 {
 // Note: ccdlb_arradd
 // This could be made into a macro, but it would look rather funky, like me and ain't no-one likes me ...
   ccdlb_t *dlb=ccdlb(*ccm);
-  ccu32 res=ccdlb_arradd_(&dlb,isze*cres,isze*ccom);
+  ccu32_t res=ccdlb_arradd_(&dlb,isze*cres,isze*ccom);
   *ccm=dlb+1;
   return res/isze;
 }
 
-ccfunc ccu32
-ccdlb_stradd(char **ccm, ccu32 cres, ccu32 ccom, const char *cpy)
+ccfunc ccu32_t
+ccdlb_stradd(char **ccm, ccu32_t cres, ccu32_t ccom, const char *cpy)
 { // Note: use char type instead of void for preemptive type-checking ...
   // Note: assuming that you'll reserve at-least one more byte for the null terminator ...
   ccassert(cres!=0);
   ccassert(ccom!=0);
-  ccu32 res=ccdlb_arradd(cccast(void**,ccm),1,cres,ccom);
+  ccu32_t res=ccdlb_arradd(cccast(void**,ccm),1,cres,ccom);
   char *cur=(char*)*ccm+res;
   memcpy(cur,cpy,cres-1);
   cur[cres-1]=0;
   return res;
 }
 
-ccfunc cchsh_t
-cchsh_abc(cci32 len, const char *key)
-{ cchsh_t t;
-	if(len>0)
-  { t.len=len;
-    t.hsh=5381;
-    while(len) t.hsh+=(t.hsh<<5)+key[--len];
-  } else
-  { t.len=-len;
-    t.hsh=cccast(ccu64,key);
-  }
-  return t;
+ccfunc ccinle ccu64_t
+cchsh_abc(cci32_t len, const char *key)
+{ ccu64_t hsh;
+  if(len>0)
+    for(hsh=5381;len;hsh+=(hsh<<5)+key[--len]);
+  else
+    hsh=cccast(ccu64_t,key);
+  return hsh;
 }
 
 ccfunc void
-ccdlb_tblini(ccdlb_t **dlb_, cci32 isze)
+ccdlb_tblini(ccdlb_t **dlb_, cci32_t isze)
 {
-	ccdlb_t *dlb=*dlb_;
+  ccdlb_t *dlb=*dlb_;
 
-  int is_ini=!dlb;
-
-  if(is_ini)
+  if(!dlb)
   {
-  	// Note: allocate one item to force allocate the table ...
-    ccdlb_arradd_(&dlb,isze,ccnil);
+    // Note: reserve some items, this will initialize the memory ...
+    ccdlb_arradd_(&dlb,isze*0xff,0x00);
+    ccarrzro(dlb+1);
 
     // Todo: create some entries
     ccarrres(dlb->entries,0xff);
     ccarrzro(dlb->entries);
     ccarrfix(dlb->entries);
 
-    ccassert(ccarrmax(dlb->entries)==0xff);
-    ccassert(ccarrmin(dlb->entries)==0x00);
-
+    // Note:
     *dlb_=dlb;
   }
 }
 
-ccfunc ccdlb_entry_t *
-ccdlb_tblfndorlst_(ccdlb_t *tbl, int len, const char *key, int *fnd)
+ccfunc ccent_t *
+ccdlb_tblent_(ccdlb_t *tbl, int len, const char *key)
 {
-	ccnotnil(tbl);
-  ccnotnil(key);
-  ccnotnil(len);
+  ccu64_t  hsh=cchsh_abc(len,key);
+  ccu32_t  idx=hsh%ccarrmax(tbl->entries);
+  ccent_t *ent=tbl->entries+idx;
 
-  cchsh_t hsh=cchsh_abc(len,key);
-  ccdlb_entry_t *ent=tbl->entries+hsh.hsh%ccarrmax(tbl->entries);
-
-  *fnd=cctrue;
+  ccerrset(ccerr_kNON);
   while(ent->key)
-  {
-    // Note: entry's key length is signed to differentiate a string hash from a pointer hash ...
-    if(ent->len==len)
-    {
-    	if(len>0)
-      { if(memcmp(ent->key,key,len)==0)
-      		return ent;
-      } else
-      if(ent->key==key)
-      	return ent;
-    }
-    tbl->debug_collisions++;
-    if(ent->nex) ent=ent->nex;
-    else break;
+  { if((ent->len==len)&&((ent->key==key)||(!memcmp(ent->key,key,len))))
+      return ent;
+    if(!ent->nex)
+      break;
+    ent=ent->nex;
   }
-  *fnd=ccfalse;
+  ccerrset(ccerr_kNIT);
   return ent;
 }
 
-ccfunc ccinle ccu32
-ccdlb_tblget(ccdlb_t *tbl, cci32 isze, int len, const char *key, int *ait)
+ccfunc ccu32_t
+ccdlb_tblcat(ccdlb_t **tbl, ccu32_t isze, int len, const char *key, ccent_t *ent)
 {
-	if(!tbl)
-	{
-		if(ait)*ait=ccfalse;
-		return CCNIT;
-	}
-
-	int fnd;
-	ccdlb_entry_t *ent;
-
-	ent=ccdlb_tblfndorlst_(tbl,len,key,&fnd);
-
-	if(ait)*ait=fnd;
-
-	ccu32 val;
-	val=fnd?ent->val:CCNIT;
-  return val/isze;
-}
-
-ccfunc ccinle ccu32
-ccdlb_tblentcat_(ccdlb_t **tbl, ccu32 isze, int len, const char *key, ccdlb_entry_t *ent)
-{
-	ccnotnil(tbl);
+  ccnotnil(tbl);
   ccnotnil(*tbl);
 
-	if(ent->key)
-  { ent->nex=ccmalloc_T(ccdlb_entry_t);
+  if(ent->key)
+  { ent->nex=ccmalloc_T(ccent_t);
     ent=ent->nex;
     memset(ent,ccnil,sizeof(*ent));
+    ccarradd(ccdref(tbl)->entries,1);
   }
 
   ccassert(ent->key==ccnil);
@@ -384,99 +358,101 @@ ccdlb_tblentcat_(ccdlb_t **tbl, ccu32 isze, int len, const char *key, ccdlb_entr
   ccassert(ent->val==ccnil);
 
   // Note: must zero the item
-  ccu32 val=ccdlb_arradd_(tbl,isze,isze);
-  memset(cccast(char*,*tbl+1)+val,ccnil,isze);
-  ccassert(ccarrlen(*tbl)<CCNIT);
+  ccu32_t val=ccdlb_arradd_(tbl,isze,isze);
+  memset(cccast(char*,ccdref(tbl)+1)+val,ccnil,isze);
 
+  // Todo:
   if(len>0)
-  {
-    // Todo:
     ccstrputN(ent->key,len,cccast(char*,key));
-  } else
-      ent->key=cccast(char*,key);
+  else
+    ent->key=cccast(char*,key);
 
   ent->len=len;
   ent->val=val;
   return val;
 }
 
-ccfunc ccu32
-ccdlb_tblset_(ccdlb_t **tbl, ccu32 isze, int len, const char *key, int *ait)
-{
-  ccu32 val;
-  cci32 fnd;
-  ccdlb_entry_t *ent;
-  ent=ccdlb_tblfndorlst_(*tbl,len,key,&fnd);
-  if(fnd)
-  { return ent->val;
-  } else
-  { val=ccdlb_tblentcat_(tbl,isze,len,key,ent);
+
+ccfunc ccu32_t
+ccdlb_tblget(void **ccm, cci32_t isze, int len, const char *key)
+{ ccdlb_t * tbl=ccdlb(ccdref(ccm));
+  ccu32_t   val=ccnil;
+
+  ccerrset(ccerr_kNIT);
+  if(tbl)
+  { ccent_t *ent=ccdlb_tblent_(tbl,len,key);
+    if(ccerrnon()) val=ent->val;
   }
-  if(ait)*ait=fnd;
-  return val;
+  return val/isze;
 }
 
-ccfunc ccu32
-ccdlb_tblput_(ccdlb_t **tbl, ccu32 isze, int len, const char *key, int *ait)
+ccfunc ccu32_t
+ccdlb_tblput(void **ccm, cci32_t isze, int len, const char *key)
 {
-  ccu32 val;
-  cci32 fnd;
-  ccdlb_entry_t *ent;
-  ent=ccdlb_tblfndorlst_(*tbl,len,key,&fnd);
+  ccdlb_t *tbl;
+  ccent_t *ent;
+  ccu32_t  val;
 
-  if(!fnd)
-  { val=ccdlb_tblentcat_(tbl,isze,len,key,ent);
-  } else val=CCAIT;
+  tbl=ccdlb(ccdref(ccm));
+  if(!tbl) ccdlb_tblini(&tbl,isze);
 
-  if(ait) *ait=fnd;
+  val=ccnil;
+  ent=ccdlb_tblent_(tbl,len,key);
+  if(ccerrnit())
+  {
+    val=ccdlb_tblcat(&tbl,isze,len,key,ent);
+    *ccm=tbl+1;
 
-  return val;
+    ccerrset(ccerr_kNON);
+  } else
+  {
+    ccerrset(ccerr_kAIT);
+  }
+  return val/isze;
 }
 
-ccfunc ccu32
-ccdlb_tblset(void **ccm, ccu32 isze, int len, const char *key, int *ait)
+ccfunc ccu32_t
+ccdlb_tblset(void **ccm, cci32_t isze, int len, const char *key)
 {
-  ccdlb_t *dlb=ccdlb(*ccm);
-  ccdlb_tblini(&dlb,isze);
+  ccdlb_t *tbl;
+  ccent_t *ent;
+  ccu32_t  val;
 
-  ccu32 res;
-  res=ccdlb_tblset_(&dlb,isze,len,key,ait);
+  tbl=ccdlb(ccdref(ccm));
+  if(!tbl) ccdlb_tblini(&tbl,isze);
 
-  *ccm=dlb+1;
+  val=ccnil;
+  ent=ccdlb_tblent_(tbl,len,key);
+  if(ccerrnit())
+  {
+    val=ccdlb_tblcat(&tbl,isze,len,key,ent);
+    *ccm=tbl+1;
 
-  return res/isze;
+    ccerrset(ccerr_kNON);
+  } else
+  {
+    val=ent->val;
+  }
+
+  return val/isze;
 }
 
-ccfunc ccu32
-ccdlb_tblput(void **ccm, ccu32 isze, int len, const char *key, int *ait)
-{
-  ccdlb_t *dlb=ccdlb(*ccm);
-  ccdlb_tblini(&dlb,isze);
-
-  ccu32 res;
-  res=ccdlb_tblput_(&dlb,isze,len,cccast(char*,key),ait);
-
-  *ccm=dlb+1;
-
-  return res/isze;
-}
-
-ccfunc ccu32
+ccfunc ccu32_t
 ccstr_vcatf(char **ccm, const char *fmt, va_list vli)
 {
   int len=stbsp_vsnprintf(0,0,fmt,vli);
-  ccu32 res=ccdlb_arradd(cccast(void**,ccm),1,len+1,len);
+  ccu32_t res=ccdlb_arradd(cccast(void**,ccm),1,len+1,len);
   len=stbsp_vsnprintf((char*)*ccm+res,len+1,fmt,vli);
   return res;
 }
 
-ccfunc ccu32
+ccfunc ccu32_t
 ccstr_catf(char **ccm, const char *fmt, ...)
 {
   va_list vli;
   va_start(vli,fmt);
 
-  ccu32 res;
+  ccu32_t res;
   res=ccstr_vcatf(ccm,fmt,vli);
 
   va_end(vli);
@@ -488,6 +464,40 @@ ccstr_catf(char **ccm, const char *fmt, ...)
 ccfunc void
 ccdlb_test()
 {
+
+  void *mem=ccnil;
+  mem=ccrealloc(mem,24);
+  ccfree(mem);
+
+  mem=ccmalloc(24);
+  mem=ccrealloc(mem,48);
+  ccfree(mem);
+
+#if 0
+  typedef struct block_t
+  { char a[13];
+  } block_t;
+  block_t *b=ccmalloc_T(block_t);
+  cci64_t  d=cccast(ccu64_t,b);
+  cci64_t  x=d/sizeof(*b);
+  block_t *r=b+-x;
+  (void)r;
+#endif
+
+#if 0
+  typedef struct blocka_t
+  { char s[0x10];
+  } blocka_t;
+  typedef struct blockb_t
+  { char s[0x10];
+  } blockb_t;
+  char mem[sizeof(blockb_t)];
+  blocka_t *bal=(blocka_t *)mem;
+  blockb_t *bbl=(blockb_t *)mem;
+  memcpy(bal->s,"hello!",sizeof("!hello"));
+  memcpy(bbl->s,"!hello",sizeof("hello!"));
+#endif
+
   typedef struct simple_t
   { char *s;
   } simple_t;
@@ -515,22 +525,37 @@ ccdlb_test()
   { char *key;
     simple_t *res;
 
+    // Put:
     key=ccformat("%c%i",'a'+i,i);
-    res=cctblsetS(string_map,key,ccnil);
-    ccassert(res->s==ccnil);
+    res=cctblputS(string_map,key);
+    ccassert(ccerrnon());
     ccstrputS(res->s,key);
 
+    key=ccformat("%c%i",'A'+i,i);
+    res=cctblputS(string_map,key);
+    ccassert(ccerrnon());
+    ccstrputS(res->s,key);
+
+    // Set:
     key=ccformat("%c%i",'a'+i,i);
-    res=cctblsetS(string_map,key,ccnil);
+    res=cctblsetS(string_map,key);
+    ccassert(ccerrnon());
     ccassert(strcmp(key,res->s)==0);
 
     key=ccformat("%c%i",'A'+i,i);
-    res=cctblsetS(string_map,key,ccnil);
-    ccassert(res->s==ccnil);
-    ccstrputS(res->s,key);
+    res=cctblsetS(string_map,key);
+    ccassert(ccerrnon());
+    ccassert(strcmp(key,res->s)==0);
+
+    // Get:
+    key=ccformat("%c%i",'a'+i,i);
+    res=cctblgetS(string_map,key);
+    ccassert(ccerrnon());
+    ccassert(strcmp(key,res->s)==0);
 
     key=ccformat("%c%i",'A'+i,i);
-    res=cctblsetS(string_map,key,ccnil);
+    res=cctblgetS(string_map,key);
+    ccassert(ccerrnon());
     ccassert(strcmp(key,res->s)==0);
   }
 
@@ -543,27 +568,22 @@ ccdlb_test()
 
     simple_t *res;
 
-    res=cctblsetS(string_map,key,ccnil);
+    res=cctblgetS(string_map,key);
+    ccassert(ccerrnon());
     ccassert(strcmp(key,res->s)==0);
 
-    res=cctblsetP(pointer_map,item,ccnil);
+    res=cctblputP(pointer_map,item);
+    ccassert(ccerrnon());
     ccstrputS(res->s,key);
   }
 
   ccarrfor(simple_arr,item)
-  {
-    char *key=item->s;
-
+  { char *key=item->s;
     simple_t *res;
-    res=cctblsetP(pointer_map,item,ccnil);
-
-
+    res=cctblgetP(pointer_map,item);
+    ccassert(ccerrnon());
     ccassert(strcmp(key,res->s)==0);
   }
-
-  cctracelog("array item count %i, reserved %i", ccarrmin(simple_arr), ccarrmax(simple_arr));
-  cctracelog("string map collisions %i, items %i", ccdlb(string_map)->debug_collisions, ccarrlen(string_map));
-  cctracelog("pointer map collisions %i, items %i", ccdlb(pointer_map)->debug_collisions, ccarrlen(string_map));
 }
 
 #endif

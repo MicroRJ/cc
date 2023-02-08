@@ -261,16 +261,18 @@ typedef enum cctypekind_t
 
 typedef union ccclassic_t
 {
-  cci64 as_i64;
-  cci32 as_i32;
-  cci16 as_i16;
-  cci8  as_i8;
+  cci64_t as_i64;
+  cci32_t as_i32;
+  cci16_t as_i16;
+  cci8_t  as_i8;
 
-  ccu64 as_u64;
-  ccu32 as_u32;
-  ccu16 as_u16;
-  ccu8  as_u8;
+  ccu64_t as_u64;
+  ccu32_t as_u32;
+  ccu16_t as_u16;
+  ccu8_t  as_u8;
 } ccclassic_t;
+
+typedef struct ccloc_t ccloc_t;
 
 typedef struct ccloc_t
 { const char *file;
@@ -278,6 +280,8 @@ typedef struct ccloc_t
   const char *clss;
   int row, col;
 } ccloc_t;
+
+typedef struct ccentry_t ccentry_t;
 
 typedef struct ccentry_t
 { ccentry_t   * nex;
@@ -313,10 +317,10 @@ typedef struct cclex_t
 { const char *doc_max, *doc_min;
   const char *max,     *min; // <-- points to the beginning and end of the token after its been parsed.
 
-  ktt_u32    tbl_max;
-  ktt_u32    tbl_min;
+  ccu32_t    tbl_max;
+  ccu32_t    tbl_min;
   ccentry_t *tbl;
-  ktt_u32    tbl_dbg;
+  ccu32_t    tbl_dbg;
   cctoken_t  tok;
 } cclex_t;
 
@@ -328,6 +332,8 @@ typedef struct ccread_t
   cctoken_t *min;
   cctoken_t *bed;
 } ccread_t;
+
+typedef struct cctype_t cctype_t;
 
 typedef struct cctype_t
 { cctypekind_t kind;
@@ -364,10 +370,10 @@ typedef struct ccedict_t ccedict_t;
 typedef struct ccblock_t ccblock_t;
 typedef struct ccfunction_t ccfunction_t;
 
-#include "ccedict.h"
 #include "ccemit-value.h"
 #include "ccexec-value.h"
 #include "ccemit-block.h"
+#include "ccedict.h"
 
 typedef struct ccfunction_t
 { const char  *debug_label;
@@ -379,11 +385,9 @@ typedef struct ccfunction_t
 } ccfunction_t;
 
 typedef struct ccemit_t
-{ ccemit_value_t * globals;
-  ccblock_t      * current;
-  int              curirix;
-
-  ccedict_t      * edict_alloc;
+{ ccemit_value_t ** globals;
+  ccblock_t      *  current;
+  int               curirix;
 } ccemit_t;
 
 typedef struct ccexec_t
@@ -420,7 +424,7 @@ cclex_init(cclex_t *l);
 ccfunc void
 cclex_move(cclex_t *l, size_t len, const char *bed);
 
-ccfunc ktt_i32
+ccfunc cci32_t
 cclex_next_token(cclex_t *l);
 
 ccfunc void
@@ -432,7 +436,7 @@ cclex_uninit(cclex_t *l);
 ccfunc cctoken_t *
 ccpeep(ccread_t *parser);
 
-ccfunc ktt_i32
+ccfunc cci32_t
 ccsee(ccread_t *parser, cctoken_k kind);
 
 ccfunc cctoken_t *
@@ -462,7 +466,7 @@ ccread_struct_declaration(ccread_t *parser);
 ccfunc cctree_t *
 ccread_struct_declaration_list(ccread_t *parser);
 
-ccfunc ktt_i32
+ccfunc cci32_t
 ccread_attribute_seq(ccread_t *parser);
 
 ccfunc cctype_t *
@@ -603,7 +607,7 @@ ccread_all_tokens(ccread_t *parser)
 }
 
 ccfunc cctoken_t *
-kttc__peek_ahead(ccread_t *parser, ktt_i32 offset)
+kttc__peek_ahead(ccread_t *parser, cci32_t offset)
 { if((parser->min + offset < parser->max))
   { return parser->min + offset;
   }
@@ -617,17 +621,17 @@ ccpeep(ccread_t *parser)
 { return kttc__peek_ahead(parser, 0);
 }
 
-ccfunc ktt_i32
+ccfunc cci32_t
 ccsee(ccread_t *parser, cctoken_k kind)
 { return ccpeep(parser)->bit == kind;
 }
 
-ccfunc ktt_i32
+ccfunc cci32_t
 ccsee_end(ccread_t *parser)
 { return ccsee(parser, cctoken_Kend);
 }
 
-ccfunc ktt_i32
+ccfunc cci32_t
 kttc__peek_oper_increment(ccread_t *parser)
 {
   cctoken_t *tok0 = kttc__peek_ahead(parser, 0);
@@ -635,7 +639,7 @@ kttc__peek_oper_increment(ccread_t *parser)
   return (tok0->sig == cctoken_Kadd) && (tok1->sig == cctoken_Kadd);
 }
 
-ccfunc ktt_i32
+ccfunc cci32_t
 kttc__peek_oper_decrement(ccread_t *parser)
 {
   cctoken_t *tok0 = kttc__peek_ahead(parser, 0);
