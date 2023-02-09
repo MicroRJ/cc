@@ -21,7 +21,7 @@ struct
 union
 #endif
 { struct
-	{ cctype_t   * type;
+	{ cctree_t   * type;
 		ccclassic_t  clsc;
 	} constant;
 

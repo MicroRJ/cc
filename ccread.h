@@ -234,6 +234,7 @@ typedef enum cctoken_k
 
 } cctoken_k;
 
+#if 0
 typedef enum cctypekind_t
 { cctype_invalid = 0,
   cctype_void,
@@ -258,6 +259,7 @@ typedef enum cctypekind_t
   cctype_struct_spec,
   cctype_enum_specifier,
 } cctypekind_t;
+#endif
 
 typedef union ccclassic_t
 {
@@ -333,32 +335,22 @@ typedef struct ccread_t
   cctoken_t *bed;
 } ccread_t;
 
-typedef struct cctype_t cctype_t;
+#if 0
+typedef struct cctree_t cctree_t;
+typedef struct cctree_t
+{
 
-typedef struct cctype_t
-{ cctypekind_t kind;
 
-  const char *name;
 
   int size;
   int align;
-
-  union
-  { cctype_t *ret;
-    cctype_t *arr;
-    cctype_t *ptr;
-    cctype_t *modifier_of;
-  };
-
-  struct cctree_t **list;
-
   int bitoff;
   int bitlen;
-
   unsigned    is_unsigned: 1;
   unsigned    is_static:   1;
   unsigned    is_variadic: 1;
-} cctype_t;
+} cctree_t;
+#endif
 
 #include "cctree.h"
 
@@ -432,38 +424,10 @@ ccsee(ccread_t *parser, cctoken_k kind);
 ccfunc cctoken_t *
 ccgobble(ccread_t *parser);
 
-ccfunc void
-cctype_del(cctype_t *type);
-
-ccfunc cctype_t *
-cctype_new(cctypekind_t kind, const char *name);
-
-ccfunc cctype_t *
-cctype_clone(cctype_t *type);
-
-ccfunc cctype_t *
-cctype_new_ptr(cctype_t *modifier_of);
-
-ccfunc cctype_t *
-cctype_new_arr(cctype_t *modifier_of);
-
-ccfunc cctype_t *
-cctype_new_fun(cctype_t *modifier_of, cctree_t **);
-
+ccfunc cctree_t *
+cctree_clone(cctree_t *type);
 
 // TEMPORARY:
-ccglobal cctype_t
-  *ctype_flo32  = cctype_new(cctype_float32,"keitt::f32"),
-  *ctype_flo64  = cctype_new(cctype_float64,"keitt::f64"),
-  *ctype_int64  = cctype_new(cctype_int64,"keitt::i64"),
-  *ctype_int32  = cctype_new(cctype_int32,"keitt::i32"),
-  *ctype_int16  = cctype_new(cctype_int16,"keitt::i16"),
-  *ctype_int8   = cctype_new(cctype_int8,"keitt::i8"),
-  *ctype_uint64 = cctype_new(cctype_uint64,"keitt::u64"),
-  *ctype_uint32 = cctype_new(cctype_uint32,"keitt::u32"),
-  *ctype_uint16 = cctype_new(cctype_uint16,"keitt::u16"),
-  *ctype_uint8  = cctype_new(cctype_uint8,"keitt::u8"),
-  *ctype_void   = cctype_new(cctype_void,"keitt::void");
 
 
 ccfunc void
@@ -665,56 +629,6 @@ cceat(ccread_t *parser, cctoken_k kind)
   return 0;
 }
 
-
-ccfunc cctype_t *
-cctype_new(cctypekind_t kind, const char *name)
-{ cctype_t *result=(cctype_t *)ccmalloc(sizeof(cctype_t));
-  memset(result,0,sizeof(*result));
-
-  result->kind=kind;
-  result->name=name;
-  return result;
-}
-ccfunc void
-cctype_del(cctype_t *type)
-{ ccfree(type);
-}
-ccfunc cctype_t *
-cctype_clone(cctype_t *type)
-{ cctype_t *result=cctype_new(type->kind,0);
-  *result=*type;
-  return result;
-}
-
-ccfunc cctype_t *
-cctype_new_ptr(cctype_t *modifier_of)
-{ cctype_t *type = cctype_new(cctype_ptr,"ptr");
-  type->modifier_of = modifier_of;
-  return type;
-}
-
-ccfunc cctype_t *
-cctype_new_arr(cctype_t *modifier_of)
-{ cctype_t *type = cctype_new(cctype_arr,"arr");
-  type->modifier_of = modifier_of;
-  return type;
-}
-
-ccfunc cctype_t *
-cctype_new_fun(cctype_t *modifier_of, cctree_t **list)
-{ cctype_t *type = cctype_new(cctype_Kfunc,"fun");
-  type->modifier_of=modifier_of;
-  type->list=list;
-  return type;
-}
-
-ccfunc cctype_t *
-cctype_new_struct_spec(cctree_t **list, cctree_t *name)
-{ ccassert(list!=0);
-  cctype_t *type=cctype_new(cctype_struct_spec,cctree_name(name));
-  type->list=list;
-  return type;
-}
 
 
 #endif

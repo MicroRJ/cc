@@ -14,7 +14,7 @@ ccemit_value_edict(ccedict_t *edict)
 }
 
 ccfunc ccemit_value_t
-ccemit_value_const(cctype_t *type, ccclassic_t clsc)
+ccemit_value_const(cctree_t *type, ccclassic_t clsc)
 { ccemit_value_t value={};
   value.kind=ccvalue_kCONST;
   value.constant.type=type;
@@ -36,7 +36,7 @@ ccvm_value_init(ccemit_value_t *value, ccvalue_K kind, const char *name)
 }
 
 ccfunc ccemit_value_t *
-ccemit_constant(ccemit_t *emit, cctype_t *type, ccclassic_t clsc)
+ccemit_constant(ccemit_t *emit, cctree_t *type, ccclassic_t clsc)
 {
   (void)emit;
   ccemit_value_t *value=ccmalloc_T(ccemit_value_t);
@@ -315,7 +315,7 @@ ccemit_function(ccemit_t *emit, cctree_t *tree)
   ccnotnil(tree);
 
   ccnotnil(tree->type);
-  ccassert(tree->type->kind==cctype_Kfunc);
+  ccassert(tree->type->kind==cctree_kFUNC);
 
 	cctree_check(tree);
 
@@ -368,7 +368,7 @@ ccemit_translation_unit(ccemit_t *emit, cctree_t *tree)
 
     for(cctree_t **decl_name=decl->list;decl_name<ccarrend(decl->list);++decl_name)
     {
-    	if(ccdref(decl_name)->type->kind==cctype_Kfunc)
+    	if(ccdref(decl_name)->type->kind==cctree_kFUNC)
       { ccfunction_t *func=ccemit_function(emit,ccdref(decl_name));
 
         ccemit_value_t **value=cctblputS(emit->globals,ccdref(decl_name)->name);

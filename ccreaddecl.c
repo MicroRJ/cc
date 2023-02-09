@@ -9,15 +9,15 @@ ccfunc cctree_t *
 ccread_initializer(ccread_t *reader, cctree_t *root, cci32_t mark);
 
 ccfunc cctree_t *
-ccread_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *type);
+ccread_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type);
 
-ccfunc cctype_t *
+ccfunc cctree_t *
 ccread_declaration_specifiers(ccread_t *reader, cctree_t *root, cci32_t mark);
 
 ccfunc cci32_t
 ccread_attribute_seq(ccread_t *reader, cctree_t *root, cci32_t mark);
 
-ccfunc cctype_t *
+ccfunc cctree_t *
 ccread_specifier_qualifier_list(ccread_t *reader, cctree_t *root, cci32_t mark);
 
 #if 0
@@ -101,14 +101,14 @@ ccread_initializer(ccread_t *reader, cctree_t *root, cci32_t mark)
   return ccread_assignment_expr(reader,root,mark);
 }
 
-ccfunc cctype_t *
-ccread_direct_decl_name_modifier(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *type)
+ccfunc cctree_t *
+ccread_direct_decl_name_modifier(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { if(cceat(reader, cctoken_Klparen))
   { cctree_t **list=ccread_param_type_list(reader,root,mark);
     if(!cceat(reader, cctoken_Krparen)) ccsynerr(reader, 0, "expected ')'");
-    cctype_t *modifier=ccread_direct_decl_name_modifier(reader,root,mark,type);
-    if(modifier->kind==cctype_Kfunc) ccsynwar(reader,0,"function that returns function");
-    if(modifier->kind==cctype_arr) ccsynwar(reader,0,"function that returns array");
+    cctree_t *modifier=ccread_direct_decl_name_modifier(reader,root,mark,type);
+    if(modifier->kind==cctree_kFUNC) ccsynwar(reader,0,"function that returns function");
+    if(modifier->kind==cctree_kARRAY) ccsynwar(reader,0,"function that returns array");
     return cctype_new_fun(modifier,list);
   } else
   if(cceat(reader, cctoken_Klsquare))
@@ -120,44 +120,44 @@ ccread_direct_decl_name_modifier(ccread_t *reader, cctree_t *root, cci32_t mark,
     { ccsynerr(reader, 0, "expected ']' for array modifier");
     }
 
-    cctype_t *modifier = ccread_direct_decl_name_modifier(reader,root,mark,type);
+    cctree_t *modifier = ccread_direct_decl_name_modifier(reader,root,mark,type);
     return cctype_new_arr(modifier);
   }
   return type;
 }
 
 ccfunc cctree_t *
-ccread_direct_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *type)
+ccread_direct_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { if(cceat(reader,cctoken_Klparen))
-  { cctype_t *mod,*tmp;
+  { cctree_t *mod,*tmp;
     cctree_t *res;
-    mod=cctype_clone(type);
+    mod=cctree_clone(type);
     res=ccread_decl_name(reader,root,mark,mod);
     if(!cceat(reader, cctoken_Krparen)) ccsynerr(reader, 0, "expected ')'");
     tmp=ccread_direct_decl_name_modifier(reader,root,mark,type);
     *mod=*tmp;
-    cctype_del(tmp);
+    cctree_del(tmp);
     return res;
   } else
   if(ccsee(reader, cctoken_Kliteral_identifier))
-  { cctree_t  *name=ccread_identifier(reader,root,mark);
-		cctype_t *mod=ccread_direct_decl_name_modifier(reader,root,mark,type);
+  { cctree_t *name=ccread_identifier(reader,root,mark);
+		cctree_t *mod=ccread_direct_decl_name_modifier(reader,root,mark,type);
     return cctree_decl_name(root,mark, mod,name,ccnil,ccnil);
   } else // Note: abstract declarator then ...
-  { cctype_t *mod=ccread_direct_decl_name_modifier(reader,root,mark,type);
+  { cctree_t *mod=ccread_direct_decl_name_modifier(reader,root,mark,type);
     return cctree_decl_name(root,mark, mod,0,ccnil,ccnil);
   }
 }
 
-ccfunc ccinle cctype_t *
-ccread_decl_name_modifier_maybe(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *type)
+ccfunc ccinle cctree_t *
+ccread_decl_name_modifier_maybe(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { if(cceat(reader,cctoken_Kmul))
     return cctype_new_ptr(ccread_decl_name_modifier_maybe(reader,root,mark,type));
   return type;
 }
 
 ccfunc ccinle cctree_t *
-ccread_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *type)
+ccread_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { ccnotnil(type);
   cctree_t *tree;
   tree=ccread_direct_decl_name(reader,root,mark,ccread_decl_name_modifier_maybe(reader,root,mark,type));
@@ -170,7 +170,7 @@ ccread_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *type)
 }
 
 ccfunc cctree_t *
-ccread_init_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *type)
+ccread_init_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { ccassert(type!=0);
 
   cctree_t *decl=ccread_decl_name(reader,root,mark,type);
@@ -185,7 +185,7 @@ ccread_init_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *
 }
 
 ccfunc cctree_t *
-ccread_struct_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *type)
+ccread_struct_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { ccassert(type!=0);
   cctree_t *decl=ccread_decl_name(reader,root,mark,type);
   if(decl)
@@ -198,7 +198,7 @@ ccread_struct_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t
 }
 
 ccfunc cctree_t **
-ccread_init_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *type)
+ccread_init_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { ccnotnil(root);
 	cctree_t *next,**list=ccnil;
   do
@@ -210,7 +210,7 @@ ccread_init_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cctyp
 }
 
 ccfunc cctree_t **
-ccread_struct_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cctype_t *type)
+ccread_struct_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { cctree_t *next,**list=ccnil;
   do
   { next=ccread_struct_decl_name(reader,root,mark,type);
@@ -221,7 +221,7 @@ ccread_struct_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cct
 
 ccfunc cctree_t *
 ccread_init_decl(ccread_t *reader, cctree_t *root, cci32_t mark)
-{ cctype_t *type; cctree_t **list;
+{ cctree_t *type; cctree_t **list;
   if(type=ccread_declaration_specifiers(reader,root,mark))
   { ccread_attribute_seq(reader,root,mark);
     if(list=ccread_init_decl_name_list(reader,root,mark,type))
@@ -233,7 +233,7 @@ ccread_init_decl(ccread_t *reader, cctree_t *root, cci32_t mark)
 
 ccfunc cctree_t *
 ccread_struct_decl(ccread_t *reader, cctree_t *root, cci32_t mark)
-{ cctype_t *type; cctree_t **list;
+{ cctree_t *type; cctree_t **list;
   if(type=ccread_specifier_qualifier_list(reader,root,mark))
   { if(list=ccread_struct_decl_name_list(reader,root,mark,type))
     { return cctree_decl(root,mark,type,list);
@@ -251,11 +251,11 @@ ccread_struct_decl_list(ccread_t *reader, cctree_t *root, cci32_t mark)
   return list;
 }
 
-ccfunc cctype_t *
+ccfunc cctree_t *
 ccread_struct_or_union_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
 { if(cceat(reader, cctoken_Kstruct))
   { cctree_t *name,**list;
-    cctype_t *type;
+    cctree_t *type;
     name=ccread_identifier(reader,root,mark);
     if(!cceat(reader, cctoken_Klcurly))
       ccsynerr(reader, 0, "expected '{' for struct specifier");
@@ -293,7 +293,7 @@ ccread_struct_or_union_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
 //   enum-specifier
 //   typedef-name
 
-ccfunc cctype_t *
+ccfunc cctree_t *
 ccread_type_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
 { // Todo: make this proper ....
   if(cctoken_t *tok = ccsee_typespec(reader))
@@ -387,10 +387,10 @@ ccread_alignment_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
 //   type-qualifier specifier-qualifier-list(opt)
 //   alignment-specifier specifier-qualifier-list(opt)
 //
-ccfunc cctype_t *
+ccfunc cctree_t *
 ccread_specifier_qualifier_list(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-  cctype_t *type = ccread_type_specifier(reader,root,mark);
+  cctree_t *type = ccread_type_specifier(reader,root,mark);
   ccread_type_qualifier(reader,root,mark);
   ccread_alignment_specifier(reader,root,mark);
 
@@ -416,12 +416,12 @@ ccread_attribute_seq(ccread_t *reader, cctree_t *root, cci32_t mark)
 //   function-specifier declaration-specifiersopt
 //   alignment-specifier declaration-specifiersopt
 //
-ccfunc cctype_t *
+ccfunc cctree_t *
 ccread_declaration_specifiers(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
   ccread_storage_class_specifier(reader,root,mark);
 
-  cctype_t *type = ccread_specifier_qualifier_list(reader,root,mark);
+  cctree_t *type = ccread_specifier_qualifier_list(reader,root,mark);
 
   ccread_function_specifier(reader,root,mark);
 
@@ -445,7 +445,7 @@ ccread_declaration_specifiers(ccread_t *reader, cctree_t *root, cci32_t mark)
 ccfunc cctree_t *
 ccread_param_decl(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-	cctype_t *spec=ccnil;
+	cctree_t *spec=ccnil;
 	cctree_t *decl=ccnil;
 
 	if(ccsee(reader,cctoken_Kliteral_ellipsis))

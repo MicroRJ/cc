@@ -33,7 +33,7 @@ union
 	struct
 	{
 		const char *debug_label;
-		cctype_t   *type;
+		cctree_t   *type;
 	} local,param;
 
 	// Note: Produces a non-addressable rvalue ...

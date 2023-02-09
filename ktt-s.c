@@ -69,7 +69,7 @@ kttc__token2s(char **buf, cctoken_t *token)
 ccfunc void
 cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree);
 ccfunc void
-kttc__type2s(ccread_t *parser, char **buf, cctype_t *type);
+kttc__type2s(ccread_t *parser, char **buf, cctree_t *type);
 
 
 ccfunc void
@@ -90,7 +90,7 @@ ccstructdecl_tos(ccread_t *reader, char **buf, cctree_t *tree)
 }
 
 ccfunc void
-cctypestruct_tos(ccread_t *reader, char **buf, cctype_t *type)
+cctypestruct_tos(ccread_t *reader, char **buf, cctree_t *type)
 {
   if(type->kind==cctype_struct_spec)
   {
@@ -114,7 +114,7 @@ cctypestruct_tos(ccread_t *reader, char **buf, cctype_t *type)
 
 
 ccfunc void
-kttc__type2s(ccread_t *parser, char **buf, cctype_t *type)
+kttc__type2s(ccread_t *parser, char **buf, cctree_t *type)
 { switch(type->kind)
   { case cctype_arr: ccstr_catf(buf, "(arr: "); kttc__type2s(parser, buf, type->modifier_of); ccstr_catf(buf, ")"); break;
     case cctype_Kfunc: ccstr_catf(buf, "(fun: "); kttc__type2s(parser, buf, type->modifier_of); ccstr_catf(buf, ")"); break;

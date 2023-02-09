@@ -12,7 +12,7 @@ typedef enum ccexec_value_k
 typedef struct ccexec_value_t
 { const char      * debug_label;
 	ccexec_value_k    kind;
-	cctype_t        * type;
+	cctree_t        * type;
 	union
 	{ void * value;
 		ccf64_t  asf64;
@@ -32,7 +32,7 @@ typedef struct ccexec_value_t
 } ccexec_value_t;
 
 ccfunc ccinle ccexec_value_t
-ccexec_value_I(ccexec_value_k kind, cctype_t *type, void *value, const char *debug_label)
+ccexec_value_I(ccexec_value_k kind, cctree_t *type, void *value, const char *debug_label)
 {
 	ccexec_value_t t;
 	t.kind=kind;
@@ -43,7 +43,7 @@ ccexec_value_I(ccexec_value_k kind, cctype_t *type, void *value, const char *deb
 }
 
 ccfunc ccinle ccexec_value_t
-ccexec_value_i64(cctype_t *type, cci64_t val, const char *debug_label)
+ccexec_value_i64(cctree_t *type, cci64_t val, const char *debug_label)
 { ccexec_value_t t;
 	t.kind=ccexec_value_kCONST;
 	t.debug_label=debug_label;
@@ -53,7 +53,7 @@ ccexec_value_i64(cctype_t *type, cci64_t val, const char *debug_label)
 }
 
 ccfunc ccinle ccexec_value_t
-ccexec_value_u64(cctype_t *type, ccu64_t val, const char *debug_label)
+ccexec_value_u64(cctree_t *type, ccu64_t val, const char *debug_label)
 { ccexec_value_t t;
 	t.kind=ccexec_value_kCONST;
 	t.debug_label=debug_label;
@@ -63,7 +63,7 @@ ccexec_value_u64(cctype_t *type, ccu64_t val, const char *debug_label)
 }
 
 ccfunc ccinle ccexec_value_t
-ccexec_value_f64(cctype_t *type, ccf64_t val, const char *debug_label)
+ccexec_value_f64(cctree_t *type, ccf64_t val, const char *debug_label)
 { ccexec_value_t t;
 	t.kind=ccexec_value_kCONST;
 	t.debug_label=debug_label;

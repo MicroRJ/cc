@@ -72,7 +72,7 @@ ccexec_lvalue(ccexec_t *exec, ccexec_value_t *lval, ccemit_value_t *val)
 }
 
 ccfunc cci32_t
-ccexec_load(ccexec_t *exec, cctype_t *type, void *address)
+ccexec_load(ccexec_t *exec, cctree_t *type, void *address)
 {
 	return ccdref(cccast(cci32_t *,address));
 }

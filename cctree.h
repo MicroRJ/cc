@@ -3,6 +3,15 @@
 
 typedef enum cctree_k
 {
+	cctree_kTYPENAME,
+
+	cctree_kSTRUCT,
+	cctree_kENUM,
+
+	cctree_kFUNC,
+	cctree_kARRAY,
+	cctree_kPOINTER,
+
 	cctree_kIDENTIFIER,
   cctree_kINTEGER,
   cctree_kFLOAT,
@@ -37,6 +46,25 @@ typedef enum cctree_k
 #define cctree_mRVALUE   (0x01<<0x03)
 #define cctree_mEXTERNAL (0x01<<0x04)
 
+typedef struct cctree_t cctree_t;
+
+ccfunc void cctree_del(cctree_t *);
+ccfunc cctree_t *cctree_new(cctree_k, cctree_t *, cci32_t);
+
+ccglobal cctree_t
+  *ctype_flo32  = cctree_new(cctree_kTYPENAME,ccnil,ccnil),
+  *ctype_flo64  = cctree_new(cctree_kTYPENAME,ccnil,ccnil),
+  *ctype_int64  = cctree_new(cctree_kTYPENAME,ccnil,ccnil),
+  *ctype_int32  = cctree_new(cctree_kTYPENAME,ccnil,ccnil),
+  *ctype_int16  = cctree_new(cctree_kTYPENAME,ccnil,ccnil),
+  *ctype_int8   = cctree_new(cctree_kTYPENAME,ccnil,ccnil),
+  *ctype_uint64 = cctree_new(cctree_kTYPENAME,ccnil,ccnil),
+  *ctype_uint32 = cctree_new(cctree_kTYPENAME,ccnil,ccnil),
+  *ctype_uint16 = cctree_new(cctree_kTYPENAME,ccnil,ccnil),
+  *ctype_uint8  = cctree_new(cctree_kTYPENAME,ccnil,ccnil),
+  *ctype_void   = cctree_new(cctree_kTYPENAME,ccnil,ccnil);
+
+
 // Note: slowly but surely compact this ...
 typedef struct cctree_t
 { cctree_k    kind;
@@ -47,7 +75,7 @@ typedef struct cctree_t
   cctree_t  **decl;
   cctree_t  **list;
 	cctoken_k   oper;
-  cctype_t  * type;
+  cctree_t  * type;
   cctree_t  * init; // Note: conditional
   cctree_t  * size; // Note: the size constant expression `unsigned a: 1`
   cctree_t  * lval; // Note: then
@@ -99,10 +127,47 @@ cctree_new(cctree_k kind, cctree_t *root, cci32_t mark)
   return tree;
 }
 
+ccfunc cctree_t *
+cctree_clone(cctree_t *tree)
+{ cctree_t *result=cctree_new(tree->kind,tree->root,tree->mark);
+  *result=*tree;
+  return result;
+}
+
 ccfunc ccstr_t
 cctree_name(cctree_t *name)
 {
   return name?name->name:0;
+}
+
+ccfunc cctree_t *
+cctype_new_ptr(cctree_t *type)
+{ cctree_t *tree=cctree_new(cctree_kPOINTER,0,0);
+  tree->type=type;
+  return tree;
+}
+
+ccfunc cctree_t *
+cctype_new_arr(cctree_t *type)
+{ cctree_t *tree=cctree_new(cctree_kARRAY,0,0);
+  tree->type=type;
+  return tree;
+}
+
+ccfunc cctree_t *
+cctype_new_fun(cctree_t *type, cctree_t **list)
+{ cctree_t *tree=cctree_new(cctree_kFUNC,0,0);
+  tree->type=type;
+  tree->list=list;
+  return tree;
+}
+
+ccfunc cctree_t *
+cctype_new_struct_spec(cctree_t **list, cctree_t *name)
+{ ccassert(list!=0);
+  cctree_t *tree=cctree_new(cctree_kSTRUCT,0,0);
+  tree->list=list;
+  return tree;
 }
 
 ccfunc cctree_t *
@@ -166,7 +231,7 @@ cctree_return(cctree_t *root, cci32_t mark, cctree_t *rval)
 }
 
 ccfunc cctree_t *
-cctree_decl_name(cctree_t *root, cci32_t mark, cctype_t *type, cctree_t *name, cctree_t *size, cctree_t *init)
+cctree_decl_name(cctree_t *root, cci32_t mark, cctree_t *type, cctree_t *name, cctree_t *size, cctree_t *init)
 { cctree_t *tree=cctree_new(cctree_kDECLNAME,root,mark);
   tree->type=type;
   tree->name=cctree_name(name);
@@ -176,7 +241,7 @@ cctree_decl_name(cctree_t *root, cci32_t mark, cctype_t *type, cctree_t *name, c
 }
 
 ccfunc cctree_t *
-cctree_decl(cctree_t *root, cci32_t mark, cctype_t *type, cctree_t **list)
+cctree_decl(cctree_t *root, cci32_t mark, cctree_t *type, cctree_t **list)
 { cctree_t *tree=cctree_new(cctree_kDECL,root,mark);
   tree->type=type;
   tree->list=list;
@@ -229,12 +294,14 @@ cctree_new_designator(cctree_t *root, cci32_t mark, cctoken_t *token, cctree_t *
 
 // Todo:
 ccfunc cctree_t *
-cctree_constant(cctree_t *root, cci32_t mark, cctype_t *type, cctoken_t *token)
+cctree_constant(cctree_t *root, cci32_t mark, cctree_t *type, cctoken_t *token)
 { cctree_t *result = cctree_new(cctree_kINTEGER,root,mark);
   result->type  =  type;
   result->as_i64=token->sig;
   return result;
 }
+
+
 
 
 
@@ -248,7 +315,7 @@ cctree_new_struct_decl_name(cctree_t *decl, cctree_t *expr)
   return tree;
 }
 ccfunc cctree_t *
-cctree_new_struct_decl(cctype_t *type, cctree_t *list)
+cctree_new_struct_decl(cctree_t *type, cctree_t *list)
 { ccassert(type!=0);
   ccassert(list!=0);
   cctree_t *tree=cctree_new(cctree_Kstruct_decl);

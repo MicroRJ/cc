@@ -34,7 +34,7 @@ ccread_external_declaration(ccread_t *reader, cctree_t *root, cci32_t mark)
   ccnotnil(name->type);
   ccnotnil(name->name);
 
-  if(name->type->kind==cctype_Kfunc)
+  if(name->type->kind==cctree_kFUNC)
   {
     // Note: You can't define multiple functions within the same declaration ...
     ccassert(ccarrlen(decl->list)==1);
