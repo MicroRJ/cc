@@ -2,8 +2,8 @@
 #define _CCEMIT
 
 // paisley - "a distinctive intricate pattern of curved feather-shaped figures based on an Indian pine-cone design"
-
 // austere - "severe or strict in manner, attitude, or appearance"
+
 
 ccfunc ccemit_value_t
 ccemit_value_edict(ccedict_t *edict)
@@ -29,7 +29,7 @@ ccemit_value_const_i32(cci32_t val)
 }
 
 ccfunc ccemit_value_t *
-ccvm_value_init(ccemit_value_t *value, ccvalue_K kind, const char *name)
+ccvm_value_init(ccemit_value_t *value, ccvalue_k kind, const char *name)
 { memset(value,ccnil,sizeof(*value));
   value->kind=kind;
   return value;
@@ -106,6 +106,7 @@ ccemit_enter(ccblock_t *block, ccblock_t *blc)
   return ccblock_add_edict(block,ccedict_enter(blc));
 }
 
+
 #if 0
 ccfunc ccedict_t *
 ccemit_condi(ccblock_t *block, ccemit_value_t *cnd, ccblock_t *then_blc, ccblock_t *else_blc)
@@ -122,23 +123,24 @@ ccemit_return(ccblock_t *irset)
   i->kind=ccedict_kRETURN;
   return i;
 }
-ccfunc ccedict_t *
+#endif
+
+ccfunc ccemit_value_t *
 ccemit_call(ccblock_t *block, ccemit_value_t *value)
 {
-  (void)block;
-  (void)value;
-
-  return ccnil;
+	return ccblock_add_edict(block,ccedict_call(value));
 }
-#endif
+
 
 ccfunc ccemit_value_t *
 ccemit_resolve(ccemit_t *emit, ccfunction_t *func, cctree_t *tree)
 { ccnotnil(tree);
 	ccnotnil(tree->kind==cctree_kIDENTIFIER);
-	ccnotnil(tree->lval);
 
-	ccemit_value_t *result=ccfunc_local(func,tree->lval);
+	cctree_t *lvalue=cctree_resolve_symbol(tree);
+	ccnotnil(lvalue);
+
+	ccemit_value_t *result=ccfunc_local(func,lvalue);
 	ccnotnil(result);
   return result;
 }
@@ -220,14 +222,21 @@ ccemit_tree(
   } else
   if(tree->kind==cctree_kCALL)
   {
-#if 0
-    ccstr_t func_name=tree->expr_tree->constant.token.str;
-    int in_table;
-    ccemit_value_t *func_value=cctblgetS(emit->globals,func_name,&in_table);
-    if(in_table)
-    { ccemit_call(irset,func_value);
-    } else cctraceerr("undefined function");
-#endif
+  	cctree_t *lval=tree->lval;
+  	// cctree_t *rval=tree->rval;
+
+  	cctree_t *allude=cctree_resolve_symbol(lval);
+  	ccemit_value_t **value=cctblgetP(emit->globals,allude);
+  	ccassert(ccerrnon());
+
+   	return ccemit_call(func->enter,*value);
+
+    // ccstr_t func_name=tree->expr_tree->constant.token.str;
+    // int in_table;
+    // if(in_table)
+    // { ccemit_call(irset,func_value);
+    // } else cctraceerr("undefined function");
+
   } else
   if(tree->kind==cctree_kBINARY)
   {
@@ -317,8 +326,6 @@ ccemit_function(ccemit_t *emit, cctree_t *tree)
   ccnotnil(tree->type);
   ccassert(tree->type->kind==cctree_kFUNC);
 
-	cctree_check(tree);
-
   ccfunction_t *func=ccmalloc_T(ccfunction_t);
   memset(func,ccnil,sizeof(*func));
   func->tree=tree;
@@ -360,32 +367,43 @@ ccemit_function(ccemit_t *emit, cctree_t *tree)
   return func;
 }
 
+
+ccfunc void
+ccemit_external_decl(ccemit_t *emit, cctree_t *tree)
+{
+	cctree_t **decl_;
+	cctree_t  *decl;
+	ccarrfor(tree->list,decl_)
+	{ decl=*decl_;
+
+		if(decl->type->kind==cctree_kFUNC)
+    {
+      ccemit_value_t **value=cctblputP(emit->globals,decl);
+      ccassert(ccerrnon());
+
+    	ccfunction_t *func=ccemit_function(emit,decl);
+
+      *value=ccmalloc_T(ccemit_value_t);
+      (*value)->kind=ccvalue_kFUNC;
+      (*value)->func=func;
+
+    	if(!strcmp(decl->name,"main"))
+    		emit->entry=*value;
+    } else
+    {
+    	// Todo:
+    	ccassert(!"error");
+    }
+	}
+}
+
 ccfunc void
 ccemit_translation_unit(ccemit_t *emit, cctree_t *tree)
 {
-  for(cctree_t *decl=tree; decl<ccarrend(tree); decl++)
-  { cctree_check(decl);
+	cctree_solve(tree);
 
-    for(cctree_t **decl_name=decl->list;decl_name<ccarrend(decl->list);++decl_name)
-    {
-    	if(ccdref(decl_name)->type->kind==cctree_kFUNC)
-      { ccfunction_t *func=ccemit_function(emit,ccdref(decl_name));
-
-        ccemit_value_t **value=cctblputS(emit->globals,ccdref(decl_name)->name);
-        if(ccerrait()) cctraceerr("function re-definition");
-
-        // Todo:
-        *value=ccmalloc_T(ccemit_value_t);
-        (*value)->kind=ccvalue_kFUNC;
-        (*value)->function=func;
-
-      } else
-      {
-      	// Todo:
-      	ccassert(!"error");
-      }
-    }
-  }
+	cctree_t **decl;
+	ccarrfor(tree->list,decl) ccemit_external_decl(emit,*decl);
 }
 
 ccfunc void

@@ -20,8 +20,8 @@ typedef enum cctoken_k
   cctoken_Kendimpl, // '\r\n'
   cctoken_Kendexpl, // ';'
 
-  cctoken_Klparen,  // '('
-  cctoken_Krparen,  // ')'
+  cctoken_kLPAREN,  // '('
+  cctoken_kRPAREN,  // ')'
   cctoken_Klcurly,  // '{'
   cctoken_Krcurly,  // '}'
   cctoken_Klsquare, // '['
@@ -37,12 +37,12 @@ typedef enum cctoken_k
   cctoken_Kliteral_ellipsis,
   cctoken_Kliteral_comment,
   cctoken_Kliteral_character,
-  cctoken_Kliteral_string,
+  cctoken_kLITSTRING,
   cctoken_Kliteral_string_format,
   cctoken_Kliteral_string_unterminated,
-  cctoken_Kliteral_identifier,
-  cctoken_Kliteral_integer,
-  cctoken_Kliteral_float,
+  cctoken_kLITIDENT,
+  cctoken_kLITINTEGER,
+  cctoken_kLITFLOAT,
   /**
    * Group: msvc attributes.
    *
@@ -108,7 +108,7 @@ typedef enum cctoken_k
   cctoken_Kcomplex,  // _Complex
   cctoken_Katomic,   // _Atomic
   cctoken_Kenum,
-  cctoken_Kstruct,
+  cctoken_kSTRUCT,
   /**
    * Group: type specifier & storage class.
 
@@ -335,27 +335,10 @@ typedef struct ccread_t
   cctoken_t *bed;
 } ccread_t;
 
-#if 0
-typedef struct cctree_t cctree_t;
-typedef struct cctree_t
-{
-
-
-
-  int size;
-  int align;
-  int bitoff;
-  int bitlen;
-  unsigned    is_unsigned: 1;
-  unsigned    is_static:   1;
-  unsigned    is_variadic: 1;
-} cctree_t;
-#endif
-
 #include "cctree.h"
 
 typedef enum ccedict_k ccedict_k;
-typedef enum ccvalue_K ccvalue_K;
+typedef enum ccvalue_k ccvalue_k;
 typedef struct ccemit_value_t ccemit_value_t;
 typedef struct ccexec_value_t ccexec_value_t;
 typedef struct ccedict_t ccedict_t;
@@ -374,6 +357,7 @@ typedef struct ccemit_t
 { ccemit_value_t ** globals;
   ccblock_t      *  current;
   int               curirix;
+  ccemit_value_t *  entry;
 } ccemit_t;
 
 typedef struct ccexec_t
@@ -381,7 +365,7 @@ typedef struct ccexec_t
   ccexec_value_t * values;
   ccfunction_t   * routine;
   ccblock_t      * current;
-  int              curirix;
+  cci32_t          irindex;
 } ccexec_t;
 
 

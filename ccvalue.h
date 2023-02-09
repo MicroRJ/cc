@@ -2,19 +2,18 @@
 #define _CCEMIT_VALUE
 
 
-// Note: boil this down to a function, constant value or instruction, local value, global value
-typedef enum ccvalue_K
+typedef enum ccvalue_k
 { ccvalue_Kinvalid=0,
   ccvalue_Kblock,
   ccvalue_kCONST,
   ccvalue_kGLOBAL,
   ccvalue_kFUNC,
   ccvalue_kEDICT,
-} ccvalue_K;
+} ccvalue_k;
 
 typedef struct ccemit_value_t
 {
-	ccvalue_K kind;
+	ccvalue_k kind;
 #if defined(_DEBUG)
 struct
 #else
@@ -25,7 +24,7 @@ union
 		ccclassic_t  clsc;
 	} constant;
 
-  ccfunction_t *function;
+  ccfunction_t *func;
   ccedict_t    *edict;
   ccblock_t    *block;
 };

@@ -30,12 +30,11 @@ struct
 union
 #endif
 {
+	// Note: Produces an addressable lvalue, if param, value must be set before invoking a function ...
 	struct
-	{
-		const char *debug_label;
+	{ const char *debug_label;
 		cctree_t   *type;
 	} local,param;
-
 	// Note: Produces a non-addressable rvalue ...
 	// Note: #lval is the lvalue to store to.
 	// Note: #rval is the rvalue to store.
@@ -43,11 +42,15 @@ union
 	{ ccemit_value_t *lval;
 		ccemit_value_t *rval;
 	} store;
-	// Note: Produces an non-addressable rvalue,  ...
+	// Note: Produces an non-addressable rvalue ...
 	// Note: #lval is the lvalue to load.
 	struct
 	{ ccemit_value_t *lval;
 	} fetch;
+	// Note: Produces a non-addressable rvalue
+	struct
+	{ ccemit_value_t *call;
+	} invoke;
 	struct
 	{ ccemit_value_t * cnd;
   	ccblock_t      * then_blc;
@@ -124,6 +127,16 @@ ccedict_enter(ccblock_t *blc)
 	ccedict_t *e=ccmalloc_T(ccedict_t);
 	e->kind=ccedict_kENTER;
 	e->enter.blc=blc;
+
+	return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_call(ccemit_value_t *value)
+{
+	ccedict_t *e=ccmalloc_T(ccedict_t);
+	e->kind=ccedict_kINVOKE;
+	e->invoke.call=value;
 
 	return e;
 }

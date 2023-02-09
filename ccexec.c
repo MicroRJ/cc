@@ -1,8 +1,6 @@
 #ifndef _CCEXEC
 #define _CCEXEC
 
-ccfunc ccstr_t ccvmir_tos(ccedict_t *ir);
-
 ccfunc void
 ccexec_yield(ccexec_t *exec, ccexec_value_t *val, ccemit_value_t *value)
 {
@@ -82,7 +80,7 @@ ccexec_enter(ccexec_t *vm, ccblock_t *block)
 {
   ccnotnil(block);
   vm->current=block;
-  vm->curirix=0;
+  vm->irindex=0;
 }
 
 //
@@ -171,6 +169,9 @@ ccexec_local(ccexec_t *exec, ccemit_value_t *value)
 }
 
 ccfunc void
+ccexec_invoke(ccexec_t *exec, ccemit_value_t *value);
+
+ccfunc void
 ccexec_edict(ccexec_t *exec, ccblock_t *irset, ccemit_value_t *value)
 {
   (void)irset;
@@ -232,6 +233,10 @@ ccexec_edict(ccexec_t *exec, ccblock_t *irset, ccemit_value_t *value)
     {
       ccexec_edict_arith(exec,value);
     } break;
+  	case ccedict_kINVOKE:
+  	{
+  		ccexec_invoke(exec,edict->invoke.call);
+  	} break;
 #if 0
 
     case ccedict_kBLOCK:
@@ -252,10 +257,6 @@ ccexec_edict(ccexec_t *exec, ccblock_t *irset, ccemit_value_t *value)
         ccexec_enter(vm,instr->block[1]);
       }
     } break;
-    case ccedict_kARITH:
-    {
-      instr->res=ccexec_edict_arith(irset,instr->oper,instr->lhs,instr->rhs);
-    } break;
 #endif
     default: ccassert(!"error");
   }
@@ -269,16 +270,28 @@ ccvm_exit(ccexec_t *vm)
 
 
 ccfunc void
-ccvm_exec(ccexec_t *vm, ccblock_t *block)
-{ ccexec_enter(vm,block);
-  do
-  { if(vm->curirix<ccarrlen(vm->current->edict))
-    {
-      ccemit_value_t **ir=vm->current->edict+vm->curirix++;
-      ccexec_edict(vm,vm->current,*ir);
+ccexec_invoke(ccexec_t *exec, ccemit_value_t *value)
+{
+	ccfunction_t *func=value->func;
 
-    } else ccvm_exit(vm);
-  } while(vm->current);
+	cctree_t **lval;
+  ccarrfor(func->tree->type->list,lval)
+  { ccemit_value_t *local=ccfunc_local(func,*lval);
+  	ccexec_value_t *rval=ccexec_local(exec,local);
+  	ccdref(cccast(cci32_t*,rval->value))=1;
+  }
+
+	ccexec_enter(exec,func->decls);
+
+  while(exec->irindex<ccarrlen(exec->current->edict))
+  { ccemit_value_t **it=exec->current->edict+exec->irindex;
+    exec->irindex++;
+    ccexec_edict(exec,exec->current,*it);
+    if(!exec->current) break;
+  }
+
+  exec->current=ccnil;
+  exec->irindex=0;
 }
 
 ccfunc int
@@ -289,24 +302,8 @@ ccexec_init(ccexec_t *exec)
 
 ccfunc int
 ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
-{
-  exec->emit=emit;
-
-  ccemit_value_t *entryV=*cctblgetL(emit->globals,"main");
-  if(!ccerrnon()) cctraceerr("missing entry point");
-
-  ccfunction_t *entryF=entryV->function;
-
-  cctree_t **lval;
-  ccarrfor(entryF->tree->type->list,lval)
-  {
-  	ccemit_value_t *local=ccfunc_local(entryF,*lval);
-  	ccexec_value_t *rval=ccexec_local(exec,local);
-  	ccdref(cccast(cci32_t*,rval->value))=1;
-  }
-
-  ccvm_exec(exec,entryF->decls);
-
+{ exec->emit=emit;
+  ccexec_invoke(exec,emit->entry);
   return 1;
 }
 

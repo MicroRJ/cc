@@ -258,9 +258,6 @@ ccfunc unsigned long int ccfilesize(void *);
 
 #include "ccfio.c"
 #include "cclex.c"
-#include "ccreadexpr.c"
-#include "ccreaddecl.c"
-#include "ccreadstat.c"
 #include "ccread.c"
 #include "ccemit.c"
 #include "ccexec.c"

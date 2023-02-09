@@ -125,7 +125,7 @@ cclex_hash_init(cclex_t *lexer)
   cclex_hashonly(lexer,cclit("_Complex"),cctoken_Kcomplex);
   cclex_hashonly(lexer,cclit("_Atomic"),cctoken_Katomic);
   cclex_hashonly(lexer,cclit("enum"),cctoken_Kenum);
-  cclex_hashonly(lexer,cclit("struct"),cctoken_Kstruct);
+  cclex_hashonly(lexer,cclit("struct"),cctoken_kSTRUCT);
   /**
    * Group: type specifier & storage class.
    **/
@@ -222,7 +222,7 @@ cclex_next_token(cclex_t *l)
 ccfunc const char *
 cclex_identifier(cclex_t *l, const char *str)
 { int len=cclex_idenlen(str);
-  l->tok.bit=cctoken_Kliteral_identifier;
+  l->tok.bit=cctoken_kLITIDENT;
   l->tok.str=cclex_hash(l,len,str,cctrue,(int*)&l->tok.bit,ccnil);
   return str+len;
 }
@@ -248,7 +248,7 @@ cclex_readstr(cclex_t *l, const char *str)
           str++;
           com++; // Note: account for the null terminator
 
-        l->tok.bit=cctoken_Kliteral_string;
+        l->tok.bit=cctoken_kLITSTRING;
         ccstradd((char*)l->tok.str,0,com);
         return str;
       } else
@@ -365,10 +365,10 @@ cclex_next_token_internal(cclex_t *l)
           { break;
           }
         }
-        l->tok.bit = cctoken_Kliteral_float;
+        l->tok.bit = cctoken_kLITFLOAT;
         l->tok.flo = u + d / p;
       } else
-      { l->tok.bit = cctoken_Kliteral_integer;
+      { l->tok.bit = cctoken_kLITINTEGER;
         l->tok.uns = u;
       }
     } break;
@@ -399,10 +399,10 @@ cclex_next_token_internal(cclex_t *l)
     // { ++ l->max, l->tok.bit = cctoken_Kpound;
     // } break;
     case '(':
-    { ++ l->max, l->tok.bit = cctoken_Klparen;
+    { ++ l->max, l->tok.bit = cctoken_kLPAREN;
     } break;
     case ')':
-    { ++ l->max, l->tok.bit = cctoken_Krparen;
+    { ++ l->max, l->tok.bit = cctoken_kRPAREN;
     } break;
     case '[':
     { ++ l->max, l->tok.bit = cctoken_Klsquare;

@@ -41,6 +41,4 @@ ccblock_add_edict(ccblock_t *block, ccedict_t *edict)
   return value;
 }
 
-
-
 #endif

@@ -12,12 +12,12 @@ kttc__token2s(char **buf, cctoken_t *token)
   { case cctoken_Kendexpl:           ccstr_catf(buf, ";"); break;
     case cctoken_Kliteral_ellipsis:  ccstr_catf(buf, "..."); break;
     case cctoken_Kliteral_character: ccstr_catf(buf, "%c", token->sig); break;
-    case cctoken_Kliteral_integer:   ccstr_catf(buf, "%lli", token->sig); break;
-    case cctoken_Kliteral_float:     ccstr_catf(buf, "%f", token->flo); break;
-    case cctoken_Kliteral_identifier: ccstr_catf(buf, "%s",token->str); break;
-    case cctoken_Kliteral_string: ccstr_catf(buf, "\"%s\"",token->str); break;
-    case cctoken_Klparen:  ccstr_catf(buf, "("); break;
-    case cctoken_Krparen:  ccstr_catf(buf, ")"); break;
+    case cctoken_kLITINTEGER:   ccstr_catf(buf, "%lli", token->sig); break;
+    case cctoken_kLITFLOAT:     ccstr_catf(buf, "%f", token->flo); break;
+    case cctoken_kLITIDENT: ccstr_catf(buf, "%s",token->str); break;
+    case cctoken_kLITSTRING: ccstr_catf(buf, "\"%s\"",token->str); break;
+    case cctoken_kLPAREN:  ccstr_catf(buf, "("); break;
+    case cctoken_kRPAREN:  ccstr_catf(buf, ")"); break;
     case cctoken_Klcurly:  ccstr_catf(buf, "["); break;
     case cctoken_Krcurly:  ccstr_catf(buf, "]"); break;
     case cctoken_Klsquare: ccstr_catf(buf, "["); break;

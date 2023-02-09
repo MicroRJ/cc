@@ -1,18 +1,23 @@
 #ifndef _CCTREE
 #define _CCTREE
 
+//
+// Todo: make the parser simply be the parser and then add another stage that actually checks everything and
+// creates the types, checks the scopes and so on ...
+//
+
 typedef enum cctree_k
 {
-	cctree_kTYPENAME,
+  cctree_kTYPENAME,
 
-	cctree_kSTRUCT,
-	cctree_kENUM,
+  cctree_kSTRUCT,
+  cctree_kENUM,
 
-	cctree_kFUNC,
-	cctree_kARRAY,
-	cctree_kPOINTER,
+  cctree_kFUNC,
+  cctree_kARRAY,
+  cctree_kPOINTER,
 
-	cctree_kIDENTIFIER,
+  cctree_kIDENTIFIER,
   cctree_kINTEGER,
   cctree_kFLOAT,
   cctree_kSTRING,
@@ -69,15 +74,14 @@ ccglobal cctree_t
 typedef struct cctree_t
 { cctree_k    kind;
   cctree_t   *root;
-	cci32_t     mark;
+  cci32_t     mark;
 
   ccstr_t     name;
-  cctree_t  **decl;
   cctree_t  **list;
-	cctoken_k   oper;
+  cctoken_k   oper;
   cctree_t  * type;
-  cctree_t  * init; // Note: conditional
   cctree_t  * size; // Note: the size constant expression `unsigned a: 1`
+  cctree_t  * init; // Note: conditional
   cctree_t  * lval; // Note: then
   cctree_t  * rval; // Note: else
 
@@ -85,18 +89,18 @@ typedef struct cctree_t
   cctree_t  * blob;
 
   union
-	{ ccstr_t as_str;
-		cci64_t as_i64;
-	  cci32_t as_i32;
-	  cci16_t as_i16;
-	  cci8_t  as_i8;
-	  ccu64_t as_u64;
-	  ccu32_t as_u32;
-	  ccu16_t as_u16;
-	  ccu8_t  as_u8;
-	};
+  { ccstr_t as_str;
+    cci64_t as_i64;
+    cci32_t as_i32;
+    cci16_t as_i16;
+    cci8_t  as_i8;
+    ccu64_t as_u64;
+    ccu32_t as_u32;
+    ccu16_t as_u16;
+    ccu8_t  as_u8;
+  };
 
-	// Todo: pending ...
+  // Todo: pending ...
   union
   { struct
     { cctoken_t   token;
@@ -163,7 +167,7 @@ cctype_new_fun(cctree_t *type, cctree_t **list)
 }
 
 ccfunc cctree_t *
-cctype_new_struct_spec(cctree_t **list, cctree_t *name)
+cctree_struct(cctree_t **list, cctree_t *name)
 { ccassert(list!=0);
   cctree_t *tree=cctree_new(cctree_kSTRUCT,0,0);
   tree->list=list;
@@ -173,28 +177,27 @@ cctype_new_struct_spec(cctree_t **list, cctree_t *name)
 ccfunc cctree_t *
 cctree_translation_unit()
 { cctree_t *tree=cctree_new(cctree_kTUNIT,ccnil,ccnil);
-	return tree;
+  return tree;
 }
 
 ccfunc cctree_t *
 cctree_group(cctree_t *root, cci32_t mark, cctree_t *init)
 { cctree_t *tree=cctree_new(cctree_kGROUP,root,mark);
-	tree->init=init;
-	return tree;
+  tree->init=init;
+  return tree;
 }
 
 ccfunc cctree_t *
 cctree_call(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval)
 { cctree_t *tree=cctree_new(cctree_kCALL,root,mark);
-	tree->lval=lval;
-	tree->rval=rval;
-	return tree;
+  tree->lval=lval;
+  tree->rval=rval;
+  return tree;
 }
 
 ccfunc cctree_t *
-cctree_block(cctree_t *root, cci32_t mark, cctree_t **decl, cctree_t **list)
+cctree_block(cctree_t *root, cci32_t mark, cctree_t **list)
 { cctree_t *tree=cctree_new(cctree_kBLOCK,root,mark);
-  tree->decl=decl;
   tree->list=list;
   return tree;
 }
@@ -249,11 +252,9 @@ cctree_decl(cctree_t *root, cci32_t mark, cctree_t *type, cctree_t **list)
 }
 
 ccfunc cctree_t *
-cctree_identifier(cctree_t *root, cci32_t mark, cctree_t *lval, const char *name)
-{ ccnotnil(name);
-	cctree_t *tree=cctree_new(cctree_kIDENTIFIER,root,mark);
-  tree->lval=lval;
-  tree->name=(ccstr_t)name;
+cctree_identifier(cctree_t *root, cci32_t mark, ccstr_t name)
+{ cctree_t *tree=cctree_new(cctree_kIDENTIFIER,root,mark);
+  tree->name=name;
   return tree;
 }
 
@@ -268,7 +269,7 @@ cctree_unary(cctree_t *root, cci32_t mark, cctoken_t *token, cctree_t *rval)
 ccfunc cctree_t *
 cctree_binary(cctree_t *root, cci32_t mark, cctoken_t *token, cctree_t *lhs, cctree_t *rhs)
 { cctree_t *result=cctree_new(cctree_kBINARY,root,mark);
-	result->oper=token->bit;
+  result->oper=token->bit;
   result->lval=lhs;
   result->rval=rhs;
   return result;
@@ -329,7 +330,7 @@ ccfunc cctree_t *
 cctree_new_designation(cctree_t *list, cctree_t *init)
 {
 #if 0
-	// Make sure we return null here, not just for safety but because other functions
+  // Make sure we return null here, not just for safety but because other functions
   // depend on it for convenience.
   if(list)
   {
@@ -342,85 +343,186 @@ cctree_new_designation(cctree_t *list, cctree_t *init)
   return ccnil;
 }
 
-ccfunc void
-cctree_check(cctree_t *tree)
+// Todo: this is temporary ...
+ccglobal cctree_t **type_decls;
+ccglobal cctree_t **func_decls;
+ccglobal cctree_t **vari_decls;
+ccglobal cctree_t **symbols;
+
+
+ccfunc ccinle void
+cctree_solve_decl(cctree_t *);
+
+ccfunc ccinle void
+cctree_solve_statement(cctree_t *);
+
+ccfunc cctree_t *
+cctree_resolve_symbol(cctree_t *tree)
 {
-	if(!tree) return;
+  cctree_t **symbol=ccnil;
+  symbol=cctblgetP(symbols,tree);
 
-	if(tree->kind!=cctree_kTUNIT)
-	{
-		ccnotnil(tree->root);
-	}
-
-
-	cctree_t **list;
-
-	switch(tree->kind)
-	{
-		case cctree_kINTEGER:
-		case cctree_kFLOAT:
-		break;
-
-		case cctree_kUNARY:
-			ccnotnil(tree->oper);
-			cctree_check(ccnotnil(tree->rval));
-		break;
-		case cctree_kBINARY:
-			ccnotnil(tree->oper);
-			cctree_check(ccnotnil(tree->lval));
-			cctree_check(ccnotnil(tree->rval));
-		break;
-		case cctree_kTERNARY:
-			ccnotnil(tree->oper);
-
-			if(tree->mark&cctree_mRVALUE)
-			{ ccnotnil(tree->init);
-				ccnotnil(tree->lval);
-				ccnotnil(tree->rval);
-			}
-
-			cctree_check(tree->init);
-			cctree_check(tree->lval);
-			cctree_check(tree->rval);
-		break;
-		case cctree_kWHILE:
-			ccnotnil(tree->init);
-			cctree_check(tree->init);
-			cctree_check(tree->lval);
-			cctree_check(tree->rval);
-		break;
-		case cctree_kDECLNAME:
-			ccnotnil(tree->type);
-			ccnotnil(tree->name);
-
-			ccassert(!tree->list);
-
-			cctree_check(tree->init);
-			cctree_check(tree->blob);
-		break;
-		case cctree_kDECL:
-			ccnotnil(tree->type);
-			ccnotnil(tree->list);
-
-			ccassert(!tree->size);
-			ccassert(!tree->name);
-			ccassert(!tree->init);
-
-			ccarrfor(tree->list,list) cctree_check(*list);
-		break;
-		case cctree_kLABEL:
-		case cctree_kIDENTIFIER:
-			ccnotnil(tree->name);
-		break;
-		case cctree_kSTRING:
-			ccnotnil(tree->as_str);
-		break;
-		case cctree_kBLOCK:
-			// ccnotnil(tree->list);
-			ccarrfor(tree->list,list) cctree_check(*list);
-		break;
-
-		default: ccassert(!"noimpl");
-	}
+  return ccerrnon()? *symbol :ccnil;
 }
+
+ccfunc int
+cctree_resolve_call_symbol_allusion(cctree_t *tree)
+{
+  cctree_t **vdecl=cctblgetS(func_decls,tree->name);
+
+  if(ccerrnon())
+  {
+    cctree_t **symbol=cctblputP(symbols,tree);
+    *symbol=*vdecl;
+  }
+
+  return ccerrnon();
+}
+
+ccfunc int
+cctree_resolve_symbol_allusion(cctree_t *tree)
+{
+  cctree_t **vdecl=cctblgetS(vari_decls,tree->name);
+
+  if(ccerrnon())
+  {
+    cctree_t **symbol=cctblputP(symbols,tree);
+    *symbol=*vdecl;
+  }
+
+  return ccerrnon();
+}
+
+ccfunc void
+cctree_solve_lvalue(cctree_t *tree)
+{ switch(tree->kind)
+  {
+    case cctree_kIDENTIFIER:
+    {
+      if(!cctree_resolve_symbol_allusion(tree))
+        cctraceerr("undeclared lvalue recipient '%s', did you forget to declare the variable?",tree->name);
+    } break;
+    default: ccassert(!"internal");
+  }
+}
+
+ccfunc void
+cctree_solve_binary(cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue);
+
+ccfunc void
+cctree_solve_rvalue(cctree_t *tree)
+{ switch(tree->kind)
+  { case cctree_kINTEGER:
+    break;
+    case cctree_kIDENTIFIER:
+    {
+      if(!cctree_resolve_symbol_allusion(tree))
+        cctraceerr("undeclared lvalue address '%s', did you forget to declare the variable?",tree->name);
+
+    } break;
+    case cctree_kBINARY:
+    {
+      cctree_solve_binary(tree->oper,tree->lval,tree->rval);
+    } break;
+  }
+}
+
+ccfunc void
+cctree_solve_binary(cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue)
+{ if(oper==cctoken_kASSIGN)
+    cctree_solve_lvalue(lvalue);
+  else
+    cctree_solve_rvalue(lvalue);
+
+  cctree_solve_rvalue(rvalue);
+}
+ccfunc void
+cctree_solve_statement(cctree_t *tree)
+{
+  if(tree->kind==cctree_kDECL)
+  {
+    cctree_solve_decl(tree);
+  } else
+  if(tree->kind==cctree_kCALL)
+  {
+    ccassert(tree->lval);
+    ccassert(tree->rval);
+
+    if(!cctree_resolve_call_symbol_allusion(tree->lval))
+        cctraceerr("%s: identifier not found",tree->lval->name);
+
+    cctree_t *rval;
+    ccarrfor(tree->rval,rval) cctree_solve_rvalue(rval);
+
+  } else
+  if(tree->kind==cctree_kBINARY)
+  {
+    cctree_solve_binary(tree->oper,tree->lval,tree->rval);
+  } else
+  {
+    ccassert(!"error");
+  }
+}
+
+// Todo: the root of a decl name should always be a declaration,
+// with the exception of function parameters ...
+ccfunc void
+cctree_solve_decl_name(cctree_t *tree)
+{
+  // Note: is this a good way to do things?
+  if(tree->root->kind==cctree_kTUNIT)
+  { ccassert(tree->mark&cctree_mEXTERNAL);
+  }
+  if(tree->mark&cctree_mEXTERNAL)
+  { ccassert(tree->root->kind==cctree_kTUNIT);
+  }
+
+  if(tree->type->kind==cctree_kFUNC)
+  {
+    if(tree->mark&cctree_mEXTERNAL)
+    {
+      cctree_t **value=cctblputS(func_decls,tree->name);
+      if(ccerrnon())
+      {
+        cctree_t **list;
+        ccarrfor(tree->type->list,list)
+          cctree_solve_decl_name(*list);
+
+        ccarrfor(tree->blob->list,list)
+          cctree_solve_statement(*list);
+
+        *value=tree;
+      } else
+          cctraceerr("%s: already has a body", tree->name);
+    } else
+        cctraceerr("'%s': local function defintions are illegal", tree->name);
+  } else
+  {
+    cctree_t **value=cctblputS(vari_decls,tree->name);
+    if(ccerrnon())
+      *value=tree;
+    else
+      cctraceerr("'%s': variable redefinition", tree->name);
+
+    if(tree->init)
+    {
+      cctree_solve_rvalue(tree->init);
+    }
+  }
+}
+
+ccfunc ccinle void
+cctree_solve_decl(cctree_t *decl)
+{ cctree_t **list;
+  ccarrfor(decl->list,list) cctree_solve_decl_name(*list);
+}
+
+ccfunc void
+cctree_solve(cctree_t *tree)
+{ ccassert(tree->kind==cctree_kTUNIT);
+
+  cctree_t **decl;
+  ccarrfor(tree->list,decl) cctree_solve_decl(*decl);
+}
+
 #endif
