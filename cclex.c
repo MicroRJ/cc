@@ -59,7 +59,9 @@ cclex_hashonly(cclex_t *l, int len, const char *key, cctoken_k bit)
 {
 	int fnd;
 	const char *okey=cclex_hash(l,len,key,ccfalse,(int*)&bit,&fnd);
+	(void)okey;
 	ccassert(okey==key);
+
   if(fnd) cctraceerr("invalid key, already in hash table");
 }
 
@@ -289,7 +291,9 @@ cclex_next_token_internal(cclex_t *l)
   l->min = l->max;
 
   // TODO(RJ): TEMPORARY!
+#ifdef _DEBUG
   l->tok.doc = l->min;
+#endif
 
   if(l->max >= l->doc_max)
   { l->tok.bit = cctoken_Kend;

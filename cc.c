@@ -56,11 +56,13 @@ extern "C" {
 # pragma warning(push)
 # pragma warning(disable:4053) // void operand for ternary expression ...
 # pragma warning(disable:4706) // assignment within conditional expression
-#ifdef _DEBUG
+
+#ifdef _DEVELOPER
 # pragma warning(disable:4100)
 # pragma warning(disable:4201)
 # pragma warning(disable:4505)
 #endif
+
 #endif
 
 
@@ -92,7 +94,7 @@ extern "C" {
 # define ccfunc static
 #endif
 #ifndef ccunion
-# ifdef _DEBUG
+# ifdef _HARD_DEBUG
 #  define ccunion struct
 # else
 #  define ccunion union
@@ -139,7 +141,7 @@ extern "C" {
 #ifdef _DEBUG
 # define ccassert(is_true,...) (!(is_true)?ccbreak():ccnil)
 #else
-# define ccassert(is_true) 0
+# define ccassert(is_true,...) ccnil
 #endif
 #ifndef _CCASSERT
 #define _CCASSERT(x) typedef char __STATIC__ASSERT__[((x)?1:-1)]
@@ -151,22 +153,32 @@ extern "C" {
 ccfunc void
 cctrace_(int guid, const char  *file, int line, const char *func, const char *tag, const char *fmt, ...);
 
-#ifndef cctrace
-# define cctrace(tag,fmt,...) cctrace_(__COUNTER__,__FILE__,__LINE__,__FUNC__,tag,fmt,__VA_ARGS__)
-#endif
-#ifndef cctracelog
-# define cctracelog(fmt,...) cctrace("log",fmt,__VA_ARGS__)
-#endif
-#ifndef cctracewar
-# define cctracewar(fmt,...) cctrace("war",fmt,__VA_ARGS__)
-#endif
-
-#ifdef _DEBUG
-
-#ifndef cctraceerr
-# define cctraceerr(fmt,...) cctrace("err",fmt,__VA_ARGS__),ccbreak()
-#endif
-
+# ifndef cctrace
+#  define cctrace(tag,fmt,...) cctrace_(__COUNTER__,__FILE__,__LINE__,__FUNC__,tag,fmt,__VA_ARGS__)
+# endif
+# ifndef cctracelog
+#  define cctracelog(fmt,...) cctrace("log",fmt,__VA_ARGS__)
+# endif
+# ifndef cctracewar
+#  define cctracewar(fmt,...) cctrace("war",fmt,__VA_ARGS__)
+# endif
+# ifdef _DEBUG
+# ifndef cctraceerr
+#  define cctraceerr(fmt,...) cctrace("err",fmt,__VA_ARGS__),ccbreak()
+# endif
+#else
+# ifndef cctrace
+#  define cctrace(tag,fmt,...) 0
+# endif
+# ifndef cctracelog
+#  define cctracelog(fmt,...) ccnil
+# endif
+# ifndef cctracewar
+#  define cctracewar(fmt,...) ccnil
+# endif
+# ifndef cctraceerr
+#  define cctraceerr(fmt,...) ccnil
+# endif
 #endif
 
 
@@ -242,12 +254,12 @@ ccfunc void ccfree_(void *data, const char *file, const char *func, int line)
 }
 
 #ifdef _DEVELOPER
-# undef malloc
-#  define malloc DO_NOT_USE_MALLOC
-# undef realloc
-#  define realloc DO_NOT_USE_REALLOC
-# undef free
-#  define free DO_NOT_USE_FREE
+#undef malloc
+# define malloc DO_NOT_USE_MALLOC
+#undef realloc
+# define realloc DO_NOT_USE_REALLOC
+#undef free
+# define free DO_NOT_USE_FREE
 #endif
 #endif
 

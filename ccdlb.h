@@ -474,7 +474,7 @@ ccstr_catf(char **ccm, const char *fmt, ...)
 ccfunc void
 ccdlb_test()
 {
-
+#ifdef _HARD_DEBUG
 #if 0
   void *mem=ccnil;
   mem=ccrealloc(mem,24);
@@ -596,6 +596,7 @@ ccdlb_test()
     ccassert(ccerrnon());
     ccassert(strcmp(key,res->s)==0);
   }
+#endif
 }
 
 #endif

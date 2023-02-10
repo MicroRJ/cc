@@ -28,11 +28,7 @@ typedef struct ccedict_t
 	ccedict_k   kind;
 	ccstr_t     label; // Note: for debugging ...
 
-#if defined(_DEBUG)
-struct
-#else
-union
-#endif
+ccunion
 {
 	// Note: Produces an addressable lvalue, if param, value must be set before invoking a function ...
 	struct

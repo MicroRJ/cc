@@ -303,10 +303,6 @@ cctree_constant(cctree_t *root, cci32_t mark, cctree_t *type, cctoken_t *token)
   return result;
 }
 
-
-
-
-
 #if 0
 ccfunc cctree_t *
 cctree_new_struct_decl_name(cctree_t *decl, cctree_t *expr)
@@ -325,12 +321,10 @@ cctree_new_struct_decl(cctree_t *type, cctree_t *list)
   tree->struct_decl.list = list;
   return tree;
 }
-#endif
 
 ccfunc cctree_t *
 cctree_new_designation(cctree_t *list, cctree_t *init)
 {
-#if 0
   // Make sure we return null here, not just for safety but because other functions
   // depend on it for convenience.
   if(list)
@@ -340,9 +334,9 @@ cctree_new_designation(cctree_t *list, cctree_t *init)
     tree->designation.init = init;
     return tree;
   }
-#endif
   return ccnil;
 }
+#endif
 
 // Todo: this is temporary ...
 ccglobal cctree_t **type_decls;
