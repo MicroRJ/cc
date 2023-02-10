@@ -49,7 +49,7 @@ ccunion
 	} fetch;
 	// Note: Produces a non-addressable rvalue
 	struct
-	{ ccemit_value_t  * call;
+	{ ccemit_procd_t  * call;
 		ccemit_value_t ** rval;
 	} invoke;
 	struct
@@ -153,7 +153,7 @@ ccedict_jump(ccemit_block_t *blc, ccu32_t tar)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_jumpT(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
+ccedict_tjump(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
 {
 	ccedict_t *e=ccmalloc_T(ccedict_t);
   e->kind=ccedict_kJUMPT;
@@ -164,7 +164,7 @@ ccedict_jumpT(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_jumpF(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
+ccedict_fjump(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
 {
 	ccedict_t *e=ccmalloc_T(ccedict_t);
   e->kind=ccedict_kJUMPF;
@@ -175,7 +175,7 @@ ccedict_jumpF(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_call(ccemit_value_t *lval, ccemit_value_t **rval)
+ccedict_call(ccemit_procd_t *lval, ccemit_value_t **rval)
 {
 	ccassert(lval!=0);
 

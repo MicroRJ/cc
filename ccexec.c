@@ -56,7 +56,7 @@ ccstack_yield_rvalue(
     case ccvalue_kCONST:
       // Todo: this is ridiculous
       result=ccexec_rvalue(
-        cccast(void*,couple->constant.clsc.as_i64),"constant-value");
+        cccast(void*,couple->constant.clsc.asi64),"constant-value");
     break;
   }
 
@@ -149,7 +149,7 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
 
 ccfunc int
 ccexec_invoke(
-  ccexec_t *exec, ccemit_value_t *val, ccexec_value_t *ret, ccexec_value_t *in);
+  ccexec_t *e, ccemit_procd_t *p, ccexec_value_t *r, ccexec_value_t *i);
 
 ccfunc int
 ccexec_edict(
@@ -306,46 +306,40 @@ ccexec_edict(
 
 ccfunc int
 ccexec_invoke(
-  ccexec_t *exec, ccemit_value_t *value, ccexec_value_t *ret, ccexec_value_t *args)
+  ccexec_t *_e, ccemit_procd_t *_p, ccexec_value_t *_r, ccexec_value_t *_i)
 {
-  ccnotnil(exec);
-  ccnotnil(value);
-
   // Todo: let's not use our actual stack ...
   ccexec_stack_t stack={};
 
-  ccemit_procd_t *func=value->func;
-  cctree_t *type=func->tree->type;
+  cctree_t *type=_p->tree->type;
 
-#ifdef _HARD_DEBUG
-  ccassert(ccarrlen(type->list)==ccarrlen(args));
-#endif
+  ccassert(ccarrlen(type->list)==ccarrlen(_i));
 
   cctree_t **lval;
   ccarrfor(type->list,lval)
   {
-    ccemit_value_t *local=ccfunc_local(func,*lval);
+    ccemit_value_t *local=ccprocd_local(_p,*lval);
     ccexec_value_t *rval=ccstack_local_alloc(&stack,local);
 
-    cci32_t int_value=args->asi32;
+    cci32_t int_value=_i->asi32;
     ccdref(cccast(cci32_t*,rval->value))=int_value;
-    args++;
+    _i++;
   }
 
-  ccexec_enter(&stack,func->decls);
+  ccexec_enter(&stack,_p->decls);
 
   while(stack.irindex<ccarrlen(stack.current->edict))
   {
     ccemit_value_t **it=stack.current->edict+stack.irindex;
     stack.irindex++;
 
-    if(!ccexec_edict(exec,&stack,*it))
+    if(!ccexec_edict(_e,&stack,*it))
     {
       // Note: is this flawed?
       ccedict_t *edict=(*it)->edict;
 
       if(edict->kind==ccedict_kRETURN)
-        *ret=ccstack_yield(&stack,*it);
+        *_r=ccstack_yield(&stack,*it);
       return cctrue;
     }
   }

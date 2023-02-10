@@ -13,6 +13,7 @@ typedef struct ccexec_value_t
 { ccstr_t           label; // Note: for debugging
 	ccexec_value_k    kind;
 
+
 	union
 	{ void    * value;
 		ccf64_t   asf64; ccf32_t   asf32;
@@ -22,17 +23,6 @@ typedef struct ccexec_value_t
 		ccu8_t    asu8;   ccu8_t    asi8;
 	};
 } ccexec_value_t;
-
-typedef struct ccemit_procd_t ccemit_procd_t;
-typedef struct ccemit_procd_t
-{ cctree_t        *tree;
-  ccemit_value_t **local;
-  ccemit_block_t **block;
-
-  ccemit_block_t  *decls;
-  ccemit_block_t  *enter;
-  ccemit_block_t  *leave;
-} ccemit_procd_t;
 
 typedef struct ccexec_stack_t ccexec_stack_t;
 typedef struct ccexec_stack_t
@@ -50,7 +40,7 @@ typedef struct ccexec_t
 } ccexec_t;
 
 ccfunc ccemit_value_t *
-ccfunc_local(ccemit_procd_t *func, cctree_t *tree)
+ccprocd_local(ccemit_procd_t *func, cctree_t *tree)
 { // Todo: check tree ...
 	ccemit_value_t **v=cctblgetP(func->local,tree);
 	if(ccerrnon()) return *v;
@@ -58,7 +48,7 @@ ccfunc_local(ccemit_procd_t *func, cctree_t *tree)
 }
 
 ccfunc ccemit_value_t *
-ccfunc_include_local(ccemit_procd_t *func, cctree_t *tree, int is_param)
+ccprocd_include_local(ccemit_procd_t *func, cctree_t *tree, int is_param)
 { // Todo: check tree ...
 	ccedict_t *e=is_param?ccedict_param(tree):ccedict_local(tree);
   ccemit_value_t  *i=ccblock_add_edict(func->decls,e);

@@ -234,21 +234,20 @@ typedef enum cctoken_k
 
 } cctoken_k;
 
-typedef union ccclassic_t
-{
-  cci64_t as_i64;
-  cci32_t as_i32;
-  cci16_t as_i16;
-  cci8_t  as_i8;
+typedef struct ccclassic_t
+{ union
+  {
+    cci64_t   asi64; ccu64_t   asu64;
+    ccu32_t   asi32; ccu32_t   asu32;
+    ccu16_t   asi16; ccu16_t   asu16;
+    ccu8_t    asi8;  ccu8_t    asu8;
 
-  ccu64_t as_u64;
-  ccu32_t as_u32;
-  ccu16_t as_u16;
-  ccu8_t  as_u8;
+    ccf64_t   asf64; ccf32_t   asf32;
+    void    * asptr;
+  };
 } ccclassic_t;
 
 typedef struct ccloc_t ccloc_t;
-
 typedef struct ccloc_t
 { const char *file;
   const char *func;
