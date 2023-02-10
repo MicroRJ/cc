@@ -400,6 +400,12 @@ cctree_mingle(cctree_t *tree, const char *name)
 
   ccerrset(ccerr_kNIT);
 
+  if((tree->kind==cctree_kINDEX)&&
+  	 (tree->lval->kind!=cctree_kIDENTIFIER))
+  {
+  	ccassert(!"error");
+  }
+
   if((tree->kind==cctree_kIDENTIFIER) || // Note: to figure out what variable we're referring to ..
      (tree->kind==cctree_kINDEX))        // Note: to figure out what variable we're referring to
     solved=cctblgetS(vari_decls,name);

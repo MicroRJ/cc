@@ -12,16 +12,8 @@ int retsame(int c)
 	return c;
 }
 
-
 int main(int a)
-{
-	int some[100];
-	some[24]=a;
-
-	int h;
-	h=some[24];
-
-	int g=h;
-	g=fib(g);
-	return g;
+{ int some[100];
+	some[24]=retsame(fib(a));
+	return some[24];
 }
