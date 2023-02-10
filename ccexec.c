@@ -1,7 +1,7 @@
 #ifndef _CCEXEC
 #define _CCEXEC
+
 // Todo: fix constants,
-// Todo: legit jump instruction and conditional jump?
 // Todo: faster string allocations
 // Todo: Legit stack allocator along with revamped mingle system
 // Todo: Legit type system
@@ -55,7 +55,8 @@ ccstack_yield_rvalue(
     // Todo:
     case ccvalue_kCONST:
       // Todo: this is ridiculous
-      result=ccexec_value_I(ccev_kRVALUE,couple->constant.type,cccast(void*,couple->constant.clsc.as_i64),"constant-value");
+      result=ccexec_rvalue(
+        cccast(void*,couple->constant.clsc.as_i64),"constant-value");
     break;
   }
 
@@ -83,39 +84,37 @@ ccstack_yield_lvalue(ccexec_stack_t *stack, ccemit_value_t *couple)
 }
 
 // Note: allocates an execution time addressable l-value on the stack and associates it with the given value...
-ccfunc ccexec_value_t *
+ccfunc ccinle ccexec_value_t *
 ccstack_local_alloc(
   ccexec_stack_t *stack, ccemit_value_t *value)
 {
+#ifdef _HARD_DEBUG
   ccnotnil((value));
   ccassert((value->kind==ccvalue_kEDICT),
     "cannot allocate local, expected a value of type EDICT and of subtype LOCAL or PARAM");
+#endif
 
+
+#ifdef _HARD_DEBUG
   ccedict_t *edict=value->edict;
-
   ccnotnil((edict));
   ccassert((edict->kind==ccedict_kLOCAL)||(edict->kind==ccedict_kPARAM),
     "cannot allocate local, expected an edict of type LOCAL or PARAM");
+#endif
 
-  // Todo:
   ccexec_value_t *result=ccstack_mingle(stack,value);
-  result->value=ccmalloc(sizeof(ccclassic_t));
-  result->kind=ccev_kLVALUE;
-  result->type=edict->local.type;
+  *result=ccexec_lvalue(ccmalloc(sizeof(ccclassic_t)),"local_alloc");
 
-  // Todo:
-  result->label=ccnil;
-  ccstrcatf(result->label,"'%s':localloc",edict->label);
   return result;
 }
 
-ccfunc cci32_t
+ccfunc ccinle cci32_t
 ccexec_load(ccexec_stack_t *stack, cctree_t *type, void *address)
 {
   return ccdref(cccast(cci32_t *,address));
 }
 
-ccfunc void
+ccfunc ccinle void
 ccexec_enter(ccexec_stack_t *stack, ccemit_block_t *block)
 {
   stack->current=block;
@@ -123,73 +122,29 @@ ccexec_enter(ccexec_stack_t *stack, ccemit_block_t *block)
 }
 
 //
-ccfunc ccexec_value_t *
-ccexec_edict_arith(ccexec_stack_t *stack, ccemit_value_t *val)
+ccfunc ccinle ccexec_value_t
+ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
 {
-  ccexec_value_t *result={};
-
-  cctoken_k       opr;
-  ccemit_value_t *lhs,*rhs;
-
-  opr=val->edict->arith.opr;
-  lhs=val->edict->arith.lhs;
-  rhs=val->edict->arith.rhs;
-
-  ccnotnil(lhs);
-  ccnotnil(rhs);
-
-  ccexec_value_t lval,rval;
-  lval=ccstack_yield_rvalue(stack,lhs);
-  rval=ccstack_yield_rvalue(stack,rhs);
-
-
-  if(opr==cctoken_kASSIGN)
-  { ccassert(!"internal");
-    // lhs->leaf=rhs->leaf;
-  } else
-  if(opr==cctoken_Kequals)
-  { // return ccemit_const_i32(ccnil,lhs->leaf.sig==rhs->leaf.sig);
-  } else
-  if(opr==cctoken_Kgreater_than)
-  { result=ccstack_mingle(stack,val);
-    result->kind=ccev_kRVALUE;
-    result->label="greater-than";
-    result->asi32=lval.asi32>rval.asi32;
-  } else
-  if(opr==cctoken_Kgreater_than_eql)
-  { result=ccstack_mingle(stack,val);
-    result->kind=ccev_kRVALUE;
-    result->label="greater-than-eql";
-    result->asi32=lval.asi32>=rval.asi32;
-  } else
-  if(opr==cctoken_Kless_than)
-  { // return ccemit_const_i32(ccnil,lhs->leaf.sig<rhs->leaf.sig);
-  } else
-  if(opr==cctoken_Kless_than_eql)
-  {
-  } else
-  if(opr==cctoken_Ksub)
-  { result=ccstack_mingle(stack,val);
-    result->kind=ccev_kRVALUE;
-    result->label="sub";
-    result->asi32=lval.asi32-rval.asi32;
-  } else
-  if(opr==cctoken_Kadd)
-  { result=ccstack_mingle(stack,val);
-    result->kind=ccev_kRVALUE;
-    result->label="add";
-    result->asi32=lval.asi32+rval.asi32;
-#if 0
-    cctracelog("ADD: %i, %i; 0x%x=%i",
-      lval.clsc.as_i32,
-      rval.clsc.as_i32, result,result->clsc.as_i32);
-#endif
-  } else
-  { ccassert(!"error");
+  switch(opr)
+  { case cctoken_kGTN:
+      return ccexec_rvalue(cccast(void*,lval.asi64>rval.asi64),">");
+    case cctoken_kGTE:
+      return ccexec_rvalue(cccast(void*,lval.asi64>=rval.asi64),">=");
+    case cctoken_kLTN:
+      return ccexec_rvalue(cccast(void*,lval.asi64>rval.asi64),"<");
+    case cctoken_kLTE:
+      return ccexec_rvalue(cccast(void*,lval.asi64>rval.asi64),"<=");
+    case cctoken_kMUL:
+      return ccexec_rvalue(cccast(void*,lval.asi64>rval.asi64),"*");
+    case cctoken_kDIV:
+      return ccexec_rvalue(cccast(void*,lval.asi64>rval.asi64),"/");
+    case cctoken_kSUB:
+      return ccexec_rvalue(cccast(void*,lval.asi64-rval.asi64),"-");
+    case cctoken_kADD:
+      return ccexec_rvalue(cccast(void*,lval.asi64+rval.asi64),"+");
+    default: ccassert(!"error");
   }
-
-  ccassert(result!=ccnil);
-  return result;
+  return ccexec_rvalue(cccast(void*,0),"internal-error");
 }
 
 ccfunc int
@@ -225,10 +180,8 @@ ccexec_edict(
 
       ccexec_value_t *saved=ccstack_mingle(stack,value);
       saved->kind=ccev_kRVALUE;
-      saved->type=lval.type;
-      saved->asi64=ccexec_load(stack,lval.type,lval.value);
+      saved->asi64=ccexec_load(stack,ccnil,lval.value);
       saved->label=ccnil;
-      ccstrcatf(saved->label,"fetch: %s",lval.label);
     } break;
     case ccedict_kSTORE:
     {
@@ -241,7 +194,6 @@ ccexec_edict(
 
       ccexec_value_t *saved=ccstack_mingle(stack,value);
       saved->kind=ccev_kRVALUE;
-      saved->type=lval.type;
       saved->value=rval.value;
       saved->label=rval.label;
     } break;
@@ -285,7 +237,17 @@ ccexec_edict(
     } break;
     case ccedict_kARITH:
     {
-      ccexec_edict_arith(stack,value);
+#ifdef _HARD_DEBUG
+      ccnotnil(edict->arith.opr);
+      ccnotnil(edict->arith.lhs);
+      ccnotnil(edict->arith.rhs);
+#endif
+      ccexec_value_t lval,rval;
+      lval=ccstack_yield_rvalue(stack,edict->arith.lhs);
+      rval=ccstack_yield_rvalue(stack,edict->arith.rhs);
+
+      ccexec_value_t *saved=ccstack_mingle(stack,value);
+      *saved=ccexec_edict_arith(edict->arith.opr,lval,rval);
     } break;
     case ccedict_kRETURN:
     {
@@ -344,17 +306,20 @@ ccexec_edict(
 
 ccfunc int
 ccexec_invoke(
-  ccexec_t *exec, ccemit_value_t *value, ccexec_value_t *ret, ccexec_value_t *arguments)
+  ccexec_t *exec, ccemit_value_t *value, ccexec_value_t *ret, ccexec_value_t *args)
 {
   ccnotnil(exec);
   ccnotnil(value);
 
+  // Todo: let's not use our actual stack ...
   ccexec_stack_t stack={};
 
   ccemit_procd_t *func=value->func;
   cctree_t *type=func->tree->type;
 
-  ccassert(ccarrlen(type->list)==ccarrlen(arguments));
+#ifdef _HARD_DEBUG
+  ccassert(ccarrlen(type->list)==ccarrlen(args));
+#endif
 
   cctree_t **lval;
   ccarrfor(type->list,lval)
@@ -362,9 +327,9 @@ ccexec_invoke(
     ccemit_value_t *local=ccfunc_local(func,*lval);
     ccexec_value_t *rval=ccstack_local_alloc(&stack,local);
 
-    cci32_t int_value=arguments->asi32;
+    cci32_t int_value=args->asi32;
     ccdref(cccast(cci32_t*,rval->value))=int_value;
-    arguments++;
+    args++;
   }
 
   ccexec_enter(&stack,func->decls);
@@ -384,7 +349,6 @@ ccexec_invoke(
       return cctrue;
     }
   }
-
 
   ccarrdel(stack.values);
 
@@ -407,27 +371,24 @@ int fib(int x)
   return x;
 }
 
-
-
 ccfunc int
 ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
 {
   exec->emit=emit;
 
   ccexec_value_t *args=ccnil;
-  ccexec_value_t *arg=ccarrone(args);
-  arg->kind=ccev_kRVALUE;
-  arg->asi32=22;
+  *ccarrone(args)=ccexec_rvalue(cccast(void*,22),"arg-0");
 
   ccu64_t cc_cs=ccclocktick();
+
   ccexec_value_t ret;
   ccexec_invoke(exec,emit->entry,&ret,args);
+
   ccu64_t cc_ce=ccclocktick();
 
   ccu64_t c_cs=ccclocktick();
-  int c=fib(arg->asi32);
+  int c=fib(args->asi32);
   ccu64_t c_ce=ccclocktick();
-
 
   printf("fib c:%i %f(s) - cc:%i %f(s)\n",
     c, ccclocksecs(c_ce-c_cs), ret.asi32, ccclocksecs(cc_ce-cc_cs));

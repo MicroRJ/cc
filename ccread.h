@@ -173,21 +173,21 @@ typedef enum cctoken_k
   cctoken_Kmsp, // ->
   //
   // Group: multiplicative
-  cctoken_Kmul,
-  cctoken_Kdiv,
+  cctoken_kMUL,
+  cctoken_kDIV,
   cctoken_Kmod,
 
   // Group: additive
-  cctoken_Kadd,
-  cctoken_Ksub,
+  cctoken_kADD,
+  cctoken_kSUB,
 
   // Group: shift
   cctoken_Kbitwise_shl,
   cctoken_Kbitwise_shr,
 
   // Group: relational
-  cctoken_Kgreater_than,
-  cctoken_Kless_than,
+  cctoken_kGTN,
+  cctoken_kLTN,
 
   // Group: equality
   cctoken_Kequals,
@@ -220,8 +220,8 @@ typedef enum cctoken_k
   cctoken_Ksub_eql,
   cctoken_Kbitwise_shl_eql,
   cctoken_Kbitwise_shr_eql,
-  cctoken_Kgreater_than_eql,
-  cctoken_Kless_than_eql,
+  cctoken_kGTE,
+  cctoken_kLTE,
   cctoken_Kbitwise_and_eql,
   cctoken_Kbitwise_xor_eql,
   cctoken_Kbitwise_or_eql,

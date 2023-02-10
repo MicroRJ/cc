@@ -478,7 +478,7 @@ cclex_next_token_internal(cclex_t *l)
       if(l->max[1]=='=')
       { l->max += 2, l->tok.bit = cctoken_Kdiv_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kdiv;
+      { l->max += 1, l->tok.bit = cctoken_kDIV;
       }
     } break;
     // *=
@@ -488,7 +488,7 @@ cclex_next_token_internal(cclex_t *l)
       if(l->max[1]=='=')
       { l->max += 2, l->tok.bit = cctoken_Kmul_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kmul;
+      { l->max += 1, l->tok.bit = cctoken_kMUL;
       }
     } break;
     // ++
@@ -506,7 +506,7 @@ cclex_next_token_internal(cclex_t *l)
       if(l->max[1]=='=')
       { l->max += 2, l->tok.bit = cctoken_Kadd_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kadd;
+      { l->max += 1, l->tok.bit = cctoken_kADD;
       }
     } break;
     // --
@@ -527,7 +527,7 @@ cclex_next_token_internal(cclex_t *l)
       if(l->max[1]=='=')
       { l->max += 2, l->tok.bit = cctoken_Ksub_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Ksub;
+      { l->max += 1, l->tok.bit = cctoken_kSUB;
       }
     } break;
     // ==
@@ -555,9 +555,9 @@ cclex_next_token_internal(cclex_t *l)
     case '>':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kgreater_than_eql;
+      { l->max += 2, l->tok.bit = cctoken_kGTE;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kgreater_than;
+      { l->max += 1, l->tok.bit = cctoken_kGTN;
       }
     } break;
     // <=
@@ -565,9 +565,9 @@ cclex_next_token_internal(cclex_t *l)
     case '<':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kless_than_eql;
+      { l->max += 2, l->tok.bit = cctoken_kLTE;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kless_than;
+      { l->max += 1, l->tok.bit = cctoken_kLTN;
       }
     } break;
     // %=

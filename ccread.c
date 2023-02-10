@@ -167,7 +167,7 @@ kttc__peek_oper_increment(ccread_t *parser)
 {
   cctoken_t *tok0 = kttc__peek_ahead(parser, 0);
   cctoken_t *tok1 = kttc__peek_ahead(parser, 1);
-  return (tok0->sig == cctoken_Kadd) && (tok1->sig == cctoken_Kadd);
+  return (tok0->sig == cctoken_kADD) && (tok1->sig == cctoken_kADD);
 }
 
 ccfunc cci32_t
@@ -175,7 +175,7 @@ kttc__peek_oper_decrement(ccread_t *parser)
 {
   cctoken_t *tok0 = kttc__peek_ahead(parser, 0);
   cctoken_t *tok1 = kttc__peek_ahead(parser, 1);
-  return (tok0->sig == cctoken_Ksub) &&  (tok1->sig == cctoken_Ksub);
+  return (tok0->sig == cctoken_kSUB) &&  (tok1->sig == cctoken_kSUB);
 }
 
 ccfunc cctoken_t *
@@ -303,9 +303,9 @@ ccfunc cctree_t *
 ccread_unary_expr(ccread_t *reader, cctree_t *root, cci32_t mark)
 { cctree_t *result = ccnil;
 
-  if(ccsee(reader,cctoken_Kadd))
+  if(ccsee(reader,cctoken_kADD))
   { cctoken_t *tok=ccgobble(reader);
-    if(cceat(reader,cctoken_Kadd))
+    if(cceat(reader,cctoken_kADD))
     { // TODO(RJ): this is dumb, remove...
       cctoken_t clo=*tok;
       clo.sig=cctoken_Kpre_increment;
@@ -314,9 +314,9 @@ ccread_unary_expr(ccread_t *reader, cctree_t *root, cci32_t mark)
     { result=cctree_unary(root,mark, tok, ccread_cast_expr(reader,root,mark));
     }
   } else
-  if(ccsee(reader,cctoken_Ksub))
+  if(ccsee(reader,cctoken_kSUB))
   { cctoken_t *tok=ccgobble(reader);
-    if(cceat(reader,cctoken_Ksub))
+    if(cceat(reader,cctoken_kSUB))
     { // TODO(RJ): this is dumb, remove...
       cctoken_t clo=*tok;
       clo.sig=cctoken_Kpre_decrement;
@@ -325,7 +325,7 @@ ccread_unary_expr(ccread_t *reader, cctree_t *root, cci32_t mark)
     { result=cctree_unary(root,mark, tok, ccread_cast_expr(reader,root,mark));
     }
   } else
-  if(ccsee(reader, cctoken_Kmul))
+  if(ccsee(reader, cctoken_kMUL))
   {
     // TODO(RJ): this is dumb, remove...
     cctoken_t *tok = ccgobble(reader);
@@ -372,8 +372,8 @@ ccread_cast_expr(ccread_t *parser, cctree_t *root, cci32_t mark)
 ccfunc cctree_t *
 ccread_multiplicative_expr(ccread_t *parser, cctree_t *root, cci32_t mark)
 { cctree_t *lhs = ccread_unary_expr(parser,root,mark);
-  while(  ccsee(parser, cctoken_Kmul) ||
-          ccsee(parser, cctoken_Kdiv) ||
+  while(  ccsee(parser, cctoken_kMUL) ||
+          ccsee(parser, cctoken_kDIV) ||
           ccsee(parser, cctoken_Kmod) )
   {
     cctoken_t *tok = ccgobble(parser);
@@ -391,8 +391,8 @@ ccread_multiplicative_expr(ccread_t *parser, cctree_t *root, cci32_t mark)
 ccfunc cctree_t *
 ccread_additive_expr(ccread_t *parser, cctree_t *root, cci32_t mark)
 { cctree_t *lhs = ccread_multiplicative_expr(parser,root,mark);
-  while (ccsee(parser, cctoken_Kadd) ||
-         ccsee(parser, cctoken_Ksub))
+  while (ccsee(parser, cctoken_kADD) ||
+         ccsee(parser, cctoken_kSUB))
   {
     cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_multiplicative_expr(parser,root,mark);
@@ -429,10 +429,10 @@ ccread_shift_expr(ccread_t *parser, cctree_t *root, cci32_t mark)
 ccfunc cctree_t *
 ccread_relational_expr(ccread_t *parser, cctree_t *root, cci32_t mark)
 { cctree_t *lhs = ccread_shift_expr(parser,root,mark);
-  while ( ccsee(parser, cctoken_Kless_than)      ||
-          ccsee(parser, cctoken_Kless_than_eql)  ||
-          ccsee(parser, cctoken_Kgreater_than)   ||
-          ccsee(parser, cctoken_Kgreater_than_eql) )
+  while ( ccsee(parser, cctoken_kLTN)      ||
+          ccsee(parser, cctoken_kLTE)  ||
+          ccsee(parser, cctoken_kGTN)   ||
+          ccsee(parser, cctoken_kGTE) )
   { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_shift_expr(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
@@ -764,7 +764,7 @@ ccread_direct_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t
 
 ccfunc ccinle cctree_t *
 ccread_decl_name_modifier_maybe(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
-{ if(cceat(reader,cctoken_Kmul))
+{ if(cceat(reader,cctoken_kMUL))
     return cctype_new_ptr(ccread_decl_name_modifier_maybe(reader,root,mark,type));
   return type;
 }

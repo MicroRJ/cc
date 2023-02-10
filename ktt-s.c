@@ -27,11 +27,11 @@ kttc__token2s(char **buf, cctoken_t *token)
     case cctoken_Kmso:     ccstr_catf(buf, "."); break;
     case cctoken_Kmsp:     ccstr_catf(buf, "->"); break;
     case cctoken_Kcomma:   ccstr_catf(buf, ","); break;
-    case cctoken_Kmul: ccstr_catf(buf, "*"); break;
-    case cctoken_Kdiv: ccstr_catf(buf, "/"); break;
+    case cctoken_kMUL: ccstr_catf(buf, "*"); break;
+    case cctoken_kDIV: ccstr_catf(buf, "/"); break;
     case cctoken_Kmod: ccstr_catf(buf, "%"); break;
-    case cctoken_Ksub: ccstr_catf(buf, "-"); break;
-    case cctoken_Kadd: ccstr_catf(buf, "+"); break;
+    case cctoken_kSUB: ccstr_catf(buf, "-"); break;
+    case cctoken_kADD: ccstr_catf(buf, "+"); break;
     case cctoken_Kptr_dereference: ccstr_catf(buf, "*"); break;
     case cctoken_Kptr_address_of: ccstr_catf(buf, "&"); break;
     case cctoken_Kpos_decrement: ccstr_catf(buf, "--"); break;
@@ -39,8 +39,8 @@ kttc__token2s(char **buf, cctoken_t *token)
     case cctoken_Kpre_decrement: ccstr_catf(buf, "--"); break;
     case cctoken_Kpre_increment: ccstr_catf(buf, "++"); break;
     case cctoken_Knegate: ccstr_catf(buf, "!"); break;
-    case cctoken_Kgreater_than: ccstr_catf(buf, ">"); break;
-    case cctoken_Kless_than: ccstr_catf(buf, "<"); break;
+    case cctoken_kGTN: ccstr_catf(buf, ">"); break;
+    case cctoken_kLTN: ccstr_catf(buf, "<"); break;
     case cctoken_Kbitwise_invert: ccstr_catf(buf, "~"); break;
     case cctoken_Kbitwise_xor: ccstr_catf(buf, "^"); break;
     case cctoken_Kbitwise_or: ccstr_catf(buf, "^"); break;
@@ -57,8 +57,8 @@ kttc__token2s(char **buf, cctoken_t *token)
     case cctoken_Kmod_eql: ccstr_catf(buf, "%="); break;
     case cctoken_Ksub_eql: ccstr_catf(buf, "-="); break;
     case cctoken_Kadd_eql: ccstr_catf(buf, "+="); break;
-    case cctoken_Kless_than_eql: ccstr_catf(buf, "<="); break;
-    case cctoken_Kgreater_than_eql: ccstr_catf(buf, ">="); break;
+    case cctoken_kLTE: ccstr_catf(buf, "<="); break;
+    case cctoken_kGTE: ccstr_catf(buf, ">="); break;
     case cctoken_Kbitwise_xor_eql: ccstr_catf(buf, "^="); break;
     case cctoken_Kbitwise_and_eql: ccstr_catf(buf, "&="); break;
     case cctoken_Kbitwise_or_eql: ccstr_catf(buf, "^="); break;

@@ -12,7 +12,6 @@ typedef struct ccexec_value_t ccexec_value_t;
 typedef struct ccexec_value_t
 { ccstr_t           label; // Note: for debugging
 	ccexec_value_k    kind;
-	cctree_t        * type; // Todo: remove from here ...
 
 	union
 	{ void    * value;
@@ -70,43 +69,20 @@ ccfunc_include_local(ccemit_procd_t *func, cctree_t *tree, int is_param)
 }
 
 ccfunc ccinle ccexec_value_t
-ccexec_value_I(ccexec_value_k kind, cctree_t *type, void *value, ccstr_t label)
-{
-	ccexec_value_t t;
-	t.kind=kind;
-	t.type=type;
+ccexec_rvalue(void *value, ccstr_t label)
+{ ccexec_value_t t;
+	t.kind=ccev_kRVALUE;
 	t.value=value;
 	t.label=label;
 	return t;
 }
 
 ccfunc ccinle ccexec_value_t
-ccexec_value_i64(cctree_t *type, cci64_t val, ccstr_t label)
+ccexec_lvalue(void *value, ccstr_t label)
 { ccexec_value_t t;
-	t.kind=ccev_kRVALUE;
+	t.kind=ccev_kLVALUE;
+	t.value=value;
 	t.label=label;
-	t.type=type;
-	t.asi64=val;
-	return t;
-}
-
-ccfunc ccinle ccexec_value_t
-ccexec_value_u64(cctree_t *type, ccu64_t val, ccstr_t label)
-{ ccexec_value_t t;
-	t.kind=ccev_kRVALUE;
-	t.label=label;
-	t.type=type;
-	t.asu64=val;
-	return t;
-}
-
-ccfunc ccinle ccexec_value_t
-ccexec_value_f64(cctree_t *type, ccf64_t val, ccstr_t label)
-{ ccexec_value_t t;
-	t.kind=ccev_kRVALUE;
-	t.label=label;
-	t.type=type;
-	t.asf64=val;
 	return t;
 }
 
