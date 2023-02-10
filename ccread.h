@@ -14,7 +14,7 @@ typedef enum cctoken_k
   /**
    * Group: syntactic operators.
    **/
-  cctoken_Kend     =   0,
+  cctoken_kEND     =   0,
 
   // ** this is up to the lexer to determine and the parser to interpret **
   cctoken_Kendimpl, // '\r\n'
@@ -24,8 +24,8 @@ typedef enum cctoken_k
   cctoken_kRPAREN,  // ')'
   cctoken_Klcurly,  // '{'
   cctoken_Krcurly,  // '}'
-  cctoken_Klsquare, // '['
-  cctoken_Krsquare, // ']'
+  cctoken_kLSQUARE, // '['
+  cctoken_kRSQUARE, // ']'
 
   cctoken_Kcomma, // ','
   cctoken_Kcolon, // ':'
@@ -169,8 +169,8 @@ typedef enum cctoken_k
   cctoken_Knegative, // -
   //
   cctoken_Knegate, // !
-  cctoken_Kmso, // .
-  cctoken_Kmsp, // ->
+  cctoken_kDOT, // .
+  cctoken_kARROW, // ->
   //
   // Group: multiplicative
   cctoken_kMUL,

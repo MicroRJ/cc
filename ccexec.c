@@ -1,10 +1,12 @@
 #ifndef _CCEXEC
 #define _CCEXEC
 
-// Todo: fix constants,
 // Todo: faster string allocations
 // Todo: Legit stack allocator along with revamped mingle system
 // Todo: Legit type system
+
+ccfunc ccu32_t
+ccexec_sizeof(ccexec_stack_t *stack, cctree_t *type);
 
 // Note: associates a value with an edict, as you can see, I have peculiar choice of words ...
 ccfunc ccexec_value_t *
@@ -52,9 +54,7 @@ ccstack_yield_rvalue(
         break;
       }
     } break;
-    // Todo:
     case ccvalue_kCONST:
-      // Todo: this is ridiculous
       result=ccexec_rvalue(
         cccast(void*,couple->constant.clsc.asi64),"constant-value");
     break;
@@ -102,8 +102,11 @@ ccstack_local_alloc(
     "cannot allocate local, expected an edict of type LOCAL or PARAM");
 #endif
 
+  ccu32_t size=ccexec_sizeof(stack,edict->local.type);
+  ccassert(size!=0);
+
   ccexec_value_t *result=ccstack_mingle(stack,value);
-  *result=ccexec_lvalue(ccmalloc(sizeof(ccclassic_t)),"local_alloc");
+  *result=ccexec_lvalue(ccmalloc(size),"local_alloc");
 
   return result;
 }
@@ -135,9 +138,9 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
     case cctoken_kLTE:
       return ccexec_rvalue(cccast(void*,lval.asi64>rval.asi64),"<=");
     case cctoken_kMUL:
-      return ccexec_rvalue(cccast(void*,lval.asi64>rval.asi64),"*");
+      return ccexec_rvalue(cccast(void*,lval.asi64*rval.asi64),"*");
     case cctoken_kDIV:
-      return ccexec_rvalue(cccast(void*,lval.asi64>rval.asi64),"/");
+      return ccexec_rvalue(cccast(void*,lval.asi64/rval.asi64),"/");
     case cctoken_kSUB:
       return ccexec_rvalue(cccast(void*,lval.asi64-rval.asi64),"-");
     case cctoken_kADD:
@@ -302,6 +305,27 @@ ccexec_edict(
     default: ccassert(!"error");
   }
   return cctrue;
+}
+
+ccfunc ccu32_t
+ccexec_sizeof(ccexec_stack_t *_s, cctree_t *_t)
+{
+	if(_t->kind==cctree_kPOINTER)
+	{
+		return sizeof(void*);
+	} else
+	if(_t->kind==cctree_kARRAY)
+	{
+		// ccstack_yield_rvalue(_s,_t->rval);
+		// int some[10];
+	} else
+	if(_t->kind==cctree_kTYPENAME)
+	{
+		return sizeof(ccclassic_t);
+	}
+
+	ccassert(!"error");
+	return 0;
 }
 
 ccfunc int

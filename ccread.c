@@ -5,83 +5,111 @@
 // Note: No static language specific analysis done here, this file is meant to be modular in this manner...
 
 ccfunc void
-ccread_init(ccread_t *parser)
-{ memset(parser, 0, sizeof(*parser));
-  cclex_init(& parser->lex);
-  parser->bed = 0;
-  parser->min = 0;
-  parser->max = 0;
+ccread_init(ccread_t *_r)
+{
+	memset(_r,ccnil,sizeof(*_r));
+  cclex_init(& _r->lex);
 }
 
 ccfunc void
-ccread_uninit(ccread_t *parser)
-{ cclex_uninit(& parser->lex); // <-- free all the string memory.
-  ccarrdel(parser->buf); // <-- free all the buffered tokens.
+ccread_uninit(ccread_t *_r)
+{
+	cclex_uninit(&_r->lex);
+  ccarrdel(_r->buf);
 }
 
 ccfunc void
-ccread_all_tokens(ccread_t *parser);
+ccread_all_tokens(ccread_t *_r);
 
 // Todo: reset the token array ...
 ccfunc void
-ccreader_move(ccread_t *parser, size_t len, const char *min)
+ccreader_move(ccread_t *_r, size_t _l, const char *_d)
 {
-  cclex_move(& parser->lex, len, min);
-  ccread_all_tokens(parser);
+  cclex_move(&_r->lex,_l,_d);
+  ccread_all_tokens(_r);
 
-  parser->bed = 0;
-  parser->min = parser->buf;
-  parser->max = parser->buf + ccarrlen(parser->buf);
+  _r->bed=0;
+  _r->min=_r->buf;
+  _r->max=_r->buf+ccarrlen(_r->buf);
 }
 
 ccfunc void
-ccread_include(ccread_t *reader, const char *name)
+ccread_include(ccread_t *_r, const char *name)
 {
-  unsigned long int size;
+  unsigned long int size=0;
   void *file=ccopenfile(name);
-  void *data=ccpullfile(file,0,&(size=0));
+  void *data=ccpullfile(file,0,&size);
   ccclosefile(file);
 
-  ccreader_move(reader,size,(char*)data);
+  ccreader_move(_r,size,(char*)data);
 
   // Todo:
   // ccfree(data);
 }
 
 ccfunc void
-ccread_all_tokens(ccread_t *parser)
-{ while(cclex_next_token(& parser->lex))
+ccread_all_tokens(ccread_t *_r)
+{ while(cclex_next_token(& _r->lex))
   {
-    cctoken_t *token=ccarradd(parser->buf,1);
-    cclex_token(& parser->lex,token);
+    cctoken_t *token=ccarradd(_r->buf,1);
+    cclex_token(& _r->lex,token);
   }
 }
 
 ccfunc cctoken_t *
-kttc__peek_ahead(ccread_t *parser, cci32_t offset)
-{ if((parser->min + offset < parser->max))
-  { return parser->min + offset;
+ccpeek(ccread_t *_r, cci32_t _o)
+{
+	if((_r->min+_o<_r->max))
+  {
+  	return _r->min+_o;
   }
-  // TODO(RJ): this should point to a valid location in a file?
-  static cctoken_t end_tok = { cctoken_Kend }; // <-- hopefully no-one modifies this.
+
+  // Note: is this flawed?
+  static cctoken_t end_tok = { cctoken_kEND };
   return & end_tok;
 }
 
-ccfunc cctoken_t *
-ccpeep(ccread_t *parser)
-{ return kttc__peek_ahead(parser, 0);
+ccfunc ccinle cctoken_t *
+ccpeep(ccread_t *_r)
+{
+	return ccpeek(_r,0);
 }
 
-ccfunc cci32_t
-ccsee(ccread_t *parser, cctoken_k kind)
-{ return ccpeep(parser)->bit == kind;
+ccfunc ccinle int
+ccsee(ccread_t *_r, cctoken_k kind)
+{
+	return ccpeep(_r)->bit==kind;
 }
 
-ccfunc cci32_t
-ccsee_end(ccread_t *parser)
-{ return ccsee(parser, cctoken_Kend);
+ccfunc ccinle int
+ccsee_end(ccread_t *_r)
+{
+	return ccsee(_r,cctoken_kEND);
 }
 
+// Note: I keep coming up with these names ...
+ccfunc ccinle cctoken_t *
+ccgobble(ccread_t *_r)
+{
+	// Todo: instead of saving the last token, just save its flags, that's was we're really looking for ...
+	if(_r->min<_r->max)
+		return _r->bed=_r->min++;
+
+  return ccpeep(_r); // <-- use peek here to return special end token.
+}
+
+ccfunc ccinle cctoken_t *
+cceat(ccread_t *_r, cctoken_k _k)
+{
+	if(ccsee(_r,_k))
+		return ccgobble(_r);
+  return 0;
+}
+
+// Todo: most of the time there's a switch statement do then handle each specifier,
+// is this really necessary or is it just more overhead ...
+
+// Todo: remove, redundant ...
 ccfunc cctoken_t *
 kttc__peek_alignment_specifier(ccread_t *parser)
 {
@@ -95,6 +123,7 @@ kttc__peek_alignment_specifier(ccread_t *parser)
   return ccnil;
 }
 
+// Todo: remove, redundant ...
 ccfunc cctoken_t *
 kttc__peek_type_qualifier(ccread_t *parser)
 {
@@ -108,6 +137,7 @@ kttc__peek_type_qualifier(ccread_t *parser)
   return ccnil;
 }
 
+// Todo: remove, redundant ...
 ccfunc cctoken_t *
 ccsee_typespec(ccread_t *parser)
 {
@@ -121,6 +151,7 @@ ccsee_typespec(ccread_t *parser)
   return ccnil;
 }
 
+// Todo: remove, redundant ...
 ccfunc cctoken_t *
 kttc__peek_storage_class(ccread_t *parser)
 {
@@ -134,6 +165,7 @@ kttc__peek_storage_class(ccread_t *parser)
   return ccnil;
 }
 
+// Todo: remove, redundant ...
 ccfunc cctoken_t *
 kttc__peek_func_specifier(ccread_t *parser)
 {
@@ -144,63 +176,6 @@ kttc__peek_func_specifier(ccread_t *parser)
   {
     return token;
   }
-  return ccnil;
-}
-
-ccfunc cctoken_t *
-ccgobble(ccread_t *reader)
-{ if((reader->min<reader->max)) return reader->bed = reader->min ++;
-  return ccpeep(reader); // <-- use peek here to return special end token.
-}
-
-// NOTE(RJ): gotta be careful with how you inline this in a function call, order of execution my not be what you'd
-// expect, especially if one of the arguments is recursive.
-ccfunc cctoken_t *
-cceat(ccread_t *parser, cctoken_k kind)
-{ if(ccsee(parser,kind)) return ccgobble(parser);
-  return 0;
-}
-
-
-ccfunc cci32_t
-kttc__peek_oper_increment(ccread_t *parser)
-{
-  cctoken_t *tok0 = kttc__peek_ahead(parser, 0);
-  cctoken_t *tok1 = kttc__peek_ahead(parser, 1);
-  return (tok0->sig == cctoken_kADD) && (tok1->sig == cctoken_kADD);
-}
-
-ccfunc cci32_t
-kttc__peek_oper_decrement(ccread_t *parser)
-{
-  cctoken_t *tok0 = kttc__peek_ahead(parser, 0);
-  cctoken_t *tok1 = kttc__peek_ahead(parser, 1);
-  return (tok0->sig == cctoken_kSUB) &&  (tok1->sig == cctoken_kSUB);
-}
-
-ccfunc cctoken_t *
-kttc__consume_oper_increment(ccread_t *parser, cctoken_k new_sig)
-{
-  if(kttc__peek_oper_increment(parser))
-  { cctoken_t *tok = ccgobble(parser);
-    tok->sig = new_sig;
-    ccgobble(parser);
-    return tok;
-  }
-
-  return ccnil;
-}
-
-ccfunc cctoken_t *
-kttc__consume_oper_decrement(ccread_t *parser, cctoken_k new_sig)
-{
-  if(kttc__peek_oper_decrement(parser))
-  { cctoken_t *tok = ccgobble(parser);
-    tok->sig = new_sig;
-    ccgobble(parser);
-    return tok;
-  }
-
   return ccnil;
 }
 
@@ -233,7 +208,8 @@ ccread_primary(ccread_t *reader, cctree_t *root, cci32_t mark)
 	  case cctoken_kLITFLOAT:
   		return cctree_constant(root,mark,ctype_flo64,ccgobble(reader));
 	  case cctoken_kLITSTRING:
-  		return cctree_constant(root,mark,cctype_new_arr(ctype_int8),ccgobble(reader));
+	  	ccassert(!"error");
+  		// return cctree_constant(root,mark,cctreee_array_modifier(ctype_int8),ccgobble(reader));
 	  case cctoken_kLPAREN:
 	  { cctree_t *group=ccread_expression(reader,root,mark);
 	    if(!cceat(reader,cctoken_kRPAREN)) cctraceerr("expected ')'");
@@ -260,22 +236,30 @@ ccread_primary(ccread_t *reader, cctree_t *root, cci32_t mark)
 ccfunc cctree_t *
 ccread_postfix(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
+	// Todo:
+	// ccsee(reader,cctoken_kARROW)
+
   cctree_t *lhs = ccread_primary(reader,root,mark);
 
   if(cceat(reader, cctoken_kLPAREN))
-  { cctree_t *args = ccread_arglist_expr(reader,root,mark);
-    if(!cceat(reader,cctoken_kRPAREN)) ccsynerr(reader, 0, "expected ')'");
+  {
+  	cctree_t *args = ccread_arglist_expr(reader,root,mark);
+
+    if(!cceat(reader,cctoken_kRPAREN))
+    	ccsynerr(reader, 0, "expected ')'");
+
     return cctree_call(root,mark,lhs,args);
   } else
-  if(ccsee(reader, cctoken_Klsquare))
-  { cctree_t *expression = ccread_expression(reader,root,mark);
-    (void) expression;
-    if(! cceat(reader, cctoken_Krsquare))
-    { ccsynerr(reader, 0, "expected ']', in postfix expression!");
-    }
+  if(ccsee(reader, cctoken_kLSQUARE))
+  {
+  	cctree_t *args = ccread_expression(reader,root,mark);
+
+    if(!cceat(reader,cctoken_kRSQUARE))
+    	ccsynerr(reader, 0, "expected ']'");
+
+    return cctree_index(root,mark,lhs,args);
   } else
-  if(ccsee(reader, cctoken_Kmso) ||
-     ccsee(reader, cctoken_Kmsp))
+  if(ccsee(reader,cctoken_kDOT))
   { lhs = cctree_unary(root,mark,ccgobble(reader),lhs);
   } else
   if(cctoken_t *inc = cceat(reader, cctoken_Kpos_increment))
@@ -637,12 +621,12 @@ ccread_specifier_qualifier_list(ccread_t *reader, cctree_t *root, cci32_t mark);
 ccfunc cctree_t *
 ccread_designator(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-	if(ccsee(reader, cctoken_Klsquare))
+	if(ccsee(reader, cctoken_kLSQUARE))
   { cctoken_t *tok = ccgobble(reader);
     cctree_t  *cex = ccread_constant_expression(reader,root,mark);
     return cctree_new_designator(tok, cex);
   } else
-  if(ccsee(reader, cctoken_Kmso))
+  if(ccsee(reader, cctoken_kDOT))
   { cctoken_t *tok = ccgobble(reader);
     cctree_t  *cex = ccread_identifier(reader,root,mark);
     return cctree_new_designator(tok, cex);
@@ -722,19 +706,17 @@ ccread_direct_decl_name_modifier(ccread_t *reader, cctree_t *root, cci32_t mark,
     cctree_t *modifier=ccread_direct_decl_name_modifier(reader,root,mark,type);
     if(modifier->kind==cctree_kFUNC) ccsynwar(reader,0,"function that returns function");
     if(modifier->kind==cctree_kARRAY) ccsynwar(reader,0,"function that returns array");
-    return cctype_new_fun(modifier,list);
+    return cctreee_function_modifier(modifier,list);
   } else
-  if(cceat(reader, cctoken_Klsquare))
+  if(cceat(reader, cctoken_kLSQUARE))
   {
-    cctree_t *expression = ccread_expression(reader,root,mark);
-    (void) expression;
+    cctree_t *rval=ccread_expression(reader,root,mark);
 
-    if(! cceat(reader, cctoken_Krsquare))
-    { ccsynerr(reader, 0, "expected ']' for array modifier");
-    }
+    if(!cceat(reader,cctoken_kRSQUARE))
+    	ccsynerr(reader,0,"expected ']'");
 
-    cctree_t *modifier = ccread_direct_decl_name_modifier(reader,root,mark,type);
-    return cctype_new_arr(modifier);
+    cctree_t *modi=ccread_direct_decl_name_modifier(reader,root,mark,type);
+    return cctreee_array_modifier(modi,rval);
   }
   return type;
 }
@@ -765,7 +747,7 @@ ccread_direct_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t
 ccfunc ccinle cctree_t *
 ccread_decl_name_modifier_maybe(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { if(cceat(reader,cctoken_kMUL))
-    return cctype_new_ptr(ccread_decl_name_modifier_maybe(reader,root,mark,type));
+    return cctreee_pointer_modifier(ccread_decl_name_modifier_maybe(reader,root,mark,type));
   return type;
 }
 
@@ -867,7 +849,7 @@ ccread_struct_or_union_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
   	}
     if(!cceat(reader, cctoken_Krcurly))
       ccsynerr(reader,0,"expected '}' for struct specifier");
-    tree=cctree_struct(list,name);
+    tree=cctreee_struct_specifier(list,name);
     return tree;
   } else
   if(cceat(reader, cctoken_Kenum))

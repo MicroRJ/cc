@@ -38,6 +38,7 @@ typedef enum cctree_k
   cctree_kUNARY,
   cctree_kGROUP,
   cctree_kCALL,
+  cctree_kINDEX,
 
   cctree_kTUNIT,
 
@@ -68,6 +69,7 @@ ccglobal const char *cctree_s[]=
   "kUNARY",
   "kGROUP",
   "kCALL",
+  "kINDEX",
   "kTUNIT",
   "designator",
   "designation",
@@ -175,21 +177,22 @@ cctree_name(cctree_t *name)
 }
 
 ccfunc cctree_t *
-cctype_new_ptr(cctree_t *type)
+cctreee_pointer_modifier(cctree_t *type)
 { cctree_t *tree=cctree_new(cctree_kPOINTER,0,0);
   tree->type=type;
   return tree;
 }
 
 ccfunc cctree_t *
-cctype_new_arr(cctree_t *type)
+cctreee_array_modifier(cctree_t *type, cctree_t *rval)
 { cctree_t *tree=cctree_new(cctree_kARRAY,0,0);
   tree->type=type;
+  tree->rval=rval;
   return tree;
 }
 
 ccfunc cctree_t *
-cctype_new_fun(cctree_t *type, cctree_t **list)
+cctreee_function_modifier(cctree_t *type, cctree_t **list)
 { cctree_t *tree=cctree_new(cctree_kFUNC,0,0);
   tree->type=type;
   tree->list=list;
@@ -197,7 +200,7 @@ cctype_new_fun(cctree_t *type, cctree_t **list)
 }
 
 ccfunc cctree_t *
-cctree_struct(cctree_t **list, cctree_t *name)
+cctreee_struct_specifier(cctree_t **list, cctree_t *name)
 { ccassert(list!=0);
   cctree_t *tree=cctree_new(cctree_kSTRUCT,0,0);
   tree->list=list;
@@ -221,6 +224,14 @@ cctree_group(cctree_t *root, cci32_t mark, cctree_t *init)
 ccfunc cctree_t *
 cctree_call(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval)
 { cctree_t *tree=cctree_new(cctree_kCALL,root,mark);
+  tree->lval=lval;
+  tree->rval=rval;
+  return tree;
+}
+
+ccfunc cctree_t *
+cctree_index(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval)
+{ cctree_t *tree=cctree_new(cctree_kINDEX,root,mark);
   tree->lval=lval;
   tree->rval=rval;
   return tree;

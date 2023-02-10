@@ -296,7 +296,7 @@ cclex_next_token_internal(cclex_t *l)
 #endif
 
   if(l->max >= l->doc_max)
-  { l->tok.bit = cctoken_Kend;
+  { l->tok.bit = cctoken_kEND;
     return;
   }
   switch(* l->max)
@@ -409,10 +409,10 @@ cclex_next_token_internal(cclex_t *l)
     { ++ l->max, l->tok.bit = cctoken_kRPAREN;
     } break;
     case '[':
-    { ++ l->max, l->tok.bit = cctoken_Klsquare;
+    { ++ l->max, l->tok.bit = cctoken_kLSQUARE;
     } break;
     case ']':
-    { ++ l->max, l->tok.bit = cctoken_Krsquare;
+    { ++ l->max, l->tok.bit = cctoken_kRSQUARE;
     } break;
     case '{':
     { ++ l->max, l->tok.bit = cctoken_Klcurly;
@@ -430,7 +430,7 @@ cclex_next_token_internal(cclex_t *l)
     { if(l->max[1] == '.' && l->max[2] == '.')
       { l->max += 3, l->tok.bit = cctoken_Kliteral_ellipsis;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kmso;
+      { l->max += 1, l->tok.bit = cctoken_kDOT;
       }
     } break;
     // ^
@@ -522,7 +522,7 @@ cclex_next_token_internal(cclex_t *l)
       // { l->max += 2, l->tok.bit = cctoken_Kdecrement;
       // } else
       if(l->max[1]=='>')
-      { l->max += 2, l->tok.bit = cctoken_Kmsp;
+      { l->max += 2, l->tok.bit = cctoken_kARROW;
       } else
       if(l->max[1]=='=')
       { l->max += 2, l->tok.bit = cctoken_Ksub_eql;
@@ -590,7 +590,7 @@ cclex_next_token_internal(cclex_t *l)
     } break;
 
     case '\0':
-    { l->max += 1, l->tok.bit = cctoken_Kend;
+    { l->max += 1, l->tok.bit = cctoken_kEND;
     } break;
 
     // NOTE(RJ):

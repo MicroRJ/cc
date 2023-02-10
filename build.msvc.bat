@@ -3,5 +3,5 @@
 @SET myLinkerOptions=/DEBUG /SUBSYSTEM:CONSOLE /INCREMENTAL:NO
 @SET myInclude=/I.
 
-@CALL cl -D_DEVELOPER %myCompilerOptions% %myInclude% test.c /link %myLinkerOptions%
+@CALL cl -D_HARD_DEBUG -D_DEVELOPER %myCompilerOptions% %myInclude% test.c /link %myLinkerOptions%
 

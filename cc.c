@@ -217,42 +217,28 @@ ccfunc void  ccfree_   (void *,         const char *, const char *, int);
 #endif
 
 #ifdef _HARD_DEBUG
-ccfunc void
-ccmem_check(void *mem, unsigned int sze)
-{
-  long   reqn;
-  char * file;
-  int    line;
-  if(!_CrtCheckMemory())
-    cctraceerr("invalid memory state");
-  else
-  if(!_CrtIsValidHeapPointer(mem))
-    cctraceerr("invalid heap pointer %p, %i", mem,sze);
-  else
-  if(!_CrtIsMemoryBlock(mem,sze,&reqn,&file,&line))
-    cctraceerr("invalid memory block %p, %i", mem,sze);
-}
-
 ccfunc void *ccmalloc_(size_t size, const char *file, const char *func, int line)
 {
-  void *mem=_malloc_dbg(size,_CLIENT_BLOCK,file,line);
+  // long   reqn;
+  // char * file;
+  // int    line;
+  // ccassert(_CrtIsMemoryBlock(mem,sze,&reqn,&file,&line))
 
-  ccmem_check(mem,cccast(ccu32_t,size));
+  void *mem=_malloc_dbg(size,_CLIENT_BLOCK,file,line);
   return mem;
 }
 
 ccfunc void *ccrealloc_(void *data, size_t size, const char *file, const char *func, int line)
 {
   void *mem=_realloc_dbg(data,size,_CLIENT_BLOCK,file,line);
-
-  ccmem_check(mem,cccast(ccu32_t,size));
   return mem;
 }
 ccfunc void ccfree_(void *data, const char *file, const char *func, int line)
 {
+	ccassert(_CrtIsValidHeapPointer(data));
+
   _free_dbg(data,_CLIENT_BLOCK);
 }
-
 #ifdef _DEVELOPER
 #undef malloc
 # define malloc DO_NOT_USE_MALLOC

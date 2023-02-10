@@ -20,12 +20,12 @@ kttc__token2s(char **buf, cctoken_t *token)
     case cctoken_kRPAREN:  ccstr_catf(buf, ")"); break;
     case cctoken_Klcurly:  ccstr_catf(buf, "["); break;
     case cctoken_Krcurly:  ccstr_catf(buf, "]"); break;
-    case cctoken_Klsquare: ccstr_catf(buf, "["); break;
-    case cctoken_Krsquare: ccstr_catf(buf, "]"); break;
+    case cctoken_kLSQUARE: ccstr_catf(buf, "["); break;
+    case cctoken_kRSQUARE: ccstr_catf(buf, "]"); break;
     case cctoken_Kconditional:   ccstr_catf(buf, "?"); break;
     case cctoken_Kcolon:   ccstr_catf(buf, ":"); break;
-    case cctoken_Kmso:     ccstr_catf(buf, "."); break;
-    case cctoken_Kmsp:     ccstr_catf(buf, "->"); break;
+    case cctoken_kDOT:     ccstr_catf(buf, "."); break;
+    case cctoken_kARROW:     ccstr_catf(buf, "->"); break;
     case cctoken_Kcomma:   ccstr_catf(buf, ","); break;
     case cctoken_kMUL: ccstr_catf(buf, "*"); break;
     case cctoken_kDIV: ccstr_catf(buf, "/"); break;

@@ -9,7 +9,6 @@ int fib(int x)
 
 int main(int a)
 {
-	int huge[100];
 
 	int g;
 	g=fib(a);

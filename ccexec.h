@@ -49,7 +49,11 @@ ccprocd_local(ccemit_procd_t *func, cctree_t *tree)
 
 ccfunc ccemit_value_t *
 ccprocd_include_local(ccemit_procd_t *func, cctree_t *tree, int is_param)
-{ // Todo: check tree ...
+{
+	ccnotnil(tree);
+	ccassert(tree->kind==cctree_kDECLNAME);
+
+// Todo: check tree ...
 	ccedict_t *e=is_param?ccedict_param(tree):ccedict_local(tree);
   ccemit_value_t  *i=ccblock_add_edict(func->decls,e);
   ccemit_value_t **v=cctblputP(func->local,tree);
