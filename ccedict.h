@@ -22,7 +22,9 @@ ccglobal const char *ccedict_s[]=
 
 // Note: perhas each edict should have a flag that indicates whether to produce a value or not.
 typedef struct ccedict_t
-{ ccedict_k   kind;
+{
+	ccedict_k   kind;
+	ccstr_t     label; // Note: for debugging ...
 
 #if defined(_DEBUG)
 struct
@@ -32,7 +34,7 @@ union
 {
 	// Note: Produces an addressable lvalue, if param, value must be set before invoking a function ...
 	struct
-	{ const char *debug_label;
+	{
 		cctree_t   *type;
 	} local,param;
 	// Note: Produces a non-addressable rvalue ...
@@ -75,11 +77,12 @@ ccfunc ccinle ccedict_t *
 ccedict_local(cctree_t *tree)
 {
 	// Todo: check the tree
+
 	ccedict_t *e=ccmalloc_T(ccedict_t);
 	e->kind=ccedict_kLOCAL;
-	e->local.type=tree->type;
-	e->local.debug_label=tree->name;
+	e->label=tree->name;
 
+	e->local.type=tree->type;
 	return e;
 }
 
@@ -87,11 +90,12 @@ ccfunc ccinle ccedict_t *
 ccedict_param(cctree_t *tree)
 {
 	// Todo: check the tree
+
 	ccedict_t *e=ccmalloc_T(ccedict_t);
 	e->kind=ccedict_kPARAM;
-	e->local.type=tree->type;
-	e->local.debug_label=tree->name;
+	e->label=tree->name;
 
+	e->local.type=tree->type;
 	return e;
 }
 

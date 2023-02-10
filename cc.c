@@ -167,15 +167,28 @@ ccfunc void *ccmalloc_ (size_t,         const char *, const char *, int);
 ccfunc void *ccrealloc_(void *, size_t, const char *, const char *, int);
 ccfunc void  ccfree_   (void *,         const char *, const char *, int);
 
-#ifndef ccmalloc
-# define ccmalloc(len) ccmalloc_(len,__FILE__,__FUNC__,__LINE__)
-#endif
-#ifndef ccrealloc
-# define ccrealloc(mem,len) ccrealloc_(mem,len,__FILE__,__FUNC__,__LINE__)
-#endif
-#ifndef ccfree
-# define ccfree(mem) ccfree_(mem,__FILE__,__FUNC__,__LINE__)
-#endif
+
+#ifdef _HARD_DEBUG
+# ifndef ccmalloc
+#  define ccmalloc(len) ccmalloc_(len,__FILE__,__FUNC__,__LINE__)
+# endif
+# ifndef ccrealloc
+#  define ccrealloc(mem,len) ccrealloc_(mem,len,__FILE__,__FUNC__,__LINE__)
+# endif
+# ifndef ccfree
+#  define ccfree(mem) ccfree_(mem,__FILE__,__FUNC__,__LINE__)
+# endif
+#else
+# ifndef ccmalloc
+#  define ccmalloc(len) malloc(len)
+# endif
+# ifndef ccrealloc
+#  define ccrealloc(mem,len) realloc(mem,len)
+# endif
+# ifndef ccfree
+#  define ccfree(mem) free(mem)
+# endif
+#endif // #ifdef _HARD_DEBUG
 
 #ifndef ccmalloc_T
 # define ccmalloc_T(type) cccast(type*,ccmalloc(sizeof(type)))
@@ -184,8 +197,7 @@ ccfunc void  ccfree_   (void *,         const char *, const char *, int);
 # define ccrealloc_T(mem,type) cccast(type*,ccrealloc(mem,sizeof(type)))
 #endif
 
-#ifdef _DEBUG
-
+#ifdef _HARD_DEBUG
 ccfunc void
 ccmem_check(void *mem, unsigned int sze)
 {
@@ -205,7 +217,6 @@ ccmem_check(void *mem, unsigned int sze)
 ccfunc void *ccmalloc_(size_t size, const char *file, const char *func, int line)
 {
   void *mem=_malloc_dbg(size,_CLIENT_BLOCK,file,line);
-  // cctrace_(0,file,line,func,__FUNC__,"%lli-%p",size,mem);
 
   ccmem_check(mem,cccast(ccu32_t,size));
   return mem;
@@ -214,7 +225,6 @@ ccfunc void *ccmalloc_(size_t size, const char *file, const char *func, int line
 ccfunc void *ccrealloc_(void *data, size_t size, const char *file, const char *func, int line)
 {
   void *mem=_realloc_dbg(data,size,_CLIENT_BLOCK,file,line);
-  // cctrace_(0,file,line,func,__FUNC__,"%lli-%p>>%p",size,data,mem);
 
   ccmem_check(mem,cccast(ccu32_t,size));
   return mem;
@@ -222,10 +232,7 @@ ccfunc void *ccrealloc_(void *data, size_t size, const char *file, const char *f
 ccfunc void ccfree_(void *data, const char *file, const char *func, int line)
 {
   _free_dbg(data,_CLIENT_BLOCK);
-  // cctrace_(0,file,line,func,__FUNC__,"%p",data);
 }
-
-#endif
 
 #ifdef _DEVELOPER
 # undef malloc
@@ -234,6 +241,7 @@ ccfunc void ccfree_(void *data, const char *file, const char *func, int line)
 #  define realloc DO_NOT_USE_REALLOC
 # undef free
 #  define free DO_NOT_USE_FREE
+#endif
 #endif
 
 _CCASSERT(sizeof(ccu64_t)==sizeof(size_t));

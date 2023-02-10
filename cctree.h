@@ -393,10 +393,7 @@ cctree_resolve_call_symbol_allusion(cctree_t *tree)
     cctree_t **symbol=cctblputP(symbols,tree);
     ccassert(ccerrnon());
     *symbol=*solved;
-
-  	cctracelog("%p: '%s'",tree,tree->name);
   }
-
   return ccerrnon();
 }
 

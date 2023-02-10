@@ -1,71 +1,60 @@
 #ifndef _CCEXEC_VALUE
 #define _CCEXEC_VALUE
 
+typedef enum ccexec_value_k ccexec_value_k;
 typedef enum ccexec_value_k
-{
-	ccexec_value_kINVALID=0,
-
-	ccexec_value_kCONST,
-	ccexec_value_kADDRS,
+{ ccev_kINVALID=0,
+	ccev_kRVALUE,
+	ccev_kLVALUE,
 } ccexec_value_k;
 
+typedef struct ccexec_value_t ccexec_value_t;
 typedef struct ccexec_value_t
-{ const char      * debug_label;
+{ ccstr_t           label; // Note: for debugging
 	ccexec_value_k    kind;
-	cctree_t        * type;
+	cctree_t        * type; // Todo: remove from here ...
+
 	union
-	{ void * value;
-		ccf64_t  asf64;
-		cci64_t  asi64;
-		ccu64_t  asu64;
-
-		ccf32_t  asf32;
-
-		ccu32_t  asu32;
-		ccu16_t  asu16;
-		ccu8_t   asu8;
-
-		ccu32_t  asi32;
-		ccu16_t  asi16;
-		ccu8_t   asi8;
+	{ void    * value;
+		ccf64_t   asf64; ccf32_t   asf32;
+		ccu64_t   asu64; cci64_t   asi64;
+		ccu32_t   asu32; ccu32_t   asi32;
+		ccu16_t   asu16; ccu16_t   asi16;
+		ccu8_t    asu8;   ccu8_t    asi8;
 	};
 } ccexec_value_t;
 
 typedef struct ccemit_block_t ccemit_block_t;
 typedef struct ccemit_block_t
-{ const char      *label;
+{ ccstr_t          label; // Note: for debugging?
   ccemit_value_t **edict;
 } ccemit_block_t;
 
 typedef struct ccemit_procd_t
 { cctree_t         *tree;
   ccemit_value_t * *local;
-  ccemit_block_t        *block;
-  ccemit_block_t        *decls;
-  ccemit_block_t        *enter;
-  ccemit_block_t        *leave;
+  ccemit_block_t   *block;
+  ccemit_block_t   *decls;
+  ccemit_block_t   *enter;
+  ccemit_block_t   *leave;
 } ccemit_procd_t;
 
 typedef struct ccexec_stack_t
-{ ccemit_procd_t   *function;
+{ ccemit_procd_t *function;
 
-	ccemit_block_t      *current;
+	ccemit_block_t *current;
 	cci32_t         irindex;
 
 	ccexec_value_t *values;
 } ccexec_stack_t;
 
 typedef struct ccexec_t
-{ ccemit_t       * emit;
-  ccexec_value_t * values;
-  ccemit_procd_t   * routine;
-  ccemit_block_t      * current;
-  cci32_t          irindex;
+{ ccemit_t * emit;
 } ccexec_t;
 
 
 ccfunc ccemit_block_t *
-ccblock_I(ccemit_block_t *block, const char *label)
+ccblock_I(ccemit_block_t *block, ccstr_t label)
 {
   block->label=label?label:"no-label";
 
@@ -78,7 +67,7 @@ ccblock_I(ccemit_block_t *block, const char *label)
 }
 
 ccfunc ccemit_block_t *
-ccblock(ccemit_block_t *block, const char *label)
+ccblock(ccemit_block_t *block, ccstr_t label)
 {
   return ccblock_I(ccmalloc_T(ccemit_block_t),label);
 }
@@ -124,41 +113,41 @@ ccfunc_include_local(ccemit_procd_t *func, cctree_t *tree, int is_param)
 }
 
 ccfunc ccinle ccexec_value_t
-ccexec_value_I(ccexec_value_k kind, cctree_t *type, void *value, const char *debug_label)
+ccexec_value_I(ccexec_value_k kind, cctree_t *type, void *value, ccstr_t label)
 {
 	ccexec_value_t t;
 	t.kind=kind;
 	t.type=type;
 	t.value=value;
-	t.debug_label=debug_label;
+	t.label=label;
 	return t;
 }
 
 ccfunc ccinle ccexec_value_t
-ccexec_value_i64(cctree_t *type, cci64_t val, const char *debug_label)
+ccexec_value_i64(cctree_t *type, cci64_t val, ccstr_t label)
 { ccexec_value_t t;
-	t.kind=ccexec_value_kCONST;
-	t.debug_label=debug_label;
+	t.kind=ccev_kRVALUE;
+	t.label=label;
 	t.type=type;
 	t.asi64=val;
 	return t;
 }
 
 ccfunc ccinle ccexec_value_t
-ccexec_value_u64(cctree_t *type, ccu64_t val, const char *debug_label)
+ccexec_value_u64(cctree_t *type, ccu64_t val, ccstr_t label)
 { ccexec_value_t t;
-	t.kind=ccexec_value_kCONST;
-	t.debug_label=debug_label;
+	t.kind=ccev_kRVALUE;
+	t.label=label;
 	t.type=type;
 	t.asu64=val;
 	return t;
 }
 
 ccfunc ccinle ccexec_value_t
-ccexec_value_f64(cctree_t *type, ccf64_t val, const char *debug_label)
+ccexec_value_f64(cctree_t *type, ccf64_t val, ccstr_t label)
 { ccexec_value_t t;
-	t.kind=ccexec_value_kCONST;
-	t.debug_label=debug_label;
+	t.kind=ccev_kRVALUE;
+	t.label=label;
 	t.type=type;
 	t.asf64=val;
 	return t;

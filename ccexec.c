@@ -1,90 +1,129 @@
 #ifndef _CCEXEC
 #define _CCEXEC
 
-ccfunc void
-ccexec_yield(ccexec_t *exec, ccexec_value_t *val, ccemit_value_t *value)
-{
-  ccexec_value_t *v=cctblgetP(exec->values,value);
 
-  if(ccerrnon())
-    if(val) memcpy(val,v,sizeof(*v));
-  else
-    cctraceerr("invalid yield, no entry for value 0x%x %i", value, value);
+// Note: associates a value with an edict, as you can see, I have peculiar choice of words ...
+ccfunc ccexec_value_t *
+ccstack_mingle(ccexec_stack_t *stack, ccemit_value_t *value)
+{
+  ccassert(value!=0);
+
+
+  ccexec_value_t *result=cctblputP(stack->values,value);
+  ccassert(ccerrnon());
+
+
+  return result;
+}
+
+// Note: yields the associated execution time value, the value may not be modified ... pretty please
+ccfunc ccexec_value_t *
+ccstack_yield(ccexec_stack_t *stack, ccemit_value_t *value)
+{
+  ccassert(value!=0);
+
+  ccexec_value_t *result=cctblgetP(stack->values,value);
+  ccassert(ccerrnon());
+
+  if((result->kind==ccev_kINVALID))
+  	cctraceerr("value kind is invalid, did you register this value and not set its contents?");
+
+  ccassert(result->kind!=ccev_kINVALID);
+
+  return result;
+}
+
+// Note: allocates an execution time addressable l-value on the stack and associates it with the given value...
+ccfunc ccexec_value_t *
+ccstack_local_alloc(
+  ccexec_stack_t *stack, ccemit_value_t *value)
+{
+  ccnotnil((value));
+  ccassert((value->kind==ccvalue_kEDICT),
+    "cannot allocate local, expected a value of type EDICT and of subtype LOCAL or PARAM");
+
+  ccedict_t *edict=value->edict;
+
+  ccnotnil((edict));
+  ccassert((edict->kind==ccedict_kLOCAL)||(edict->kind==ccedict_kPARAM),
+    "cannot allocate local, expected an edict of type LOCAL or PARAM");
+
+  // Todo:
+  ccexec_value_t *result=ccstack_mingle(stack,value);
+  result->value=ccmalloc(sizeof(ccclassic_t));
+  result->kind=ccev_kLVALUE;
+  result->type=edict->local.type;
+
+  // Todo:
+  result->label=ccnil;
+  ccstrcatf(result->label,"'%s':localloc",edict->label);
+  return result;
 }
 
 ccfunc ccexec_value_t *
-ccexec_save(ccexec_t *exec, ccemit_value_t *value)
+ccstack_yield_rvalue(
+  ccexec_stack_t *stack, ccemit_value_t *couple)
 {
-  ccexec_value_t *v=cctblputP(exec->values,value);
-  ccassert(ccerrnon());
+  ccexec_value_t *result=ccnil;
 
-  return v;
-}
-
-ccfunc int
-ccexec_rvalue(ccexec_t *exec, ccexec_value_t *rval, ccemit_value_t *val)
-{
-  switch(val->kind)
+  switch(couple->kind)
   { case ccvalue_kEDICT:
-    { switch(val->edict->kind)
+    { switch(couple->edict->kind)
       { case ccedict_kFETCH:
         case ccedict_kARITH:
         case ccedict_kINVOKE:
-          ccexec_yield(exec,rval,val);
+          result=ccstack_yield(stack,couple);
         break;
-        default:
-          ccassert(!"internal");
-        return ccfalse;
       }
     } break;
-    case ccvalue_kGLOBAL:
-      ccassert(!"noimpl");
-    break;
-    case ccvalue_kCONST:
     // Todo:
-      *rval=ccexec_value_I(ccexec_value_kCONST,
-        val->constant.type,
-        cccast(void*,val->constant.clsc.as_i64),
-        "constant-value");
+    case ccvalue_kCONST:
+      // Todo: this is ridiculous
+      result=ccmalloc_T(ccexec_value_t);
+      *result=ccexec_value_I(ccev_kRVALUE,couple->constant.type,cccast(void*,couple->constant.clsc.as_i64),"constant-value");
     break;
-    default:
-      ccassert(!"internal");
-    return ccfalse;
   }
-  return cctrue;
+
+  ccnotnil(result);
+  ccassert(result->kind==ccev_kRVALUE);
+  return result;
 }
 
-ccfunc void
-ccexec_lvalue(ccexec_t *exec, ccexec_value_t *lval, ccemit_value_t *val)
+ccfunc ccexec_value_t *
+ccstack_yield_lvalue(ccexec_stack_t *stack, ccemit_value_t *couple)
 {
-  if(val->kind==ccvalue_kEDICT)
-  { switch(val->edict->kind)
+  ccexec_value_t *result=ccnil;
+
+  if(couple->kind==ccvalue_kEDICT)
+  { switch(couple->edict->kind)
     { case ccedict_kLOCAL:
       case ccedict_kPARAM:
-        ccexec_yield(exec,lval,val);
+        result=ccstack_yield(stack,couple);
       break;
-      default: ccassert(!"internal");
     }
-  } else ccassert(!"internal");
+  }
+
+  ccnotnil(result);
+  ccassert(result->kind==ccev_kLVALUE);
+  return result;
 }
 
 ccfunc cci32_t
-ccexec_load(ccexec_t *exec, cctree_t *type, void *address)
+ccexec_load(ccexec_stack_t *stack, cctree_t *type, void *address)
 {
   return ccdref(cccast(cci32_t *,address));
 }
 
 ccfunc void
-ccexec_enter(ccexec_t *vm, ccemit_block_t *block)
+ccexec_enter(ccexec_stack_t *stack, ccemit_block_t *block)
 {
-  ccnotnil(block);
-  vm->current=block;
-  vm->irindex=0;
+  stack->current=block;
+  stack->irindex=0;
 }
 
 //
 ccfunc ccexec_value_t *
-ccexec_edict_arith(ccexec_t *exec, ccemit_value_t *val)
+ccexec_edict_arith(ccexec_stack_t *stack, ccemit_value_t *val)
 {
   ccexec_value_t *result={};
 
@@ -98,11 +137,10 @@ ccexec_edict_arith(ccexec_t *exec, ccemit_value_t *val)
   ccnotnil(lhs);
   ccnotnil(rhs);
 
-  ccexec_value_t lval,rval;
-  ccassert(ccexec_rvalue(exec,&lval,lhs));
-  ccassert(ccexec_rvalue(exec,&rval,rhs));
-  ccassert(lval.kind==ccexec_value_kCONST);
-  ccassert(rval.kind==ccexec_value_kCONST);
+  ccexec_value_t *lval,*rval;
+  lval=ccstack_yield_rvalue(stack,lhs);
+  rval=ccstack_yield_rvalue(stack,rhs);
+
 
   if(opr==cctoken_kASSIGN)
   { ccassert(!"internal");
@@ -112,13 +150,16 @@ ccexec_edict_arith(ccexec_t *exec, ccemit_value_t *val)
   { // return ccemit_const_i32(ccnil,lhs->leaf.sig==rhs->leaf.sig);
   } else
   if(opr==cctoken_Kgreater_than)
-  { result=ccexec_save(exec,val);
-    result->kind=ccexec_value_kCONST;
-    result->debug_label="greater-than";
-    result->asi32=lval.asi32>rval.asi32;
+  { result=ccstack_mingle(stack,val);
+    result->kind=ccev_kRVALUE;
+    result->label="greater-than";
+    result->asi32=lval->asi32>rval->asi32;
   } else
   if(opr==cctoken_Kgreater_than_eql)
-  { // return ccemit_const_i32(ccnil,lhs->leaf.sig>=rhs->leaf.sig);
+  { result=ccstack_mingle(stack,val);
+    result->kind=ccev_kRVALUE;
+    result->label="greater-than-eql";
+    result->asi32=lval->asi32>=rval->asi32;
   } else
   if(opr==cctoken_Kless_than)
   { // return ccemit_const_i32(ccnil,lhs->leaf.sig<rhs->leaf.sig);
@@ -127,16 +168,16 @@ ccexec_edict_arith(ccexec_t *exec, ccemit_value_t *val)
   {
   } else
   if(opr==cctoken_Ksub)
-  { result=ccexec_save(exec,val);
-    result->kind=ccexec_value_kCONST;
-    result->debug_label="sub";
-    result->asi32=lval.asi32-rval.asi32;
+  { result=ccstack_mingle(stack,val);
+    result->kind=ccev_kRVALUE;
+    result->label="sub";
+    result->asi32=lval->asi32-rval->asi32;
   } else
   if(opr==cctoken_Kadd)
-  { result=ccexec_save(exec,val);
-    result->kind=ccexec_value_kCONST;
-    result->debug_label="add";
-    result->asi32=lval.asi32+rval.asi32;
+  { result=ccstack_mingle(stack,val);
+    result->kind=ccev_kRVALUE;
+    result->label="add";
+    result->asi32=lval->asi32+rval->asi32;
 #if 0
     cctracelog("ADD: %i, %i; 0x%x=%i",
       lval.clsc.as_i32,
@@ -150,39 +191,16 @@ ccexec_edict_arith(ccexec_t *exec, ccemit_value_t *val)
   return result;
 }
 
-ccfunc ccexec_value_t *
-ccexec_local(ccexec_t *exec, ccemit_value_t *value)
-{
-  ccnotnil((value));
-  ccassert((value->kind==ccvalue_kEDICT),
-    "cannot create local from given value, expected a value of type EDICT and of subtype LOCAL or PARAM");
-
-  ccedict_t *edict=value->edict;
-
-  ccnotnil((edict));
-  ccassert((edict->kind==ccedict_kLOCAL)||(edict->kind==ccedict_kPARAM),
-    "cannot create local from given value, expected an edict of type LOCAL or PARAM");
-
-  // Todo: stack alloc
-  ccexec_value_t *saved=ccexec_save(exec,value);
-  saved->value       = ccmalloc(sizeof(ccclassic_t));
-  saved->kind        = ccexec_value_kADDRS;
-  saved->type        = edict->local.type;
-  saved->debug_label = edict->local.debug_label;
-
-  cctracelog("%s[0x%x: $%s 0x%x",
-    ccedict_s[edict->kind],value,saved->debug_label,saved->value);
-
-  return saved;
-}
-
-
-ccfunc void
-ccexec_invoke(ccexec_t *exec, ccemit_value_t *val, ccexec_value_t *ret, ccexec_value_t *in);
+ccfunc int
+ccexec_invoke(
+  ccexec_t *exec, ccemit_value_t *val, ccexec_value_t *ret, ccexec_value_t *in);
 
 ccfunc int
-ccexec_edict(ccexec_t *exec, ccemit_block_t *irset, ccemit_value_t *value)
+ccexec_edict(
+  ccexec_t *exec, ccexec_stack_t *stack, ccemit_value_t *value)
 {
+  ccnotnil(stack);
+
   ccnotnil(value);
   ccassert(value->kind==ccvalue_kEDICT);
 
@@ -190,123 +208,103 @@ ccexec_edict(ccexec_t *exec, ccemit_block_t *irset, ccemit_value_t *value)
 
   switch(edict->kind)
   {
-    case ccedict_kLOCAL:
-    { ccexec_local(exec,value);
-    } break;
     // Note: this is simply to ensure we've set the parameters ...
     case ccedict_kPARAM:
-    { ccexec_value_t lval;
-      ccexec_yield(exec,&lval,value);
+    { ccstack_yield(stack,value);
     } break;
+
+    case ccedict_kLOCAL:
+    { ccstack_local_alloc(stack,value);
+    } break;
+
     case ccedict_kFETCH:
     {
-      ccexec_value_t lval;
-      ccexec_lvalue(exec,&lval,edict->fetch.lval);
+      ccexec_value_t *lval;
+      lval=ccstack_yield_lvalue(stack,ccnotnil(edict->fetch.lval));
 
-      ccassert(lval.kind==ccexec_value_kADDRS);
-
-      ccexec_value_t *saved=ccexec_save(exec,value);
-      saved->kind=ccexec_value_kCONST;
-      saved->type=lval.type;
-      saved->asi64=ccexec_load(exec,lval.type,lval.value);
-      saved->debug_label=lval.debug_label;
+      ccexec_value_t *saved=ccstack_mingle(stack,value);
+      saved->kind=ccev_kRVALUE;
+      saved->type=lval->type;
+      saved->asi64=ccexec_load(stack,lval->type,lval->value);
+      saved->label=ccnil;
+      ccstrcatf(saved->label,"fetch: %s",lval->label);
     } break;
     case ccedict_kSTORE:
     {
-      ccexec_value_t lval,rval;
-      ccexec_lvalue(exec,&lval,ccnotnil(edict->store.lval));
-      ccexec_rvalue(exec,&rval,ccnotnil(edict->store.rval));
-
-      ccassert(lval.kind==ccexec_value_kADDRS);
-      ccassert(rval.kind==ccexec_value_kCONST);
-
-      cctracelog("STORE[0x%x: $%s 0x%x=%i",
-        value,lval.debug_label,lval.value,rval.asi32);
+      ccexec_value_t *lval,*rval;
+      lval=ccstack_yield_lvalue(stack,ccnotnil(edict->store.lval));
+      rval=ccstack_yield_rvalue(stack,ccnotnil(edict->store.rval));
 
       // Todo:
-      *cccast(cci32_t*,lval.value)=rval.asi32;
+      *cccast(cci32_t*,lval->value)=rval->asi32;
 
-      ccexec_value_t *saved=ccexec_save(exec,value);
-      saved->kind=ccexec_value_kCONST;
-      saved->type=lval.type;
-      saved->value=rval.value;
-      saved->debug_label=rval.debug_label;
+      ccexec_value_t *saved=ccstack_mingle(stack,value);
+      saved->kind=ccev_kRVALUE;
+      saved->type=lval->type;
+      saved->value=rval->value;
+      saved->label=rval->label;
     } break;
     case ccedict_kENTER:
     { ccnotnil(edict->enter.blc);
-      ccexec_enter(exec,edict->enter.blc);
+      ccexec_enter(stack,edict->enter.blc);
     } break;
     case ccedict_kARITH:
     {
-      ccexec_edict_arith(exec,value);
+      ccexec_edict_arith(stack,value);
     } break;
     case ccedict_kRETURN:
     {
       ccnotnil(edict->ret.value);
 
       // Note: save the return value under the return instruction ... is this flawed?
-      ccexec_value_t *saved=ccexec_save(exec,value);
-      ccexec_rvalue(exec,saved,edict->ret.value);
+      ccexec_value_t *saved=ccstack_mingle(stack,value);
+      *saved=*ccstack_yield_rvalue(stack,edict->ret.value);
+
     } return ccfalse;
 
     case ccedict_kINVOKE:
     {
-    	ccassert(edict->invoke.call!=0);
+      ccassert(edict->invoke.call!=0);
 
-      ccexec_value_t *rval=ccnil;
-
+      ccexec_value_t  *rval=ccnil;
       ccemit_value_t **list=ccnil;
       ccarrfor(edict->invoke.rval,list)
-        ccexec_rvalue(exec,ccarrone(rval),*list);
+        *ccarrone(rval)=*ccstack_yield_rvalue(stack,*list);
 
       // Note: save the return value ...
-      ccexec_value_t *ret=ccexec_save(exec,value);
-      ccexec_invoke(exec,edict->invoke.call,ret,rval);
+      ccexec_value_t *ret=ccstack_mingle(stack,value);
+      if(!ccexec_invoke(exec,edict->invoke.call,ret,rval))
+      {
+      	ccassert(!"no-return value, error");
+      }
 
       ccarrdel(rval);
     } break;
     case ccedict_kTERNARY:
     {
-    	ccexec_value_t cond;
-      ccexec_rvalue(exec,&cond,ccnotnil(edict->ternary.cnd));
+      ccexec_value_t *cond;
+      cond=ccstack_yield_rvalue(stack,ccnotnil(edict->ternary.cnd));
 
-      ccassert(cond.kind==ccexec_value_kCONST);
-
-      if(cond.asi32)
-      	if(edict->ternary.lhs) ccexec_enter(exec,edict->ternary.lhs);
+      // Todo: is this flawed?
+      if(cond->asi32)
+        ccexec_enter(stack,ccnotnil(edict->ternary.lhs));
       else
-        if(edict->ternary.rhs) ccexec_enter(exec,edict->ternary.rhs);
+        ccexec_enter(stack,ccnotnil(edict->ternary.rhs));
 
     } break;
-#if 0
-
-    case ccedict_kBLOCK:
-    { ccedict_t *it;
-      ccarrfor(instr->block[0]->instr,it)
-      {
-        ccexec_edict(vm,irset,it);
-      }
-    } break;
-
-
-#endif
     default: ccassert(!"error");
   }
-
   return cctrue;
 }
 
-ccfunc void
-ccvm_exit(ccexec_t *vm)
-{
-  vm->current=ccnil;
-}
-
-ccfunc void
+ccfunc int
 ccexec_invoke(
-	ccexec_t *exec, ccemit_value_t *value, ccexec_value_t *ret, ccexec_value_t *arguments)
+  ccexec_t *exec, ccemit_value_t *value, ccexec_value_t *ret, ccexec_value_t *arguments)
 {
-	ret->debug_label="return_value";
+  ccnotnil(exec);
+  ccnotnil(value);
+
+  ccexec_stack_t stack={};
 
   ccemit_procd_t *func=value->func;
   cctree_t *type=func->tree->type;
@@ -315,36 +313,37 @@ ccexec_invoke(
 
   cctree_t **lval;
   ccarrfor(type->list,lval)
-  { ccemit_value_t *local=ccfunc_local(func,*lval);
-    ccexec_value_t *rval=ccexec_local(exec,local);
+  {
+    ccemit_value_t *local=ccfunc_local(func,*lval);
+    ccexec_value_t *rval=ccstack_local_alloc(&stack,local);
 
     cci32_t int_value=arguments->asi32;
     ccdref(cccast(cci32_t*,rval->value))=int_value;
     arguments++;
   }
 
-  int 			  irindex=exec->irindex;
-  ccemit_block_t * current=exec->current;
+  ccexec_enter(&stack,func->decls);
 
-  ccexec_enter(exec,func->decls);
+  while(stack.irindex<ccarrlen(stack.current->edict))
+  {
+    ccemit_value_t **it=stack.current->edict+stack.irindex;
+    stack.irindex++;
 
-  while(exec->irindex<ccarrlen(exec->current->edict))
-  { ccemit_value_t **it=exec->current->edict+exec->irindex;
-    exec->irindex++;
-
-    if(!ccexec_edict(exec,exec->current,*it))
+    if(!ccexec_edict(exec,&stack,*it))
     {
-    	// Note: is this flawed?
-    	ccedict_t *edict=(*it)->edict;
-    	if(edict->kind==ccedict_kRETURN)
-    		ccexec_yield(exec,ret,*it);
+      // Note: is this flawed?
+      ccedict_t *edict=(*it)->edict;
 
-    	break;
+      if(edict->kind==ccedict_kRETURN)
+        *ret=*ccstack_yield(&stack,*it);
+      return cctrue;
     }
   }
 
-  exec->current=current;
-  exec->irindex=irindex;
+
+  ccarrdel(stack.values);
+
+  return ccfalse;
 }
 
 ccfunc int
@@ -353,17 +352,30 @@ ccexec_init(ccexec_t *exec)
   return cctrue;
 }
 
+
+ccfunc int
+ccfib(int x)
+{
+	if(x<2) return x;
+
+	return ccfib(x-2)+ccfib(x-1);
+}
+
 ccfunc int
 ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
-{ exec->emit=emit;
+{
+
+  exec->emit=emit;
 
   ccexec_value_t *args=ccnil;
   ccexec_value_t *arg=ccarrone(args);
-  arg->kind=ccexec_value_kCONST;
-  arg->asi32=17;
+  arg->kind=ccev_kRVALUE;
+  arg->asi32=23;
 
   ccexec_value_t ret;
   ccexec_invoke(exec,emit->entry,&ret,args);
+
+	printf("fib %i - %i\n", ccfib(arg->asi32), ret.asi32);
   return 1;
 }
 

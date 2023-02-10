@@ -1,24 +1,14 @@
 int fib(int x)
-{
-	int l,r;
-
-	if(x>2)
-	{
-		l=fib(x-2);
-		r=fib(x-1);
-
-		x=l+r;
+{ if(x>=2)
+	{ int l=fib(x-2);
+		int r=fib(x-1);
+		return l+r;
 	}
-
 	return x;
 }
 
 int main(int a)
 {
-	int g;
-
-	if(a>1)
-	{
-		g=fib(a);
-	}
+	int g=fib(a);
+	return g;
 }
