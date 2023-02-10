@@ -82,6 +82,9 @@ extern "C" {
 #define ccu8_t  unsigned cci8_t
 #endif
 
+#ifndef ccthread_local
+# define ccthread_local __declspec(thread)
+#endif
 #ifndef ccglobal
 # define ccglobal static
 #endif

@@ -4,6 +4,206 @@
 //
 // Note: No static language specific analysis done here, this file is meant to be modular in this manner...
 
+ccfunc void
+ccread_init(ccread_t *parser)
+{ memset(parser, 0, sizeof(*parser));
+  cclex_init(& parser->lex);
+  parser->bed = 0;
+  parser->min = 0;
+  parser->max = 0;
+}
+
+ccfunc void
+ccread_uninit(ccread_t *parser)
+{ cclex_uninit(& parser->lex); // <-- free all the string memory.
+  ccarrdel(parser->buf); // <-- free all the buffered tokens.
+}
+
+ccfunc void
+ccread_all_tokens(ccread_t *parser);
+
+// Todo: reset the token array ...
+ccfunc void
+ccreader_move(ccread_t *parser, size_t len, const char *min)
+{
+  cclex_move(& parser->lex, len, min);
+  ccread_all_tokens(parser);
+
+  parser->bed = 0;
+  parser->min = parser->buf;
+  parser->max = parser->buf + ccarrlen(parser->buf);
+}
+
+ccfunc void
+ccread_include(ccread_t *reader, const char *name)
+{
+  unsigned long int size;
+  void *file=ccopenfile(name);
+  void *data=ccpullfile(file,0,&(size=0));
+  ccclosefile(file);
+
+  ccreader_move(reader,size,(char*)data);
+
+  // Todo:
+  // ccfree(data);
+}
+
+ccfunc void
+ccread_all_tokens(ccread_t *parser)
+{ while(cclex_next_token(& parser->lex))
+  {
+    cctoken_t *token=ccarradd(parser->buf,1);
+    cclex_token(& parser->lex,token);
+  }
+}
+
+ccfunc cctoken_t *
+kttc__peek_ahead(ccread_t *parser, cci32_t offset)
+{ if((parser->min + offset < parser->max))
+  { return parser->min + offset;
+  }
+  // TODO(RJ): this should point to a valid location in a file?
+  static cctoken_t end_tok = { cctoken_Kend }; // <-- hopefully no-one modifies this.
+  return & end_tok;
+}
+
+ccfunc cctoken_t *
+ccpeep(ccread_t *parser)
+{ return kttc__peek_ahead(parser, 0);
+}
+
+ccfunc cci32_t
+ccsee(ccread_t *parser, cctoken_k kind)
+{ return ccpeep(parser)->bit == kind;
+}
+
+ccfunc cci32_t
+ccsee_end(ccread_t *parser)
+{ return ccsee(parser, cctoken_Kend);
+}
+
+ccfunc cctoken_t *
+kttc__peek_alignment_specifier(ccread_t *parser)
+{
+  cctoken_t *token = ccpeep(parser);
+
+  if(token->bit > kttc__algn_spec_0 &&
+     token->bit < kttc__algn_spec_1)
+  {
+    return token;
+  }
+  return ccnil;
+}
+
+ccfunc cctoken_t *
+kttc__peek_type_qualifier(ccread_t *parser)
+{
+  cctoken_t *token = ccpeep(parser);
+
+  if(token->bit > cctype_qual_0 &&
+     token->bit < cctype_qual_1)
+  {
+    return token;
+  }
+  return ccnil;
+}
+
+ccfunc cctoken_t *
+ccsee_typespec(ccread_t *parser)
+{
+  cctoken_t *token = ccpeep(parser);
+
+  if(token->bit > cctype_spec_0 &&
+     token->bit < cctype_spec_1)
+  {
+    return token;
+  }
+  return ccnil;
+}
+
+ccfunc cctoken_t *
+kttc__peek_storage_class(ccread_t *parser)
+{
+  cctoken_t *token = ccpeep(parser);
+
+  if(token->bit > kttc__scls_spec_0 &&
+     token->bit < kttc__scls_spec_1)
+  {
+    return token;
+  }
+  return ccnil;
+}
+
+ccfunc cctoken_t *
+kttc__peek_func_specifier(ccread_t *parser)
+{
+  cctoken_t *token = ccpeep(parser);
+
+  if(token->bit > kttc__func_spec_0 &&
+     token->bit < kttc__func_spec_1)
+  {
+    return token;
+  }
+  return ccnil;
+}
+
+ccfunc cctoken_t *
+ccgobble(ccread_t *reader)
+{ if((reader->min<reader->max)) return reader->bed = reader->min ++;
+  return ccpeep(reader); // <-- use peek here to return special end token.
+}
+
+// NOTE(RJ): gotta be careful with how you inline this in a function call, order of execution my not be what you'd
+// expect, especially if one of the arguments is recursive.
+ccfunc cctoken_t *
+cceat(ccread_t *parser, cctoken_k kind)
+{ if(ccsee(parser,kind)) return ccgobble(parser);
+  return 0;
+}
+
+
+ccfunc cci32_t
+kttc__peek_oper_increment(ccread_t *parser)
+{
+  cctoken_t *tok0 = kttc__peek_ahead(parser, 0);
+  cctoken_t *tok1 = kttc__peek_ahead(parser, 1);
+  return (tok0->sig == cctoken_Kadd) && (tok1->sig == cctoken_Kadd);
+}
+
+ccfunc cci32_t
+kttc__peek_oper_decrement(ccread_t *parser)
+{
+  cctoken_t *tok0 = kttc__peek_ahead(parser, 0);
+  cctoken_t *tok1 = kttc__peek_ahead(parser, 1);
+  return (tok0->sig == cctoken_Ksub) &&  (tok1->sig == cctoken_Ksub);
+}
+
+ccfunc cctoken_t *
+kttc__consume_oper_increment(ccread_t *parser, cctoken_k new_sig)
+{
+  if(kttc__peek_oper_increment(parser))
+  { cctoken_t *tok = ccgobble(parser);
+    tok->sig = new_sig;
+    ccgobble(parser);
+    return tok;
+  }
+
+  return ccnil;
+}
+
+ccfunc cctoken_t *
+kttc__consume_oper_decrement(ccread_t *parser, cctoken_k new_sig)
+{
+  if(kttc__peek_oper_decrement(parser))
+  { cctoken_t *tok = ccgobble(parser);
+    tok->sig = new_sig;
+    ccgobble(parser);
+    return tok;
+  }
+
+  return ccnil;
+}
+
 ccfunc cctree_t *
 ccread_arglist_expr(ccread_t *reader, cctree_t *root, cci32_t mark);
 ccfunc cctree_t *

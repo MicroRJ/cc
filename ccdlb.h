@@ -1,8 +1,9 @@
 #ifndef _CCDLB
 #define _CCDLB
 
+// Todo: pending string arena ...
+
 typedef struct ccent_t ccent_t;
-typedef struct ccpad_t ccpad_t;
 // Note: dynamic length buffer
 typedef struct ccdlb_t ccdlb_t;
 
@@ -13,34 +14,39 @@ typedef struct ccent_t
   ccu32_t   val;
 } ccent_t;
 
+// Todo: custom allocator support, custom alignment support ...
 typedef struct ccdlb_t
-{
-
-	unsigned    mno_add: 1;
-	unsigned    mno_rze: 1;
+{ unsigned    rem_add: 1;
+	unsigned    rem_rze: 1;
   ccent_t *   entries;
   ccu32_t     sze_max;
   ccu32_t     sze_min;
 } ccdlb_t;
 
-
-// Todo:
-// Hmm....
-
+// Note: I don't want to propagate this too much, let's just use it here ...
 typedef enum ccerr_k
 {
   ccerr_kNON=0,
   ccerr_kNIT=1,
   ccerr_kAIT=2,
+  ccerr_kOOM=3,
+  ccerr_kIUA=4,
 } ccerr_k;
 
-ccglobal ccerr_k ccerr;
+ccglobal const char * const ccerr_s[]=
+{ "none",
+	"not in table",
+	"already in table",
+	"out of memory",
+	"invalid user argument",
+};
 
+ccglobal ccthread_local ccerr_k ccerr;
 #define ccerrset(err) (ccerr=err)
 #define ccerrnon()    ((ccerr)==ccerr_kNON)
+#define ccerrsom()    ((ccerr)!=ccerr_kNON)
 #define ccerrnit()    ((ccerr)==ccerr_kNIT)
 #define ccerrait()    ((ccerr)==ccerr_kAIT)
-
 
 // Note: C string utils ...
 #ifndef ccstrlenS
@@ -49,7 +55,6 @@ ccglobal ccerr_k ccerr;
 #ifndef ccstrlenL
 # define ccstrlenL(lstr) cccast(ccu32_t,sizeof(lstr)-1)
 #endif
-
 
 #ifndef ccdlb_
 # define ccdlb_(ccm) (cccast(ccdlb_t*,ccm)-1)
@@ -93,8 +98,11 @@ ccglobal ccerr_k ccerr;
 # define ccarrend ccarrend_min
 #endif
 
+#ifndef ccarrresi
+# define ccarrresi(ccm,com) ccdlb_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),com,ccnil)
+#endif
 #ifndef ccarrres
-# define ccarrres(ccm,com) ((ccm)+ccdlb_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),com,ccnil))
+# define ccarrres(ccm,com) ((ccm)+ccarrresi(ccm,com))
 #endif
 #ifndef ccarraddi
 # define ccarraddi(ccm,com) ccdlb_arradd(cccast(void **,&(ccm)),sizeof(*(ccm)),com,com)
@@ -109,14 +117,12 @@ ccglobal ccerr_k ccerr;
 # define ccarrzro(ccm) memset(ccm,ccnil,ccdlbmax(ccm))
 #endif
 #ifndef ccarrfix
-# define ccarrfix(ccm) ((ccm)?ccdlb_(ccm)->mno_rze=cctrue:(ccnil))
+# define ccarrfix(ccm) ((ccm)?ccdlb_(ccm)->rem_rze=cctrue:(ccnil))
 #endif
 
 #ifndef ccarrfor
 # define ccarrfor(arr,itr) for(itr=arr;itr<ccarrend(arr);++itr)
 #endif
-
-
 
 // Note: Table
 
@@ -225,10 +231,8 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32_t rsze, ccu32_t csze)
 ** The buffer is ensured to be at-least 10 bytes, however, the min counter will
 ** only be incremented by 5.
 **
-** This comes in plenty handy, at least for the type of programming I do ...
+** This comes in handy, at least for the type of programming I do ...
 */
-
-
   ccdlb_t *dlb=*dlb_;
 
   int is_ini=!dlb;
@@ -237,14 +241,13 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32_t rsze, ccu32_t csze)
     sze_max=ccnil,
     sze_min=ccnil;
   cci32_t
-    mno_rze=ccnil;
+    rem_rze=ccnil;
 
   if(!is_ini)
   { sze_max=dlb->sze_max;
     sze_min=dlb->sze_min;
-    mno_rze=dlb->mno_rze;
+    rem_rze=dlb->rem_rze;
   }
-
 
   // Note: ensure that we never commit past what we're about to reserve or what
   // we've reserved already ...
@@ -252,7 +255,7 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32_t rsze, ccu32_t csze)
 
   if(sze_max<sze_min+rsze)
   {
-    ccassert(!mno_rze);
+    ccassert(!rem_rze);
 
     sze_max<<=1;
     if(sze_max<sze_min+rsze)
@@ -296,6 +299,7 @@ ccdlb_stradd(char **ccm, ccu32_t cres, ccu32_t ccom, const char *cpy)
   return res;
 }
 
+// Note: I don't know whether this is a good hash or not ...
 ccfunc ccinle ccu64_t
 cchsh_abc(cci32_t len, const char *key)
 { ccu64_t hsh;
@@ -471,6 +475,7 @@ ccfunc void
 ccdlb_test()
 {
 
+#if 0
   void *mem=ccnil;
   mem=ccrealloc(mem,24);
   ccfree(mem);
@@ -478,6 +483,7 @@ ccdlb_test()
   mem=ccmalloc(24);
   mem=ccrealloc(mem,48);
   ccfree(mem);
+#endif
 
 #if 0
   typedef struct block_t

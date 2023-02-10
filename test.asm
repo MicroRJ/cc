@@ -6,302 +6,269 @@ INCLUDELIB MSVCRTD
 INCLUDELIB OLDNAMES
 
 CONST	SEGMENT
-$SG49152 DB	'ccread_statement', 00H
-	ORG $+7
-$SG49153 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49154 DB	'expected statement', 00H
 	ORG $+1
-$SG49156 DB	'err', 00H
-$SG49155 DB	'expected '';''', 00H
+$SG49155 DB	'err', 00H
+$SG49156 DB	'ccread_statement', 00H
 	ORG $+3
-$SG49157 DB	'ccread_statement', 00H
-	ORG $+3
-$SG49165 DB	'err', 00H
-$SG49158 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49161 DB	'err', 00H
+$SG49157 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+1
-$SG49170 DB	'err', 00H
-$SG49164 DB	'expected ''(''', 00H
-	ORG $+3
-$SG49166 DB	'ccread_statement', 00H
-	ORG $+3
-$SG49175 DB	'err', 00H
-$SG49167 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49172 DB	'err', 00H
+$SG49160 DB	'expected statement', 00H
 	ORG $+1
-$SG49181 DB	'err', 00H
-$SG49169 DB	'expected '')''', 00H
+$SG49176 DB	'err', 00H
+$SG49162 DB	'ccread_statement', 00H
 	ORG $+3
-$SG49171 DB	'ccread_statement', 00H
+$SG49199 DB	'err', 00H
+$SG49163 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+1
+$SG49227 DB	'err', 00H
+$SG49171 DB	'invalid statement, missing '':'' for label statement?', 00H
+$SG49232 DB	'err', 00H
+$SG49173 DB	'ccread_statement', 00H
 	ORG $+3
-$SG49187 DB	'err', 00H
-$SG49172 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49237 DB	'err', 00H
+$SG49174 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+1
-$SG49198 DB	'err', 00H
-$SG49174 DB	'expected expression', 00H
-$SG49202 DB	'err', 00H
-$SG49176 DB	'ccread_statement', 00H
-	ORG $+3
-$SG49225 DB	'err', 00H
-$SG49177 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+1
-$SG49253 DB	'err', 00H
-$SG49180 DB	'expected statement', 00H
-	ORG $+1
-$SG49258 DB	'err', 00H
-$SG49182 DB	'ccread_statement', 00H
-	ORG $+3
-$SG49263 DB	'err', 00H
-$SG49183 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+1
-$SG49570 DB	'err', 00H
-$SG49186 DB	'expected statement', 00H
-	ORG $+1
-$SG49657 DB	'sub', 00H
-$SG49188 DB	'ccread_statement', 00H
-	ORG $+3
-$SG49487 DB	'$local', 00H
-	ORG $+1
-$SG49660 DB	'add', 00H
-$SG49189 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+1
-$SG49672 DB	'log', 00H
-$SG49197 DB	'invalid statement, missing '':'' for label statement?', 00H
-$SG49714 DB	'log', 00H
-$SG49199 DB	'ccread_statement', 00H
-	ORG $+3
-$SG49492 DB	'error', 00H
+$SG49544 DB	'err', 00H
+$SG49175 DB	'invalid statement', 00H
 	ORG $+2
-$SG49513 DB	'$decls', 00H
+$SG49461 DB	'$local', 00H
 	ORG $+1
+$SG49631 DB	'sub', 00H
+$SG49177 DB	'ccread_statement', 00H
+	ORG $+3
+$SG49466 DB	'error', 00H
+	ORG $+2
+$SG49487 DB	'$decls', 00H
+	ORG $+1
+$SG49634 DB	'add', 00H
+$SG49178 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+1
+$SG49646 DB	'log', 00H
+$SG49198 DB	'expected ''}''', 00H
+	ORG $+3
+$SG49200 DB	'ccread_block', 00H
+	ORG $+3
+$SG49201 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+1
+$SG49688 DB	'log', 00H
+$SG49226 DB	'expected '';''', 00H
+	ORG $+3
+$SG49228 DB	'ccread_external_declaration', 00H
 pf	DB	069H
 	DB	075H
 	DB	063H
 	DB	066H
-$SG49200 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49229 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+1
 fn	DB	078H
 	DB	079H
 	DB	07aH
 	DB	077H
-$SG49201 DB	'invalid statement', 00H
+$SG49231 DB	'expected '';''', 00H
+	ORG $+3
+$SG49233 DB	'ccread_external_declaration', 00H
+$SG49814 DB	'i', 00H
 	ORG $+2
-$SG49514 DB	'$enter', 00H
+$SG49234 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+1
-$SG49840 DB	'i', 00H
+$SG49815 DB	'lli', 00H
+$SG49236 DB	'invalid external declaration', 00H
+	ORG $+3
+$SG49238 DB	'ccread_external_declaration', 00H
+$SG49816 DB	'c', 00H
 	ORG $+2
-$SG49203 DB	'ccread_statement', 00H
-	ORG $+3
-$SG49515 DB	'$leave', 00H
+$SG49239 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+1
-$SG49841 DB	'lli', 00H
-$SG49204 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+1
-$SG49842 DB	'c', 00H
+$SG49817 DB	'f', 00H
 	ORG $+2
-$SG49224 DB	'expected ''}''', 00H
-	ORG $+3
-$SG49226 DB	'ccread_block', 00H
-	ORG $+3
-$SG49227 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49270 DB	'ccemit_constant', 00H
+$SG49271 DB	'W:\cpp\void\ktt-c\ccemit.c', 00H
 	ORG $+1
-$SG49843 DB	'f', 00H
+$SG49832 DB	'x%i', 00H
+$SG49283 DB	'ccvm_block', 00H
+	ORG $+1
+$SG49842 DB	'%s', 00H
+	ORG $+1
+$SG49284 DB	'W:\cpp\void\ktt-c\ccemit.c', 00H
+	ORG $+1
+$SG49848 DB	'*', 00H
 	ORG $+2
-$SG49252 DB	'expected '';''', 00H
+$SG49371 DB	'internal', 00H
 	ORG $+3
-$SG49254 DB	'ccread_external_declaration', 00H
-$SG49858 DB	'x%i', 00H
-$SG49255 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49488 DB	'$enter', 00H
 	ORG $+1
-$SG49868 DB	'%s', 00H
-	ORG $+1
-$SG49257 DB	'expected '';''', 00H
-	ORG $+3
-$SG49259 DB	'ccread_external_declaration', 00H
-$SG49874 DB	'*', 00H
+$SG49850 DB	'&', 00H
 	ORG $+2
-$SG49260 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49386 DB	'internal', 00H
+	ORG $+3
+$SG49489 DB	'$leave', 00H
 	ORG $+1
-$SG49876 DB	'&', 00H
+$SG49852 DB	'[]', 00H
+	ORG $+1
+$SG49463 DB	'$if::then', 00H
 	ORG $+2
-$SG49262 DB	'invalid external declaration', 00H
-	ORG $+3
-$SG49264 DB	'ccread_external_declaration', 00H
-$SG49878 DB	'[]', 00H
+$SG49576 DB	'noimpl', 00H
 	ORG $+1
-$SG49265 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+1
-$SG49891 DB	'%s ', 00H
-$SG49296 DB	'ccemit_constant', 00H
-$SG49297 DB	'W:\cpp\void\ktt-c\ccemit.c', 00H
-	ORG $+1
-$SG49898 DB	'%c', 00H
-	ORG $+1
-$SG49309 DB	'ccvm_block', 00H
-	ORG $+1
-$SG49924 DB	'(', 00H
+$SG49865 DB	'%s ', 00H
+$SG49465 DB	'$if::else', 00H
 	ORG $+2
-$SG49310 DB	'W:\cpp\void\ktt-c\ccemit.c', 00H
+$SG49872 DB	'%c', 00H
 	ORG $+1
-$SG49926 DB	',', 00H
+$SG49511 DB	'ccemit_external_decl', 00H
+	ORG $+3
+$SG49512 DB	'W:\cpp\void\ktt-c\ccemit.c', 00H
+	ORG $+1
+$SG49898 DB	'(', 00H
 	ORG $+2
-$SG49397 DB	'internal', 00H
+$SG49513 DB	'ccemit_external_decl', 00H
 	ORG $+3
-$SG49543 DB	'error', 00H
+$SG49514 DB	'W:\cpp\void\ktt-c\ccemit.c', 00H
+	ORG $+1
+$SG49516 DB	'main', 00H
+	ORG $+3
+$SG49517 DB	'error', 00H
 	ORG $+2
-$SG49602 DB	'noimpl', 00H
-	ORG $+1
-$SG49927 DB	')', 00H
+$SG49900 DB	',', 00H
 	ORG $+2
-$SG49412 DB	'internal', 00H
-	ORG $+3
-$SG49661 DB	'error', 00H
+$SG49543 DB	'invalid yield, no entry for value 0x%x %i', 00H
 	ORG $+2
-$SG49936 DB	'%sm', 00H
-$SG49489 DB	'$if::then', 00H
+$SG49901 DB	')', 00H
 	ORG $+2
-$SG49937 DB	0dH, 0aH, 00H
+$SG49545 DB	'ccexec_yield', 00H
+	ORG $+3
+$SG49546 DB	'W:\cpp\void\ktt-c\ccexec.c', 00H
 	ORG $+1
-$SG49491 DB	'$if::else', 00H
+$SG49910 DB	'%sm', 00H
+$SG49574 DB	'internal', 00H
+	ORG $+3
+$SG49635 DB	'error', 00H
 	ORG $+2
-$SG49938 DB	'{ ', 00H
+$SG49911 DB	0dH, 0aH, 00H
 	ORG $+1
-$SG49537 DB	'ccemit_external_decl', 00H
+$SG49578 DB	'constant-value', 00H
+	ORG $+1
+$SG49580 DB	'internal', 00H
 	ORG $+3
-$SG49538 DB	'W:\cpp\void\ktt-c\ccemit.c', 00H
-	ORG $+1
-$SG49939 DB	';', 00H
+$SG49703 DB	'error', 00H
 	ORG $+2
-$SG49539 DB	'ccemit_external_decl', 00H
-	ORG $+3
-$SG49540 DB	'W:\cpp\void\ktt-c\ccemit.c', 00H
+$SG49912 DB	'{ ', 00H
 	ORG $+1
-$SG49542 DB	'main', 00H
+$SG49593 DB	'internal', 00H
 	ORG $+3
-$SG49729 DB	'error', 00H
+$SG49913 DB	';', 00H
 	ORG $+2
-$SG49942 DB	'}', 0dH, 0aH, 00H
-$SG49569 DB	'invalid yield, no entry for value 0x%x %i', 00H
+$SG49594 DB	'internal', 00H
+	ORG $+3
+$SG49916 DB	'}', 0dH, 0aH, 00H
+$SG49617 DB	'internal', 00H
+	ORG $+3
+$SG49929 DB	',', 00H
 	ORG $+2
-$SG49955 DB	',', 00H
+$SG49622 DB	'greater-than', 00H
+	ORG $+3
+$SG49643 DB	'ccexec_local', 00H
+	ORG $+3
+$SG49644 DB	'W:\cpp\void\ktt-c\ccexec.c', 00H
+	ORG $+1
+$SG49930 DB	')', 0dH, 0aH, 00H
+$SG49645 DB	'%s[0x%x: $%s 0x%x', 00H
 	ORG $+2
-$SG49571 DB	'ccexec_yield', 00H
-	ORG $+3
-$SG49572 DB	'W:\cpp\void\ktt-c\ccexec.c', 00H
+$SG49931 DB	'{ ', 00H
 	ORG $+1
-$SG49956 DB	')', 0dH, 0aH, 00H
-$SG49600 DB	'internal', 00H
+$SG49647 DB	'ccexec_local', 00H
 	ORG $+3
-$SG49957 DB	'{ ', 00H
+$SG49648 DB	'W:\cpp\void\ktt-c\ccexec.c', 00H
 	ORG $+1
-$SG49604 DB	'constant-value', 00H
-	ORG $+1
-$SG49606 DB	'internal', 00H
-	ORG $+3
-$SG49958 DB	';', 00H
+$SG49932 DB	';', 00H
 	ORG $+2
-$SG49619 DB	'internal', 00H
+$SG49687 DB	'STORE[0x%x: $%s 0x%x=%i', 00H
+$SG49689 DB	'ccexec_edict', 00H
 	ORG $+3
-$SG49961 DB	'}', 0dH, 0aH, 00H
-$SG49620 DB	'internal', 00H
-	ORG $+3
-$SG49972 DB	0dH, 0aH, 00H
+$SG49690 DB	'W:\cpp\void\ktt-c\ccexec.c', 00H
 	ORG $+1
-$SG49643 DB	'internal', 00H
+$SG49935 DB	'}', 0dH, 0aH, 00H
+$SG49695 DB	'ccexec_edict', 00H
 	ORG $+3
-$SG49973 DB	'{', 00H
+$SG49696 DB	'W:\cpp\void\ktt-c\ccexec.c', 00H
+	ORG $+1
+$SG49946 DB	0dH, 0aH, 00H
+	ORG $+1
+$SG49733 DB	'return_value', 00H
+	ORG $+3
+$SG49788 DB	'gen_type', 00H
+	ORG $+3
+$SG49947 DB	'{', 00H
 	ORG $+2
-$SG49648 DB	'greater-than', 00H
+$SG49789 DB	'W:\cpp\void\ktt-c\ccemit-c.c', 00H
 	ORG $+3
-$SG49669 DB	'ccexec_local', 00H
+$SG49826 DB	'%c%i', 00H
 	ORG $+3
-$SG49670 DB	'W:\cpp\void\ktt-c\ccexec.c', 00H
-	ORG $+1
-$SG49975 DB	';', 00H
+$SG49829 DB	'%c%i_%i', 00H
+$SG49893 DB	'static ', 00H
+$SG49896 DB	'void', 00H
+	ORG $+3
+$SG49897 DB	0dH, 0aH, '%s', 00H
+	ORG $+3
+$SG49914 DB	0dH, 0aH, '  r.%c=%c;', 00H
+	ORG $+3
+$SG49915 DB	0dH, 0aH, '  return r;', 0dH, 0aH, 00H
+$SG49926 DB	'static %s operator %s (', 00H
+$SG49933 DB	0dH, 0aH, '  r.%c=a.%c%cb.%c;', 00H
+	ORG $+3
+$SG49934 DB	0dH, 0aH, '  return r;', 0dH, 0aH, 00H
+$SG49945 DB	'typedef struct ', 00H
+$SG49948 DB	0dH, 0aH, '  ', 00H
+	ORG $+3
+$SG49949 DB	';', 00H
 	ORG $+2
-$SG49671 DB	'%s[0x%x: $%s 0x%x', 00H
+$SG49950 DB	0dH, 0aH, 00H
+	ORG $+1
+$SG49951 DB	'} ', 00H
+	ORG $+1
+$SG49952 DB	';', 0dH, 0aH, 00H
+$SG49953 DB	'*', 00H
 	ORG $+2
-$SG49976 DB	0dH, 0aH, 00H
+$SG49954 DB	'*=', 00H
 	ORG $+1
-$SG49673 DB	'ccexec_local', 00H
-	ORG $+3
-$SG49674 DB	'W:\cpp\void\ktt-c\ccexec.c', 00H
-	ORG $+1
-$SG49977 DB	'} ', 00H
-	ORG $+1
-$SG49713 DB	'STORE[0x%x: $%s 0x%x=%i', 00H
-$SG49715 DB	'ccexec_edict', 00H
-	ORG $+3
-$SG49716 DB	'W:\cpp\void\ktt-c\ccexec.c', 00H
-	ORG $+1
-$SG49978 DB	';', 0dH, 0aH, 00H
-$SG49721 DB	'ccexec_edict', 00H
-	ORG $+3
-$SG49722 DB	'W:\cpp\void\ktt-c\ccexec.c', 00H
-	ORG $+1
-$SG49979 DB	'*', 00H
+$SG49955 DB	'/', 00H
 	ORG $+2
-$SG49759 DB	'return_value', 00H
-	ORG $+3
-$SG49814 DB	'gen_type', 00H
-	ORG $+3
-$SG49980 DB	'*=', 00H
+$SG49956 DB	'/=', 00H
 	ORG $+1
-$SG49815 DB	'W:\cpp\void\ktt-c\ccemit-c.c', 00H
-	ORG $+3
-$SG49852 DB	'%c%i', 00H
-	ORG $+3
-$SG49855 DB	'%c%i_%i', 00H
-$SG49919 DB	'static ', 00H
-$SG49922 DB	'void', 00H
-	ORG $+3
-$SG49923 DB	0dH, 0aH, '%s', 00H
-	ORG $+3
-$SG49940 DB	0dH, 0aH, '  r.%c=%c;', 00H
-	ORG $+3
-$SG49941 DB	0dH, 0aH, '  return r;', 0dH, 0aH, 00H
-$SG49952 DB	'static %s operator %s (', 00H
-$SG49959 DB	0dH, 0aH, '  r.%c=a.%c%cb.%c;', 00H
-	ORG $+3
-$SG49960 DB	0dH, 0aH, '  return r;', 0dH, 0aH, 00H
-$SG49971 DB	'typedef struct ', 00H
-$SG49974 DB	0dH, 0aH, '  ', 00H
-	ORG $+3
-$SG49981 DB	'/', 00H
+$SG49957 DB	'+', 00H
 	ORG $+2
-$SG49982 DB	'/=', 00H
+$SG49958 DB	'+=', 00H
 	ORG $+1
-$SG49983 DB	'+', 00H
+$SG49959 DB	'-', 00H
 	ORG $+2
-$SG49984 DB	'+=', 00H
+$SG49960 DB	'-=', 00H
 	ORG $+1
-$SG49985 DB	'-', 00H
-	ORG $+2
-$SG49986 DB	'-=', 00H
+$SG49994 DB	'log test 1', 00H
 	ORG $+1
-$SG50020 DB	'log test 1', 00H
-	ORG $+1
-$SG50021 DB	'log', 00H
-$SG50022 DB	'main', 00H
+$SG49995 DB	'log', 00H
+$SG49996 DB	'main', 00H
 	ORG $+3
-$SG50023 DB	'test.c', 00H
+$SG49997 DB	'test.c', 00H
 	ORG $+1
-$SG50024 DB	'log test 2', 00H
+$SG49998 DB	'log test 2', 00H
 	ORG $+1
-$SG50025 DB	'log', 00H
-$SG50026 DB	'main', 00H
+$SG49999 DB	'log', 00H
+$SG50000 DB	'main', 00H
 	ORG $+3
-$SG50027 DB	'test.c', 00H
+$SG50001 DB	'test.c', 00H
 	ORG $+1
-$SG50028 DB	'log test 3', 00H
+$SG50002 DB	'log test 3', 00H
 	ORG $+1
-$SG50029 DB	'log', 00H
-$SG50030 DB	'main', 00H
+$SG50003 DB	'log', 00H
+$SG50004 DB	'main', 00H
 	ORG $+3
-$SG50031 DB	'test.c', 00H
+$SG50005 DB	'test.c', 00H
 	ORG $+1
-$SG50032 DB	'test.svm.c', 00H
+$SG50006 DB	'test.svm.c', 00H
 	ORG $+5
-$SG44982 DB	'invalid memory state', 00H
-	ORG $+3
-$SG50033 DB	'#define f64 double', 0dH, 0aH, '#define f32 float', 0dH, 0aH
+$SG50007 DB	'#define f64 double', 0dH, 0aH, '#define f32 float', 0dH, 0aH
 	DB	'#ifdef _MSC_VER', 0dH, 0aH, '# define i64 signed   __int64', 0dH
 	DB	0aH, '# define u64 unsigned __int64', 0dH, 0aH, '# define i32 '
 	DB	'signed   __int32', 0dH, 0aH, '# define u32 unsigned __int32', 0dH
@@ -316,7 +283,7 @@ $SG50033 DB	'#define f64 double', 0dH, 0aH, '#define f32 float', 0dH, 0aH
 	DB	'char', 0dH, 0aH, '#endif', 0dH, 0aH, '#define c8  char', 0dH, 0aH
 	DB	'#define c16 wchar_t', 0dH, 0aH, 00H
 	ORG $+1
-$SG50034 DB	'#define f64 double', 0dH, 0aH, '#define f32 float', 0dH, 0aH
+$SG50008 DB	'#define f64 double', 0dH, 0aH, '#define f32 float', 0dH, 0aH
 	DB	'#ifdef _MSC_VER', 0dH, 0aH, '# define i64 signed   __int64', 0dH
 	DB	0aH, '# define u64 unsigned __int64', 0dH, 0aH, '# define i32 '
 	DB	'signed   __int32', 0dH, 0aH, '# define u32 unsigned __int32', 0dH
@@ -331,7 +298,7 @@ $SG50034 DB	'#define f64 double', 0dH, 0aH, '#define f32 float', 0dH, 0aH
 	DB	'char', 0dH, 0aH, '#endif', 0dH, 0aH, '#define c8  char', 0dH, 0aH
 	DB	'#define c16 wchar_t', 0dH, 0aH, 00H
 	ORG $+1
-$SG50035 DB	'#define f64 double', 0dH, 0aH, '#define f32 float', 0dH, 0aH
+$SG50009 DB	'#define f64 double', 0dH, 0aH, '#define f32 float', 0dH, 0aH
 	DB	'#ifdef _MSC_VER', 0dH, 0aH, '# define i64 signed   __int64', 0dH
 	DB	0aH, '# define u64 unsigned __int64', 0dH, 0aH, '# define i32 '
 	DB	'signed   __int32', 0dH, 0aH, '# define u32 unsigned __int32', 0dH
@@ -346,9 +313,11 @@ $SG50035 DB	'#define f64 double', 0dH, 0aH, '#define f32 float', 0dH, 0aH
 	DB	'char', 0dH, 0aH, '#endif', 0dH, 0aH, '#define c8  char', 0dH, 0aH
 	DB	'#define c16 wchar_t', 0dH, 0aH, 00H
 	ORG $+1
-$SG50036 DB	'gen.ktt.c', 00H
+$SG50010 DB	'gen.ktt.c', 00H
 	ORG $+2
 $SG44983 DB	'err', 00H
+$SG44982 DB	'invalid memory state', 00H
+	ORG $+3
 $SG44984 DB	'ccmem_check', 00H
 $SG44989 DB	'err', 00H
 $SG44985 DB	'W:\cpp\void\ktt-c\cc.c', 00H
@@ -372,6 +341,8 @@ $SG45697 DB	'_KMGT', 00H
 	ORG $+2
 $SG45698 DB	'_kMGT', 00H
 	ORG $+2
+$SG46317 DB	'%s: %s[%i] %s() %s', 0aH, 00H
+	ORG $+4
 stbsp__bot DQ	03ff0000000000000r		; 1
 	DQ	04024000000000000r		; 10
 	DQ	04059000000000000r		; 100
@@ -395,8 +366,8 @@ stbsp__bot DQ	03ff0000000000000r		; 1
 	DQ	04415af1d78b58c40r		; 1e+20
 	DQ	0444b1ae4d6e2ef50r		; 1e+21
 	DQ	04480f0cf064dd592r		; 1e+22
-$SG46317 DB	'%s: %s[%i] %s() %s', 0aH, 00H
-	ORG $+4
+$SG46357 DB	'none', 00H
+	ORG $+3
 stbsp__negbot DQ 03fb999999999999ar		; 0.1
 	DQ	03f847ae147ae147br		; 0.01
 	DQ	03f50624dd2f1a9fcr		; 0.001
@@ -454,8 +425,8 @@ stbsp__top DQ	044b52d02c7e14af6r		; 1e+23
 	DQ	07475d2ce55747a18r		; 1e+253
 	DQ	0793ce2137f743382r		; 1e+276
 	DQ	07e031cfd3999f7b0r		; 1e+299
-$SG46618 DB	'%c%i', 00H
-	ORG $+3
+$SG46359 DB	'already in table', 00H
+	ORG $+7
 stbsp__negtop DQ 03b282db34012b251r		; 1e-23
 	DQ	0366244ce242c5561r		; 1e-46
 	DQ	0319b9b6364f30304r		; 1e-69
@@ -469,8 +440,8 @@ stbsp__negtop DQ 03b282db34012b251r		; 1e-23
 	DQ	00b677603725064a8r		; 1e-253
 	DQ	006a1ba03f5b21000r		; 1e-276
 	DQ	001dac9a7b3b7302fr		; 1e-299
-$SG46619 DB	'%c%i', 00H
-	ORG $+3
+$SG46361 DB	'invalid user argument', 00H
+	ORG $+2
 stbsp__toperr DQ 04160000000000000r		; 8.38861e+06
 	DQ	045ebb542c80deb40r		; 6.86018e+28
 	DQ	0cae83b80b9aab60ar		; -7.25314e+52
@@ -484,7 +455,7 @@ stbsp__toperr DQ 04160000000000000r		; 8.38861e+06
 	DQ	07119050c256123a0r		; 6.36413e+236
 	DQ	0f5db1799d76cc7a6r		; -5.20691e+259
 	DQ	0faa213fe39571a38r		; -5.25048e+282
-$SG46620 DB	'%c%i', 00H
+$SG46614 DB	'%c%i', 00H
 	ORG $+3
 stbsp__negtoperr DQ 037c13badb829e079r		; 3.95653e-40
 	DQ	0b2ee46a98d3d9f64r		; -2.2999e-63
@@ -499,7 +470,7 @@ stbsp__negtoperr DQ 037c13badb829e079r		; 3.95653e-40
 	DQ	0880aeb0a72a8902ar		; -6.36911e-270
 	DQ	0834e228e12c13408r		; -9.43681e-293
 	DQ	00000000000fa1259r		; 8.09709e-317
-$SG46621 DB	'%c%i', 00H
+$SG46615 DB	'%c%i', 00H
 	ORG $+3
 stbsp__powten DQ 0000000000000001H
 	DQ	000000000000000aH
@@ -521,461 +492,477 @@ stbsp__powten DQ 0000000000000001H
 	DQ	016345785d8a0000H
 	DQ	0de0b6b3a7640000H
 	DQ	8ac7230489e80000H
-$SG46386 DB	'ccdlb_arradd_', 00H
-	ORG $+2
-$SG46387 DB	'W:\cpp\void\ktt-c\ccdlb.h', 00H
-	ORG $+2
-$SG47417 DB	'log', 00H
-$SG46460 DB	'ccdlb_tblcat', 00H
+$SG46358 DB	'not in table', 00H
 	ORG $+3
-$SG46461 DB	'W:\cpp\void\ktt-c\ccdlb.h', 00H
+$SG46360 DB	'out of memory', 00H
 	ORG $+2
-$SG47449 DB	'err', 00H
-$SG46608 DB	'ccdlb_test', 00H
-	ORG $+1
-$SG47460 DB	'err', 00H
-$SG46609 DB	'W:\cpp\void\ktt-c\ccdlb.h', 00H
+$SG46393 DB	'ccdlb_arradd_', 00H
 	ORG $+2
-$SG47474 DB	'err', 00H
-$SG46610 DB	'ccdlb_test', 00H
-	ORG $+1
-$SG47538 DB	'err', 00H
-$SG46611 DB	'W:\cpp\void\ktt-c\ccdlb.h', 00H
+$SG46394 DB	'W:\cpp\void\ktt-c\ccdlb.h', 00H
 	ORG $+2
-$SG47542 DB	'err', 00H
-$SG46612 DB	'ccdlb_test', 00H
-	ORG $+1
-$SG47548 DB	'err', 00H
-$SG46613 DB	'W:\cpp\void\ktt-c\ccdlb.h', 00H
-	ORG $+2
-$SG47589 DB	'INVOKE', 00H
-	ORG $+1
-$SG48094 DB	'err', 00H
-$SG46614 DB	'ccdlb_test', 00H
-	ORG $+1
-$SG48178 DB	'int', 00H
-$SG46615 DB	'W:\cpp\void\ktt-c\ccdlb.h', 00H
-	ORG $+2
-$SG47590 DB	'RETURN', 00H
-	ORG $+1
-$SG48194 DB	'if', 00H
-	ORG $+1
-$SG46616 DB	'ccdlb_test', 00H
-	ORG $+1
-$SG48199 DB	'for', 00H
-$SG46617 DB	'W:\cpp\void\ktt-c\ccdlb.h', 00H
-	ORG $+2
-$SG46622 DB	'%c%i', 00H
+$SG47285 DB	'log', 00H
+$SG46467 DB	'ccdlb_tblcat', 00H
 	ORG $+3
-$SG46623 DB	'%c%i', 00H
+$SG46468 DB	'W:\cpp\void\ktt-c\ccdlb.h', 00H
+	ORG $+2
+$SG46616 DB	'%c%i', 00H
 	ORG $+3
-$SG46624 DB	'%c%i', 00H
+$SG46617 DB	'%c%i', 00H
 	ORG $+3
-$SG46625 DB	'%c%i', 00H
+$SG46618 DB	'%c%i', 00H
 	ORG $+3
-$SG47513 DB	'error', 00H
-	ORG $+2
-$SG48167 DB	'inline', 00H
-	ORG $+1
-$SG48201 DB	'do', 00H
-	ORG $+1
-$SG46658 DB	'ccpullfile', 00H
-	ORG $+1
-$SG48522 DB	'err', 00H
-$SG46659 DB	'W:\cpp\void\ktt-c\ccfio.c', 00H
-	ORG $+2
-$SG48169 DB	'signed', 00H
-	ORG $+1
-$SG48540 DB	'err', 00H
-$SG46949 DB	'ccread_uninit', 00H
-	ORG $+2
-$SG46950 DB	'W:\cpp\void\ktt-c\ccread.h', 00H
-	ORG $+1
-$SG48547 DB	'err', 00H
-$SG47234 DB	'cctree_del', 00H
-	ORG $+1
-$SG48592 DB	'err', 00H
-$SG47235 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
-	ORG $+1
-$SG48711 DB	'err', 00H
-$SG47244 DB	'cctree_new', 00H
-	ORG $+1
-$SG48793 DB	'err', 00H
-$SG47245 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
-	ORG $+1
-$SG48798 DB	'war', 00H
-$SG47416 DB	'%p: ''%s''', 00H
+$SG46619 DB	'%c%i', 00H
 	ORG $+3
-$SG47581 DB	'LOCAL', 00H
-	ORG $+2
-$SG48171 DB	'__int8', 00H
-	ORG $+1
-$SG48803 DB	'war', 00H
-$SG47418 DB	'cctree_resolve_call_symbol_allusion', 00H
-$SG48809 DB	'err', 00H
-$SG47419 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
-	ORG $+1
-$SG48828 DB	'err', 00H
-$SG47448 DB	'%s: identifier not found', 00H
+$SG46620 DB	'%c%i', 00H
 	ORG $+3
-$SG47582 DB	'PARAM', 00H
-	ORG $+2
-$SG48175 DB	'double', 00H
+$SG46621 DB	'%c%i', 00H
+	ORG $+3
+$SG47317 DB	'err', 00H
+$SG46654 DB	'ccpullfile', 00H
 	ORG $+1
-$SG48858 DB	'err', 00H
-$SG47450 DB	'cctree_solve_call', 00H
+$SG47328 DB	'err', 00H
+$SG46655 DB	'W:\cpp\void\ktt-c\ccfio.c', 00H
 	ORG $+2
-$SG48186 DB	'struct', 00H
+$SG47342 DB	'err', 00H
+$SG47102 DB	'cctree_del', 00H
 	ORG $+1
-$SG48872 DB	'err', 00H
-$SG47451 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+$SG47406 DB	'err', 00H
+$SG47103 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+	ORG $+1
+$SG47410 DB	'err', 00H
+$SG47112 DB	'cctree_new', 00H
+	ORG $+1
+$SG47416 DB	'err', 00H
+$SG47113 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+	ORG $+1
+$SG47962 DB	'err', 00H
+$SG47284 DB	'%p: ''%s''', 00H
+	ORG $+3
+$SG47381 DB	'error', 00H
+	ORG $+2
+$SG47457 DB	'INVOKE', 00H
+	ORG $+1
+$SG48046 DB	'int', 00H
+$SG47286 DB	'cctree_resolve_call_symbol_allusion', 00H
+$SG48062 DB	'if', 00H
+	ORG $+1
+$SG47287 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+	ORG $+1
+$SG48067 DB	'for', 00H
+$SG47316 DB	'%s: identifier not found', 00H
+	ORG $+3
+$SG47449 DB	'LOCAL', 00H
+	ORG $+2
+$SG47458 DB	'RETURN', 00H
+	ORG $+1
+$SG48069 DB	'do', 00H
+	ORG $+1
+$SG47318 DB	'cctree_solve_call', 00H
+	ORG $+2
+$SG48035 DB	'inline', 00H
+	ORG $+1
+$SG48496 DB	'err', 00H
+$SG47319 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
 	ORG $+5
-$SG47459 DB	'undeclared lvalue recipient ''%s'', did you forget to de'
+$SG47329 DB	'cctree_solve_lvalue', 00H
+	ORG $+4
+$SG47327 DB	'undeclared lvalue recipient ''%s'', did you forget to de'
 	DB	'clare the variable?', 00H
 	ORG $+2
-$SG48189 DB	'extern', 00H
+$SG48037 DB	'signed', 00H
 	ORG $+1
-$SG48913 DB	'err', 00H
-$SG47461 DB	'cctree_solve_lvalue', 00H
-$SG48927 DB	'err', 00H
-$SG47462 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+$SG48514 DB	'err', 00H
+$SG47330 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
 	ORG $+1
-$SG48946 DB	'err', 00H
-$SG47464 DB	'internal', 00H
+$SG48521 DB	'err', 00H
+$SG47332 DB	'internal', 00H
 	ORG $+7
-$SG47473 DB	'undeclared lvalue address ''%s'', did you forget to decl'
+$SG47343 DB	'cctree_solve_rvalue', 00H
+	ORG $+4
+$SG47341 DB	'undeclared lvalue address ''%s'', did you forget to decl'
 	DB	'are the variable?', 00H
-$SG47475 DB	'cctree_solve_rvalue', 00H
-$SG48951 DB	'err', 00H
-$SG47476 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+$SG47344 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
 	ORG $+1
-$SG48956 DB	'err', 00H
-$SG47480 DB	'internal', 00H
+$SG48566 DB	'err', 00H
+$SG47348 DB	'internal', 00H
 	ORG $+3
-$SG47583 DB	'STORE', 00H
+$SG47450 DB	'PARAM', 00H
 	ORG $+2
-$SG48191 DB	'static', 00H
+$SG48039 DB	'__int8', 00H
 	ORG $+1
-$SG49042 DB	'err', 00H
-$SG47537 DB	'%s: already has a body', 00H
+$SG48685 DB	'err', 00H
+$SG47405 DB	'%s: already has a body', 00H
 	ORG $+1
-$SG47539 DB	'cctree_solve_decl_name', 00H
+$SG47407 DB	'cctree_solve_decl_name', 00H
 	ORG $+1
-$SG47540 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+$SG47408 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+	ORG $+1
+$SG48767 DB	'err', 00H
+$SG47409 DB	'''%s'': local function defintions are illegal', 00H
+$SG48772 DB	'war', 00H
+$SG47411 DB	'cctree_solve_decl_name', 00H
+	ORG $+1
+$SG47412 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+	ORG $+1
+$SG48777 DB	'war', 00H
+$SG47415 DB	'''%s'': variable redefinition', 00H
+$SG48783 DB	'err', 00H
+$SG47417 DB	'cctree_solve_decl_name', 00H
+	ORG $+1
+$SG47418 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+	ORG $+1
+$SG47451 DB	'STORE', 00H
+	ORG $+2
+$SG47452 DB	'FETCH', 00H
+	ORG $+2
+$SG47453 DB	'ARITH', 00H
+	ORG $+2
+$SG47454 DB	'BLOCK', 00H
+	ORG $+2
+$SG48043 DB	'double', 00H
+	ORG $+1
+$SG48802 DB	'err', 00H
+$SG47455 DB	'TERNARY', 00H
+$SG47456 DB	'ENTER', 00H
+	ORG $+2
+$SG47600 DB	'ccedict_local', 00H
+	ORG $+2
+$SG47601 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG48832 DB	'err', 00H
+$SG47608 DB	'ccedict_param', 00H
+	ORG $+2
+$SG47609 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG48846 DB	'err', 00H
+$SG47617 DB	'ccedict_store', 00H
+	ORG $+2
+$SG47618 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG48887 DB	'err', 00H
+$SG47625 DB	'ccedict_fetch', 00H
+	ORG $+2
+$SG47626 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG48901 DB	'err', 00H
+$SG47635 DB	'ccedict_arith', 00H
+	ORG $+2
+$SG47636 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG48920 DB	'err', 00H
+$SG47643 DB	'ccedict_enter', 00H
+	ORG $+2
+$SG47644 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG48925 DB	'err', 00H
+$SG47652 DB	'ccedict_call', 00H
+	ORG $+3
+$SG47653 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG48930 DB	'err', 00H
+$SG47660 DB	'ccedict_return', 00H
+	ORG $+1
+$SG47661 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG49016 DB	'err', 00H
+$SG47670 DB	'ccedict_ternary', 00H
+$SG47671 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG49076 DB	'err', 00H
+$SG47839 DB	'no-label', 00H
+	ORG $+3
+$SG48021 DB	'__asm', 00H
+	ORG $+2
+$SG48054 DB	'struct', 00H
+	ORG $+1
+$SG49083 DB	'err', 00H
+$SG47846 DB	'ccblock', 00H
+$SG47847 DB	'W:\cpp\void\ktt-c\ccexec.h', 00H
+	ORG $+1
+$SG49090 DB	'err', 00H
+$SG47856 DB	'ccblock_add', 00H
+$SG49095 DB	'err', 00H
+$SG47857 DB	'W:\cpp\void\ktt-c\ccexec.h', 00H
 	ORG $+1
 $SG49102 DB	'err', 00H
-$SG47541 DB	'''%s'': local function defintions are illegal', 00H
-$SG49109 DB	'err', 00H
-$SG47543 DB	'cctree_solve_decl_name', 00H
+$SG47945 DB	'cclex_hash', 00H
 	ORG $+1
-$SG47544 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+$SG49107 DB	'err', 00H
+$SG47946 DB	'W:\cpp\void\ktt-c\cclex.c', 00H
+	ORG $+2
+$SG48057 DB	'extern', 00H
 	ORG $+1
-$SG49116 DB	'err', 00H
-$SG47547 DB	'''%s'': variable redefinition', 00H
-$SG49121 DB	'err', 00H
-$SG47549 DB	'cctree_solve_decl_name', 00H
+$SG49112 DB	'err', 00H
+$SG47961 DB	'invalid key, already in hash table', 00H
 	ORG $+1
-$SG47550 DB	'W:\cpp\void\ktt-c\cctree.h', 00H
+$SG49118 DB	'err', 00H
+$SG47963 DB	'cclex_hashonly', 00H
 	ORG $+1
-$SG47584 DB	'FETCH', 00H
+$SG47964 DB	'W:\cpp\void\ktt-c\cclex.c', 00H
 	ORG $+2
-$SG47585 DB	'ARITH', 00H
-	ORG $+2
-$SG47586 DB	'BLOCK', 00H
-	ORG $+2
-$SG48195 DB	'switch', 00H
+$SG48059 DB	'static', 00H
 	ORG $+1
-$SG49128 DB	'err', 00H
-$SG47587 DB	'TERNARY', 00H
-$SG47588 DB	'ENTER', 00H
+$SG49125 DB	'err', 00H
+$SG48022 DB	'__based', 00H
+$SG48023 DB	'__cdecl', 00H
+$SG48024 DB	'__clrcall', 00H
 	ORG $+2
-$SG47732 DB	'ccedict_local', 00H
+$SG48063 DB	'switch', 00H
+	ORG $+1
+$SG49130 DB	'err', 00H
+$SG48025 DB	'__fastcall', 00H
+	ORG $+1
+$SG49139 DB	'err', 00H
+$SG48026 DB	'__inline', 00H
+	ORG $+3
+$SG48032 DB	'const', 00H
 	ORG $+2
-$SG47733 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
-$SG49133 DB	'err', 00H
-$SG47740 DB	'ccedict_param', 00H
-	ORG $+2
-$SG47741 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
-$SG49138 DB	'err', 00H
-$SG47749 DB	'ccedict_store', 00H
-	ORG $+2
-$SG47750 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG48071 DB	'return', 00H
+	ORG $+1
 $SG49144 DB	'err', 00H
-$SG47757 DB	'ccedict_fetch', 00H
+$SG48027 DB	'__stdcall', 00H
 	ORG $+2
-$SG47758 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
-$SG49151 DB	'err', 00H
-$SG47767 DB	'ccedict_arith', 00H
-	ORG $+2
-$SG47768 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
-	ORG $+4
-$SG47775 DB	'ccedict_enter', 00H
-	ORG $+2
-$SG47776 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
-	ORG $+4
-$SG47784 DB	'ccedict_call', 00H
-	ORG $+3
-$SG47785 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
-	ORG $+4
-$SG47792 DB	'ccedict_return', 00H
+$SG48934 DB	'noimpl', 00H
 	ORG $+1
-$SG47793 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
+$SG49149 DB	'err', 00H
+$SG48028 DB	'__thiscall', 00H
+	ORG $+5
+$SG48029 DB	'__vectorcal', 00H
 	ORG $+4
-$SG47802 DB	'ccedict_ternary', 00H
-$SG47803 DB	'W:\cpp\void\ktt-c\ccedict.h', 00H
-	ORG $+4
-$SG47971 DB	'no-label', 00H
+$SG48030 DB	'_Alignof', 00H
 	ORG $+7
-$SG47978 DB	'ccblock', 00H
-$SG47979 DB	'W:\cpp\void\ktt-c\ccexec.h', 00H
-	ORG $+5
-$SG47988 DB	'ccblock_add', 00H
-	ORG $+4
-$SG47989 DB	'W:\cpp\void\ktt-c\ccexec.h', 00H
-	ORG $+5
-$SG48077 DB	'cclex_hash', 00H
-	ORG $+5
-$SG48078 DB	'W:\cpp\void\ktt-c\cclex.c', 00H
+$SG48031 DB	'_Alignas', 00H
+	ORG $+7
+$SG48033 DB	'restrict', 00H
+	ORG $+7
+$SG48034 DB	'volatile', 00H
+	ORG $+7
+$SG48036 DB	'_Noreturn', 00H
 	ORG $+6
-$SG48093 DB	'invalid key, already in hash table', 00H
-	ORG $+5
-$SG48095 DB	'cclex_hashonly', 00H
-	ORG $+1
-$SG48096 DB	'W:\cpp\void\ktt-c\cclex.c', 00H
-	ORG $+2
-$SG48153 DB	'__asm', 00H
-	ORG $+6
-$SG48154 DB	'__based', 00H
-$SG48155 DB	'__cdecl', 00H
-$SG48156 DB	'__clrcall', 00H
-	ORG $+6
-$SG48157 DB	'__fastcall', 00H
-	ORG $+5
-$SG48158 DB	'__inline', 00H
+$SG48038 DB	'unsigned', 00H
 	ORG $+7
-$SG48159 DB	'__stdcall', 00H
-	ORG $+6
-$SG48160 DB	'__thiscall', 00H
+$SG48040 DB	'__int16', 00H
+$SG48041 DB	'__int32', 00H
+$SG48042 DB	'__int64', 00H
+$SG48044 DB	'float', 00H
+	ORG $+2
+$SG48045 DB	'long', 00H
+	ORG $+3
+$SG48047 DB	'short', 00H
+	ORG $+2
+$SG48048 DB	'char', 00H
+	ORG $+3
+$SG48049 DB	'void', 00H
+	ORG $+3
+$SG48050 DB	'_Bool', 00H
+	ORG $+2
+$SG48051 DB	'_Complex', 00H
+	ORG $+7
+$SG48052 DB	'_Atomic', 00H
+$SG48053 DB	'enum', 00H
+	ORG $+3
+$SG48055 DB	'typedef', 00H
+$SG48056 DB	'auto', 00H
+	ORG $+3
+$SG48058 DB	'register', 00H
+	ORG $+7
+$SG48060 DB	'_Thread_local', 00H
+	ORG $+2
+$SG48061 DB	'__declspec', 00H
+	ORG $+1
+$SG48064 DB	'else', 00H
+	ORG $+3
+$SG48065 DB	'case', 00H
+	ORG $+7
+$SG48066 DB	'default', 00H
+$SG48068 DB	'while', 00H
+	ORG $+2
+$SG48070 DB	'goto', 00H
+	ORG $+3
+$SG48072 DB	'break', 00H
+	ORG $+2
+$SG48073 DB	'continue', 00H
+	ORG $+7
+$SG48087 DB	'cclex_init', 00H
 	ORG $+5
-$SG48161 DB	'__vectorcal', 00H
+$SG48088 DB	'W:\cpp\void\ktt-c\cclex.c', 00H
+	ORG $+6
+$SG48361 DB	'ccread_uninit', 00H
+	ORG $+2
+$SG48362 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG48495 DB	'expected '')''', 00H
+	ORG $+3
+$SG48497 DB	'ccread_primary', 00H
+	ORG $+1
+$SG48498 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG48513 DB	'expected '')''', 00H
+	ORG $+3
+$SG48515 DB	'ccread_postfix', 00H
+	ORG $+1
+$SG48516 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG48520 DB	'expected '']'', in postfix expression!', 00H
+	ORG $+3
+$SG48522 DB	'ccread_postfix', 00H
+	ORG $+1
+$SG48523 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG48565 DB	'expected '')''', 00H
+	ORG $+3
+$SG48567 DB	'ccread_cast_expr', 00H
+	ORG $+7
+$SG48568 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG48684 DB	'expected '':'' invalid conditional expression', 00H
 	ORG $+4
-$SG48162 DB	'_Alignof', 00H
-	ORG $+7
-$SG48163 DB	'_Alignas', 00H
-	ORG $+3
-$SG48164 DB	'const', 00H
-	ORG $+6
-$SG48165 DB	'restrict', 00H
-	ORG $+7
-$SG48166 DB	'volatile', 00H
-	ORG $+7
-$SG48168 DB	'_Noreturn', 00H
-	ORG $+6
-$SG48170 DB	'unsigned', 00H
-	ORG $+7
-$SG48172 DB	'__int16', 00H
-$SG48173 DB	'__int32', 00H
-$SG48174 DB	'__int64', 00H
-$SG48176 DB	'float', 00H
-	ORG $+2
-$SG48177 DB	'long', 00H
-	ORG $+3
-$SG48179 DB	'short', 00H
-	ORG $+2
-$SG48180 DB	'char', 00H
-	ORG $+3
-$SG48181 DB	'void', 00H
-	ORG $+3
-$SG48182 DB	'_Bool', 00H
-	ORG $+2
-$SG48183 DB	'_Complex', 00H
-	ORG $+7
-$SG48184 DB	'_Atomic', 00H
-$SG48185 DB	'enum', 00H
-	ORG $+3
-$SG48187 DB	'typedef', 00H
-$SG48188 DB	'auto', 00H
-	ORG $+3
-$SG48190 DB	'register', 00H
-	ORG $+7
-$SG48192 DB	'_Thread_local', 00H
-	ORG $+2
-$SG48193 DB	'__declspec', 00H
-	ORG $+1
-$SG48196 DB	'else', 00H
-	ORG $+3
-$SG48197 DB	'case', 00H
-	ORG $+7
-$SG48198 DB	'default', 00H
-$SG48200 DB	'while', 00H
-	ORG $+2
-$SG48202 DB	'goto', 00H
-	ORG $+3
-$SG48203 DB	'return', 00H
-	ORG $+1
-$SG48204 DB	'break', 00H
-	ORG $+2
-$SG48205 DB	'continue', 00H
-	ORG $+7
-$SG48219 DB	'cclex_init', 00H
+$SG48686 DB	'ccread_conditional_expr', 00H
+$SG48687 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG48220 DB	'W:\cpp\void\ktt-c\cclex.c', 00H
-	ORG $+6
-$SG48521 DB	'expected '')''', 00H
+$SG48766 DB	'expected '')''', 00H
 	ORG $+3
-$SG48523 DB	'ccread_primary', 00H
-	ORG $+1
-$SG48524 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+5
-$SG48539 DB	'expected '')''', 00H
-	ORG $+3
-$SG48541 DB	'ccread_postfix', 00H
-	ORG $+1
-$SG48542 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+5
-$SG48546 DB	'expected '']'', in postfix expression!', 00H
-	ORG $+3
-$SG48548 DB	'ccread_postfix', 00H
-	ORG $+1
-$SG48549 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+5
-$SG48591 DB	'expected '')''', 00H
-	ORG $+3
-$SG48593 DB	'ccread_cast_expr', 00H
+$SG48768 DB	'ccread_direct_decl_name_modifier', 00H
 	ORG $+7
-$SG48594 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG48769 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG48710 DB	'expected '':'' invalid conditional expression', 00H
+$SG48771 DB	'function that returns function', 00H
+	ORG $+1
+$SG48773 DB	'ccread_direct_decl_name_modifier', 00H
+	ORG $+7
+$SG48774 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG48776 DB	'function that returns array', 00H
 	ORG $+4
-$SG48712 DB	'ccread_conditional_expr', 00H
-$SG48713 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG48778 DB	'ccread_direct_decl_name_modifier', 00H
+	ORG $+7
+$SG48779 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG48792 DB	'expected '')''', 00H
+$SG48782 DB	'expected '']'' for array modifier', 00H
+$SG48784 DB	'ccread_direct_decl_name_modifier', 00H
+	ORG $+7
+$SG48785 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG48801 DB	'expected '')''', 00H
 	ORG $+3
-$SG48794 DB	'ccread_direct_decl_name_modifier', 00H
-	ORG $+7
-$SG48795 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG48803 DB	'ccread_direct_decl_name', 00H
+$SG48804 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG48797 DB	'function that returns function', 00H
+$SG48831 DB	'expected initializer after ''=''', 00H
 	ORG $+1
-$SG48799 DB	'ccread_direct_decl_name_modifier', 00H
-	ORG $+7
-$SG48800 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+5
-$SG48802 DB	'function that returns array', 00H
-	ORG $+4
-$SG48804 DB	'ccread_direct_decl_name_modifier', 00H
-	ORG $+7
-$SG48805 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+5
-$SG48808 DB	'expected '']'' for array modifier', 00H
-$SG48810 DB	'ccread_direct_decl_name_modifier', 00H
-	ORG $+7
-$SG48811 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+5
-$SG48827 DB	'expected '')''', 00H
-	ORG $+3
-$SG48829 DB	'ccread_direct_decl_name', 00H
-$SG48830 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+5
-$SG48857 DB	'expected initializer after ''=''', 00H
-	ORG $+1
-$SG48859 DB	'ccread_init_decl_name', 00H
+$SG48833 DB	'ccread_init_decl_name', 00H
 	ORG $+2
-$SG48860 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG48834 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG48871 DB	'expected constant expression after '':''', 00H
+$SG48845 DB	'expected constant expression after '':''', 00H
 	ORG $+1
-$SG48873 DB	'ccread_struct_decl_name', 00H
-$SG48874 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG48847 DB	'ccread_struct_decl_name', 00H
+$SG48848 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG48912 DB	'expected declarator', 00H
+$SG48886 DB	'expected declarator', 00H
 	ORG $+4
-$SG48914 DB	'ccread_init_decl', 00H
+$SG48888 DB	'ccread_init_decl', 00H
 	ORG $+7
-$SG48915 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG48889 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG48926 DB	'expected declarator', 00H
+$SG48900 DB	'expected declarator', 00H
 	ORG $+4
-$SG48928 DB	'ccread_struct_decl', 00H
+$SG48902 DB	'ccread_struct_decl', 00H
 	ORG $+5
-$SG48929 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG48903 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG48945 DB	'expected ''{'' for struct specifier', 00H
+$SG48919 DB	'expected ''{'' for struct specifier', 00H
 	ORG $+6
-$SG48947 DB	'ccread_struct_or_union_specifier', 00H
+$SG48921 DB	'ccread_struct_or_union_specifier', 00H
 	ORG $+7
-$SG48948 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG48922 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG48950 DB	'expected '';''', 00H
+$SG48924 DB	'expected '';''', 00H
 	ORG $+3
-$SG48952 DB	'ccread_struct_or_union_specifier', 00H
+$SG48926 DB	'ccread_struct_or_union_specifier', 00H
 	ORG $+7
-$SG48953 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG48927 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG48955 DB	'expected ''}'' for struct specifier', 00H
+$SG48929 DB	'expected ''}'' for struct specifier', 00H
 	ORG $+6
-$SG48957 DB	'ccread_struct_or_union_specifier', 00H
+$SG48931 DB	'ccread_struct_or_union_specifier', 00H
 	ORG $+7
-$SG48958 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+1
-$SG48960 DB	'noimpl', 00H
+$SG48932 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG49041 DB	'unexpected ''...'', must be at end of function', 00H
+$SG49015 DB	'unexpected ''...'', must be at end of function', 00H
 	ORG $+3
-$SG49043 DB	'ccread_param_decl', 00H
+$SG49017 DB	'ccread_param_decl', 00H
 	ORG $+6
-$SG49044 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49018 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG49101 DB	'expected ''}''', 00H
+$SG49075 DB	'expected ''}''', 00H
+	ORG $+3
+$SG49077 DB	'ccread_statement', 00H
+	ORG $+7
+$SG49078 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG49082 DB	'expected '';''', 00H
+	ORG $+3
+$SG49084 DB	'ccread_statement', 00H
+	ORG $+7
+$SG49085 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG49089 DB	'expected expression', 00H
+	ORG $+4
+$SG49091 DB	'ccread_statement', 00H
+	ORG $+7
+$SG49092 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG49094 DB	'expected '';''', 00H
+	ORG $+3
+$SG49096 DB	'ccread_statement', 00H
+	ORG $+7
+$SG49097 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG49101 DB	'expected ''(''', 00H
 	ORG $+3
 $SG49103 DB	'ccread_statement', 00H
 	ORG $+7
 $SG49104 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG49108 DB	'expected '';''', 00H
+$SG49106 DB	'expected '')''', 00H
 	ORG $+3
-$SG49110 DB	'ccread_statement', 00H
+$SG49108 DB	'ccread_statement', 00H
 	ORG $+7
-$SG49111 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49109 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG49115 DB	'expected expression', 00H
+$SG49111 DB	'expected expression', 00H
 	ORG $+4
-$SG49117 DB	'ccread_statement', 00H
+$SG49113 DB	'ccread_statement', 00H
 	ORG $+7
-$SG49118 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49114 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG49120 DB	'expected '';''', 00H
+$SG49117 DB	'expected statement', 00H
+	ORG $+5
+$SG49119 DB	'ccread_statement', 00H
+	ORG $+7
+$SG49120 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG49124 DB	'missing goto label identifier', 00H
+	ORG $+2
+$SG49126 DB	'ccread_statement', 00H
+	ORG $+7
+$SG49127 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+	ORG $+5
+$SG49129 DB	'expected '';''', 00H
 	ORG $+3
-$SG49122 DB	'ccread_statement', 00H
+$SG49131 DB	'ccread_statement', 00H
 	ORG $+7
-$SG49123 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49132 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG49127 DB	'expected ''(''', 00H
+$SG49138 DB	'expected ''(''', 00H
 	ORG $+3
-$SG49129 DB	'ccread_statement', 00H
+$SG49140 DB	'ccread_statement', 00H
 	ORG $+7
-$SG49130 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
+$SG49141 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG49132 DB	'expected '')''', 00H
+$SG49143 DB	'expected '')''', 00H
 	ORG $+3
-$SG49134 DB	'ccread_statement', 00H
-	ORG $+7
-$SG49135 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+5
-$SG49137 DB	'expected expression', 00H
-	ORG $+4
-$SG49139 DB	'ccread_statement', 00H
-	ORG $+7
-$SG49140 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
-	ORG $+5
-$SG49143 DB	'expected statement', 00H
-	ORG $+5
 $SG49145 DB	'ccread_statement', 00H
 	ORG $+7
 $SG49146 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 	ORG $+5
-$SG49150 DB	'missing goto label identifier', 00H
+$SG49148 DB	'expected expression', 00H
+	ORG $+4
+$SG49150 DB	'ccread_statement', 00H
+	ORG $+7
+$SG49151 DB	'W:\cpp\void\ktt-c\ccread.c', 00H
 CONST	ENDS
 PUBLIC	__local_stdio_printf_options
 PUBLIC	_vfprintf_l
@@ -1046,16 +1033,10 @@ _TLS	ENDS
 _BSS	SEGMENT
 ?buf@?1??cctrace_@@9@4PADA DB 0fffH DUP (?)		; `cctrace_'::`2'::buf
 _BSS	ENDS
-_BSS	SEGMENT
+_TLS	SEGMENT
 ccerr	DD	01H DUP (?)
-_BSS	ENDS
-;	COMDAT ?end_tok@?1??kttc__peek_ahead@@9@4Ucctoken_t@@A
+_TLS	ENDS
 _BSS	SEGMENT
-?end_tok@?1??kttc__peek_ahead@@9@4Ucctoken_t@@A DB 040H DUP (?) ; `kttc__peek_ahead'::`2'::end_tok
-_BSS	ENDS
-_BSS	SEGMENT
-	ALIGN	8
-
 ctype_flo32 DQ	01H DUP (?)
 ctype_flo64 DQ	01H DUP (?)
 ctype_int64 DQ	01H DUP (?)
@@ -1070,6 +1051,10 @@ ctype_void DQ	01H DUP (?)
 func_decls DQ	01H DUP (?)
 vari_decls DQ	01H DUP (?)
 symbols	DQ	01H DUP (?)
+_BSS	ENDS
+;	COMDAT ?end_tok@?1??kttc__peek_ahead@@9@4Ucctoken_t@@A
+_BSS	SEGMENT
+?end_tok@?1??kttc__peek_ahead@@9@4Ucctoken_t@@A DB 040H DUP (?) ; `kttc__peek_ahead'::`2'::end_tok
 _BSS	ENDS
 ;	COMDAT ?buf@?1??gen_typename@@9@4PADA
 _BSS	SEGMENT
@@ -1170,13 +1155,13 @@ $pdata$ccformat DD imagerel ccformat
 	DD	imagerel ccformat+73
 	DD	imagerel $unwind$ccformat
 $pdata$ccdlb_tblget DD imagerel ccdlb_tblget
-	DD	imagerel ccdlb_tblget+158
+	DD	imagerel ccdlb_tblget+204
 	DD	imagerel $unwind$ccdlb_tblget
 $pdata$ccdlb_tblput DD imagerel ccdlb_tblput
-	DD	imagerel ccdlb_tblput+227
+	DD	imagerel ccdlb_tblput+296
 	DD	imagerel $unwind$ccdlb_tblput
 $pdata$ccdlb_tblset DD imagerel ccdlb_tblset
-	DD	imagerel ccdlb_tblset+229
+	DD	imagerel ccdlb_tblset+275
 	DD	imagerel $unwind$ccdlb_tblset
 $pdata$ccdlb_arradd_ DD imagerel ccdlb_arradd_
 	DD	imagerel ccdlb_arradd_+363
@@ -1194,7 +1179,7 @@ $pdata$ccdlb_tblini DD imagerel ccdlb_tblini
 	DD	imagerel ccdlb_tblini+306
 	DD	imagerel $unwind$ccdlb_tblini
 $pdata$ccdlb_tblent_ DD imagerel ccdlb_tblent_
-	DD	imagerel ccdlb_tblent_+285
+	DD	imagerel ccdlb_tblent_+331
 	DD	imagerel $unwind$ccdlb_tblent_
 $pdata$ccdlb_tblcat DD imagerel ccdlb_tblcat
 	DD	imagerel ccdlb_tblcat+358
@@ -1206,65 +1191,8 @@ $pdata$ccstr_catf DD imagerel ccstr_catf
 	DD	imagerel ccstr_catf+76
 	DD	imagerel $unwind$ccstr_catf
 $pdata$ccdlb_test DD imagerel ccdlb_test
-	DD	imagerel ccdlb_test+2058
+	DD	imagerel ccdlb_test+2036
 	DD	imagerel $unwind$ccdlb_test
-$pdata$cclex_init DD imagerel cclex_init
-	DD	imagerel cclex_init+197
-	DD	imagerel $unwind$cclex_init
-$pdata$cclex_next_token DD imagerel cclex_next_token
-	DD	imagerel cclex_next_token+101
-	DD	imagerel $unwind$cclex_next_token
-$pdata$cclex_token DD imagerel cclex_token
-	DD	imagerel cclex_token+83
-	DD	imagerel $unwind$cclex_token
-$pdata$ccpeep DD imagerel ccpeep
-	DD	imagerel ccpeep+26
-	DD	imagerel $unwind$ccpeep
-$pdata$ccsee DD	imagerel ccsee
-	DD	imagerel ccsee+58
-	DD	imagerel $unwind$ccsee
-$pdata$ccgobble DD imagerel ccgobble
-	DD	imagerel ccgobble+126
-	DD	imagerel $unwind$ccgobble
-$pdata$cctree_clone DD imagerel cctree_clone
-	DD	imagerel cctree_clone+75
-	DD	imagerel $unwind$cctree_clone
-$pdata$ccread_init DD imagerel ccread_init
-	DD	imagerel ccread_init+93
-	DD	imagerel $unwind$ccread_init
-$pdata$ccread_uninit DD imagerel ccread_uninit
-	DD	imagerel ccread_uninit+98
-	DD	imagerel $unwind$ccread_uninit
-$pdata$ccread_all_tokens DD imagerel ccread_all_tokens
-	DD	imagerel ccread_all_tokens+105
-	DD	imagerel $unwind$ccread_all_tokens
-$pdata$ccreader_move DD imagerel ccreader_move
-	DD	imagerel ccreader_move+180
-	DD	imagerel $unwind$ccreader_move
-$pdata$ccread_include DD imagerel ccread_include
-	DD	imagerel ccread_include+95
-	DD	imagerel $unwind$ccread_include
-$pdata$ccsee_end DD imagerel ccsee_end
-	DD	imagerel ccsee_end+26
-	DD	imagerel $unwind$ccsee_end
-$pdata$kttc__peek_alignment_specifier DD imagerel kttc__peek_alignment_specifier
-	DD	imagerel kttc__peek_alignment_specifier+58
-	DD	imagerel $unwind$kttc__peek_alignment_specifier
-$pdata$kttc__peek_type_qualifier DD imagerel kttc__peek_type_qualifier
-	DD	imagerel kttc__peek_type_qualifier+58
-	DD	imagerel $unwind$kttc__peek_type_qualifier
-$pdata$ccsee_typespec DD imagerel ccsee_typespec
-	DD	imagerel ccsee_typespec+58
-	DD	imagerel $unwind$ccsee_typespec
-$pdata$kttc__peek_storage_class DD imagerel kttc__peek_storage_class
-	DD	imagerel kttc__peek_storage_class+58
-	DD	imagerel $unwind$kttc__peek_storage_class
-$pdata$kttc__peek_func_specifier DD imagerel kttc__peek_func_specifier
-	DD	imagerel kttc__peek_func_specifier+58
-	DD	imagerel $unwind$kttc__peek_func_specifier
-$pdata$cceat DD	imagerel cceat
-	DD	imagerel cceat+50
-	DD	imagerel $unwind$cceat
 $pdata$cctree_del DD imagerel cctree_del
 	DD	imagerel cctree_del+44
 	DD	imagerel $unwind$cctree_del
@@ -1339,6 +1267,9 @@ $pdata$??__Ectype_void@@YAXXZ DD imagerel ??__Ectype_void@@YAXXZ
 	DD	imagerel $unwind$??__Ectype_void@@YAXXZ
 pdata	ENDS
 pdata	SEGMENT
+$pdata$cctree_clone DD imagerel cctree_clone
+	DD	imagerel cctree_clone+75
+	DD	imagerel $unwind$cctree_clone
 $pdata$cctree_name DD imagerel cctree_name
 	DD	imagerel cctree_name+49
 	DD	imagerel $unwind$cctree_name
@@ -1406,16 +1337,16 @@ $pdata$cctree_solve_statement DD imagerel cctree_solve_statement
 	DD	imagerel cctree_solve_statement+240
 	DD	imagerel $unwind$cctree_solve_statement
 $pdata$cctree_include_invokeable_symbol DD imagerel cctree_include_invokeable_symbol
-	DD	imagerel cctree_include_invokeable_symbol+151
+	DD	imagerel cctree_include_invokeable_symbol+197
 	DD	imagerel $unwind$cctree_include_invokeable_symbol
 $pdata$cctree_resolve_symbol DD imagerel cctree_resolve_symbol
-	DD	imagerel cctree_resolve_symbol+116
+	DD	imagerel cctree_resolve_symbol+139
 	DD	imagerel $unwind$cctree_resolve_symbol
 $pdata$cctree_resolve_call_symbol_allusion DD imagerel cctree_resolve_call_symbol_allusion
-	DD	imagerel cctree_resolve_call_symbol_allusion+290
+	DD	imagerel cctree_resolve_call_symbol_allusion+359
 	DD	imagerel $unwind$cctree_resolve_call_symbol_allusion
 $pdata$cctree_resolve_symbol_allusion DD imagerel cctree_resolve_symbol_allusion
-	DD	imagerel cctree_resolve_symbol_allusion+187
+	DD	imagerel cctree_resolve_symbol_allusion+256
 	DD	imagerel $unwind$cctree_resolve_symbol_allusion
 $pdata$cctree_solve_binary DD imagerel cctree_solve_binary
 	DD	imagerel cctree_solve_binary+62
@@ -1433,7 +1364,7 @@ $pdata$cctree_solve_block DD imagerel cctree_solve_block
 	DD	imagerel cctree_solve_block+140
 	DD	imagerel $unwind$cctree_solve_block
 $pdata$cctree_solve_decl_name DD imagerel cctree_solve_decl_name
-	DD	imagerel cctree_solve_decl_name+851
+	DD	imagerel cctree_solve_decl_name+874
 	DD	imagerel $unwind$cctree_solve_decl_name
 $pdata$cctree_solve DD imagerel cctree_solve
 	DD	imagerel cctree_solve+151
@@ -1478,10 +1409,10 @@ $pdata$ccblock_add_edict DD imagerel ccblock_add_edict
 	DD	imagerel ccblock_add_edict+64
 	DD	imagerel $unwind$ccblock_add_edict
 $pdata$ccfunc_local DD imagerel ccfunc_local
-	DD	imagerel ccfunc_local+93
+	DD	imagerel ccfunc_local+116
 	DD	imagerel $unwind$ccfunc_local
 $pdata$ccfunc_include_local DD imagerel ccfunc_include_local
-	DD	imagerel ccfunc_include_local+178
+	DD	imagerel ccfunc_include_local+201
 	DD	imagerel $unwind$ccfunc_include_local
 $pdata$ccexec_value_I DD imagerel ccexec_value_I
 	DD	imagerel ccexec_value_I+93
@@ -1498,18 +1429,72 @@ $pdata$cclex_hashonly DD imagerel cclex_hashonly
 $pdata$cclex_hash_init DD imagerel cclex_hash_init
 	DD	imagerel cclex_hash_init+1498
 	DD	imagerel $unwind$cclex_hash_init
+$pdata$cclex_init DD imagerel cclex_init
+	DD	imagerel cclex_init+197
+	DD	imagerel $unwind$cclex_init
 $pdata$cclex_idenlen DD imagerel cclex_idenlen
 	DD	imagerel cclex_idenlen+165
 	DD	imagerel $unwind$cclex_idenlen
+$pdata$cclex_token DD imagerel cclex_token
+	DD	imagerel cclex_token+83
+	DD	imagerel $unwind$cclex_token
 $pdata$cclex_next_token_internal DD imagerel cclex_next_token_internal
 	DD	imagerel cclex_next_token_internal+4608
 	DD	imagerel $unwind$cclex_next_token_internal
+$pdata$cclex_next_token DD imagerel cclex_next_token
+	DD	imagerel cclex_next_token+101
+	DD	imagerel $unwind$cclex_next_token
 $pdata$cclex_identifier DD imagerel cclex_identifier
 	DD	imagerel cclex_identifier+118
 	DD	imagerel $unwind$cclex_identifier
 $pdata$cclex_readstr DD imagerel cclex_readstr
 	DD	imagerel cclex_readstr+867
 	DD	imagerel $unwind$cclex_readstr
+$pdata$ccread_init DD imagerel ccread_init
+	DD	imagerel ccread_init+93
+	DD	imagerel $unwind$ccread_init
+$pdata$ccread_uninit DD imagerel ccread_uninit
+	DD	imagerel ccread_uninit+98
+	DD	imagerel $unwind$ccread_uninit
+$pdata$ccread_all_tokens DD imagerel ccread_all_tokens
+	DD	imagerel ccread_all_tokens+105
+	DD	imagerel $unwind$ccread_all_tokens
+$pdata$ccreader_move DD imagerel ccreader_move
+	DD	imagerel ccreader_move+180
+	DD	imagerel $unwind$ccreader_move
+$pdata$ccread_include DD imagerel ccread_include
+	DD	imagerel ccread_include+95
+	DD	imagerel $unwind$ccread_include
+$pdata$ccpeep DD imagerel ccpeep
+	DD	imagerel ccpeep+26
+	DD	imagerel $unwind$ccpeep
+$pdata$ccsee DD	imagerel ccsee
+	DD	imagerel ccsee+58
+	DD	imagerel $unwind$ccsee
+$pdata$ccsee_end DD imagerel ccsee_end
+	DD	imagerel ccsee_end+26
+	DD	imagerel $unwind$ccsee_end
+$pdata$kttc__peek_alignment_specifier DD imagerel kttc__peek_alignment_specifier
+	DD	imagerel kttc__peek_alignment_specifier+58
+	DD	imagerel $unwind$kttc__peek_alignment_specifier
+$pdata$kttc__peek_type_qualifier DD imagerel kttc__peek_type_qualifier
+	DD	imagerel kttc__peek_type_qualifier+58
+	DD	imagerel $unwind$kttc__peek_type_qualifier
+$pdata$ccsee_typespec DD imagerel ccsee_typespec
+	DD	imagerel ccsee_typespec+58
+	DD	imagerel $unwind$ccsee_typespec
+$pdata$kttc__peek_storage_class DD imagerel kttc__peek_storage_class
+	DD	imagerel kttc__peek_storage_class+58
+	DD	imagerel $unwind$kttc__peek_storage_class
+$pdata$kttc__peek_func_specifier DD imagerel kttc__peek_func_specifier
+	DD	imagerel kttc__peek_func_specifier+58
+	DD	imagerel $unwind$kttc__peek_func_specifier
+$pdata$ccgobble DD imagerel ccgobble
+	DD	imagerel ccgobble+126
+	DD	imagerel $unwind$ccgobble
+$pdata$cceat DD	imagerel cceat
+	DD	imagerel cceat+50
+	DD	imagerel $unwind$cceat
 $pdata$ccread_arglist_expr DD imagerel ccread_arglist_expr
 	DD	imagerel ccread_arglist_expr+170
 	DD	imagerel $unwind$ccread_arglist_expr
@@ -1691,7 +1676,7 @@ $pdata$ccemit_rvalue DD imagerel ccemit_rvalue
 	DD	imagerel ccemit_rvalue+311
 	DD	imagerel $unwind$ccemit_rvalue
 $pdata$ccemit_invoke_easy DD imagerel ccemit_invoke_easy
-	DD	imagerel ccemit_invoke_easy+378
+	DD	imagerel ccemit_invoke_easy+401
 	DD	imagerel $unwind$ccemit_invoke_easy
 $pdata$ccemit_tree DD imagerel ccemit_tree
 	DD	imagerel ccemit_tree+976
@@ -1712,7 +1697,7 @@ $pdata$ccemit_function DD imagerel ccemit_function
 	DD	imagerel ccemit_function+839
 	DD	imagerel $unwind$ccemit_function
 $pdata$ccemit_external_decl DD imagerel ccemit_external_decl
-	DD	imagerel ccemit_external_decl+427
+	DD	imagerel ccemit_external_decl+450
 	DD	imagerel $unwind$ccemit_external_decl
 $pdata$ccemit_translation_unit DD imagerel ccemit_translation_unit
 	DD	imagerel ccemit_translation_unit+160
@@ -1721,10 +1706,10 @@ $pdata$ccemit_init DD imagerel ccemit_init
 	DD	imagerel ccemit_init+32
 	DD	imagerel $unwind$ccemit_init
 $pdata$ccexec_yield DD imagerel ccexec_yield
-	DD	imagerel ccexec_yield+192
+	DD	imagerel ccexec_yield+215
 	DD	imagerel $unwind$ccexec_yield
 $pdata$ccexec_save DD imagerel ccexec_save
-	DD	imagerel ccexec_save+87
+	DD	imagerel ccexec_save+110
 	DD	imagerel $unwind$ccexec_save
 $pdata$ccexec_rvalue DD imagerel ccexec_rvalue
 	DD	imagerel ccexec_rvalue+303
@@ -1864,16 +1849,16 @@ stbsp__digitpair DW 00H
 	DB	'8990919293949596979899', 00H
 	ORG $+1
 	ORG $+4
-ccedict_s DQ	FLAT:$SG47581
-	DQ	FLAT:$SG47582
-	DQ	FLAT:$SG47583
-	DQ	FLAT:$SG47584
-	DQ	FLAT:$SG47585
-	DQ	FLAT:$SG47586
-	DQ	FLAT:$SG47587
-	DQ	FLAT:$SG47588
-	DQ	FLAT:$SG47589
-	DQ	FLAT:$SG47590
+ccedict_s DQ	FLAT:$SG47449
+	DQ	FLAT:$SG47450
+	DQ	FLAT:$SG47451
+	DQ	FLAT:$SG47452
+	DQ	FLAT:$SG47453
+	DQ	FLAT:$SG47454
+	DQ	FLAT:$SG47455
+	DQ	FLAT:$SG47456
+	DQ	FLAT:$SG47457
+	DQ	FLAT:$SG47458
 _DATA	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
@@ -2026,52 +2011,14 @@ $unwind$ccstr_vcatf DD 011301H
 $unwind$ccstr_catf DD 011801H
 	DD	06218H
 $unwind$ccdlb_test DD 020701H
-	DD	01f0107H
-$unwind$cclex_init DD 030b01H
-	DD	07007c20bH
-	DD	06006H
-$unwind$cclex_next_token DD 010901H
-	DD	06209H
-$unwind$cclex_token DD 031001H
-	DD	0700c8210H
-	DD	0600bH
-$unwind$ccpeep DD 010901H
-	DD	04209H
-$unwind$ccsee DD 010d01H
-	DD	0620dH
-$unwind$ccgobble DD 010901H
-	DD	06209H
-$unwind$cctree_clone DD 030b01H
-	DD	07007620bH
-	DD	06006H
-$unwind$ccread_init DD 010901H
-	DD	04209H
-$unwind$ccread_uninit DD 010901H
-	DD	06209H
-$unwind$ccread_all_tokens DD 010901H
-	DD	06209H
-$unwind$ccreader_move DD 011301H
-	DD	06213H
-$unwind$ccread_include DD 010e01H
-	DD	0820eH
-$unwind$ccsee_end DD 010901H
-	DD	04209H
-$unwind$kttc__peek_alignment_specifier DD 010901H
-	DD	06209H
-$unwind$kttc__peek_type_qualifier DD 010901H
-	DD	06209H
-$unwind$ccsee_typespec DD 010901H
-	DD	06209H
-$unwind$kttc__peek_storage_class DD 010901H
-	DD	06209H
-$unwind$kttc__peek_func_specifier DD 010901H
-	DD	06209H
-$unwind$cceat DD 010d01H
-	DD	0420dH
+	DD	01b0107H
 $unwind$cctree_del DD 010901H
 	DD	04209H
 $unwind$cctree_new DD 011201H
 	DD	06212H
+$unwind$cctree_clone DD 030b01H
+	DD	07007620bH
+	DD	06006H
 $unwind$cctree_name DD 010901H
 	DD	02209H
 $unwind$cctype_new_ptr DD 010901H
@@ -2179,14 +2126,52 @@ $unwind$cclex_hashonly DD 011701H
 	DD	08217H
 $unwind$cclex_hash_init DD 010901H
 	DD	04209H
+$unwind$cclex_init DD 030b01H
+	DD	07007c20bH
+	DD	06006H
 $unwind$cclex_idenlen DD 010901H
 	DD	02209H
+$unwind$cclex_token DD 031001H
+	DD	0700c8210H
+	DD	0600bH
 $unwind$cclex_next_token_internal DD 010901H
 	DD	0a209H
+$unwind$cclex_next_token DD 010901H
+	DD	06209H
 $unwind$cclex_identifier DD 010e01H
 	DD	0820eH
 $unwind$cclex_readstr DD 010e01H
 	DD	0820eH
+$unwind$ccread_init DD 010901H
+	DD	04209H
+$unwind$ccread_uninit DD 010901H
+	DD	06209H
+$unwind$ccread_all_tokens DD 010901H
+	DD	06209H
+$unwind$ccreader_move DD 011301H
+	DD	06213H
+$unwind$ccread_include DD 010e01H
+	DD	0820eH
+$unwind$ccpeep DD 010901H
+	DD	04209H
+$unwind$ccsee DD 010d01H
+	DD	0620dH
+$unwind$ccsee_end DD 010901H
+	DD	04209H
+$unwind$kttc__peek_alignment_specifier DD 010901H
+	DD	06209H
+$unwind$kttc__peek_type_qualifier DD 010901H
+	DD	06209H
+$unwind$ccsee_typespec DD 010901H
+	DD	06209H
+$unwind$kttc__peek_storage_class DD 010901H
+	DD	06209H
+$unwind$kttc__peek_func_specifier DD 010901H
+	DD	06209H
+$unwind$ccgobble DD 010901H
+	DD	06209H
+$unwind$cceat DD 010d01H
+	DD	0420dH
 $unwind$ccread_arglist_expr DD 031501H
 	DD	070116215H
 	DD	06010H
@@ -2454,33 +2439,33 @@ $LN8:
 	dec	eax
 	mov	DWORD PTR argc$[rsp], eax
 ; Line 9
-	lea	rax, OFFSET FLAT:$SG50020
+	lea	rax, OFFSET FLAT:$SG49994
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG50021
+	lea	rax, OFFSET FLAT:$SG49995
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG50022
+	lea	r9, OFFSET FLAT:$SG49996
 	mov	r8d, 9
-	lea	rdx, OFFSET FLAT:$SG50023
+	lea	rdx, OFFSET FLAT:$SG49997
 	mov	ecx, 53					; 00000035H
 	call	cctrace_
 ; Line 10
-	lea	rax, OFFSET FLAT:$SG50024
+	lea	rax, OFFSET FLAT:$SG49998
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG50025
+	lea	rax, OFFSET FLAT:$SG49999
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG50026
+	lea	r9, OFFSET FLAT:$SG50000
 	mov	r8d, 10
-	lea	rdx, OFFSET FLAT:$SG50027
+	lea	rdx, OFFSET FLAT:$SG50001
 	mov	ecx, 54					; 00000036H
 	call	cctrace_
 ; Line 11
-	lea	rax, OFFSET FLAT:$SG50028
+	lea	rax, OFFSET FLAT:$SG50002
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG50029
+	lea	rax, OFFSET FLAT:$SG50003
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG50030
+	lea	r9, OFFSET FLAT:$SG50004
 	mov	r8d, 11
-	lea	rdx, OFFSET FLAT:$SG50031
+	lea	rdx, OFFSET FLAT:$SG50005
 	mov	ecx, 55					; 00000037H
 	call	cctrace_
 ; Line 13
@@ -2489,7 +2474,7 @@ $LN8:
 	lea	rcx, QWORD PTR read$[rsp]
 	call	ccread_init
 ; Line 17
-	lea	rdx, OFFSET FLAT:$SG50032
+	lea	rdx, OFFSET FLAT:$SG50006
 	lea	rcx, QWORD PTR read$[rsp]
 	call	ccread_include
 ; Line 20
@@ -2514,13 +2499,13 @@ $LN8:
 ; Line 32
 	mov	QWORD PTR out$2[rsp], 0
 ; Line 34
-	lea	rcx, OFFSET FLAT:$SG50034
+	lea	rcx, OFFSET FLAT:$SG50008
 	call	strlen
 	mov	QWORD PTR tv130[rsp], rax
-	lea	rcx, OFFSET FLAT:$SG50035
+	lea	rcx, OFFSET FLAT:$SG50009
 	call	strlen
 	inc	eax
-	lea	r9, OFFSET FLAT:$SG50033
+	lea	r9, OFFSET FLAT:$SG50007
 	mov	rcx, QWORD PTR tv130[rsp]
 	mov	r8d, ecx
 	mov	edx, eax
@@ -2550,7 +2535,7 @@ $LN4@main:
 	jmp	SHORT $LN2@main
 $LN3@main:
 ; Line 71
-	lea	rcx, OFFSET FLAT:$SG50036
+	lea	rcx, OFFSET FLAT:$SG50010
 	call	ccopenfile
 	mov	QWORD PTR file$3[rsp], rax
 ; Line 72
@@ -2663,7 +2648,7 @@ $LN7:
 	cmp	DWORD PTR [rax], 4
 	jne	$LN5@emit_vecty
 ; Line 293
-	lea	rdx, OFFSET FLAT:$SG49971
+	lea	rdx, OFFSET FLAT:$SG49945
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 294
@@ -2671,11 +2656,11 @@ $LN7:
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_typename
 ; Line 295
-	lea	rdx, OFFSET FLAT:$SG49972
+	lea	rdx, OFFSET FLAT:$SG49946
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 296
-	lea	rdx, OFFSET FLAT:$SG49973
+	lea	rdx, OFFSET FLAT:$SG49947
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 297
@@ -2691,7 +2676,7 @@ $LN4@emit_vecty:
 	cmp	DWORD PTR i$1[rsp], eax
 	jge	SHORT $LN3@emit_vecty
 ; Line 298
-	lea	rdx, OFFSET FLAT:$SG49974
+	lea	rdx, OFFSET FLAT:$SG49948
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 299
@@ -2703,18 +2688,18 @@ $LN4@emit_vecty:
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vardecl
 ; Line 300
-	lea	rdx, OFFSET FLAT:$SG49975
+	lea	rdx, OFFSET FLAT:$SG49949
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 301
 	jmp	SHORT $LN2@emit_vecty
 $LN3@emit_vecty:
 ; Line 302
-	lea	rdx, OFFSET FLAT:$SG49976
+	lea	rdx, OFFSET FLAT:$SG49950
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 303
-	lea	rdx, OFFSET FLAT:$SG49977
+	lea	rdx, OFFSET FLAT:$SG49951
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 304
@@ -2722,7 +2707,7 @@ $LN3@emit_vecty:
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_typename
 ; Line 305
-	lea	rdx, OFFSET FLAT:$SG49978
+	lea	rdx, OFFSET FLAT:$SG49952
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 $LN5@emit_vecty:
@@ -2731,38 +2716,38 @@ $LN5@emit_vecty:
 	mov	rcx, QWORD PTR out$[rsp]
 	call	genmake
 ; Line 309
-	lea	r8, OFFSET FLAT:$SG49979
+	lea	r8, OFFSET FLAT:$SG49953
 	mov	rdx, QWORD PTR t$[rsp]
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vecoprari
-	lea	r8, OFFSET FLAT:$SG49980
+	lea	r8, OFFSET FLAT:$SG49954
 	mov	rdx, QWORD PTR t$[rsp]
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vecoprari
 ; Line 310
-	lea	r8, OFFSET FLAT:$SG49981
+	lea	r8, OFFSET FLAT:$SG49955
 	mov	rdx, QWORD PTR t$[rsp]
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vecoprari
-	lea	r8, OFFSET FLAT:$SG49982
+	lea	r8, OFFSET FLAT:$SG49956
 	mov	rdx, QWORD PTR t$[rsp]
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vecoprari
 ; Line 311
-	lea	r8, OFFSET FLAT:$SG49983
+	lea	r8, OFFSET FLAT:$SG49957
 	mov	rdx, QWORD PTR t$[rsp]
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vecoprari
-	lea	r8, OFFSET FLAT:$SG49984
+	lea	r8, OFFSET FLAT:$SG49958
 	mov	rdx, QWORD PTR t$[rsp]
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vecoprari
 ; Line 312
-	lea	r8, OFFSET FLAT:$SG49985
+	lea	r8, OFFSET FLAT:$SG49959
 	mov	rdx, QWORD PTR t$[rsp]
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vecoprari
-	lea	r8, OFFSET FLAT:$SG49986
+	lea	r8, OFFSET FLAT:$SG49960
 	mov	rdx, QWORD PTR t$[rsp]
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vecoprari
@@ -2790,7 +2775,7 @@ $LN8:
 	call	gen_typename
 	mov	r9, QWORD PTR opr$[rsp]
 	mov	r8, rax
-	lea	rdx, OFFSET FLAT:$SG49952
+	lea	rdx, OFFSET FLAT:$SG49926
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 205
@@ -2820,7 +2805,7 @@ $LN5@emit_vecop:
 	call	emit_vardecl
 $LN6@emit_vecop:
 ; Line 213
-	lea	rdx, OFFSET FLAT:$SG49955
+	lea	rdx, OFFSET FLAT:$SG49929
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 214
@@ -2829,11 +2814,11 @@ $LN6@emit_vecop:
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vardecl
 ; Line 216
-	lea	rdx, OFFSET FLAT:$SG49956
+	lea	rdx, OFFSET FLAT:$SG49930
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 218
-	lea	rdx, OFFSET FLAT:$SG49957
+	lea	rdx, OFFSET FLAT:$SG49931
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 219
@@ -2842,7 +2827,7 @@ $LN6@emit_vecop:
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vardecl
 ; Line 220
-	lea	rdx, OFFSET FLAT:$SG49958
+	lea	rdx, OFFSET FLAT:$SG49932
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 222
@@ -2874,18 +2859,18 @@ $LN4@emit_vecop:
 	mov	DWORD PTR [rsp+40], eax
 	mov	DWORD PTR [rsp+32], ecx
 	mov	r9d, edx
-	lea	rdx, OFFSET FLAT:$SG49959
+	lea	rdx, OFFSET FLAT:$SG49933
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 224
 	jmp	SHORT $LN2@emit_vecop
 $LN3@emit_vecop:
 ; Line 225
-	lea	rdx, OFFSET FLAT:$SG49960
+	lea	rdx, OFFSET FLAT:$SG49934
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 226
-	lea	rdx, OFFSET FLAT:$SG49961
+	lea	rdx, OFFSET FLAT:$SG49935
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 227
@@ -2909,7 +2894,7 @@ $LN6:
 	mov	rcx, QWORD PTR t$[rsp]
 	call	gen_typename
 	mov	rdx, rax
-	lea	rcx, OFFSET FLAT:$SG49936
+	lea	rcx, OFFSET FLAT:$SG49910
 	call	ccformat
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR t$[rsp]
@@ -2920,11 +2905,11 @@ $LN6:
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_fundecl
 ; Line 187
-	lea	rdx, OFFSET FLAT:$SG49937
+	lea	rdx, OFFSET FLAT:$SG49911
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 188
-	lea	rdx, OFFSET FLAT:$SG49938
+	lea	rdx, OFFSET FLAT:$SG49912
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 190
@@ -2933,7 +2918,7 @@ $LN6:
 	mov	rcx, QWORD PTR out$[rsp]
 	call	emit_vardecl
 ; Line 191
-	lea	rdx, OFFSET FLAT:$SG49939
+	lea	rdx, OFFSET FLAT:$SG49913
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 193
@@ -2957,18 +2942,18 @@ $LN4@genmake:
 	movsx	ecx, BYTE PTR [rdx+rcx]
 	mov	r9d, eax
 	mov	r8d, ecx
-	lea	rdx, OFFSET FLAT:$SG49940
+	lea	rdx, OFFSET FLAT:$SG49914
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 195
 	jmp	SHORT $LN2@genmake
 $LN3@genmake:
 ; Line 197
-	lea	rdx, OFFSET FLAT:$SG49941
+	lea	rdx, OFFSET FLAT:$SG49915
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 198
-	lea	rdx, OFFSET FLAT:$SG49942
+	lea	rdx, OFFSET FLAT:$SG49916
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 199
@@ -2994,7 +2979,7 @@ $LN9:
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
 ; Line 164
-	lea	rdx, OFFSET FLAT:$SG49919
+	lea	rdx, OFFSET FLAT:$SG49893
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 165
@@ -3008,17 +2993,17 @@ $LN9:
 	jmp	SHORT $LN6@emit_funde
 $LN5@emit_funde:
 ; Line 168
-	lea	rdx, OFFSET FLAT:$SG49922
+	lea	rdx, OFFSET FLAT:$SG49896
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 $LN6@emit_funde:
 ; Line 170
 	mov	r8, QWORD PTR n$[rsp]
-	lea	rdx, OFFSET FLAT:$SG49923
+	lea	rdx, OFFSET FLAT:$SG49897
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 172
-	lea	rdx, OFFSET FLAT:$SG49924
+	lea	rdx, OFFSET FLAT:$SG49898
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 173
@@ -3035,7 +3020,7 @@ $LN4@emit_funde:
 ; Line 174
 	cmp	DWORD PTR i$1[rsp], 0
 	je	SHORT $LN7@emit_funde
-	lea	rdx, OFFSET FLAT:$SG49926
+	lea	rdx, OFFSET FLAT:$SG49900
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 $LN7@emit_funde:
@@ -3050,7 +3035,7 @@ $LN7@emit_funde:
 	jmp	SHORT $LN2@emit_funde
 $LN3@emit_funde:
 ; Line 177
-	lea	rdx, OFFSET FLAT:$SG49927
+	lea	rdx, OFFSET FLAT:$SG49901
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 179
@@ -3101,7 +3086,7 @@ $LN19:
 	mov	rcx, QWORD PTR t$[rsp]
 	call	gen_typename
 	mov	r8, rax
-	lea	rdx, OFFSET FLAT:$SG49891
+	lea	rdx, OFFSET FLAT:$SG49865
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 129
@@ -3143,7 +3128,7 @@ $LN9@emit_varde:
 ; Line 142
 	movsx	eax, BYTE PTR name$[rsp]
 	mov	r8d, eax
-	lea	rdx, OFFSET FLAT:$SG49898
+	lea	rdx, OFFSET FLAT:$SG49872
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 144
@@ -3194,21 +3179,21 @@ $LN6:
 ; Line 120
 	cmp	DWORD PTR modifier$[rsp], 5
 	jne	SHORT $LN2@emit_modif
-	lea	rdx, OFFSET FLAT:$SG49874
+	lea	rdx, OFFSET FLAT:$SG49848
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 $LN2@emit_modif:
 ; Line 121
 	cmp	DWORD PTR modifier$[rsp], 6
 	jne	SHORT $LN3@emit_modif
-	lea	rdx, OFFSET FLAT:$SG49876
+	lea	rdx, OFFSET FLAT:$SG49850
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 $LN3@emit_modif:
 ; Line 122
 	cmp	DWORD PTR modifier$[rsp], 7
 	jne	SHORT $LN4@emit_modif
-	lea	rdx, OFFSET FLAT:$SG49878
+	lea	rdx, OFFSET FLAT:$SG49852
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 $LN4@emit_modif:
@@ -3232,7 +3217,7 @@ $LN3:
 	mov	rcx, QWORD PTR t$[rsp]
 	call	gen_typename
 	mov	r8, rax
-	lea	rdx, OFFSET FLAT:$SG49868
+	lea	rdx, OFFSET FLAT:$SG49842
 	mov	rcx, QWORD PTR out$[rsp]
 	call	ccstr_catf
 ; Line 116
@@ -3288,7 +3273,7 @@ $LN9:
 	mov	ecx, DWORD PTR [rcx+16]
 	mov	DWORD PTR [rsp+32], ecx
 	mov	r9d, eax
-	lea	r8, OFFSET FLAT:$SG49852
+	lea	r8, OFFSET FLAT:$SG49826
 	mov	edx, DWORD PTR len$[rsp]
 	mov	rcx, QWORD PTR buf$[rsp]
 	call	ccformatex
@@ -3312,7 +3297,7 @@ $LN2@gen_typena:
 	mov	ecx, DWORD PTR [rcx+8]
 	mov	DWORD PTR [rsp+32], ecx
 	mov	r9d, eax
-	lea	r8, OFFSET FLAT:$SG49855
+	lea	r8, OFFSET FLAT:$SG49829
 	mov	edx, DWORD PTR len$[rsp]
 	mov	rcx, QWORD PTR buf$[rsp]
 	call	ccformatex
@@ -3342,7 +3327,7 @@ $LN4@gen_typena:
 	mov	rcx, rdx
 	mov	rdx, QWORD PTR t$[rsp]
 	mov	r9d, DWORD PTR [rdx+20]
-	lea	r8, OFFSET FLAT:$SG49858
+	lea	r8, OFFSET FLAT:$SG49832
 	mov	edx, eax
 	call	ccformatex
 	jmp	SHORT $LN1@gen_typena
@@ -3496,8 +3481,8 @@ $LN3:
 	sub	rsp, 56					; 00000038H
 ; Line 33
 	mov	r9d, 33					; 00000021H
-	lea	r8, OFFSET FLAT:$SG49814
-	lea	rdx, OFFSET FLAT:$SG49815
+	lea	r8, OFFSET FLAT:$SG49788
+	lea	rdx, OFFSET FLAT:$SG49789
 	mov	ecx, 32					; 00000020H
 	call	ccmalloc_
 	mov	QWORD PTR type$[rsp], rax
@@ -3733,13 +3718,13 @@ $LN34@ccexec_edi:
 	mov	QWORD PTR [rsp+56], rax
 	mov	rax, QWORD PTR value$[rsp]
 	mov	QWORD PTR [rsp+48], rax
-	lea	rax, OFFSET FLAT:$SG49713
+	lea	rax, OFFSET FLAT:$SG49687
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49714
+	lea	rax, OFFSET FLAT:$SG49688
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49715
+	lea	r9, OFFSET FLAT:$SG49689
 	mov	r8d, 224				; 000000e0H
-	lea	rdx, OFFSET FLAT:$SG49716
+	lea	rdx, OFFSET FLAT:$SG49690
 	mov	ecx, 52					; 00000034H
 	call	cctrace_
 ; Line 227
@@ -3894,8 +3879,8 @@ $LN44@ccexec_edi:
 	mov	QWORD PTR tv258[rsp], 0
 $LN45@ccexec_edi:
 	mov	r9d, 266				; 0000010aH
-	lea	r8, OFFSET FLAT:$SG49721
-	lea	rdx, OFFSET FLAT:$SG49722
+	lea	r8, OFFSET FLAT:$SG49695
+	lea	rdx, OFFSET FLAT:$SG49696
 	mov	rcx, QWORD PTR tv258[rsp]
 	call	ccfree_
 ; Line 267
@@ -3945,7 +3930,7 @@ $LN16@ccexec_edi:
 	jmp	SHORT $LN2@ccexec_edi
 $LN20@ccexec_edi:
 ; Line 293
-	lea	rax, OFFSET FLAT:$SG49729
+	lea	rax, OFFSET FLAT:$SG49703
 	test	rax, rax
 	je	SHORT $LN50@ccexec_edi
 	int	3
@@ -4003,7 +3988,7 @@ ccexec_invoke PROC
 	sub	rsp, 152				; 00000098H
 ; Line 309
 	mov	rax, QWORD PTR ret$[rsp]
-	lea	rcx, OFFSET FLAT:$SG49759
+	lea	rcx, OFFSET FLAT:$SG49733
 	mov	QWORD PTR [rax], rcx
 ; Line 311
 	mov	rax, QWORD PTR value$[rsp]
@@ -4260,8 +4245,8 @@ $LN9@ccexec_loc:
 	mov	QWORD PTR saved$[rsp], rax
 ; Line 168
 	mov	r9d, 168				; 000000a8H
-	lea	r8, OFFSET FLAT:$SG49669
-	lea	rdx, OFFSET FLAT:$SG49670
+	lea	r8, OFFSET FLAT:$SG49643
+	lea	rdx, OFFSET FLAT:$SG49644
 	mov	ecx, 8
 	call	ccmalloc_
 	mov	rcx, QWORD PTR saved$[rsp]
@@ -4293,13 +4278,13 @@ $LN9@ccexec_loc:
 	mov	QWORD PTR [rsp+56], rdx
 	mov	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR [rsp+48], rax
-	lea	rax, OFFSET FLAT:$SG49671
+	lea	rax, OFFSET FLAT:$SG49645
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49672
+	lea	rax, OFFSET FLAT:$SG49646
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49673
+	lea	r9, OFFSET FLAT:$SG49647
 	mov	r8d, 174				; 000000aeH
-	lea	rdx, OFFSET FLAT:$SG49674
+	lea	rdx, OFFSET FLAT:$SG49648
 	mov	ecx, 51					; 00000033H
 	call	cctrace_
 ; Line 176
@@ -4385,7 +4370,7 @@ $LN29@ccexec_edi:
 	cmp	DWORD PTR opr$[rsp], 109		; 0000006dH
 	jne	SHORT $LN2@ccexec_edi
 ; Line 108
-	lea	rax, OFFSET FLAT:$SG49643
+	lea	rax, OFFSET FLAT:$SG49617
 	test	rax, rax
 	je	SHORT $LN31@ccexec_edi
 	int	3
@@ -4412,7 +4397,7 @@ $LN4@ccexec_edi:
 	mov	DWORD PTR [rax+8], 1
 ; Line 117
 	mov	rax, QWORD PTR result$[rsp]
-	lea	rcx, OFFSET FLAT:$SG49648
+	lea	rcx, OFFSET FLAT:$SG49622
 	mov	QWORD PTR [rax], rcx
 ; Line 118
 	mov	eax, DWORD PTR rval$[rsp+24]
@@ -4460,7 +4445,7 @@ $LN12@ccexec_edi:
 	mov	DWORD PTR [rax+8], 1
 ; Line 132
 	mov	rax, QWORD PTR result$[rsp]
-	lea	rcx, OFFSET FLAT:$SG49657
+	lea	rcx, OFFSET FLAT:$SG49631
 	mov	QWORD PTR [rax], rcx
 ; Line 133
 	mov	eax, DWORD PTR rval$[rsp+24]
@@ -4485,7 +4470,7 @@ $LN14@ccexec_edi:
 	mov	DWORD PTR [rax+8], 1
 ; Line 138
 	mov	rax, QWORD PTR result$[rsp]
-	lea	rcx, OFFSET FLAT:$SG49660
+	lea	rcx, OFFSET FLAT:$SG49634
 	mov	QWORD PTR [rax], rcx
 ; Line 139
 	mov	eax, DWORD PTR rval$[rsp+24]
@@ -4498,7 +4483,7 @@ $LN14@ccexec_edi:
 	jmp	SHORT $LN17@ccexec_edi
 $LN16@ccexec_edi:
 ; Line 146
-	lea	rax, OFFSET FLAT:$SG49661
+	lea	rax, OFFSET FLAT:$SG49635
 	test	rax, rax
 	je	SHORT $LN35@ccexec_edi
 	int	3
@@ -4604,7 +4589,7 @@ $LN7@ccexec_lva:
 	jmp	SHORT $LN2@ccexec_lva
 $LN8@ccexec_lva:
 ; Line 66
-	lea	rax, OFFSET FLAT:$SG49619
+	lea	rax, OFFSET FLAT:$SG49593
 	test	rax, rax
 	je	SHORT $LN10@ccexec_lva
 	int	3
@@ -4613,7 +4598,7 @@ $LN2@ccexec_lva:
 ; Line 68
 	jmp	SHORT $LN5@ccexec_lva
 $LN4@ccexec_lva:
-	lea	rax, OFFSET FLAT:$SG49620
+	lea	rax, OFFSET FLAT:$SG49594
 	test	rax, rax
 	je	SHORT $LN12@ccexec_lva
 	int	3
@@ -4678,7 +4663,7 @@ $LN9@ccexec_rva:
 	jmp	SHORT $LN4@ccexec_rva
 $LN10@ccexec_rva:
 ; Line 36
-	lea	rax, OFFSET FLAT:$SG49600
+	lea	rax, OFFSET FLAT:$SG49574
 	test	rax, rax
 	je	SHORT $LN15@ccexec_rva
 	int	3
@@ -4691,7 +4676,7 @@ $LN4@ccexec_rva:
 	jmp	SHORT $LN2@ccexec_rva
 $LN11@ccexec_rva:
 ; Line 41
-	lea	rax, OFFSET FLAT:$SG49602
+	lea	rax, OFFSET FLAT:$SG49576
 	test	rax, rax
 	je	SHORT $LN17@ccexec_rva
 	int	3
@@ -4700,7 +4685,7 @@ $LN17@ccexec_rva:
 	jmp	SHORT $LN2@ccexec_rva
 $LN12@ccexec_rva:
 ; Line 45
-	lea	rax, OFFSET FLAT:$SG49604
+	lea	rax, OFFSET FLAT:$SG49578
 	mov	QWORD PTR [rsp+32], rax
 	mov	rax, QWORD PTR val$[rsp]
 	mov	r9, QWORD PTR [rax+40]
@@ -4723,7 +4708,7 @@ $LN12@ccexec_rva:
 	jmp	SHORT $LN2@ccexec_rva
 $LN13@ccexec_rva:
 ; Line 51
-	lea	rax, OFFSET FLAT:$SG49606
+	lea	rax, OFFSET FLAT:$SG49580
 	test	rax, rax
 	je	SHORT $LN19@ccexec_rva
 	int	3
@@ -4767,7 +4752,12 @@ ccexec_save PROC
 	add	rax, QWORD PTR [rcx+8]
 	mov	QWORD PTR v$[rsp], rax
 ; Line 19
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN3@ccexec_sav
 	int	3
 $LN3@ccexec_sav:
@@ -4805,7 +4795,12 @@ ccexec_yield PROC
 	add	rax, QWORD PTR [rcx+8]
 	mov	QWORD PTR v$[rsp], rax
 ; Line 9
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	SHORT $LN2@ccexec_yie
 ; Line 10
 	cmp	QWORD PTR val$[rsp], 0
@@ -4821,13 +4816,13 @@ $LN3@ccexec_yie:
 	mov	QWORD PTR [rsp+56], rax
 	mov	rax, QWORD PTR value$[rsp]
 	mov	QWORD PTR [rsp+48], rax
-	lea	rax, OFFSET FLAT:$SG49569
+	lea	rax, OFFSET FLAT:$SG49543
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49570
+	lea	rax, OFFSET FLAT:$SG49544
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49571
+	lea	r9, OFFSET FLAT:$SG49545
 	mov	r8d, 12
-	lea	rdx, OFFSET FLAT:$SG49572
+	lea	rdx, OFFSET FLAT:$SG49546
 	mov	ecx, 50					; 00000032H
 	call	cctrace_
 	int	3
@@ -4982,14 +4977,19 @@ $LN10@ccemit_ext:
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR value$1[rsp], rax
 ; Line 387
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN11@ccemit_ext
 	int	3
 $LN11@ccemit_ext:
 ; Line 388
 	mov	r9d, 388				; 00000184H
-	lea	r8, OFFSET FLAT:$SG49537
-	lea	rdx, OFFSET FLAT:$SG49538
+	lea	r8, OFFSET FLAT:$SG49511
+	lea	rdx, OFFSET FLAT:$SG49512
 	mov	ecx, 48					; 00000030H
 	call	ccmalloc_
 	mov	QWORD PTR func$2[rsp], rax
@@ -5000,8 +5000,8 @@ $LN11@ccemit_ext:
 	call	memset
 ; Line 390
 	mov	r9d, 390				; 00000186H
-	lea	r8, OFFSET FLAT:$SG49539
-	lea	rdx, OFFSET FLAT:$SG49540
+	lea	r8, OFFSET FLAT:$SG49513
+	lea	rdx, OFFSET FLAT:$SG49514
 	mov	ecx, 48					; 00000030H
 	call	ccmalloc_
 	mov	rcx, QWORD PTR value$1[rsp]
@@ -5021,7 +5021,7 @@ $LN11@ccemit_ext:
 	mov	rcx, QWORD PTR emit$[rsp]
 	call	ccemit_function
 ; Line 396
-	lea	rdx, OFFSET FLAT:$SG49542
+	lea	rdx, OFFSET FLAT:$SG49516
 	mov	rax, QWORD PTR decl$[rsp]
 	mov	rcx, QWORD PTR [rax+24]
 	call	strcmp
@@ -5037,7 +5037,7 @@ $LN7@ccemit_ext:
 	jmp	SHORT $LN6@ccemit_ext
 $LN5@ccemit_ext:
 ; Line 401
-	lea	rax, OFFSET FLAT:$SG49543
+	lea	rax, OFFSET FLAT:$SG49517
 	test	rax, rax
 	je	SHORT $LN13@ccemit_ext
 	int	3
@@ -5158,17 +5158,17 @@ $LN16@ccemit_fun:
 	mov	rcx, QWORD PTR func$[rsp]
 	mov	QWORD PTR [rcx+40], rax
 ; Line 351
-	lea	rdx, OFFSET FLAT:$SG49513
+	lea	rdx, OFFSET FLAT:$SG49487
 	mov	rax, QWORD PTR func$[rsp]
 	mov	rcx, QWORD PTR [rax+24]
 	call	ccblock_I
 ; Line 352
-	lea	rdx, OFFSET FLAT:$SG49514
+	lea	rdx, OFFSET FLAT:$SG49488
 	mov	rax, QWORD PTR func$[rsp]
 	mov	rcx, QWORD PTR [rax+32]
 	call	ccblock_I
 ; Line 353
-	lea	rdx, OFFSET FLAT:$SG49515
+	lea	rdx, OFFSET FLAT:$SG49489
 	mov	rax, QWORD PTR func$[rsp]
 	mov	rcx, QWORD PTR [rax+40]
 	call	ccblock_I
@@ -5688,7 +5688,7 @@ $LN18@ccemit_tre:
 	mov	QWORD PTR then_block$3[rsp], 0
 	mov	QWORD PTR else_block$1[rsp], 0
 ; Line 311
-	lea	rdx, OFFSET FLAT:$SG49487
+	lea	rdx, OFFSET FLAT:$SG49461
 	mov	rcx, QWORD PTR irset$[rsp]
 	call	ccblock
 	mov	QWORD PTR done_block$4[rsp], rax
@@ -5697,7 +5697,7 @@ $LN18@ccemit_tre:
 	cmp	QWORD PTR [rax+72], 0
 	je	SHORT $LN21@ccemit_tre
 ; Line 313
-	lea	rdx, OFFSET FLAT:$SG49489
+	lea	rdx, OFFSET FLAT:$SG49463
 	mov	rcx, QWORD PTR irset$[rsp]
 	call	ccblock
 	mov	QWORD PTR then_block$3[rsp], rax
@@ -5718,7 +5718,7 @@ $LN21@ccemit_tre:
 	cmp	QWORD PTR [rax+80], 0
 	je	SHORT $LN22@ccemit_tre
 ; Line 318
-	lea	rdx, OFFSET FLAT:$SG49491
+	lea	rdx, OFFSET FLAT:$SG49465
 	mov	rcx, QWORD PTR irset$[rsp]
 	call	ccblock
 	mov	QWORD PTR else_block$1[rsp], rax
@@ -5759,7 +5759,7 @@ $LN7@ccemit_tre:
 $LN5@ccemit_tre:
 $LN3@ccemit_tre:
 ; Line 328
-	lea	rax, OFFSET FLAT:$SG49492
+	lea	rax, OFFSET FLAT:$SG49466
 	test	rax, rax
 	je	SHORT $LN24@ccemit_tre
 	int	3
@@ -5774,13 +5774,13 @@ ccemit_tree ENDP
 _TEXT	ENDS
 ; Function compile flags: /Odtp
 _TEXT	SEGMENT
-tv86 = 32
+tv92 = 32
 rtree$ = 40
 list$ = 48
 rvalue$ = 56
 ltree$ = 64
 allude$ = 72
-tv132 = 80
+tv138 = 80
 call$ = 88
 emit$ = 112
 func$ = 120
@@ -5830,7 +5830,12 @@ $LN8@ccemit_inv:
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR call$[rsp], rax
 ; Line 159
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN10@ccemit_inv
 	int	3
 $LN10@ccemit_inv:
@@ -5851,12 +5856,12 @@ $LN4@ccemit_inv:
 	imul	rax, rax, -1
 	mov	rcx, QWORD PTR rtree$[rsp]
 	mov	eax, DWORD PTR [rcx+rax]
-	mov	DWORD PTR tv86[rsp], eax
+	mov	DWORD PTR tv92[rsp], eax
 	jmp	SHORT $LN13@ccemit_inv
 $LN12@ccemit_inv:
-	mov	DWORD PTR tv86[rsp], 0
+	mov	DWORD PTR tv92[rsp], 0
 $LN13@ccemit_inv:
-	mov	eax, DWORD PTR tv86[rsp]
+	mov	eax, DWORD PTR tv92[rsp]
 	xor	edx, edx
 	mov	ecx, 184				; 000000b8H
 	div	rcx
@@ -5872,7 +5877,7 @@ $LN13@ccemit_inv:
 	mov	rdx, QWORD PTR func$[rsp]
 	mov	rcx, QWORD PTR emit$[rsp]
 	call	ccemit_rvalue
-	mov	QWORD PTR tv132[rsp], rax
+	mov	QWORD PTR tv138[rsp], rax
 	mov	r9d, 1
 	mov	r8d, 1
 	mov	edx, 8
@@ -5880,7 +5885,7 @@ $LN13@ccemit_inv:
 	call	ccdlb_arradd
 	mov	eax, eax
 	mov	rcx, QWORD PTR rvalue$[rsp]
-	mov	rdx, QWORD PTR tv132[rsp]
+	mov	rdx, QWORD PTR tv138[rsp]
 	mov	QWORD PTR [rcx+rax*8], rdx
 	jmp	$LN2@ccemit_inv
 $LN3@ccemit_inv:
@@ -5985,7 +5990,7 @@ $LN7@ccemit_rva:
 	jmp	SHORT $LN2@ccemit_rva
 $LN8@ccemit_rva:
 ; Line 201
-	lea	rax, OFFSET FLAT:$SG49412
+	lea	rax, OFFSET FLAT:$SG49386
 	test	rax, rax
 	je	SHORT $LN10@ccemit_rva
 	int	3
@@ -6033,7 +6038,7 @@ $LN4@ccemit_lva:
 	jmp	SHORT $LN2@ccemit_lva
 $LN5@ccemit_lva:
 ; Line 177
-	lea	rax, OFFSET FLAT:$SG49397
+	lea	rax, OFFSET FLAT:$SG49371
 	test	rax, rax
 	je	SHORT $LN7@ccemit_lva
 	int	3
@@ -6323,8 +6328,8 @@ ccemit_constant PROC
 	sub	rsp, 56					; 00000038H
 ; Line 43
 	mov	r9d, 43					; 0000002bH
-	lea	r8, OFFSET FLAT:$SG49296
-	lea	rdx, OFFSET FLAT:$SG49297
+	lea	r8, OFFSET FLAT:$SG49270
+	lea	rdx, OFFSET FLAT:$SG49271
 	mov	ecx, 48					; 00000030H
 	call	ccmalloc_
 	mov	QWORD PTR value$[rsp], rax
@@ -6358,14 +6363,14 @@ next$1 = 40
 reader$ = 64
 ccread_translation_unit PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 1039
+; Line 1239
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
-; Line 1040
+; Line 1240
 	call	cctree_translation_unit
 	mov	QWORD PTR tree$[rsp], rax
 $LN2@ccread_tra:
-; Line 1042
+; Line 1242
 	xor	r8d, r8d
 	mov	rdx, QWORD PTR tree$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -6373,7 +6378,7 @@ $LN2@ccread_tra:
 	mov	QWORD PTR next$1[rsp], rax
 	cmp	QWORD PTR next$1[rsp], 0
 	je	SHORT $LN3@ccread_tra
-; Line 1043
+; Line 1243
 	mov	rax, QWORD PTR tree$[rsp]
 	add	rax, 32					; 00000020H
 	mov	r9d, 1
@@ -6388,9 +6393,9 @@ $LN2@ccread_tra:
 	mov	QWORD PTR [rcx+rax*8], rdx
 	jmp	SHORT $LN2@ccread_tra
 $LN3@ccread_tra:
-; Line 1045
+; Line 1245
 	mov	rax, QWORD PTR tree$[rsp]
-; Line 1046
+; Line 1246
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_translation_unit ENDP
@@ -6405,12 +6410,12 @@ root$ = 104
 mark$ = 112
 ccread_external_declaration PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 1050
+; Line 1250
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 88					; 00000058H
-; Line 1051
+; Line 1251
 	mov	eax, DWORD PTR mark$[rsp]
 	or	eax, 4
 	or	eax, 16
@@ -6419,53 +6424,53 @@ ccread_external_declaration PROC
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_init_decl
 	mov	QWORD PTR decl$[rsp], rax
-; Line 1053
+; Line 1253
 	cmp	QWORD PTR decl$[rsp], 0
 	jne	SHORT $LN2@ccread_ext
 	xor	eax, eax
 	jmp	$LN1@ccread_ext
 $LN2@ccread_ext:
-; Line 1055
+; Line 1255
 	mov	rax, QWORD PTR decl$[rsp]
 	cmp	DWORD PTR [rax], 16
 	je	SHORT $LN9@ccread_ext
 	int	3
 $LN9@ccread_ext:
-; Line 1056
+; Line 1256
 	mov	rax, QWORD PTR decl$[rsp]
 	cmp	QWORD PTR [rax+32], 0
 	jne	SHORT $LN11@ccread_ext
 	int	3
 $LN11@ccread_ext:
-; Line 1058
+; Line 1258
 	mov	rax, QWORD PTR decl$[rsp]
 	mov	rax, QWORD PTR [rax+32]
 	mov	rax, QWORD PTR [rax]
 	mov	QWORD PTR name$[rsp], rax
-; Line 1060
+; Line 1260
 	mov	rax, QWORD PTR name$[rsp]
 	cmp	DWORD PTR [rax], 15
 	je	SHORT $LN13@ccread_ext
 	int	3
 $LN13@ccread_ext:
-; Line 1061
+; Line 1261
 	mov	rax, QWORD PTR name$[rsp]
 	cmp	QWORD PTR [rax+48], 0
 	jne	SHORT $LN15@ccread_ext
 	int	3
 $LN15@ccread_ext:
-; Line 1062
+; Line 1262
 	mov	rax, QWORD PTR name$[rsp]
 	cmp	QWORD PTR [rax+24], 0
 	jne	SHORT $LN17@ccread_ext
 	int	3
 $LN17@ccread_ext:
-; Line 1064
+; Line 1264
 	mov	rax, QWORD PTR name$[rsp]
 	mov	rax, QWORD PTR [rax+48]
 	cmp	DWORD PTR [rax], 3
 	jne	$LN3@ccread_ext
-; Line 1067
+; Line 1267
 	mov	rax, QWORD PTR decl$[rsp]
 	cmp	QWORD PTR [rax+32], 0
 	je	SHORT $LN19@ccread_ext
@@ -6487,14 +6492,14 @@ $LN20@ccread_ext:
 	je	SHORT $LN21@ccread_ext
 	int	3
 $LN21@ccread_ext:
-; Line 1069
+; Line 1269
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR name$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_block
 	mov	rcx, QWORD PTR name$[rsp]
 	mov	QWORD PTR [rcx+88], rax
-; Line 1071
+; Line 1271
 	mov	rax, QWORD PTR name$[rsp]
 	cmp	QWORD PTR [rax+88], 0
 	jne	SHORT $LN5@ccread_ext
@@ -6505,22 +6510,22 @@ $LN21@ccread_ext:
 	and	eax, 1
 	test	eax, eax
 	jne	SHORT $LN5@ccread_ext
-	lea	rax, OFFSET FLAT:$SG49252
+	lea	rax, OFFSET FLAT:$SG49226
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49253
+	lea	rax, OFFSET FLAT:$SG49227
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49254
-	mov	r8d, 1071				; 0000042fH
-	lea	rdx, OFFSET FLAT:$SG49255
+	lea	r9, OFFSET FLAT:$SG49228
+	mov	r8d, 1271				; 000004f7H
+	lea	rdx, OFFSET FLAT:$SG49229
 	mov	ecx, 47					; 0000002fH
 	call	cctrace_
 	int	3
 	int	3
 $LN5@ccread_ext:
-; Line 1072
+; Line 1272
 	jmp	SHORT $LN4@ccread_ext
 $LN3@ccread_ext:
-; Line 1075
+; Line 1275
 	mov	rax, QWORD PTR reader$[rsp]
 	mov	rax, QWORD PTR [rax+144]
 	mov	eax, DWORD PTR [rax+56]
@@ -6528,42 +6533,42 @@ $LN3@ccread_ext:
 	and	eax, 1
 	test	eax, eax
 	jne	SHORT $LN6@ccread_ext
-	lea	rax, OFFSET FLAT:$SG49257
+	lea	rax, OFFSET FLAT:$SG49231
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49258
+	lea	rax, OFFSET FLAT:$SG49232
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49259
-	mov	r8d, 1075				; 00000433H
-	lea	rdx, OFFSET FLAT:$SG49260
+	lea	r9, OFFSET FLAT:$SG49233
+	mov	r8d, 1275				; 000004fbH
+	lea	rdx, OFFSET FLAT:$SG49234
 	mov	ecx, 48					; 00000030H
 	call	cctrace_
 	int	3
 	int	3
 $LN6@ccread_ext:
 $LN4@ccread_ext:
-; Line 1078
+; Line 1278
 	cmp	QWORD PTR decl$[rsp], 0
 	jne	SHORT $LN7@ccread_ext
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee_end
 	test	eax, eax
 	jne	SHORT $LN7@ccread_ext
-	lea	rax, OFFSET FLAT:$SG49262
+	lea	rax, OFFSET FLAT:$SG49236
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49263
+	lea	rax, OFFSET FLAT:$SG49237
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49264
-	mov	r8d, 1078				; 00000436H
-	lea	rdx, OFFSET FLAT:$SG49265
+	lea	r9, OFFSET FLAT:$SG49238
+	mov	r8d, 1278				; 000004feH
+	lea	rdx, OFFSET FLAT:$SG49239
 	mov	ecx, 49					; 00000031H
 	call	cctrace_
 	int	3
 	int	3
 $LN7@ccread_ext:
-; Line 1079
+; Line 1279
 	mov	rax, QWORD PTR decl$[rsp]
 $LN1@ccread_ext:
-; Line 1080
+; Line 1280
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_external_declaration ENDP
@@ -6576,7 +6581,7 @@ root$ = 72
 mark$ = 80
 ccread_block_or_single_stmt PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 893
+; Line 1093
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -6586,7 +6591,7 @@ ccread_block_or_single_stmt PROC
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_block
 	mov	QWORD PTR stmt$[rsp], rax
-; Line 894
+; Line 1094
 	cmp	QWORD PTR stmt$[rsp], 0
 	jne	SHORT $LN2@ccread_blo
 	mov	r8d, DWORD PTR mark$[rsp]
@@ -6595,9 +6600,9 @@ ccread_block_or_single_stmt PROC
 	call	ccread_statement
 	mov	QWORD PTR stmt$[rsp], rax
 $LN2@ccread_blo:
-; Line 895
+; Line 1095
 	mov	rax, QWORD PTR stmt$[rsp]
-; Line 896
+; Line 1096
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_block_or_single_stmt ENDP
@@ -6618,59 +6623,59 @@ root$ = 152
 mark$ = 160
 ccread_statement PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 901
+; Line 1101
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 136				; 00000088H
-; Line 902
+; Line 1102
 	mov	QWORD PTR child$[rsp], 0
-; Line 904
+; Line 1104
 	mov	edx, 6
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN2@ccread_sta
-; Line 907
+; Line 1107
 	jmp	$LN3@ccread_sta
 $LN2@ccread_sta:
-; Line 908
+; Line 1108
 	mov	edx, 5
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	$LN4@ccread_sta
-; Line 909
+; Line 1109
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_block
 	mov	QWORD PTR child$[rsp], rax
-; Line 910
+; Line 1110
 	mov	edx, 6
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN6@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49101
+	lea	rax, OFFSET FLAT:$SG49075
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49102
+	lea	rax, OFFSET FLAT:$SG49076
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49103
-	mov	r8d, 910				; 0000038eH
-	lea	rdx, OFFSET FLAT:$SG49104
+	lea	r9, OFFSET FLAT:$SG49077
+	mov	r8d, 1110				; 00000456H
+	lea	rdx, OFFSET FLAT:$SG49078
 	mov	ecx, 29
 	call	cctrace_
 	int	3
 	int	3
 $LN6@ccread_sta:
-; Line 911
+; Line 1111
 	mov	rax, QWORD PTR child$[rsp]
 	jmp	$LN1@ccread_sta
-; Line 912
+; Line 1112
 	jmp	$LN5@ccread_sta
 $LN4@ccread_sta:
-; Line 913
+; Line 1113
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -6678,7 +6683,7 @@ $LN4@ccread_sta:
 	mov	QWORD PTR child$[rsp], rax
 	cmp	QWORD PTR child$[rsp], 0
 	je	SHORT $LN7@ccread_sta
-; Line 914
+; Line 1114
 	mov	rax, QWORD PTR reader$[rsp]
 	mov	rax, QWORD PTR [rax+144]
 	mov	eax, DWORD PTR [rax+56]
@@ -6686,58 +6691,58 @@ $LN4@ccread_sta:
 	and	eax, 1
 	test	eax, eax
 	jne	SHORT $LN9@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49108
+	lea	rax, OFFSET FLAT:$SG49082
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49109
+	lea	rax, OFFSET FLAT:$SG49083
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49110
-	mov	r8d, 914				; 00000392H
-	lea	rdx, OFFSET FLAT:$SG49111
+	lea	r9, OFFSET FLAT:$SG49084
+	mov	r8d, 1114				; 0000045aH
+	lea	rdx, OFFSET FLAT:$SG49085
 	mov	ecx, 30
 	call	cctrace_
 	int	3
 	int	3
 $LN9@ccread_sta:
-; Line 915
+; Line 1115
 	mov	rax, QWORD PTR child$[rsp]
 	jmp	$LN1@ccread_sta
-; Line 916
+; Line 1116
 	jmp	$LN8@ccread_sta
 $LN7@ccread_sta:
-; Line 917
+; Line 1117
 	mov	edx, 81					; 00000051H
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	$LN10@ccread_sta
-; Line 919
+; Line 1119
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_expression
 	mov	QWORD PTR expr_tree$6[rsp], rax
-; Line 920
+; Line 1120
 	mov	r8, QWORD PTR expr_tree$6[rsp]
 	mov	edx, DWORD PTR mark$[rsp]
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_return
 	mov	QWORD PTR child$[rsp], rax
-; Line 922
+; Line 1122
 	cmp	QWORD PTR expr_tree$6[rsp], 0
 	jne	SHORT $LN12@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49115
+	lea	rax, OFFSET FLAT:$SG49089
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49116
+	lea	rax, OFFSET FLAT:$SG49090
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49117
-	mov	r8d, 922				; 0000039aH
-	lea	rdx, OFFSET FLAT:$SG49118
+	lea	r9, OFFSET FLAT:$SG49091
+	mov	r8d, 1122				; 00000462H
+	lea	rdx, OFFSET FLAT:$SG49092
 	mov	ecx, 31
 	call	cctrace_
 	int	3
 	int	3
 $LN12@ccread_sta:
-; Line 924
+; Line 1124
 	mov	rax, QWORD PTR reader$[rsp]
 	mov	rax, QWORD PTR [rax+144]
 	mov	eax, DWORD PTR [rax+56]
@@ -6745,88 +6750,88 @@ $LN12@ccread_sta:
 	and	eax, 1
 	test	eax, eax
 	jne	SHORT $LN13@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49120
+	lea	rax, OFFSET FLAT:$SG49094
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49121
+	lea	rax, OFFSET FLAT:$SG49095
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49122
-	mov	r8d, 924				; 0000039cH
-	lea	rdx, OFFSET FLAT:$SG49123
+	lea	r9, OFFSET FLAT:$SG49096
+	mov	r8d, 1124				; 00000464H
+	lea	rdx, OFFSET FLAT:$SG49097
 	mov	ecx, 32					; 00000020H
 	call	cctrace_
 	int	3
 	int	3
 $LN13@ccread_sta:
-; Line 925
+; Line 1125
 	jmp	$LN11@ccread_sta
 $LN10@ccread_sta:
-; Line 926
+; Line 1126
 	mov	edx, 78					; 0000004eH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	$LN14@ccread_sta
-; Line 928
+; Line 1128
 	mov	QWORD PTR cond_tree$2[rsp], 0
 	mov	QWORD PTR then_tree$1[rsp], 0
-; Line 930
+; Line 1130
 	mov	edx, 3
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN16@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49127
+	lea	rax, OFFSET FLAT:$SG49101
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49128
+	lea	rax, OFFSET FLAT:$SG49102
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49129
-	mov	r8d, 930				; 000003a2H
-	lea	rdx, OFFSET FLAT:$SG49130
+	lea	r9, OFFSET FLAT:$SG49103
+	mov	r8d, 1130				; 0000046aH
+	lea	rdx, OFFSET FLAT:$SG49104
 	mov	ecx, 33					; 00000021H
 	call	cctrace_
 	int	3
 	int	3
 $LN16@ccread_sta:
-; Line 931
+; Line 1131
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_expression
 	mov	QWORD PTR cond_tree$2[rsp], rax
-; Line 932
+; Line 1132
 	mov	edx, 4
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN17@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49132
+	lea	rax, OFFSET FLAT:$SG49106
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49133
+	lea	rax, OFFSET FLAT:$SG49107
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49134
-	mov	r8d, 932				; 000003a4H
-	lea	rdx, OFFSET FLAT:$SG49135
+	lea	r9, OFFSET FLAT:$SG49108
+	mov	r8d, 1132				; 0000046cH
+	lea	rdx, OFFSET FLAT:$SG49109
 	mov	ecx, 34					; 00000022H
 	call	cctrace_
 	int	3
 	int	3
 $LN17@ccread_sta:
-; Line 934
+; Line 1134
 	cmp	QWORD PTR cond_tree$2[rsp], 0
 	jne	SHORT $LN18@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49137
+	lea	rax, OFFSET FLAT:$SG49111
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49138
+	lea	rax, OFFSET FLAT:$SG49112
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49139
-	mov	r8d, 934				; 000003a6H
-	lea	rdx, OFFSET FLAT:$SG49140
+	lea	r9, OFFSET FLAT:$SG49113
+	mov	r8d, 1134				; 0000046eH
+	lea	rdx, OFFSET FLAT:$SG49114
 	mov	ecx, 35					; 00000023H
 	call	cctrace_
 	int	3
 	int	3
 $LN18@ccread_sta:
-; Line 936
+; Line 1136
 	mov	rax, QWORD PTR reader$[rsp]
 	mov	rax, QWORD PTR [rax+144]
 	mov	eax, DWORD PTR [rax+56]
@@ -6834,72 +6839,72 @@ $LN18@ccread_sta:
 	and	eax, 1
 	test	eax, eax
 	jne	SHORT $LN19@ccread_sta
-; Line 938
+; Line 1138
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_block_or_single_stmt
 	mov	QWORD PTR then_tree$1[rsp], rax
-; Line 939
+; Line 1139
 	cmp	QWORD PTR then_tree$1[rsp], 0
 	jne	SHORT $LN20@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49143
+	lea	rax, OFFSET FLAT:$SG49117
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49144
+	lea	rax, OFFSET FLAT:$SG49118
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49145
-	mov	r8d, 939				; 000003abH
-	lea	rdx, OFFSET FLAT:$SG49146
+	lea	r9, OFFSET FLAT:$SG49119
+	mov	r8d, 1139				; 00000473H
+	lea	rdx, OFFSET FLAT:$SG49120
 	mov	ecx, 36					; 00000024H
 	call	cctrace_
 	int	3
 	int	3
 $LN20@ccread_sta:
 $LN19@ccread_sta:
-; Line 941
+; Line 1141
 	mov	r9, QWORD PTR then_tree$1[rsp]
 	mov	r8, QWORD PTR cond_tree$2[rsp]
 	mov	edx, DWORD PTR mark$[rsp]
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_while
 	mov	QWORD PTR child$[rsp], rax
-; Line 942
+; Line 1142
 	jmp	$LN15@ccread_sta
 $LN14@ccread_sta:
-; Line 943
+; Line 1143
 	mov	edx, 80					; 00000050H
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	$LN21@ccread_sta
-; Line 945
+; Line 1145
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_identifier
 	mov	QWORD PTR ident$7[rsp], rax
-; Line 946
+; Line 1146
 	cmp	QWORD PTR ident$7[rsp], 0
 	jne	SHORT $LN23@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49150
+	lea	rax, OFFSET FLAT:$SG49124
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49151
+	lea	rax, OFFSET FLAT:$SG49125
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49152
-	mov	r8d, 946				; 000003b2H
-	lea	rdx, OFFSET FLAT:$SG49153
+	lea	r9, OFFSET FLAT:$SG49126
+	mov	r8d, 1146				; 0000047aH
+	lea	rdx, OFFSET FLAT:$SG49127
 	mov	ecx, 37					; 00000025H
 	call	cctrace_
 	int	3
 	int	3
 $LN23@ccread_sta:
-; Line 948
+; Line 1148
 	mov	r8, QWORD PTR ident$7[rsp]
 	mov	edx, DWORD PTR mark$[rsp]
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_goto
 	mov	QWORD PTR child$[rsp], rax
-; Line 950
+; Line 1150
 	mov	rax, QWORD PTR reader$[rsp]
 	mov	rax, QWORD PTR [rax+144]
 	mov	eax, DWORD PTR [rax+56]
@@ -6907,100 +6912,100 @@ $LN23@ccread_sta:
 	and	eax, 1
 	test	eax, eax
 	jne	SHORT $LN24@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49155
+	lea	rax, OFFSET FLAT:$SG49129
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49156
+	lea	rax, OFFSET FLAT:$SG49130
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49157
-	mov	r8d, 950				; 000003b6H
-	lea	rdx, OFFSET FLAT:$SG49158
+	lea	r9, OFFSET FLAT:$SG49131
+	mov	r8d, 1150				; 0000047eH
+	lea	rdx, OFFSET FLAT:$SG49132
 	mov	ecx, 38					; 00000026H
 	call	cctrace_
 	int	3
 	int	3
 $LN24@ccread_sta:
-; Line 951
+; Line 1151
 	jmp	$LN22@ccread_sta
 $LN21@ccread_sta:
-; Line 952
+; Line 1152
 	mov	edx, 74					; 0000004aH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN25@ccread_sta
-; Line 955
+; Line 1155
 	jmp	$LN26@ccread_sta
 $LN25@ccread_sta:
-; Line 956
+; Line 1156
 	mov	edx, 72					; 00000048H
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	$LN27@ccread_sta
-; Line 958
+; Line 1158
 	mov	QWORD PTR cond_tree$5[rsp], 0
-; Line 959
+; Line 1159
 	mov	QWORD PTR then_tree$4[rsp], 0
-; Line 960
+; Line 1160
 	mov	QWORD PTR else_tree$3[rsp], 0
-; Line 962
+; Line 1162
 	mov	edx, 3
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN29@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49164
+	lea	rax, OFFSET FLAT:$SG49138
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49165
+	lea	rax, OFFSET FLAT:$SG49139
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49166
-	mov	r8d, 962				; 000003c2H
-	lea	rdx, OFFSET FLAT:$SG49167
+	lea	r9, OFFSET FLAT:$SG49140
+	mov	r8d, 1162				; 0000048aH
+	lea	rdx, OFFSET FLAT:$SG49141
 	mov	ecx, 39					; 00000027H
 	call	cctrace_
 	int	3
 	int	3
 $LN29@ccread_sta:
-; Line 963
+; Line 1163
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_expression
 	mov	QWORD PTR cond_tree$5[rsp], rax
-; Line 964
+; Line 1164
 	mov	edx, 4
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN30@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49169
+	lea	rax, OFFSET FLAT:$SG49143
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49170
+	lea	rax, OFFSET FLAT:$SG49144
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49171
-	mov	r8d, 964				; 000003c4H
-	lea	rdx, OFFSET FLAT:$SG49172
+	lea	r9, OFFSET FLAT:$SG49145
+	mov	r8d, 1164				; 0000048cH
+	lea	rdx, OFFSET FLAT:$SG49146
 	mov	ecx, 40					; 00000028H
 	call	cctrace_
 	int	3
 	int	3
 $LN30@ccread_sta:
-; Line 966
+; Line 1166
 	cmp	QWORD PTR cond_tree$5[rsp], 0
 	jne	SHORT $LN31@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49174
+	lea	rax, OFFSET FLAT:$SG49148
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49175
+	lea	rax, OFFSET FLAT:$SG49149
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49176
-	mov	r8d, 966				; 000003c6H
-	lea	rdx, OFFSET FLAT:$SG49177
+	lea	r9, OFFSET FLAT:$SG49150
+	mov	r8d, 1166				; 0000048eH
+	lea	rdx, OFFSET FLAT:$SG49151
 	mov	ecx, 41					; 00000029H
 	call	cctrace_
 	int	3
 	int	3
 $LN31@ccread_sta:
-; Line 968
+; Line 1168
 	mov	rax, QWORD PTR reader$[rsp]
 	mov	rax, QWORD PTR [rax+144]
 	mov	eax, DWORD PTR [rax+56]
@@ -7008,29 +7013,29 @@ $LN31@ccread_sta:
 	and	eax, 1
 	test	eax, eax
 	jne	SHORT $LN32@ccread_sta
-; Line 969
+; Line 1169
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_block_or_single_stmt
 	mov	QWORD PTR then_tree$4[rsp], rax
-; Line 970
+; Line 1170
 	cmp	QWORD PTR then_tree$4[rsp], 0
 	jne	SHORT $LN33@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49180
+	lea	rax, OFFSET FLAT:$SG49154
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49181
+	lea	rax, OFFSET FLAT:$SG49155
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49182
-	mov	r8d, 970				; 000003caH
-	lea	rdx, OFFSET FLAT:$SG49183
+	lea	r9, OFFSET FLAT:$SG49156
+	mov	r8d, 1170				; 00000492H
+	lea	rdx, OFFSET FLAT:$SG49157
 	mov	ecx, 42					; 0000002aH
 	call	cctrace_
 	int	3
 	int	3
 $LN33@ccread_sta:
 $LN32@ccread_sta:
-; Line 972
+; Line 1172
 	mov	edx, 74					; 0000004aH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
@@ -7043,29 +7048,29 @@ $LN32@ccread_sta:
 	and	eax, 1
 	test	eax, eax
 	jne	SHORT $LN34@ccread_sta
-; Line 973
+; Line 1173
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_block_or_single_stmt
 	mov	QWORD PTR else_tree$3[rsp], rax
-; Line 974
+; Line 1174
 	cmp	QWORD PTR else_tree$3[rsp], 0
 	jne	SHORT $LN35@ccread_sta
-	lea	rax, OFFSET FLAT:$SG49186
+	lea	rax, OFFSET FLAT:$SG49160
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49187
+	lea	rax, OFFSET FLAT:$SG49161
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49188
-	mov	r8d, 974				; 000003ceH
-	lea	rdx, OFFSET FLAT:$SG49189
+	lea	r9, OFFSET FLAT:$SG49162
+	mov	r8d, 1174				; 00000496H
+	lea	rdx, OFFSET FLAT:$SG49163
 	mov	ecx, 43					; 0000002bH
 	call	cctrace_
 	int	3
 	int	3
 $LN35@ccread_sta:
 $LN34@ccread_sta:
-; Line 977
+; Line 1177
 	mov	rax, QWORD PTR else_tree$3[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR then_tree$4[rsp]
@@ -7074,10 +7079,10 @@ $LN34@ccread_sta:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_ternary
 	mov	QWORD PTR child$[rsp], rax
-; Line 979
+; Line 1179
 	jmp	$LN28@ccread_sta
 $LN27@ccread_sta:
-; Line 981
+; Line 1181
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -7085,7 +7090,7 @@ $LN27@ccread_sta:
 	mov	QWORD PTR child$[rsp], rax
 	cmp	QWORD PTR child$[rsp], 0
 	je	$LN36@ccread_sta
-; Line 984
+; Line 1184
 	mov	rax, QWORD PTR reader$[rsp]
 	mov	rax, QWORD PTR [rax+144]
 	mov	eax, DWORD PTR [rax+56]
@@ -7093,19 +7098,19 @@ $LN27@ccread_sta:
 	and	eax, 1
 	test	eax, eax
 	jne	$LN37@ccread_sta
-; Line 986
+; Line 1186
 	mov	rax, QWORD PTR child$[rsp]
 	cmp	DWORD PTR [rax], 6
 	jne	$LN38@ccread_sta
-; Line 988
+; Line 1188
 	mov	edx, 10
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	SHORT $LN40@ccread_sta
-; Line 991
+; Line 1191
 	mov	QWORD PTR list$8[rsp], 0
-; Line 992
+; Line 1192
 	mov	rax, QWORD PTR reader$[rsp]
 	mov	rax, QWORD PTR [rax+144]
 	mov	eax, DWORD PTR [rax+56]
@@ -7113,54 +7118,54 @@ $LN27@ccread_sta:
 	and	eax, 1
 	test	eax, eax
 	jne	SHORT $LN42@ccread_sta
-; Line 993
+; Line 1193
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_statement_list
 	mov	QWORD PTR list$8[rsp], rax
 $LN42@ccread_sta:
-; Line 995
+; Line 1195
 	mov	r9, QWORD PTR list$8[rsp]
 	mov	r8, QWORD PTR child$[rsp]
 	mov	edx, DWORD PTR mark$[rsp]
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_label
 	mov	QWORD PTR child$[rsp], rax
-; Line 996
+; Line 1196
 	jmp	SHORT $LN41@ccread_sta
 $LN40@ccread_sta:
-; Line 997
-	lea	rax, OFFSET FLAT:$SG49197
+; Line 1197
+	lea	rax, OFFSET FLAT:$SG49171
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49198
+	lea	rax, OFFSET FLAT:$SG49172
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49199
-	mov	r8d, 997				; 000003e5H
-	lea	rdx, OFFSET FLAT:$SG49200
+	lea	r9, OFFSET FLAT:$SG49173
+	mov	r8d, 1197				; 000004adH
+	lea	rdx, OFFSET FLAT:$SG49174
 	mov	ecx, 44					; 0000002cH
 	call	cctrace_
 	int	3
 	int	3
 $LN41@ccread_sta:
-; Line 998
+; Line 1198
 	jmp	SHORT $LN39@ccread_sta
 $LN38@ccread_sta:
-; Line 999
-	lea	rax, OFFSET FLAT:$SG49201
+; Line 1199
+	lea	rax, OFFSET FLAT:$SG49175
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49202
+	lea	rax, OFFSET FLAT:$SG49176
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49203
-	mov	r8d, 999				; 000003e7H
-	lea	rdx, OFFSET FLAT:$SG49204
+	lea	r9, OFFSET FLAT:$SG49177
+	mov	r8d, 1199				; 000004afH
+	lea	rdx, OFFSET FLAT:$SG49178
 	mov	ecx, 45					; 0000002dH
 	call	cctrace_
 	int	3
 	int	3
 $LN39@ccread_sta:
 $LN37@ccread_sta:
-; Line 1002
+; Line 1202
 	mov	rax, QWORD PTR child$[rsp]
 	jmp	SHORT $LN1@ccread_sta
 $LN36@ccread_sta:
@@ -7172,10 +7177,10 @@ $LN11@ccread_sta:
 $LN8@ccread_sta:
 $LN5@ccread_sta:
 $LN3@ccread_sta:
-; Line 1004
+; Line 1204
 	mov	rax, QWORD PTR child$[rsp]
 $LN1@ccread_sta:
-; Line 1005
+; Line 1205
 	add	rsp, 136				; 00000088H
 	ret	0
 ccread_statement ENDP
@@ -7189,14 +7194,14 @@ root$ = 72
 mark$ = 80
 ccread_statement_list PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 1009
+; Line 1209
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
 	mov	QWORD PTR list$[rsp], 0
 $LN2@ccread_sta:
-; Line 1010
+; Line 1210
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -7204,7 +7209,7 @@ $LN2@ccread_sta:
 	mov	QWORD PTR next$[rsp], rax
 	cmp	QWORD PTR next$[rsp], 0
 	je	SHORT $LN3@ccread_sta
-; Line 1011
+; Line 1211
 	mov	r9d, 1
 	mov	r8d, 1
 	mov	edx, 8
@@ -7214,19 +7219,19 @@ $LN2@ccread_sta:
 	mov	rcx, QWORD PTR list$[rsp]
 	mov	rdx, QWORD PTR next$[rsp]
 	mov	QWORD PTR [rcx+rax*8], rdx
-; Line 1012
+; Line 1212
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee_end
 	test	eax, eax
 	je	SHORT $LN4@ccread_sta
 	jmp	SHORT $LN3@ccread_sta
 $LN4@ccread_sta:
-; Line 1013
+; Line 1213
 	jmp	SHORT $LN2@ccread_sta
 $LN3@ccread_sta:
-; Line 1014
+; Line 1214
 	mov	rax, QWORD PTR list$[rsp]
-; Line 1015
+; Line 1215
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_statement_list ENDP
@@ -7239,54 +7244,54 @@ root$ = 88
 mark$ = 96
 ccread_block PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 1019
+; Line 1219
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 72					; 00000048H
 	mov	QWORD PTR tree$[rsp], 0
-; Line 1020
+; Line 1220
 	mov	edx, 5
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	SHORT $LN2@ccread_blo
-; Line 1021
+; Line 1221
 	xor	r8d, r8d
 	mov	edx, DWORD PTR mark$[rsp]
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_block
 	mov	QWORD PTR tree$[rsp], rax
-; Line 1022
+; Line 1222
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR tree$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_statement_list
 	mov	rcx, QWORD PTR tree$[rsp]
 	mov	QWORD PTR [rcx+32], rax
-; Line 1023
+; Line 1223
 	mov	edx, 6
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN3@ccread_blo
-; Line 1024
-	lea	rax, OFFSET FLAT:$SG49224
+; Line 1224
+	lea	rax, OFFSET FLAT:$SG49198
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49225
+	lea	rax, OFFSET FLAT:$SG49199
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49226
-	mov	r8d, 1024				; 00000400H
-	lea	rdx, OFFSET FLAT:$SG49227
+	lea	r9, OFFSET FLAT:$SG49200
+	mov	r8d, 1224				; 000004c8H
+	lea	rdx, OFFSET FLAT:$SG49201
 	mov	ecx, 46					; 0000002eH
 	call	cctrace_
 	int	3
 	int	3
 $LN3@ccread_blo:
 $LN2@ccread_blo:
-; Line 1026
+; Line 1226
 	mov	rax, QWORD PTR tree$[rsp]
-; Line 1027
+; Line 1227
 	add	rsp, 72					; 00000048H
 	ret	0
 ccread_block ENDP
@@ -7300,14 +7305,14 @@ root$ = 72
 mark$ = 80
 ccread_param_decl_list PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 867
+; Line 1067
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
 	mov	QWORD PTR list$[rsp], 0
 $LN2@ccread_par:
-; Line 868
+; Line 1068
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -7315,7 +7320,7 @@ $LN2@ccread_par:
 	mov	QWORD PTR next$[rsp], rax
 	cmp	QWORD PTR next$[rsp], 0
 	je	SHORT $LN3@ccread_par
-; Line 869
+; Line 1069
 	mov	r9d, 1
 	mov	r8d, 1
 	mov	edx, 8
@@ -7325,7 +7330,7 @@ $LN2@ccread_par:
 	mov	rcx, QWORD PTR list$[rsp]
 	mov	rdx, QWORD PTR next$[rsp]
 	mov	QWORD PTR [rcx+rax*8], rdx
-; Line 870
+; Line 1070
 	mov	edx, 9
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
@@ -7333,12 +7338,12 @@ $LN2@ccread_par:
 	jne	SHORT $LN4@ccread_par
 	jmp	SHORT $LN3@ccread_par
 $LN4@ccread_par:
-; Line 871
+; Line 1071
 	jmp	SHORT $LN2@ccread_par
 $LN3@ccread_par:
-; Line 872
+; Line 1072
 	mov	rax, QWORD PTR list$[rsp]
-; Line 873
+; Line 1073
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_param_decl_list ENDP
@@ -7352,41 +7357,41 @@ root$ = 88
 mark$ = 96
 ccread_param_decl PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 852
+; Line 1052
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 72					; 00000048H
-; Line 853
+; Line 1053
 	mov	QWORD PTR spec$[rsp], 0
-; Line 854
+; Line 1054
 	mov	QWORD PTR decl$[rsp], 0
-; Line 856
+; Line 1056
 	mov	edx, 12
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN2@ccread_par
-; Line 857
-	lea	rax, OFFSET FLAT:$SG49041
+; Line 1057
+	lea	rax, OFFSET FLAT:$SG49015
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG49042
+	lea	rax, OFFSET FLAT:$SG49016
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG49043
-	mov	r8d, 857				; 00000359H
-	lea	rdx, OFFSET FLAT:$SG49044
+	lea	r9, OFFSET FLAT:$SG49017
+	mov	r8d, 1057				; 00000421H
+	lea	rdx, OFFSET FLAT:$SG49018
 	mov	ecx, 28
 	call	cctrace_
 	int	3
 	int	3
 $LN2@ccread_par:
-; Line 859
+; Line 1059
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_declaration_specifiers
 	mov	QWORD PTR spec$[rsp], rax
-; Line 860
+; Line 1060
 	cmp	QWORD PTR spec$[rsp], 0
 	je	SHORT $LN3@ccread_par
 	mov	r9, QWORD PTR spec$[rsp]
@@ -7396,9 +7401,9 @@ $LN2@ccread_par:
 	call	ccread_decl_name
 	mov	QWORD PTR decl$[rsp], rax
 $LN3@ccread_par:
-; Line 862
+; Line 1062
 	mov	rax, QWORD PTR decl$[rsp]
-; Line 863
+; Line 1063
 	add	rsp, 72					; 00000048H
 	ret	0
 ccread_param_decl ENDP
@@ -7411,7 +7416,7 @@ root$ = 72
 mark$ = 80
 ccread_alignment_specifier PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 782
+; Line 982
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -7420,18 +7425,18 @@ ccread_alignment_specifier PROC
 	call	kttc__peek_alignment_specifier
 	test	rax, rax
 	je	SHORT $LN2@ccread_ali
-; Line 783
+; Line 983
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$1[rsp], rax
-; Line 785
+; Line 985
 	mov	eax, 1
 	jmp	SHORT $LN1@ccread_ali
 $LN2@ccread_ali:
-; Line 787
+; Line 987
 	xor	eax, eax
 $LN1@ccread_ali:
-; Line 788
+; Line 988
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_alignment_specifier ENDP
@@ -7444,7 +7449,7 @@ root$ = 72
 mark$ = 80
 ccread_function_specifier PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 768
+; Line 968
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -7453,18 +7458,18 @@ ccread_function_specifier PROC
 	call	kttc__peek_func_specifier
 	test	rax, rax
 	je	SHORT $LN2@ccread_fun
-; Line 769
+; Line 969
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$1[rsp], rax
-; Line 771
+; Line 971
 	mov	eax, 1
 	jmp	SHORT $LN1@ccread_fun
 $LN2@ccread_fun:
-; Line 773
+; Line 973
 	xor	eax, eax
 $LN1@ccread_fun:
-; Line 774
+; Line 974
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_function_specifier ENDP
@@ -7477,7 +7482,7 @@ root$ = 72
 mark$ = 80
 ccread_type_qualifier PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 754
+; Line 954
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -7486,18 +7491,18 @@ ccread_type_qualifier PROC
 	call	kttc__peek_type_qualifier
 	test	rax, rax
 	je	SHORT $LN2@ccread_typ
-; Line 755
+; Line 955
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$1[rsp], rax
-; Line 757
+; Line 957
 	mov	eax, 1
 	jmp	SHORT $LN1@ccread_typ
 $LN2@ccread_typ:
-; Line 759
+; Line 959
 	xor	eax, eax
 $LN1@ccread_typ:
-; Line 760
+; Line 960
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_type_qualifier ENDP
@@ -7510,28 +7515,28 @@ root$ = 72
 mark$ = 80
 ccread_storage_class_specifier PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 735
+; Line 935
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
-; Line 736
+; Line 936
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	kttc__peek_storage_class
 	test	rax, rax
 	je	SHORT $LN2@ccread_sto
-; Line 738
+; Line 938
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$1[rsp], rax
-; Line 741
+; Line 941
 	mov	eax, 1
 	jmp	SHORT $LN1@ccread_sto
 $LN2@ccread_sto:
-; Line 743
+; Line 943
 	xor	eax, eax
 $LN1@ccread_sto:
-; Line 744
+; Line 944
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_storage_class_specifier ENDP
@@ -7545,18 +7550,18 @@ root$ = 72
 mark$ = 80
 ccread_type_specifier PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 703
+; Line 903
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
-; Line 704
+; Line 904
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee_typespec
 	mov	QWORD PTR tok$1[rsp], rax
 	cmp	QWORD PTR tok$1[rsp], 0
 	je	$LN4@ccread_typ
-; Line 705
+; Line 905
 	mov	rax, QWORD PTR tok$1[rsp]
 	mov	eax, DWORD PTR [rax]
 	mov	DWORD PTR tv68[rsp], eax
@@ -7572,84 +7577,84 @@ ccread_type_specifier PROC
 	jmp	rax
 $LN5@ccread_typ:
 $LN6@ccread_typ:
-; Line 707
+; Line 907
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_struct_or_union_specifier
 	jmp	$LN1@ccread_typ
 $LN7@ccread_typ:
-; Line 708
+; Line 908
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_int8
 	jmp	$LN1@ccread_typ
 $LN8@ccread_typ:
-; Line 709
+; Line 909
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_int16
 	jmp	$LN1@ccread_typ
 $LN9@ccread_typ:
-; Line 710
+; Line 910
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_int32
 	jmp	$LN1@ccread_typ
 $LN10@ccread_typ:
-; Line 711
+; Line 911
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_int64
 	jmp	$LN1@ccread_typ
 $LN11@ccread_typ:
-; Line 712
+; Line 912
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_int8
 	jmp	SHORT $LN1@ccread_typ
 $LN12@ccread_typ:
-; Line 713
+; Line 913
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_void
 	jmp	SHORT $LN1@ccread_typ
 $LN13@ccread_typ:
-; Line 714
+; Line 914
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_int8
 	jmp	SHORT $LN1@ccread_typ
 $LN14@ccread_typ:
-; Line 715
+; Line 915
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_int16
 	jmp	SHORT $LN1@ccread_typ
 $LN15@ccread_typ:
-; Line 716
+; Line 916
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_int32
 	jmp	SHORT $LN1@ccread_typ
 $LN16@ccread_typ:
-; Line 717
+; Line 917
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_flo32
 	jmp	SHORT $LN1@ccread_typ
 $LN17@ccread_typ:
-; Line 718
+; Line 918
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	rax, QWORD PTR ctype_flo64
 	jmp	SHORT $LN1@ccread_typ
 $LN2@ccread_typ:
 $LN4@ccread_typ:
-; Line 721
+; Line 921
 	xor	eax, eax
 $LN1@ccread_typ:
-; Line 722
+; Line 922
 	add	rsp, 56					; 00000038H
 	ret	0
 $LN19@ccread_typ:
@@ -7682,7 +7687,7 @@ root$ = 104
 mark$ = 112
 ccread_struct_or_union_specifier PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 656
+; Line 856
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -7692,35 +7697,35 @@ ccread_struct_or_union_specifier PROC
 	call	cceat
 	test	rax, rax
 	je	$LN4@ccread_str
-; Line 659
+; Line 859
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_identifier
 	mov	QWORD PTR name$3[rsp], rax
-; Line 660
+; Line 860
 	mov	edx, 5
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN6@ccread_str
-; Line 661
-	lea	rax, OFFSET FLAT:$SG48945
+; Line 861
+	lea	rax, OFFSET FLAT:$SG48919
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48946
+	lea	rax, OFFSET FLAT:$SG48920
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48947
-	mov	r8d, 661				; 00000295H
-	lea	rdx, OFFSET FLAT:$SG48948
+	lea	r9, OFFSET FLAT:$SG48921
+	mov	r8d, 861				; 0000035dH
+	lea	rdx, OFFSET FLAT:$SG48922
 	mov	ecx, 25
 	call	cctrace_
 	int	3
 	int	3
 $LN6@ccread_str:
-; Line 663
+; Line 863
 	mov	QWORD PTR list$1[rsp], 0
 $LN2@ccread_str:
-; Line 664
+; Line 864
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -7728,7 +7733,7 @@ $LN2@ccread_str:
 	mov	QWORD PTR next$2[rsp], rax
 	cmp	QWORD PTR next$2[rsp], 0
 	je	$LN3@ccread_str
-; Line 665
+; Line 865
 	mov	r9d, 1
 	mov	r8d, 1
 	mov	edx, 8
@@ -7738,7 +7743,7 @@ $LN2@ccread_str:
 	mov	rcx, QWORD PTR list$1[rsp]
 	mov	rdx, QWORD PTR next$2[rsp]
 	mov	QWORD PTR [rcx+rax*8], rdx
-; Line 666
+; Line 866
 	mov	rax, QWORD PTR reader$[rsp]
 	mov	rax, QWORD PTR [rax+144]
 	mov	eax, DWORD PTR [rax+56]
@@ -7746,69 +7751,69 @@ $LN2@ccread_str:
 	and	eax, 1
 	test	eax, eax
 	jne	SHORT $LN7@ccread_str
-	lea	rax, OFFSET FLAT:$SG48950
+	lea	rax, OFFSET FLAT:$SG48924
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48951
+	lea	rax, OFFSET FLAT:$SG48925
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48952
-	mov	r8d, 666				; 0000029aH
-	lea	rdx, OFFSET FLAT:$SG48953
+	lea	r9, OFFSET FLAT:$SG48926
+	mov	r8d, 866				; 00000362H
+	lea	rdx, OFFSET FLAT:$SG48927
 	mov	ecx, 26
 	call	cctrace_
 	int	3
 	int	3
 $LN7@ccread_str:
-; Line 667
+; Line 867
 	jmp	$LN2@ccread_str
 $LN3@ccread_str:
-; Line 668
+; Line 868
 	mov	edx, 6
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN8@ccread_str
-; Line 669
-	lea	rax, OFFSET FLAT:$SG48955
+; Line 869
+	lea	rax, OFFSET FLAT:$SG48929
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48956
+	lea	rax, OFFSET FLAT:$SG48930
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48957
-	mov	r8d, 669				; 0000029dH
-	lea	rdx, OFFSET FLAT:$SG48958
+	lea	r9, OFFSET FLAT:$SG48931
+	mov	r8d, 869				; 00000365H
+	lea	rdx, OFFSET FLAT:$SG48932
 	mov	ecx, 27
 	call	cctrace_
 	int	3
 	int	3
 $LN8@ccread_str:
-; Line 670
+; Line 870
 	mov	rdx, QWORD PTR name$3[rsp]
 	mov	rcx, QWORD PTR list$1[rsp]
 	call	cctree_struct
 	mov	QWORD PTR tree$4[rsp], rax
-; Line 671
+; Line 871
 	mov	rax, QWORD PTR tree$4[rsp]
 	jmp	SHORT $LN1@ccread_str
-; Line 672
+; Line 872
 	jmp	SHORT $LN5@ccread_str
 $LN4@ccread_str:
-; Line 673
+; Line 873
 	mov	edx, 60					; 0000003cH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	SHORT $LN9@ccread_str
-; Line 675
-	lea	rax, OFFSET FLAT:$SG48960
+; Line 875
+	lea	rax, OFFSET FLAT:$SG48934
 	test	rax, rax
 	je	SHORT $LN11@ccread_str
 	int	3
 $LN11@ccread_str:
 $LN9@ccread_str:
 $LN5@ccread_str:
-; Line 677
+; Line 877
 	xor	eax, eax
 $LN1@ccread_str:
-; Line 678
+; Line 878
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_struct_or_union_specifier ENDP
@@ -7822,12 +7827,12 @@ root$ = 88
 mark$ = 96
 ccread_struct_decl PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 645
+; Line 845
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 72					; 00000048H
-; Line 646
+; Line 846
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -7835,7 +7840,7 @@ ccread_struct_decl PROC
 	mov	QWORD PTR type$[rsp], rax
 	cmp	QWORD PTR type$[rsp], 0
 	je	SHORT $LN2@ccread_str
-; Line 647
+; Line 847
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
@@ -7844,7 +7849,7 @@ ccread_struct_decl PROC
 	mov	QWORD PTR list$[rsp], rax
 	cmp	QWORD PTR list$[rsp], 0
 	je	SHORT $LN3@ccread_str
-; Line 648
+; Line 848
 	mov	r9, QWORD PTR list$[rsp]
 	mov	r8, QWORD PTR type$[rsp]
 	mov	edx, DWORD PTR mark$[rsp]
@@ -7853,24 +7858,24 @@ ccread_struct_decl PROC
 	jmp	SHORT $LN1@ccread_str
 	jmp	SHORT $LN4@ccread_str
 $LN3@ccread_str:
-; Line 649
-	lea	rax, OFFSET FLAT:$SG48926
+; Line 849
+	lea	rax, OFFSET FLAT:$SG48900
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48927
+	lea	rax, OFFSET FLAT:$SG48901
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48928
-	mov	r8d, 649				; 00000289H
-	lea	rdx, OFFSET FLAT:$SG48929
+	lea	r9, OFFSET FLAT:$SG48902
+	mov	r8d, 849				; 00000351H
+	lea	rdx, OFFSET FLAT:$SG48903
 	mov	ecx, 24
 	call	cctrace_
 	int	3
 	int	3
 $LN4@ccread_str:
 $LN2@ccread_str:
-; Line 651
+; Line 851
 	xor	eax, eax
 $LN1@ccread_str:
-; Line 652
+; Line 852
 	add	rsp, 72					; 00000048H
 	ret	0
 ccread_struct_decl ENDP
@@ -7884,12 +7889,12 @@ root$ = 88
 mark$ = 96
 ccread_init_decl PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 633
+; Line 833
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 72					; 00000048H
-; Line 634
+; Line 834
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -7897,12 +7902,12 @@ ccread_init_decl PROC
 	mov	QWORD PTR type$[rsp], rax
 	cmp	QWORD PTR type$[rsp], 0
 	je	$LN2@ccread_ini
-; Line 635
+; Line 835
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_attribute_seq
-; Line 636
+; Line 836
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
@@ -7911,7 +7916,7 @@ ccread_init_decl PROC
 	mov	QWORD PTR list$[rsp], rax
 	cmp	QWORD PTR list$[rsp], 0
 	je	SHORT $LN3@ccread_ini
-; Line 637
+; Line 837
 	mov	r9, QWORD PTR list$[rsp]
 	mov	r8, QWORD PTR type$[rsp]
 	mov	edx, DWORD PTR mark$[rsp]
@@ -7920,24 +7925,24 @@ ccread_init_decl PROC
 	jmp	SHORT $LN1@ccread_ini
 	jmp	SHORT $LN4@ccread_ini
 $LN3@ccread_ini:
-; Line 638
-	lea	rax, OFFSET FLAT:$SG48912
+; Line 838
+	lea	rax, OFFSET FLAT:$SG48886
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48913
+	lea	rax, OFFSET FLAT:$SG48887
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48914
-	mov	r8d, 638				; 0000027eH
-	lea	rdx, OFFSET FLAT:$SG48915
+	lea	r9, OFFSET FLAT:$SG48888
+	mov	r8d, 838				; 00000346H
+	lea	rdx, OFFSET FLAT:$SG48889
 	mov	ecx, 23
 	call	cctrace_
 	int	3
 	int	3
 $LN4@ccread_ini:
 $LN2@ccread_ini:
-; Line 640
+; Line 840
 	xor	eax, eax
 $LN1@ccread_ini:
-; Line 641
+; Line 841
 	add	rsp, 72					; 00000048H
 	ret	0
 ccread_init_decl ENDP
@@ -7952,7 +7957,7 @@ mark$ = 80
 type$ = 88
 ccread_struct_decl_name_list PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 623
+; Line 823
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
@@ -7960,14 +7965,14 @@ ccread_struct_decl_name_list PROC
 	sub	rsp, 56					; 00000038H
 	mov	QWORD PTR list$[rsp], 0
 $LN4@ccread_str:
-; Line 625
+; Line 825
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_struct_decl_name
 	mov	QWORD PTR next$[rsp], rax
-; Line 626
+; Line 826
 	cmp	QWORD PTR next$[rsp], 0
 	je	SHORT $LN5@ccread_str
 	mov	r9d, 1
@@ -7980,7 +7985,7 @@ $LN4@ccread_str:
 	mov	rdx, QWORD PTR next$[rsp]
 	mov	QWORD PTR [rcx+rax*8], rdx
 $LN5@ccread_str:
-; Line 627
+; Line 827
 	cmp	QWORD PTR next$[rsp], 0
 	je	SHORT $LN6@ccread_str
 	mov	edx, 9
@@ -7989,9 +7994,9 @@ $LN5@ccread_str:
 	test	rax, rax
 	jne	SHORT $LN4@ccread_str
 $LN6@ccread_str:
-; Line 628
+; Line 828
 	mov	rax, QWORD PTR list$[rsp]
-; Line 629
+; Line 829
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_struct_decl_name_list ENDP
@@ -8006,7 +8011,7 @@ mark$ = 80
 type$ = 88
 ccread_init_decl_name_list PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 611
+; Line 811
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
@@ -8016,22 +8021,22 @@ ccread_init_decl_name_list PROC
 	jne	SHORT $LN7@ccread_ini
 	int	3
 $LN7@ccread_ini:
-; Line 612
+; Line 812
 	mov	QWORD PTR list$[rsp], 0
 $LN4@ccread_ini:
-; Line 614
+; Line 814
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_init_decl_name
 	mov	QWORD PTR next$[rsp], rax
-; Line 615
+; Line 815
 	cmp	QWORD PTR next$[rsp], 0
 	jne	SHORT $LN5@ccread_ini
 	jmp	SHORT $LN3@ccread_ini
 $LN5@ccread_ini:
-; Line 616
+; Line 816
 	mov	r9d, 1
 	mov	r8d, 1
 	mov	edx, 8
@@ -8041,16 +8046,16 @@ $LN5@ccread_ini:
 	mov	rcx, QWORD PTR list$[rsp]
 	mov	rdx, QWORD PTR next$[rsp]
 	mov	QWORD PTR [rcx+rax*8], rdx
-; Line 617
+; Line 817
 	mov	edx, 9
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN4@ccread_ini
 $LN3@ccread_ini:
-; Line 618
+; Line 818
 	mov	rax, QWORD PTR list$[rsp]
-; Line 619
+; Line 819
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_init_decl_name_list ENDP
@@ -8064,7 +8069,7 @@ mark$ = 96
 type$ = 104
 ccread_struct_decl_name PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 598
+; Line 798
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
@@ -8074,40 +8079,40 @@ ccread_struct_decl_name PROC
 	jne	SHORT $LN6@ccread_str
 	int	3
 $LN6@ccread_str:
-; Line 599
+; Line 799
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_decl_name
 	mov	QWORD PTR decl$[rsp], rax
-; Line 600
+; Line 800
 	cmp	QWORD PTR decl$[rsp], 0
 	je	SHORT $LN2@ccread_str
-; Line 601
+; Line 801
 	mov	edx, 10
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	SHORT $LN3@ccread_str
-; Line 602
+; Line 802
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_constant_expression
 	mov	rcx, QWORD PTR decl$[rsp]
 	mov	QWORD PTR [rcx+56], rax
-; Line 603
+; Line 803
 	mov	rax, QWORD PTR decl$[rsp]
 	cmp	QWORD PTR [rax+56], 0
 	jne	SHORT $LN4@ccread_str
-	lea	rax, OFFSET FLAT:$SG48871
+	lea	rax, OFFSET FLAT:$SG48845
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48872
+	lea	rax, OFFSET FLAT:$SG48846
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48873
-	mov	r8d, 603				; 0000025bH
-	lea	rdx, OFFSET FLAT:$SG48874
+	lea	r9, OFFSET FLAT:$SG48847
+	mov	r8d, 803				; 00000323H
+	lea	rdx, OFFSET FLAT:$SG48848
 	mov	ecx, 22
 	call	cctrace_
 	int	3
@@ -8115,9 +8120,9 @@ $LN6@ccread_str:
 $LN4@ccread_str:
 $LN3@ccread_str:
 $LN2@ccread_str:
-; Line 606
+; Line 806
 	mov	rax, QWORD PTR decl$[rsp]
-; Line 607
+; Line 807
 	add	rsp, 72					; 00000048H
 	ret	0
 ccread_struct_decl_name ENDP
@@ -8131,7 +8136,7 @@ mark$ = 96
 type$ = 104
 ccread_init_decl_name PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 583
+; Line 783
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
@@ -8141,40 +8146,40 @@ ccread_init_decl_name PROC
 	jne	SHORT $LN6@ccread_ini
 	int	3
 $LN6@ccread_ini:
-; Line 585
+; Line 785
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_decl_name
 	mov	QWORD PTR decl$[rsp], rax
-; Line 587
+; Line 787
 	cmp	QWORD PTR decl$[rsp], 0
 	je	SHORT $LN2@ccread_ini
-; Line 588
+; Line 788
 	mov	edx, 109				; 0000006dH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	SHORT $LN3@ccread_ini
-; Line 589
+; Line 789
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_initializer
 	mov	rcx, QWORD PTR decl$[rsp]
 	mov	QWORD PTR [rcx+64], rax
-; Line 590
+; Line 790
 	mov	rax, QWORD PTR decl$[rsp]
 	cmp	QWORD PTR [rax+64], 0
 	jne	SHORT $LN4@ccread_ini
-	lea	rax, OFFSET FLAT:$SG48857
+	lea	rax, OFFSET FLAT:$SG48831
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48858
+	lea	rax, OFFSET FLAT:$SG48832
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48859
-	mov	r8d, 590				; 0000024eH
-	lea	rdx, OFFSET FLAT:$SG48860
+	lea	r9, OFFSET FLAT:$SG48833
+	mov	r8d, 790				; 00000316H
+	lea	rdx, OFFSET FLAT:$SG48834
 	mov	ecx, 21
 	call	cctrace_
 	int	3
@@ -8182,9 +8187,9 @@ $LN6@ccread_ini:
 $LN4@ccread_ini:
 $LN3@ccread_ini:
 $LN2@ccread_ini:
-; Line 593
+; Line 793
 	mov	rax, QWORD PTR decl$[rsp]
-; Line 594
+; Line 794
 	add	rsp, 72					; 00000048H
 	ret	0
 ccread_init_decl_name ENDP
@@ -8197,7 +8202,7 @@ mark$ = 64
 type$ = 72
 ccread_decl_name_modifier_maybe PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 567
+; Line 767
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
@@ -8208,7 +8213,7 @@ ccread_decl_name_modifier_maybe PROC
 	call	cceat
 	test	rax, rax
 	je	SHORT $LN2@ccread_dec
-; Line 568
+; Line 768
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
@@ -8218,10 +8223,10 @@ ccread_decl_name_modifier_maybe PROC
 	call	cctype_new_ptr
 	jmp	SHORT $LN1@ccread_dec
 $LN2@ccread_dec:
-; Line 569
+; Line 769
 	mov	rax, QWORD PTR type$[rsp]
 $LN1@ccread_dec:
-; Line 570
+; Line 770
 	add	rsp, 40					; 00000028H
 	ret	0
 ccread_decl_name_modifier_maybe ENDP
@@ -8240,7 +8245,7 @@ mark$ = 144
 type$ = 152
 ccread_direct_decl_name PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 544
+; Line 744
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
@@ -8253,76 +8258,76 @@ ccread_direct_decl_name PROC
 	call	cceat
 	test	rax, rax
 	je	$LN2@ccread_dir
-; Line 547
+; Line 747
 	mov	rcx, QWORD PTR type$[rsp]
 	call	cctree_clone
 	mov	QWORD PTR mod$1[rsp], rax
-; Line 548
+; Line 748
 	mov	r9, QWORD PTR mod$1[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_decl_name
 	mov	QWORD PTR res$3[rsp], rax
-; Line 549
+; Line 749
 	mov	edx, 4
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN4@ccread_dir
-	lea	rax, OFFSET FLAT:$SG48827
+	lea	rax, OFFSET FLAT:$SG48801
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48828
+	lea	rax, OFFSET FLAT:$SG48802
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48829
-	mov	r8d, 549				; 00000225H
-	lea	rdx, OFFSET FLAT:$SG48830
+	lea	r9, OFFSET FLAT:$SG48803
+	mov	r8d, 749				; 000002edH
+	lea	rdx, OFFSET FLAT:$SG48804
 	mov	ecx, 20
 	call	cctrace_
 	int	3
 	int	3
 $LN4@ccread_dir:
-; Line 550
+; Line 750
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_direct_decl_name_modifier
 	mov	QWORD PTR tmp$2[rsp], rax
-; Line 551
+; Line 751
 	mov	rdi, QWORD PTR mod$1[rsp]
 	mov	rsi, QWORD PTR tmp$2[rsp]
 	mov	ecx, 184				; 000000b8H
 	rep movsb
-; Line 552
+; Line 752
 	mov	rcx, QWORD PTR tmp$2[rsp]
 	call	cctree_del
-; Line 553
+; Line 753
 	mov	rax, QWORD PTR res$3[rsp]
 	jmp	$LN1@ccread_dir
-; Line 554
+; Line 754
 	jmp	$LN3@ccread_dir
 $LN2@ccread_dir:
-; Line 555
+; Line 755
 	mov	edx, 18
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	$LN5@ccread_dir
-; Line 556
+; Line 756
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_identifier
 	mov	QWORD PTR name$4[rsp], rax
-; Line 557
+; Line 757
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_direct_decl_name_modifier
 	mov	QWORD PTR mod$5[rsp], rax
-; Line 558
+; Line 758
 	mov	QWORD PTR [rsp+40], 0
 	mov	QWORD PTR [rsp+32], 0
 	mov	r9, QWORD PTR name$4[rsp]
@@ -8331,17 +8336,17 @@ $LN2@ccread_dir:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_decl_name
 	jmp	SHORT $LN1@ccread_dir
-; Line 559
+; Line 759
 	jmp	SHORT $LN6@ccread_dir
 $LN5@ccread_dir:
-; Line 560
+; Line 760
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_direct_decl_name_modifier
 	mov	QWORD PTR mod$6[rsp], rax
-; Line 561
+; Line 761
 	mov	QWORD PTR [rsp+40], 0
 	mov	QWORD PTR [rsp+32], 0
 	xor	r9d, r9d
@@ -8352,7 +8357,7 @@ $LN5@ccread_dir:
 $LN6@ccread_dir:
 $LN3@ccread_dir:
 $LN1@ccread_dir:
-; Line 563
+; Line 763
 	add	rsp, 104				; 00000068H
 	pop	rdi
 	pop	rsi
@@ -8371,7 +8376,7 @@ mark$ = 112
 type$ = 120
 ccread_direct_decl_name_modifier PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 519
+; Line 719
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
@@ -8382,121 +8387,121 @@ ccread_direct_decl_name_modifier PROC
 	call	cceat
 	test	rax, rax
 	je	$LN2@ccread_dir
-; Line 520
+; Line 720
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_param_type_list
 	mov	QWORD PTR list$2[rsp], rax
-; Line 521
+; Line 721
 	mov	edx, 4
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN4@ccread_dir
-	lea	rax, OFFSET FLAT:$SG48792
+	lea	rax, OFFSET FLAT:$SG48766
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48793
+	lea	rax, OFFSET FLAT:$SG48767
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48794
-	mov	r8d, 521				; 00000209H
-	lea	rdx, OFFSET FLAT:$SG48795
+	lea	r9, OFFSET FLAT:$SG48768
+	mov	r8d, 721				; 000002d1H
+	lea	rdx, OFFSET FLAT:$SG48769
 	mov	ecx, 16
 	call	cctrace_
 	int	3
 	int	3
 $LN4@ccread_dir:
-; Line 522
+; Line 722
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_direct_decl_name_modifier
 	mov	QWORD PTR modifier$1[rsp], rax
-; Line 523
+; Line 723
 	mov	rax, QWORD PTR modifier$1[rsp]
 	cmp	DWORD PTR [rax], 3
 	jne	SHORT $LN5@ccread_dir
-	lea	rax, OFFSET FLAT:$SG48797
+	lea	rax, OFFSET FLAT:$SG48771
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48798
+	lea	rax, OFFSET FLAT:$SG48772
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48799
-	mov	r8d, 523				; 0000020bH
-	lea	rdx, OFFSET FLAT:$SG48800
+	lea	r9, OFFSET FLAT:$SG48773
+	mov	r8d, 723				; 000002d3H
+	lea	rdx, OFFSET FLAT:$SG48774
 	mov	ecx, 17
 	call	cctrace_
 $LN5@ccread_dir:
-; Line 524
+; Line 724
 	mov	rax, QWORD PTR modifier$1[rsp]
 	cmp	DWORD PTR [rax], 4
 	jne	SHORT $LN6@ccread_dir
-	lea	rax, OFFSET FLAT:$SG48802
+	lea	rax, OFFSET FLAT:$SG48776
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48803
+	lea	rax, OFFSET FLAT:$SG48777
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48804
-	mov	r8d, 524				; 0000020cH
-	lea	rdx, OFFSET FLAT:$SG48805
+	lea	r9, OFFSET FLAT:$SG48778
+	mov	r8d, 724				; 000002d4H
+	lea	rdx, OFFSET FLAT:$SG48779
 	mov	ecx, 18
 	call	cctrace_
 $LN6@ccread_dir:
-; Line 525
+; Line 725
 	mov	rdx, QWORD PTR list$2[rsp]
 	mov	rcx, QWORD PTR modifier$1[rsp]
 	call	cctype_new_fun
 	jmp	$LN1@ccread_dir
-; Line 526
+; Line 726
 	jmp	$LN3@ccread_dir
 $LN2@ccread_dir:
-; Line 527
+; Line 727
 	mov	edx, 7
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	$LN7@ccread_dir
-; Line 529
+; Line 729
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_expression
 	mov	QWORD PTR expression$4[rsp], rax
-; Line 532
+; Line 732
 	mov	edx, 8
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN8@ccread_dir
-; Line 533
-	lea	rax, OFFSET FLAT:$SG48808
+; Line 733
+	lea	rax, OFFSET FLAT:$SG48782
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48809
+	lea	rax, OFFSET FLAT:$SG48783
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48810
-	mov	r8d, 533				; 00000215H
-	lea	rdx, OFFSET FLAT:$SG48811
+	lea	r9, OFFSET FLAT:$SG48784
+	mov	r8d, 733				; 000002ddH
+	lea	rdx, OFFSET FLAT:$SG48785
 	mov	ecx, 19
 	call	cctrace_
 	int	3
 	int	3
 $LN8@ccread_dir:
-; Line 536
+; Line 736
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_direct_decl_name_modifier
 	mov	QWORD PTR modifier$3[rsp], rax
-; Line 537
+; Line 737
 	mov	rcx, QWORD PTR modifier$3[rsp]
 	call	cctype_new_arr
 	jmp	SHORT $LN1@ccread_dir
 $LN7@ccread_dir:
 $LN3@ccread_dir:
-; Line 539
+; Line 739
 	mov	rax, QWORD PTR type$[rsp]
 $LN1@ccread_dir:
-; Line 540
+; Line 740
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_direct_decl_name_modifier ENDP
@@ -8509,30 +8514,30 @@ root$ = 72
 mark$ = 80
 ccread_specifier_qualifier_list PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 797
+; Line 997
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
-; Line 798
+; Line 998
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_type_specifier
 	mov	QWORD PTR type$[rsp], rax
-; Line 799
+; Line 999
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_type_qualifier
-; Line 800
+; Line 1000
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_alignment_specifier
-; Line 802
+; Line 1002
 	mov	rax, QWORD PTR type$[rsp]
-; Line 803
+; Line 1003
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_specifier_qualifier_list ENDP
@@ -8544,13 +8549,13 @@ root$ = 16
 mark$ = 24
 ccread_attribute_seq PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 812
+; Line 1012
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
-; Line 814
+; Line 1014
 	xor	eax, eax
-; Line 815
+; Line 1015
 	ret	0
 ccread_attribute_seq ENDP
 _TEXT	ENDS
@@ -8562,30 +8567,30 @@ root$ = 72
 mark$ = 80
 ccread_declaration_specifiers PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 826
+; Line 1026
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
-; Line 827
+; Line 1027
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_storage_class_specifier
-; Line 829
+; Line 1029
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_specifier_qualifier_list
 	mov	QWORD PTR type$[rsp], rax
-; Line 831
+; Line 1031
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_function_specifier
-; Line 833
+; Line 1033
 	mov	rax, QWORD PTR type$[rsp]
-; Line 834
+; Line 1034
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_declaration_specifiers ENDP
@@ -8599,7 +8604,7 @@ mark$ = 80
 type$ = 88
 ccread_decl_name PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 574
+; Line 774
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
@@ -8609,7 +8614,7 @@ ccread_decl_name PROC
 	jne	SHORT $LN3@ccread_dec
 	int	3
 $LN3@ccread_dec:
-; Line 576
+; Line 776
 	mov	r9, QWORD PTR type$[rsp]
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
@@ -8621,9 +8626,9 @@ $LN3@ccread_dec:
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_direct_decl_name
 	mov	QWORD PTR tree$[rsp], rax
-; Line 578
+; Line 778
 	mov	rax, QWORD PTR tree$[rsp]
-; Line 579
+; Line 779
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_decl_name ENDP
@@ -8635,17 +8640,17 @@ root$ = 56
 mark$ = 64
 ccread_initializer PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 499
+; Line 699
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 40					; 00000028H
-; Line 514
+; Line 714
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_assignment_expr
-; Line 515
+; Line 715
 	add	rsp, 40					; 00000028H
 	ret	0
 ccread_initializer ENDP
@@ -8658,20 +8663,20 @@ root$ = 72
 mark$ = 80
 ccread_param_type_list PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 877
+; Line 1077
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
-; Line 878
+; Line 1078
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_param_decl_list
 	mov	QWORD PTR list$[rsp], rax
-; Line 883
+; Line 1083
 	mov	rax, QWORD PTR list$[rsp]
-; Line 884
+; Line 1084
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_param_type_list ENDP
@@ -8683,17 +8688,17 @@ root$ = 56
 mark$ = 64
 ccread_constant_expression PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 384
+; Line 584
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 40					; 00000028H
-; Line 385
+; Line 585
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_conditional_expr
-; Line 386
+; Line 586
 	add	rsp, 40					; 00000028H
 	ret	0
 ccread_constant_expression ENDP
@@ -8708,7 +8713,7 @@ root$ = 104
 mark$ = 112
 ccread_assignment_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 371
+; Line 571
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -8718,20 +8723,20 @@ ccread_assignment_expr PROC
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_conditional_expr
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 372
+; Line 572
 	mov	edx, 109				; 0000006dH
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	cceat
 	mov	QWORD PTR tok$1[rsp], rax
 	cmp	QWORD PTR tok$1[rsp], 0
 	je	SHORT $LN2@ccread_ass
-; Line 373
+; Line 573
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_assignment_expr
 	mov	QWORD PTR rhs$2[rsp], rax
-; Line 374
+; Line 574
 	mov	rax, QWORD PTR rhs$2[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -8741,9 +8746,9 @@ ccread_assignment_expr PROC
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_ass:
-; Line 376
+; Line 576
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 377
+; Line 577
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_assignment_expr ENDP
@@ -8758,61 +8763,61 @@ root$ = 104
 mark$ = 112
 ccread_conditional_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 342
+; Line 542
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 88					; 00000058H
-; Line 343
+; Line 543
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_logical_or_expr
 	mov	QWORD PTR rad$[rsp], rax
-; Line 345
+; Line 545
 	mov	edx, 108				; 0000006cH
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	cceat
 	test	rax, rax
 	je	$LN2@ccread_con
-; Line 347
+; Line 547
 	mov	QWORD PTR lhs$2[rsp], 0
 	mov	QWORD PTR rhs$1[rsp], 0
-; Line 348
+; Line 548
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_logical_or_expr
 	mov	QWORD PTR lhs$2[rsp], rax
-; Line 350
+; Line 550
 	mov	edx, 10
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	cceat
 	test	rax, rax
 	je	SHORT $LN3@ccread_con
-; Line 351
+; Line 551
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_conditional_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 352
+; Line 552
 	jmp	SHORT $LN4@ccread_con
 $LN3@ccread_con:
-; Line 353
-	lea	rax, OFFSET FLAT:$SG48710
+; Line 553
+	lea	rax, OFFSET FLAT:$SG48684
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48711
+	lea	rax, OFFSET FLAT:$SG48685
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48712
-	mov	r8d, 353				; 00000161H
-	lea	rdx, OFFSET FLAT:$SG48713
+	lea	r9, OFFSET FLAT:$SG48686
+	mov	r8d, 553				; 00000229H
+	lea	rdx, OFFSET FLAT:$SG48687
 	mov	ecx, 15
 	call	cctrace_
 	int	3
 	int	3
 $LN4@ccread_con:
-; Line 356
+; Line 556
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$2[rsp]
@@ -8822,10 +8827,10 @@ $LN4@ccread_con:
 	call	cctree_ternary
 	jmp	SHORT $LN1@ccread_con
 $LN2@ccread_con:
-; Line 359
+; Line 559
 	mov	rax, QWORD PTR rad$[rsp]
 $LN1@ccread_con:
-; Line 360
+; Line 560
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_conditional_expr ENDP
@@ -8840,7 +8845,7 @@ root$ = 104
 mark$ = 112
 ccread_logical_or_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 327
+; Line 527
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -8851,23 +8856,23 @@ ccread_logical_or_expr PROC
 	call	ccread_logical_and_expr
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_log:
-; Line 328
+; Line 528
 	mov	edx, 107				; 0000006bH
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN3@ccread_log
-; Line 329
+; Line 529
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 330
+; Line 530
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_logical_and_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 331
+; Line 531
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -8876,12 +8881,12 @@ $LN2@ccread_log:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 332
+; Line 532
 	jmp	SHORT $LN2@ccread_log
 $LN3@ccread_log:
-; Line 333
+; Line 533
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 334
+; Line 534
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_logical_or_expr ENDP
@@ -8896,7 +8901,7 @@ root$ = 104
 mark$ = 112
 ccread_logical_and_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 312
+; Line 512
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -8907,23 +8912,23 @@ ccread_logical_and_expr PROC
 	call	ccread_bitwise_or_expr
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_log:
-; Line 313
+; Line 513
 	mov	edx, 106				; 0000006aH
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN3@ccread_log
-; Line 314
+; Line 514
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 315
+; Line 515
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_bitwise_or_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 316
+; Line 516
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -8932,12 +8937,12 @@ $LN2@ccread_log:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 317
+; Line 517
 	jmp	SHORT $LN2@ccread_log
 $LN3@ccread_log:
-; Line 318
+; Line 518
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 319
+; Line 519
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_logical_and_expr ENDP
@@ -8952,7 +8957,7 @@ root$ = 104
 mark$ = 112
 ccread_bitwise_or_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 297
+; Line 497
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -8963,23 +8968,23 @@ ccread_bitwise_or_expr PROC
 	call	ccread_bitwise_xor_expr
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_bit:
-; Line 298
+; Line 498
 	mov	edx, 105				; 00000069H
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN3@ccread_bit
-; Line 299
+; Line 499
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 300
+; Line 500
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_bitwise_xor_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 301
+; Line 501
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -8988,12 +8993,12 @@ $LN2@ccread_bit:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 302
+; Line 502
 	jmp	SHORT $LN2@ccread_bit
 $LN3@ccread_bit:
-; Line 303
+; Line 503
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 304
+; Line 504
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_bitwise_or_expr ENDP
@@ -9008,7 +9013,7 @@ root$ = 104
 mark$ = 112
 ccread_bitwise_xor_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 282
+; Line 482
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -9019,23 +9024,23 @@ ccread_bitwise_xor_expr PROC
 	call	ccread_bitwise_and_expr
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_bit:
-; Line 283
+; Line 483
 	mov	edx, 103				; 00000067H
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN3@ccread_bit
-; Line 284
+; Line 484
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 285
+; Line 485
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_bitwise_and_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 286
+; Line 486
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -9044,12 +9049,12 @@ $LN2@ccread_bit:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 287
+; Line 487
 	jmp	SHORT $LN2@ccread_bit
 $LN3@ccread_bit:
-; Line 288
+; Line 488
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 289
+; Line 489
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_bitwise_xor_expr ENDP
@@ -9064,7 +9069,7 @@ root$ = 104
 mark$ = 112
 ccread_bitwise_and_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 267
+; Line 467
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -9075,23 +9080,23 @@ ccread_bitwise_and_expr PROC
 	call	ccread_equality_expr
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_bit:
-; Line 268
+; Line 468
 	mov	edx, 103				; 00000067H
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN3@ccread_bit
-; Line 269
+; Line 469
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 270
+; Line 470
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_equality_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 271
+; Line 471
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -9100,12 +9105,12 @@ $LN2@ccread_bit:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 272
+; Line 472
 	jmp	SHORT $LN2@ccread_bit
 $LN3@ccread_bit:
-; Line 273
+; Line 473
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 274
+; Line 474
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_bitwise_and_expr ENDP
@@ -9120,7 +9125,7 @@ root$ = 104
 mark$ = 112
 ccread_equality_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 250
+; Line 450
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -9130,7 +9135,7 @@ ccread_equality_expr PROC
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_relational_expr
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 251
+; Line 451
 	mov	edx, 101				; 00000065H
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccsee
@@ -9142,17 +9147,17 @@ ccread_equality_expr PROC
 	test	eax, eax
 	je	SHORT $LN2@ccread_equ
 $LN3@ccread_equ:
-; Line 253
+; Line 453
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 254
+; Line 454
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_equality_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 255
+; Line 455
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -9162,9 +9167,9 @@ $LN3@ccread_equ:
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_equ:
-; Line 257
+; Line 457
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 258
+; Line 458
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_equality_expr ENDP
@@ -9179,7 +9184,7 @@ root$ = 104
 mark$ = 112
 ccread_relational_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 231
+; Line 431
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -9190,7 +9195,7 @@ ccread_relational_expr PROC
 	call	ccread_shift_expr
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_rel:
-; Line 234
+; Line 434
 	mov	edx, 100				; 00000064H
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccsee
@@ -9212,17 +9217,17 @@ $LN2@ccread_rel:
 	test	eax, eax
 	je	SHORT $LN3@ccread_rel
 $LN4@ccread_rel:
-; Line 236
+; Line 436
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 237
+; Line 437
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_shift_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 238
+; Line 438
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -9231,12 +9236,12 @@ $LN4@ccread_rel:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 239
+; Line 439
 	jmp	$LN2@ccread_rel
 $LN3@ccread_rel:
-; Line 240
+; Line 440
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 241
+; Line 441
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_relational_expr ENDP
@@ -9251,7 +9256,7 @@ root$ = 104
 mark$ = 112
 ccread_shift_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 211
+; Line 411
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -9262,7 +9267,7 @@ ccread_shift_expr PROC
 	call	ccread_additive_expr
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_shi:
-; Line 212
+; Line 412
 	mov	edx, 97					; 00000061H
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccsee
@@ -9274,17 +9279,17 @@ $LN2@ccread_shi:
 	test	eax, eax
 	je	SHORT $LN3@ccread_shi
 $LN4@ccread_shi:
-; Line 214
+; Line 414
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 215
+; Line 415
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_additive_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 216
+; Line 416
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -9293,12 +9298,12 @@ $LN4@ccread_shi:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 217
+; Line 417
 	jmp	SHORT $LN2@ccread_shi
 $LN3@ccread_shi:
-; Line 218
+; Line 418
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 219
+; Line 419
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_shift_expr ENDP
@@ -9313,7 +9318,7 @@ root$ = 104
 mark$ = 112
 ccread_additive_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 193
+; Line 393
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -9324,7 +9329,7 @@ ccread_additive_expr PROC
 	call	ccread_multiplicative_expr
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_add:
-; Line 194
+; Line 394
 	mov	edx, 95					; 0000005fH
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccsee
@@ -9336,17 +9341,17 @@ $LN2@ccread_add:
 	test	eax, eax
 	je	SHORT $LN3@ccread_add
 $LN4@ccread_add:
-; Line 197
+; Line 397
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 198
+; Line 398
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_multiplicative_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 199
+; Line 399
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -9355,12 +9360,12 @@ $LN4@ccread_add:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 200
+; Line 400
 	jmp	SHORT $LN2@ccread_add
 $LN3@ccread_add:
-; Line 201
+; Line 401
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 202
+; Line 402
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_additive_expr ENDP
@@ -9375,7 +9380,7 @@ root$ = 104
 mark$ = 112
 ccread_multiplicative_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 174
+; Line 374
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -9386,7 +9391,7 @@ ccread_multiplicative_expr PROC
 	call	ccread_unary_expr
 	mov	QWORD PTR lhs$[rsp], rax
 $LN2@ccread_mul:
-; Line 176
+; Line 376
 	mov	edx, 92					; 0000005cH
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccsee
@@ -9403,17 +9408,17 @@ $LN2@ccread_mul:
 	test	eax, eax
 	je	SHORT $LN3@ccread_mul
 $LN4@ccread_mul:
-; Line 179
+; Line 379
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 180
+; Line 380
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_unary_expr
 	mov	QWORD PTR rhs$1[rsp], rax
-; Line 181
+; Line 381
 	mov	rax, QWORD PTR rhs$1[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -9422,12 +9427,12 @@ $LN4@ccread_mul:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_binary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 182
+; Line 382
 	jmp	$LN2@ccread_mul
 $LN3@ccread_mul:
-; Line 183
+; Line 383
 	mov	rax, QWORD PTR lhs$[rsp]
-; Line 184
+; Line 384
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_multiplicative_expr ENDP
@@ -9447,7 +9452,7 @@ root$ = 312
 mark$ = 320
 ccread_unary_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 104
+; Line 304
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -9455,31 +9460,31 @@ ccread_unary_expr PROC
 	push	rdi
 	sub	rsp, 280				; 00000118H
 	mov	QWORD PTR result$[rsp], 0
-; Line 106
+; Line 306
 	mov	edx, 95					; 0000005fH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	$LN2@ccread_una
-; Line 107
+; Line 307
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$1[rsp], rax
-; Line 108
+; Line 308
 	mov	edx, 95					; 0000005fH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	SHORT $LN4@ccread_una
-; Line 110
+; Line 310
 	lea	rax, QWORD PTR clo$4[rsp]
 	mov	rdi, rax
 	mov	rsi, QWORD PTR tok$1[rsp]
 	mov	ecx, 64					; 00000040H
 	rep movsb
-; Line 111
+; Line 311
 	mov	QWORD PTR clo$4[rsp+8], 123		; 0000007bH
-; Line 112
+; Line 312
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -9490,10 +9495,10 @@ ccread_unary_expr PROC
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_unary
 	mov	QWORD PTR result$[rsp], rax
-; Line 113
+; Line 313
 	jmp	SHORT $LN5@ccread_una
 $LN4@ccread_una:
-; Line 114
+; Line 314
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -9505,34 +9510,34 @@ $LN4@ccread_una:
 	call	cctree_unary
 	mov	QWORD PTR result$[rsp], rax
 $LN5@ccread_una:
-; Line 116
+; Line 316
 	jmp	$LN3@ccread_una
 $LN2@ccread_una:
-; Line 117
+; Line 317
 	mov	edx, 96					; 00000060H
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	$LN6@ccread_una
-; Line 118
+; Line 318
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$2[rsp], rax
-; Line 119
+; Line 319
 	mov	edx, 96					; 00000060H
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	SHORT $LN8@ccread_una
-; Line 121
+; Line 321
 	lea	rax, QWORD PTR clo$5[rsp]
 	mov	rdi, rax
 	mov	rsi, QWORD PTR tok$2[rsp]
 	mov	ecx, 64					; 00000040H
 	rep movsb
-; Line 122
+; Line 322
 	mov	QWORD PTR clo$5[rsp+8], 122		; 0000007aH
-; Line 123
+; Line 323
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -9543,10 +9548,10 @@ $LN2@ccread_una:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_unary
 	mov	QWORD PTR result$[rsp], rax
-; Line 124
+; Line 324
 	jmp	SHORT $LN9@ccread_una
 $LN8@ccread_una:
-; Line 125
+; Line 325
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -9558,28 +9563,28 @@ $LN8@ccread_una:
 	call	cctree_unary
 	mov	QWORD PTR result$[rsp], rax
 $LN9@ccread_una:
-; Line 127
+; Line 327
 	jmp	$LN7@ccread_una
 $LN6@ccread_una:
-; Line 128
+; Line 328
 	mov	edx, 92					; 0000005cH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN10@ccread_una
-; Line 131
+; Line 331
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tok$3[rsp], rax
-; Line 132
+; Line 332
 	lea	rax, QWORD PTR clo$6[rsp]
 	mov	rdi, rax
 	mov	rsi, QWORD PTR tok$3[rsp]
 	mov	ecx, 64					; 00000040H
 	rep movsb
-; Line 133
+; Line 333
 	mov	QWORD PTR clo$6[rsp+8], 84		; 00000054H
-; Line 135
+; Line 335
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -9590,10 +9595,10 @@ $LN6@ccread_una:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_unary
 	mov	QWORD PTR result$[rsp], rax
-; Line 136
+; Line 336
 	jmp	$LN11@ccread_una
 $LN10@ccread_una:
-; Line 137
+; Line 337
 	mov	edx, 86					; 00000056H
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
@@ -9605,7 +9610,7 @@ $LN10@ccread_una:
 	test	eax, eax
 	je	SHORT $LN12@ccread_una
 $LN14@ccread_una:
-; Line 139
+; Line 339
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -9620,10 +9625,10 @@ $LN14@ccread_una:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_unary
 	mov	QWORD PTR result$[rsp], rax
-; Line 140
+; Line 340
 	jmp	SHORT $LN13@ccread_una
 $LN12@ccread_una:
-; Line 141
+; Line 341
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -9633,9 +9638,9 @@ $LN13@ccread_una:
 $LN11@ccread_una:
 $LN7@ccread_una:
 $LN3@ccread_una:
-; Line 143
+; Line 343
 	mov	rax, QWORD PTR result$[rsp]
-; Line 144
+; Line 344
 	add	rsp, 280				; 00000118H
 	pop	rdi
 	pop	rsi
@@ -9654,92 +9659,92 @@ root$ = 120
 mark$ = 128
 ccread_postfix PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 62
+; Line 262
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 104				; 00000068H
-; Line 63
+; Line 263
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_primary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 65
+; Line 265
 	mov	edx, 3
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	je	$LN2@ccread_pos
-; Line 66
+; Line 266
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_arglist_expr
 	mov	QWORD PTR args$2[rsp], rax
-; Line 67
+; Line 267
 	mov	edx, 4
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN4@ccread_pos
-	lea	rax, OFFSET FLAT:$SG48539
+	lea	rax, OFFSET FLAT:$SG48513
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48540
+	lea	rax, OFFSET FLAT:$SG48514
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48541
-	mov	r8d, 67					; 00000043H
-	lea	rdx, OFFSET FLAT:$SG48542
+	lea	r9, OFFSET FLAT:$SG48515
+	mov	r8d, 267				; 0000010bH
+	lea	rdx, OFFSET FLAT:$SG48516
 	mov	ecx, 12
 	call	cctrace_
 	int	3
 	int	3
 $LN4@ccread_pos:
-; Line 68
+; Line 268
 	mov	r9, QWORD PTR args$2[rsp]
 	mov	r8, QWORD PTR lhs$[rsp]
 	mov	edx, DWORD PTR mark$[rsp]
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_call
 	jmp	$LN1@ccread_pos
-; Line 69
+; Line 269
 	jmp	$LN3@ccread_pos
 $LN2@ccread_pos:
-; Line 70
+; Line 270
 	mov	edx, 7
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN5@ccread_pos
-; Line 71
+; Line 271
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_expression
 	mov	QWORD PTR expression$4[rsp], rax
-; Line 73
+; Line 273
 	mov	edx, 8
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN7@ccread_pos
-; Line 74
-	lea	rax, OFFSET FLAT:$SG48546
+; Line 274
+	lea	rax, OFFSET FLAT:$SG48520
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48547
+	lea	rax, OFFSET FLAT:$SG48521
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48548
-	mov	r8d, 74					; 0000004aH
-	lea	rdx, OFFSET FLAT:$SG48549
+	lea	r9, OFFSET FLAT:$SG48522
+	mov	r8d, 274				; 00000112H
+	lea	rdx, OFFSET FLAT:$SG48523
 	mov	ecx, 13
 	call	cctrace_
 	int	3
 	int	3
 $LN7@ccread_pos:
-; Line 76
+; Line 276
 	jmp	$LN6@ccread_pos
 $LN5@ccread_pos:
-; Line 77
+; Line 277
 	mov	edx, 90					; 0000005aH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
@@ -9751,7 +9756,7 @@ $LN5@ccread_pos:
 	test	eax, eax
 	je	SHORT $LN8@ccread_pos
 $LN10@ccread_pos:
-; Line 79
+; Line 279
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	r9, QWORD PTR lhs$[rsp]
@@ -9760,34 +9765,34 @@ $LN10@ccread_pos:
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_unary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 80
+; Line 280
 	jmp	SHORT $LN9@ccread_pos
 $LN8@ccread_pos:
-; Line 81
+; Line 281
 	mov	edx, 125				; 0000007dH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	mov	QWORD PTR inc$1[rsp], rax
 	cmp	QWORD PTR inc$1[rsp], 0
 	je	SHORT $LN11@ccread_pos
-; Line 82
+; Line 282
 	mov	r9, QWORD PTR lhs$[rsp]
 	mov	r8, QWORD PTR inc$1[rsp]
 	mov	edx, DWORD PTR mark$[rsp]
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_unary
 	mov	QWORD PTR lhs$[rsp], rax
-; Line 83
+; Line 283
 	jmp	SHORT $LN12@ccread_pos
 $LN11@ccread_pos:
-; Line 84
+; Line 284
 	mov	edx, 124				; 0000007cH
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	mov	QWORD PTR dec$3[rsp], rax
 	cmp	QWORD PTR dec$3[rsp], 0
 	je	SHORT $LN13@ccread_pos
-; Line 85
+; Line 285
 	mov	r9, QWORD PTR lhs$[rsp]
 	mov	r8, QWORD PTR inc$1[rsp]
 	mov	edx, DWORD PTR mark$[rsp]
@@ -9799,10 +9804,10 @@ $LN12@ccread_pos:
 $LN9@ccread_pos:
 $LN6@ccread_pos:
 $LN3@ccread_pos:
-; Line 87
+; Line 287
 	mov	rax, QWORD PTR lhs$[rsp]
 $LN1@ccread_pos:
-; Line 88
+; Line 288
 	add	rsp, 104				; 00000068H
 	ret	0
 ccread_postfix ENDP
@@ -9818,7 +9823,7 @@ root$ = 104
 mark$ = 112
 ccread_primary PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 26
+; Line 226
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -9826,13 +9831,13 @@ ccread_primary PROC
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccpeep
 	mov	QWORD PTR token$[rsp], rax
-; Line 27
+; Line 227
 	cmp	QWORD PTR token$[rsp], 0
 	jne	SHORT $LN4@ccread_pri
 	xor	eax, eax
 	jmp	$LN1@ccread_pri
 $LN4@ccread_pri:
-; Line 28
+; Line 228
 	mov	rax, QWORD PTR token$[rsp]
 	mov	eax, DWORD PTR [rax]
 	mov	DWORD PTR tv68[rsp], eax
@@ -9848,14 +9853,14 @@ $LN4@ccread_pri:
 	je	SHORT $LN7@ccread_pri
 	jmp	$LN2@ccread_pri
 $LN5@ccread_pri:
-; Line 30
+; Line 230
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_identifier
 	jmp	$LN1@ccread_pri
 $LN6@ccread_pri:
-; Line 32
+; Line 232
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	r9, rax
@@ -9865,7 +9870,7 @@ $LN6@ccread_pri:
 	call	cctree_constant
 	jmp	$LN1@ccread_pri
 $LN7@ccread_pri:
-; Line 34
+; Line 234
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	r9, rax
@@ -9875,7 +9880,7 @@ $LN7@ccread_pri:
 	call	cctree_constant
 	jmp	$LN1@ccread_pri
 $LN8@ccread_pri:
-; Line 36
+; Line 236
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccgobble
 	mov	QWORD PTR tv88[rsp], rax
@@ -9889,40 +9894,40 @@ $LN8@ccread_pri:
 	call	cctree_constant
 	jmp	SHORT $LN1@ccread_pri
 $LN9@ccread_pri:
-; Line 38
+; Line 238
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_expression
 	mov	QWORD PTR group$1[rsp], rax
-; Line 39
+; Line 239
 	mov	edx, 4
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN10@ccread_pri
-	lea	rax, OFFSET FLAT:$SG48521
+	lea	rax, OFFSET FLAT:$SG48495
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48522
+	lea	rax, OFFSET FLAT:$SG48496
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48523
-	mov	r8d, 39					; 00000027H
-	lea	rdx, OFFSET FLAT:$SG48524
+	lea	r9, OFFSET FLAT:$SG48497
+	mov	r8d, 239				; 000000efH
+	lea	rdx, OFFSET FLAT:$SG48498
 	mov	ecx, 11
 	call	cctrace_
 	int	3
 $LN10@ccread_pri:
-; Line 40
+; Line 240
 	mov	r8, QWORD PTR group$1[rsp]
 	mov	edx, DWORD PTR mark$[rsp]
 	mov	rcx, QWORD PTR root$[rsp]
 	call	cctree_group
 	jmp	SHORT $LN1@ccread_pri
 $LN2@ccread_pri:
-; Line 43
+; Line 243
 	xor	eax, eax
 $LN1@ccread_pri:
-; Line 44
+; Line 244
 	add	rsp, 88					; 00000058H
 	ret	0
 ccread_primary ENDP
@@ -9936,7 +9941,7 @@ root$ = 72
 mark$ = 80
 ccread_identifier PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 16
+; Line 216
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -9945,9 +9950,9 @@ ccread_identifier PROC
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	cceat
 	mov	QWORD PTR token$[rsp], rax
-; Line 17
+; Line 217
 	mov	QWORD PTR tree$[rsp], 0
-; Line 18
+; Line 218
 	cmp	QWORD PTR token$[rsp], 0
 	je	SHORT $LN2@ccread_ide
 	mov	rax, QWORD PTR token$[rsp]
@@ -9957,9 +9962,9 @@ ccread_identifier PROC
 	call	cctree_identifier
 	mov	QWORD PTR tree$[rsp], rax
 $LN2@ccread_ide:
-; Line 19
+; Line 219
 	mov	rax, QWORD PTR tree$[rsp]
-; Line 20
+; Line 220
 	add	rsp, 56					; 00000038H
 	ret	0
 ccread_identifier ENDP
@@ -9973,53 +9978,53 @@ root$ = 88
 mark$ = 96
 ccread_cast_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 152
+; Line 352
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 72					; 00000048H
 	mov	QWORD PTR result$[rsp], 0
-; Line 153
+; Line 353
 	mov	edx, 3
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	cceat
 	mov	QWORD PTR tok$1[rsp], rax
 	cmp	QWORD PTR tok$1[rsp], 0
 	je	SHORT $LN2@ccread_cas
-; Line 155
+; Line 355
 	mov	QWORD PTR result$[rsp], 0
-; Line 157
+; Line 357
 	mov	edx, 4
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	cceat
 	test	rax, rax
 	jne	SHORT $LN4@ccread_cas
-; Line 158
-	lea	rax, OFFSET FLAT:$SG48591
+; Line 358
+	lea	rax, OFFSET FLAT:$SG48565
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48592
+	lea	rax, OFFSET FLAT:$SG48566
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48593
-	mov	r8d, 158				; 0000009eH
-	lea	rdx, OFFSET FLAT:$SG48594
+	lea	r9, OFFSET FLAT:$SG48567
+	mov	r8d, 358				; 00000166H
+	lea	rdx, OFFSET FLAT:$SG48568
 	mov	ecx, 14
 	call	cctrace_
 	int	3
 	int	3
 $LN4@ccread_cas:
-; Line 160
+; Line 360
 	jmp	SHORT $LN3@ccread_cas
 $LN2@ccread_cas:
-; Line 161
+; Line 361
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR parser$[rsp]
 	call	ccread_unary_expr
 	mov	QWORD PTR result$[rsp], rax
 $LN3@ccread_cas:
-; Line 163
+; Line 363
 	mov	rax, QWORD PTR result$[rsp]
-; Line 164
+; Line 364
 	add	rsp, 72					; 00000048H
 	ret	0
 ccread_cast_expr ENDP
@@ -10033,7 +10038,7 @@ root$ = 88
 mark$ = 96
 ccread_expression PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 394
+; Line 594
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -10043,13 +10048,13 @@ ccread_expression PROC
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_assignment_expr
 	mov	QWORD PTR result$[rsp], rax
-; Line 395
+; Line 595
 	mov	edx, 9
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccsee
 	test	eax, eax
 	je	SHORT $LN2@ccread_exp
-; Line 396
+; Line 596
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
@@ -10066,9 +10071,9 @@ ccread_expression PROC
 	call	cctree_binary
 	mov	QWORD PTR result$[rsp], rax
 $LN2@ccread_exp:
-; Line 398
+; Line 598
 	mov	rax, QWORD PTR result$[rsp]
-; Line 399
+; Line 599
 	add	rsp, 72					; 00000048H
 	ret	0
 ccread_expression ENDP
@@ -10082,7 +10087,7 @@ root$ = 88
 mark$ = 96
 ccread_arglist_expr PROC
 ; File W:\cpp\void\ktt-c\ccread.c
-; Line 407
+; Line 607
 	mov	DWORD PTR [rsp+24], r8d
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
@@ -10091,13 +10096,13 @@ ccread_arglist_expr PROC
 	sub	rsp, 56					; 00000038H
 	mov	QWORD PTR list$[rsp], 0
 $LN4@ccread_arg:
-; Line 409
+; Line 609
 	mov	r8d, DWORD PTR mark$[rsp]
 	mov	rdx, QWORD PTR root$[rsp]
 	mov	rcx, QWORD PTR reader$[rsp]
 	call	ccread_assignment_expr
 	mov	QWORD PTR next$[rsp], rax
-; Line 410
+; Line 610
 	cmp	QWORD PTR next$[rsp], 0
 	je	SHORT $LN5@ccread_arg
 	mov	r9d, 1
@@ -10113,10 +10118,10 @@ $LN4@ccread_arg:
 	mov	ecx, 184				; 000000b8H
 	rep movsb
 $LN5@ccread_arg:
-; Line 411
+; Line 611
 	mov	rcx, QWORD PTR next$[rsp]
 	call	cctree_del
-; Line 412
+; Line 612
 	cmp	QWORD PTR next$[rsp], 0
 	je	SHORT $LN6@ccread_arg
 	mov	edx, 9
@@ -10125,14 +10130,529 @@ $LN5@ccread_arg:
 	test	rax, rax
 	jne	SHORT $LN4@ccread_arg
 $LN6@ccread_arg:
-; Line 413
+; Line 613
 	mov	rax, QWORD PTR list$[rsp]
-; Line 414
+; Line 614
 	add	rsp, 56					; 00000038H
 	pop	rdi
 	pop	rsi
 	ret	0
 ccread_arglist_expr ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+parser$ = 48
+kind$ = 56
+cceat	PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 160
+	mov	DWORD PTR [rsp+16], edx
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 40					; 00000028H
+	mov	edx, DWORD PTR kind$[rsp]
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	ccsee
+	test	eax, eax
+	je	SHORT $LN2@cceat
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	ccgobble
+	jmp	SHORT $LN1@cceat
+$LN2@cceat:
+; Line 161
+	xor	eax, eax
+$LN1@cceat:
+; Line 162
+	add	rsp, 40					; 00000028H
+	ret	0
+cceat	ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+tv73 = 32
+reader$ = 64
+ccgobble PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 152
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+	mov	rax, QWORD PTR reader$[rsp]
+	mov	rcx, QWORD PTR reader$[rsp]
+	mov	rcx, QWORD PTR [rcx+128]
+	cmp	QWORD PTR [rax+136], rcx
+	jae	SHORT $LN2@ccgobble
+	mov	rax, QWORD PTR reader$[rsp]
+	mov	rcx, QWORD PTR reader$[rsp]
+	mov	rcx, QWORD PTR [rcx+136]
+	mov	QWORD PTR [rax+144], rcx
+	mov	rax, QWORD PTR reader$[rsp]
+	mov	rax, QWORD PTR [rax+144]
+	mov	QWORD PTR tv73[rsp], rax
+	mov	rax, QWORD PTR reader$[rsp]
+	mov	rax, QWORD PTR [rax+136]
+	add	rax, 64					; 00000040H
+	mov	rcx, QWORD PTR reader$[rsp]
+	mov	QWORD PTR [rcx+136], rax
+	mov	rax, QWORD PTR tv73[rsp]
+	jmp	SHORT $LN1@ccgobble
+$LN2@ccgobble:
+; Line 153
+	mov	rcx, QWORD PTR reader$[rsp]
+	call	ccpeep
+$LN1@ccgobble:
+; Line 154
+	add	rsp, 56					; 00000038H
+	ret	0
+ccgobble ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+token$ = 32
+parser$ = 64
+kttc__peek_func_specifier PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 139
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+; Line 140
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	ccpeep
+	mov	QWORD PTR token$[rsp], rax
+; Line 142
+	mov	rax, QWORD PTR token$[rsp]
+	cmp	DWORD PTR [rax], 39			; 00000027H
+	jle	SHORT $LN2@kttc__peek
+	mov	rax, QWORD PTR token$[rsp]
+	cmp	DWORD PTR [rax], 42			; 0000002aH
+	jge	SHORT $LN2@kttc__peek
+; Line 145
+	mov	rax, QWORD PTR token$[rsp]
+	jmp	SHORT $LN1@kttc__peek
+$LN2@kttc__peek:
+; Line 147
+	xor	eax, eax
+$LN1@kttc__peek:
+; Line 148
+	add	rsp, 56					; 00000038H
+	ret	0
+kttc__peek_func_specifier ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+token$ = 32
+parser$ = 64
+kttc__peek_storage_class PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 126
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+; Line 127
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	ccpeep
+	mov	QWORD PTR token$[rsp], rax
+; Line 129
+	mov	rax, QWORD PTR token$[rsp]
+	cmp	DWORD PTR [rax], 62			; 0000003eH
+	jle	SHORT $LN2@kttc__peek
+	mov	rax, QWORD PTR token$[rsp]
+	cmp	DWORD PTR [rax], 71			; 00000047H
+	jge	SHORT $LN2@kttc__peek
+; Line 132
+	mov	rax, QWORD PTR token$[rsp]
+	jmp	SHORT $LN1@kttc__peek
+$LN2@kttc__peek:
+; Line 134
+	xor	eax, eax
+$LN1@kttc__peek:
+; Line 135
+	add	rsp, 56					; 00000038H
+	ret	0
+kttc__peek_storage_class ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+token$ = 32
+parser$ = 64
+ccsee_typespec PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 113
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+; Line 114
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	ccpeep
+	mov	QWORD PTR token$[rsp], rax
+; Line 116
+	mov	rax, QWORD PTR token$[rsp]
+	cmp	DWORD PTR [rax], 43			; 0000002bH
+	jle	SHORT $LN2@ccsee_type
+	mov	rax, QWORD PTR token$[rsp]
+	cmp	DWORD PTR [rax], 64			; 00000040H
+	jge	SHORT $LN2@ccsee_type
+; Line 119
+	mov	rax, QWORD PTR token$[rsp]
+	jmp	SHORT $LN1@ccsee_type
+$LN2@ccsee_type:
+; Line 121
+	xor	eax, eax
+$LN1@ccsee_type:
+; Line 122
+	add	rsp, 56					; 00000038H
+	ret	0
+ccsee_typespec ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+token$ = 32
+parser$ = 64
+kttc__peek_type_qualifier PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 100
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+; Line 101
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	ccpeep
+	mov	QWORD PTR token$[rsp], rax
+; Line 103
+	mov	rax, QWORD PTR token$[rsp]
+	cmp	DWORD PTR [rax], 34			; 00000022H
+	jle	SHORT $LN2@kttc__peek
+	mov	rax, QWORD PTR token$[rsp]
+	cmp	DWORD PTR [rax], 38			; 00000026H
+	jge	SHORT $LN2@kttc__peek
+; Line 106
+	mov	rax, QWORD PTR token$[rsp]
+	jmp	SHORT $LN1@kttc__peek
+$LN2@kttc__peek:
+; Line 108
+	xor	eax, eax
+$LN1@kttc__peek:
+; Line 109
+	add	rsp, 56					; 00000038H
+	ret	0
+kttc__peek_type_qualifier ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+token$ = 32
+parser$ = 64
+kttc__peek_alignment_specifier PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 87
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+; Line 88
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	ccpeep
+	mov	QWORD PTR token$[rsp], rax
+; Line 90
+	mov	rax, QWORD PTR token$[rsp]
+	cmp	DWORD PTR [rax], 30
+	jle	SHORT $LN2@kttc__peek
+	mov	rax, QWORD PTR token$[rsp]
+	cmp	DWORD PTR [rax], 33			; 00000021H
+	jge	SHORT $LN2@kttc__peek
+; Line 93
+	mov	rax, QWORD PTR token$[rsp]
+	jmp	SHORT $LN1@kttc__peek
+$LN2@kttc__peek:
+; Line 95
+	xor	eax, eax
+$LN1@kttc__peek:
+; Line 96
+	add	rsp, 56					; 00000038H
+	ret	0
+kttc__peek_alignment_specifier ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+parser$ = 48
+ccsee_end PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 82
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 40					; 00000028H
+	xor	edx, edx
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	ccsee
+; Line 83
+	add	rsp, 40					; 00000028H
+	ret	0
+ccsee_end ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+tv68 = 32
+parser$ = 64
+kind$ = 72
+ccsee	PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 77
+	mov	DWORD PTR [rsp+16], edx
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	ccpeep
+	mov	ecx, DWORD PTR kind$[rsp]
+	cmp	DWORD PTR [rax], ecx
+	jne	SHORT $LN3@ccsee
+	mov	DWORD PTR tv68[rsp], 1
+	jmp	SHORT $LN4@ccsee
+$LN3@ccsee:
+	mov	DWORD PTR tv68[rsp], 0
+$LN4@ccsee:
+	mov	eax, DWORD PTR tv68[rsp]
+; Line 78
+	add	rsp, 56					; 00000038H
+	ret	0
+ccsee	ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+parser$ = 48
+ccpeep	PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 72
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 40					; 00000028H
+	xor	edx, edx
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	kttc__peek_ahead
+; Line 73
+	add	rsp, 40					; 00000028H
+	ret	0
+ccpeep	ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+parser$ = 8
+offset$ = 16
+kttc__peek_ahead PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 62
+	mov	DWORD PTR [rsp+16], edx
+	mov	QWORD PTR [rsp+8], rcx
+	movsxd	rax, DWORD PTR offset$[rsp]
+	imul	rax, rax, 64				; 00000040H
+	mov	rcx, QWORD PTR parser$[rsp]
+	add	rax, QWORD PTR [rcx+136]
+	mov	rcx, QWORD PTR parser$[rsp]
+	cmp	rax, QWORD PTR [rcx+128]
+	jae	SHORT $LN2@kttc__peek
+; Line 63
+	movsxd	rax, DWORD PTR offset$[rsp]
+	imul	rax, rax, 64				; 00000040H
+	mov	rcx, QWORD PTR parser$[rsp]
+	add	rax, QWORD PTR [rcx+136]
+	jmp	SHORT $LN1@kttc__peek
+$LN2@kttc__peek:
+; Line 67
+	lea	rax, OFFSET FLAT:?end_tok@?1??kttc__peek_ahead@@9@4Ucctoken_t@@A
+$LN1@kttc__peek:
+; Line 68
+	ret	0
+kttc__peek_ahead ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+size$ = 32
+file$ = 40
+data$ = 48
+reader$ = 80
+name$ = 88
+ccread_include PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 39
+	mov	QWORD PTR [rsp+16], rdx
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 72					; 00000048H
+; Line 41
+	mov	rcx, QWORD PTR name$[rsp]
+	call	ccopenfile
+	mov	QWORD PTR file$[rsp], rax
+; Line 42
+	mov	DWORD PTR size$[rsp], 0
+	lea	r8, QWORD PTR size$[rsp]
+	xor	edx, edx
+	mov	rcx, QWORD PTR file$[rsp]
+	call	ccpullfile
+	mov	QWORD PTR data$[rsp], rax
+; Line 43
+	mov	rcx, QWORD PTR file$[rsp]
+	call	ccclosefile
+; Line 45
+	mov	eax, DWORD PTR size$[rsp]
+	mov	r8, QWORD PTR data$[rsp]
+	mov	edx, eax
+	mov	rcx, QWORD PTR reader$[rsp]
+	call	ccreader_move
+; Line 49
+	add	rsp, 72					; 00000048H
+	ret	0
+ccread_include ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+tv79 = 32
+parser$ = 64
+len$ = 72
+min$ = 80
+ccreader_move PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 28
+	mov	QWORD PTR [rsp+24], r8
+	mov	QWORD PTR [rsp+16], rdx
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+; Line 29
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	r8, QWORD PTR min$[rsp]
+	mov	rdx, QWORD PTR len$[rsp]
+	mov	rcx, rax
+	call	cclex_move
+; Line 30
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	ccread_all_tokens
+; Line 32
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	QWORD PTR [rax+144], 0
+; Line 33
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	rcx, QWORD PTR parser$[rsp]
+	mov	rcx, QWORD PTR [rcx+120]
+	mov	QWORD PTR [rax+136], rcx
+; Line 34
+	mov	rax, QWORD PTR parser$[rsp]
+	cmp	QWORD PTR [rax+120], 0
+	je	SHORT $LN3@ccreader_m
+	mov	eax, 4
+	imul	rax, rax, -1
+	mov	rcx, QWORD PTR parser$[rsp]
+	mov	rcx, QWORD PTR [rcx+120]
+	mov	eax, DWORD PTR [rax+rcx]
+	mov	DWORD PTR tv79[rsp], eax
+	jmp	SHORT $LN4@ccreader_m
+$LN3@ccreader_m:
+	mov	DWORD PTR tv79[rsp], 0
+$LN4@ccreader_m:
+	mov	eax, DWORD PTR tv79[rsp]
+	xor	edx, edx
+	mov	ecx, 64					; 00000040H
+	div	rcx
+	imul	rax, rax, 64				; 00000040H
+	mov	rcx, QWORD PTR parser$[rsp]
+	add	rax, QWORD PTR [rcx+120]
+	mov	rcx, QWORD PTR parser$[rsp]
+	mov	QWORD PTR [rcx+128], rax
+; Line 35
+	add	rsp, 56					; 00000038H
+	ret	0
+ccreader_move ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+token$1 = 32
+parser$ = 64
+ccread_all_tokens PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 53
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+$LN2@ccread_all:
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	rcx, rax
+	call	cclex_next_token
+	test	eax, eax
+	je	SHORT $LN3@ccread_all
+; Line 55
+	mov	rax, QWORD PTR parser$[rsp]
+	add	rax, 120				; 00000078H
+	mov	r9d, 1
+	mov	r8d, 1
+	mov	edx, 64					; 00000040H
+	mov	rcx, rax
+	call	ccdlb_arradd
+	mov	eax, eax
+	imul	rax, rax, 64				; 00000040H
+	mov	rcx, QWORD PTR parser$[rsp]
+	add	rax, QWORD PTR [rcx+120]
+	mov	QWORD PTR token$1[rsp], rax
+; Line 56
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	rdx, QWORD PTR token$1[rsp]
+	mov	rcx, rax
+	call	cclex_token
+; Line 57
+	jmp	SHORT $LN2@ccread_all
+$LN3@ccread_all:
+; Line 58
+	add	rsp, 56					; 00000038H
+	ret	0
+ccread_all_tokens ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+tv73 = 32
+parser$ = 64
+ccread_uninit PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 18
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	rcx, rax
+	call	cclex_uninit
+; Line 19
+	mov	rax, QWORD PTR parser$[rsp]
+	cmp	QWORD PTR [rax+120], 0
+	je	SHORT $LN3@ccread_uni
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	rax, QWORD PTR [rax+120]
+	sub	rax, 24
+	mov	QWORD PTR tv73[rsp], rax
+	jmp	SHORT $LN4@ccread_uni
+$LN3@ccread_uni:
+	mov	QWORD PTR tv73[rsp], 0
+$LN4@ccread_uni:
+	mov	r9d, 19
+	lea	r8, OFFSET FLAT:$SG48361
+	lea	rdx, OFFSET FLAT:$SG48362
+	mov	rcx, QWORD PTR tv73[rsp]
+	call	ccfree_
+; Line 20
+	add	rsp, 56					; 00000038H
+	ret	0
+ccread_uninit ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+parser$ = 48
+ccread_init PROC
+; File W:\cpp\void\ktt-c\ccread.c
+; Line 9
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 40					; 00000028H
+	mov	r8d, 152				; 00000098H
+	xor	edx, edx
+	mov	rcx, QWORD PTR parser$[rsp]
+	call	memset
+; Line 10
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	rcx, rax
+	call	cclex_init
+; Line 11
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	QWORD PTR [rax+144], 0
+; Line 12
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	QWORD PTR [rax+136], 0
+; Line 13
+	mov	rax, QWORD PTR parser$[rsp]
+	mov	QWORD PTR [rax+128], 0
+; Line 14
+	add	rsp, 40					; 00000028H
+	ret	0
+ccread_init ENDP
 _TEXT	ENDS
 ; Function compile flags: /Odtp
 _TEXT	SEGMENT
@@ -10515,6 +11035,50 @@ cclex_identifier PROC
 	add	rsp, 72					; 00000048H
 	ret	0
 cclex_identifier ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+tv80 = 32
+l$ = 64
+cclex_next_token PROC
+; File W:\cpp\void\ktt-c\cclex.c
+; Line 210
+	mov	QWORD PTR [rsp+8], rcx
+	sub	rsp, 56					; 00000038H
+$LN10@cclex_next:
+$LN9@cclex_next:
+$LN8@cclex_next:
+$LN4@cclex_next:
+; Line 212
+	mov	rcx, QWORD PTR l$[rsp]
+	call	cclex_next_token_internal
+; Line 215
+	mov	rax, QWORD PTR l$[rsp]
+	cmp	DWORD PTR [rax+56], 13
+	je	SHORT $LN4@cclex_next
+	mov	rax, QWORD PTR l$[rsp]
+	cmp	DWORD PTR [rax+56], 11
+	je	SHORT $LN8@cclex_next
+	mov	rax, QWORD PTR l$[rsp]
+	cmp	DWORD PTR [rax+56], 1
+	je	SHORT $LN9@cclex_next
+	mov	rax, QWORD PTR l$[rsp]
+	cmp	DWORD PTR [rax+56], 2
+	je	SHORT $LN10@cclex_next
+; Line 218
+	mov	rax, QWORD PTR l$[rsp]
+	cmp	DWORD PTR [rax+56], 0
+	jle	SHORT $LN6@cclex_next
+	mov	DWORD PTR tv80[rsp], 1
+	jmp	SHORT $LN7@cclex_next
+$LN6@cclex_next:
+	mov	DWORD PTR tv80[rsp], 0
+$LN7@cclex_next:
+	mov	eax, DWORD PTR tv80[rsp]
+; Line 219
+	add	rsp, 56					; 00000038H
+	ret	0
+cclex_next_token ENDP
 _TEXT	ENDS
 ; Function compile flags: /Odtp
 _TEXT	SEGMENT
@@ -12039,6 +12603,43 @@ cclex_next_token_internal ENDP
 _TEXT	ENDS
 ; Function compile flags: /Odtp
 _TEXT	SEGMENT
+$T1 = 0
+l$ = 96
+token$ = 104
+cclex_token PROC
+; File W:\cpp\void\ktt-c\cclex.c
+; Line 202
+	mov	QWORD PTR [rsp+16], rdx
+	mov	QWORD PTR [rsp+8], rcx
+	push	rsi
+	push	rdi
+	sub	rsp, 72					; 00000048H
+	mov	rax, QWORD PTR l$[rsp]
+	mov	rdi, QWORD PTR token$[rsp]
+	lea	rsi, QWORD PTR [rax+56]
+	mov	ecx, 64					; 00000040H
+	rep movsb
+; Line 203
+	lea	rax, QWORD PTR $T1[rsp]
+	mov	rdi, rax
+	xor	eax, eax
+	mov	ecx, 64					; 00000040H
+	rep stosb
+	mov	rax, QWORD PTR l$[rsp]
+	lea	rcx, QWORD PTR $T1[rsp]
+	lea	rdi, QWORD PTR [rax+56]
+	mov	rsi, rcx
+	mov	ecx, 64					; 00000040H
+	rep movsb
+; Line 204
+	add	rsp, 72					; 00000048H
+	pop	rdi
+	pop	rsi
+	ret	0
+cclex_token ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
 l$ = 0
 s$ = 32
 cclex_idenlen PROC
@@ -12105,6 +12706,108 @@ cclex_idenlen ENDP
 _TEXT	ENDS
 ; Function compile flags: /Odtp
 _TEXT	SEGMENT
+l$ = 8
+cclex_uninit PROC
+; File W:\cpp\void\ktt-c\cclex.c
+; Line 183
+	mov	QWORD PTR [rsp+8], rcx
+; Line 186
+	ret	0
+cclex_uninit ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+$T1 = 32
+l$ = 128
+cclex_init PROC
+; File W:\cpp\void\ktt-c\cclex.c
+; Line 170
+	mov	QWORD PTR [rsp+8], rcx
+	push	rsi
+	push	rdi
+	sub	rsp, 104				; 00000068H
+; Line 171
+	lea	rax, QWORD PTR $T1[rsp]
+	mov	rdi, rax
+	xor	eax, eax
+	mov	ecx, 64					; 00000040H
+	rep stosb
+	mov	rax, QWORD PTR l$[rsp]
+	lea	rcx, QWORD PTR $T1[rsp]
+	lea	rdi, QWORD PTR [rax+56]
+	mov	rsi, rcx
+	mov	ecx, 64					; 00000040H
+	rep movsb
+; Line 173
+	mov	rax, QWORD PTR l$[rsp]
+	mov	DWORD PTR [rax+32], 1024		; 00000400H
+; Line 174
+	mov	rax, QWORD PTR l$[rsp]
+	mov	DWORD PTR [rax+36], 0
+; Line 175
+	mov	rax, QWORD PTR l$[rsp]
+	mov	eax, DWORD PTR [rax+32]
+	imul	rax, rax, 24
+	mov	r9d, 175				; 000000afH
+	lea	r8, OFFSET FLAT:$SG48087
+	lea	rdx, OFFSET FLAT:$SG48088
+	mov	rcx, rax
+	call	ccmalloc_
+	mov	rcx, QWORD PTR l$[rsp]
+	mov	QWORD PTR [rcx+40], rax
+; Line 176
+	mov	rax, QWORD PTR l$[rsp]
+	mov	eax, DWORD PTR [rax+32]
+	imul	rax, rax, 24
+	mov	r8, rax
+	xor	edx, edx
+	mov	rax, QWORD PTR l$[rsp]
+	mov	rcx, QWORD PTR [rax+40]
+	call	memset
+; Line 178
+	mov	rcx, QWORD PTR l$[rsp]
+	call	cclex_hash_init
+; Line 179
+	add	rsp, 104				; 00000068H
+	pop	rdi
+	pop	rsi
+	ret	0
+cclex_init ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
+l$ = 8
+len$ = 16
+bed$ = 24
+cclex_move PROC
+; File W:\cpp\void\ktt-c\cclex.c
+; Line 163
+	mov	QWORD PTR [rsp+24], r8
+	mov	QWORD PTR [rsp+16], rdx
+	mov	QWORD PTR [rsp+8], rcx
+; Line 164
+	mov	rax, QWORD PTR len$[rsp]
+	mov	rcx, QWORD PTR bed$[rsp]
+	add	rcx, rax
+	mov	rax, rcx
+	mov	rcx, QWORD PTR l$[rsp]
+	mov	QWORD PTR [rcx], rax
+; Line 165
+	mov	rax, QWORD PTR l$[rsp]
+	mov	rcx, QWORD PTR bed$[rsp]
+	mov	QWORD PTR [rax+16], rcx
+	mov	rax, QWORD PTR l$[rsp]
+	mov	rcx, QWORD PTR bed$[rsp]
+	mov	QWORD PTR [rax+24], rcx
+	mov	rax, QWORD PTR l$[rsp]
+	mov	rcx, QWORD PTR bed$[rsp]
+	mov	QWORD PTR [rax+8], rcx
+; Line 166
+	ret	0
+cclex_move ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
+_TEXT	SEGMENT
 lexer$ = 48
 cclex_hash_init PROC
 ; File W:\cpp\void\ktt-c\cclex.c
@@ -12113,319 +12816,319 @@ cclex_hash_init PROC
 	sub	rsp, 40					; 00000028H
 ; Line 75
 	mov	r9d, 21
-	lea	r8, OFFSET FLAT:$SG48153
+	lea	r8, OFFSET FLAT:$SG48021
 	mov	edx, 5
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 76
 	mov	r9d, 22
-	lea	r8, OFFSET FLAT:$SG48154
+	lea	r8, OFFSET FLAT:$SG48022
 	mov	edx, 7
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 77
 	mov	r9d, 23
-	lea	r8, OFFSET FLAT:$SG48155
+	lea	r8, OFFSET FLAT:$SG48023
 	mov	edx, 7
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 78
 	mov	r9d, 24
-	lea	r8, OFFSET FLAT:$SG48156
+	lea	r8, OFFSET FLAT:$SG48024
 	mov	edx, 9
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 79
 	mov	r9d, 25
-	lea	r8, OFFSET FLAT:$SG48157
+	lea	r8, OFFSET FLAT:$SG48025
 	mov	edx, 10
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 80
 	mov	r9d, 26
-	lea	r8, OFFSET FLAT:$SG48158
+	lea	r8, OFFSET FLAT:$SG48026
 	mov	edx, 8
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 81
 	mov	r9d, 27
-	lea	r8, OFFSET FLAT:$SG48159
+	lea	r8, OFFSET FLAT:$SG48027
 	mov	edx, 9
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 82
 	mov	r9d, 28
-	lea	r8, OFFSET FLAT:$SG48160
+	lea	r8, OFFSET FLAT:$SG48028
 	mov	edx, 10
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 83
 	mov	r9d, 29
-	lea	r8, OFFSET FLAT:$SG48161
+	lea	r8, OFFSET FLAT:$SG48029
 	mov	edx, 11
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 89
 	mov	r9d, 31
-	lea	r8, OFFSET FLAT:$SG48162
+	lea	r8, OFFSET FLAT:$SG48030
 	mov	edx, 8
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 90
 	mov	r9d, 32					; 00000020H
-	lea	r8, OFFSET FLAT:$SG48163
+	lea	r8, OFFSET FLAT:$SG48031
 	mov	edx, 8
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 96
 	mov	r9d, 35					; 00000023H
-	lea	r8, OFFSET FLAT:$SG48164
+	lea	r8, OFFSET FLAT:$SG48032
 	mov	edx, 5
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 97
 	mov	r9d, 36					; 00000024H
-	lea	r8, OFFSET FLAT:$SG48165
+	lea	r8, OFFSET FLAT:$SG48033
 	mov	edx, 8
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 98
 	mov	r9d, 37					; 00000025H
-	lea	r8, OFFSET FLAT:$SG48166
+	lea	r8, OFFSET FLAT:$SG48034
 	mov	edx, 8
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 104
 	mov	r9d, 40					; 00000028H
-	lea	r8, OFFSET FLAT:$SG48167
+	lea	r8, OFFSET FLAT:$SG48035
 	mov	edx, 6
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 105
 	mov	r9d, 41					; 00000029H
-	lea	r8, OFFSET FLAT:$SG48168
+	lea	r8, OFFSET FLAT:$SG48036
 	mov	edx, 9
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 111
 	mov	r9d, 44					; 0000002cH
-	lea	r8, OFFSET FLAT:$SG48169
+	lea	r8, OFFSET FLAT:$SG48037
 	mov	edx, 6
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 112
 	mov	r9d, 45					; 0000002dH
-	lea	r8, OFFSET FLAT:$SG48170
+	lea	r8, OFFSET FLAT:$SG48038
 	mov	edx, 8
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 113
 	mov	r9d, 46					; 0000002eH
-	lea	r8, OFFSET FLAT:$SG48171
+	lea	r8, OFFSET FLAT:$SG48039
 	mov	edx, 6
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 114
 	mov	r9d, 47					; 0000002fH
-	lea	r8, OFFSET FLAT:$SG48172
+	lea	r8, OFFSET FLAT:$SG48040
 	mov	edx, 7
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 115
 	mov	r9d, 48					; 00000030H
-	lea	r8, OFFSET FLAT:$SG48173
+	lea	r8, OFFSET FLAT:$SG48041
 	mov	edx, 7
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 116
 	mov	r9d, 49					; 00000031H
-	lea	r8, OFFSET FLAT:$SG48174
+	lea	r8, OFFSET FLAT:$SG48042
 	mov	edx, 7
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 117
 	mov	r9d, 50					; 00000032H
-	lea	r8, OFFSET FLAT:$SG48175
+	lea	r8, OFFSET FLAT:$SG48043
 	mov	edx, 6
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 118
 	mov	r9d, 51					; 00000033H
-	lea	r8, OFFSET FLAT:$SG48176
+	lea	r8, OFFSET FLAT:$SG48044
 	mov	edx, 5
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 119
 	mov	r9d, 52					; 00000034H
-	lea	r8, OFFSET FLAT:$SG48177
+	lea	r8, OFFSET FLAT:$SG48045
 	mov	edx, 4
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 120
 	mov	r9d, 53					; 00000035H
-	lea	r8, OFFSET FLAT:$SG48178
+	lea	r8, OFFSET FLAT:$SG48046
 	mov	edx, 3
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 121
 	mov	r9d, 54					; 00000036H
-	lea	r8, OFFSET FLAT:$SG48179
+	lea	r8, OFFSET FLAT:$SG48047
 	mov	edx, 5
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 122
 	mov	r9d, 55					; 00000037H
-	lea	r8, OFFSET FLAT:$SG48180
+	lea	r8, OFFSET FLAT:$SG48048
 	mov	edx, 4
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 123
 	mov	r9d, 56					; 00000038H
-	lea	r8, OFFSET FLAT:$SG48181
+	lea	r8, OFFSET FLAT:$SG48049
 	mov	edx, 4
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 124
 	mov	r9d, 57					; 00000039H
-	lea	r8, OFFSET FLAT:$SG48182
+	lea	r8, OFFSET FLAT:$SG48050
 	mov	edx, 5
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 125
 	mov	r9d, 58					; 0000003aH
-	lea	r8, OFFSET FLAT:$SG48183
+	lea	r8, OFFSET FLAT:$SG48051
 	mov	edx, 8
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 126
 	mov	r9d, 59					; 0000003bH
-	lea	r8, OFFSET FLAT:$SG48184
+	lea	r8, OFFSET FLAT:$SG48052
 	mov	edx, 7
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 127
 	mov	r9d, 60					; 0000003cH
-	lea	r8, OFFSET FLAT:$SG48185
+	lea	r8, OFFSET FLAT:$SG48053
 	mov	edx, 4
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 128
 	mov	r9d, 61					; 0000003dH
-	lea	r8, OFFSET FLAT:$SG48186
+	lea	r8, OFFSET FLAT:$SG48054
 	mov	edx, 6
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 132
 	mov	r9d, 63					; 0000003fH
-	lea	r8, OFFSET FLAT:$SG48187
+	lea	r8, OFFSET FLAT:$SG48055
 	mov	edx, 7
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 137
 	mov	r9d, 65					; 00000041H
-	lea	r8, OFFSET FLAT:$SG48188
+	lea	r8, OFFSET FLAT:$SG48056
 	mov	edx, 4
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 138
 	mov	r9d, 66					; 00000042H
-	lea	r8, OFFSET FLAT:$SG48189
+	lea	r8, OFFSET FLAT:$SG48057
 	mov	edx, 6
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 139
 	mov	r9d, 67					; 00000043H
-	lea	r8, OFFSET FLAT:$SG48190
+	lea	r8, OFFSET FLAT:$SG48058
 	mov	edx, 8
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 140
 	mov	r9d, 68					; 00000044H
-	lea	r8, OFFSET FLAT:$SG48191
+	lea	r8, OFFSET FLAT:$SG48059
 	mov	edx, 6
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 141
 	mov	r9d, 69					; 00000045H
-	lea	r8, OFFSET FLAT:$SG48192
+	lea	r8, OFFSET FLAT:$SG48060
 	mov	edx, 13
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 142
 	mov	r9d, 70					; 00000046H
-	lea	r8, OFFSET FLAT:$SG48193
+	lea	r8, OFFSET FLAT:$SG48061
 	mov	edx, 10
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 147
 	mov	r9d, 72					; 00000048H
-	lea	r8, OFFSET FLAT:$SG48194
+	lea	r8, OFFSET FLAT:$SG48062
 	mov	edx, 2
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 148
 	mov	r9d, 73					; 00000049H
-	lea	r8, OFFSET FLAT:$SG48195
+	lea	r8, OFFSET FLAT:$SG48063
 	mov	edx, 6
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 149
 	mov	r9d, 74					; 0000004aH
-	lea	r8, OFFSET FLAT:$SG48196
+	lea	r8, OFFSET FLAT:$SG48064
 	mov	edx, 4
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 150
 	mov	r9d, 75					; 0000004bH
-	lea	r8, OFFSET FLAT:$SG48197
+	lea	r8, OFFSET FLAT:$SG48065
 	mov	edx, 4
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 151
 	mov	r9d, 76					; 0000004cH
-	lea	r8, OFFSET FLAT:$SG48198
+	lea	r8, OFFSET FLAT:$SG48066
 	mov	edx, 7
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 152
 	mov	r9d, 77					; 0000004dH
-	lea	r8, OFFSET FLAT:$SG48199
+	lea	r8, OFFSET FLAT:$SG48067
 	mov	edx, 3
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 153
 	mov	r9d, 78					; 0000004eH
-	lea	r8, OFFSET FLAT:$SG48200
+	lea	r8, OFFSET FLAT:$SG48068
 	mov	edx, 5
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 154
 	mov	r9d, 79					; 0000004fH
-	lea	r8, OFFSET FLAT:$SG48201
+	lea	r8, OFFSET FLAT:$SG48069
 	mov	edx, 2
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 155
 	mov	r9d, 80					; 00000050H
-	lea	r8, OFFSET FLAT:$SG48202
+	lea	r8, OFFSET FLAT:$SG48070
 	mov	edx, 4
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 156
 	mov	r9d, 81					; 00000051H
-	lea	r8, OFFSET FLAT:$SG48203
+	lea	r8, OFFSET FLAT:$SG48071
 	mov	edx, 6
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 157
 	mov	r9d, 82					; 00000052H
-	lea	r8, OFFSET FLAT:$SG48204
+	lea	r8, OFFSET FLAT:$SG48072
 	mov	edx, 5
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
 ; Line 158
 	mov	r9d, 83					; 00000053H
-	lea	r8, OFFSET FLAT:$SG48205
+	lea	r8, OFFSET FLAT:$SG48073
 	mov	edx, 8
 	mov	rcx, QWORD PTR lexer$[rsp]
 	call	cclex_hashonly
@@ -12470,13 +13173,13 @@ $LN4@cclex_hash:
 ; Line 63
 	cmp	DWORD PTR fnd$[rsp], 0
 	je	SHORT $LN2@cclex_hash
-	lea	rax, OFFSET FLAT:$SG48093
+	lea	rax, OFFSET FLAT:$SG47961
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG48094
+	lea	rax, OFFSET FLAT:$SG47962
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG48095
+	lea	r9, OFFSET FLAT:$SG47963
 	mov	r8d, 63					; 0000003fH
-	lea	rdx, OFFSET FLAT:$SG48096
+	lea	rdx, OFFSET FLAT:$SG47964
 	mov	ecx, 10
 	call	cctrace_
 	int	3
@@ -12629,8 +13332,8 @@ $LN9@cclex_hash:
 	cmp	QWORD PTR [rax+8], 0
 	je	SHORT $LN12@cclex_hash
 	mov	r9d, 38					; 00000026H
-	lea	r8, OFFSET FLAT:$SG48077
-	lea	rdx, OFFSET FLAT:$SG48078
+	lea	r8, OFFSET FLAT:$SG47945
+	lea	rdx, OFFSET FLAT:$SG47946
 	mov	ecx, 24
 	call	ccmalloc_
 	mov	QWORD PTR tv137[rsp], rax
@@ -12834,7 +13537,12 @@ $LN4@ccfunc_inc:
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR v$[rsp], rax
 ; Line 121
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN5@ccfunc_inc
 	int	3
 $LN5@ccfunc_inc:
@@ -12874,7 +13582,12 @@ ccfunc_local PROC
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR v$[rsp], rax
 ; Line 111
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	SHORT $LN2@ccfunc_loc
 	mov	rax, QWORD PTR v$[rsp]
 	mov	rax, QWORD PTR [rax]
@@ -12928,8 +13641,8 @@ ccblock_add PROC
 	sub	rsp, 56					; 00000038H
 ; Line 89
 	mov	r9d, 89					; 00000059H
-	lea	r8, OFFSET FLAT:$SG47988
-	lea	rdx, OFFSET FLAT:$SG47989
+	lea	r8, OFFSET FLAT:$SG47856
+	lea	rdx, OFFSET FLAT:$SG47857
 	mov	ecx, 48					; 00000030H
 	call	ccmalloc_
 	mov	QWORD PTR v$[rsp], rax
@@ -12974,8 +13687,8 @@ ccblock	PROC
 	sub	rsp, 40					; 00000028H
 ; Line 83
 	mov	r9d, 83					; 00000053H
-	lea	r8, OFFSET FLAT:$SG47978
-	lea	rdx, OFFSET FLAT:$SG47979
+	lea	r8, OFFSET FLAT:$SG47846
+	lea	rdx, OFFSET FLAT:$SG47847
 	mov	ecx, 16
 	call	ccmalloc_
 	mov	rdx, QWORD PTR label$[rsp]
@@ -13005,7 +13718,7 @@ ccblock_I PROC
 	mov	QWORD PTR tv66[rsp], rax
 	jmp	SHORT $LN4@ccblock_I
 $LN3@ccblock_I:
-	lea	rax, OFFSET FLAT:$SG47971
+	lea	rax, OFFSET FLAT:$SG47839
 	mov	QWORD PTR tv66[rsp], rax
 $LN4@ccblock_I:
 	mov	rax, QWORD PTR block$[rsp]
@@ -13060,8 +13773,8 @@ ccedict_ternary PROC
 	sub	rsp, 56					; 00000038H
 ; Line 163
 	mov	r9d, 163				; 000000a3H
-	lea	r8, OFFSET FLAT:$SG47802
-	lea	rdx, OFFSET FLAT:$SG47803
+	lea	r8, OFFSET FLAT:$SG47670
+	lea	rdx, OFFSET FLAT:$SG47671
 	mov	ecx, 144				; 00000090H
 	call	ccmalloc_
 	mov	QWORD PTR e$[rsp], rax
@@ -13098,8 +13811,8 @@ ccedict_return PROC
 	sub	rsp, 56					; 00000038H
 ; Line 154
 	mov	r9d, 154				; 0000009aH
-	lea	r8, OFFSET FLAT:$SG47792
-	lea	rdx, OFFSET FLAT:$SG47793
+	lea	r8, OFFSET FLAT:$SG47660
+	lea	rdx, OFFSET FLAT:$SG47661
 	mov	ecx, 144				; 00000090H
 	call	ccmalloc_
 	mov	QWORD PTR e$[rsp], rax
@@ -13135,8 +13848,8 @@ ccedict_call PROC
 $LN3@ccedict_ca:
 ; Line 143
 	mov	r9d, 143				; 0000008fH
-	lea	r8, OFFSET FLAT:$SG47784
-	lea	rdx, OFFSET FLAT:$SG47785
+	lea	r8, OFFSET FLAT:$SG47652
+	lea	rdx, OFFSET FLAT:$SG47653
 	mov	ecx, 144				; 00000090H
 	call	ccmalloc_
 	mov	QWORD PTR e$[rsp], rax
@@ -13169,8 +13882,8 @@ ccedict_enter PROC
 	sub	rsp, 56					; 00000038H
 ; Line 131
 	mov	r9d, 131				; 00000083H
-	lea	r8, OFFSET FLAT:$SG47775
-	lea	rdx, OFFSET FLAT:$SG47776
+	lea	r8, OFFSET FLAT:$SG47643
+	lea	rdx, OFFSET FLAT:$SG47644
 	mov	ecx, 144				; 00000090H
 	call	ccmalloc_
 	mov	QWORD PTR e$[rsp], rax
@@ -13203,8 +13916,8 @@ ccedict_arith PROC
 	sub	rsp, 56					; 00000038H
 ; Line 120
 	mov	r9d, 120				; 00000078H
-	lea	r8, OFFSET FLAT:$SG47767
-	lea	rdx, OFFSET FLAT:$SG47768
+	lea	r8, OFFSET FLAT:$SG47635
+	lea	rdx, OFFSET FLAT:$SG47636
 	mov	ecx, 144				; 00000090H
 	call	ccmalloc_
 	mov	QWORD PTR e$[rsp], rax
@@ -13241,8 +13954,8 @@ ccedict_fetch PROC
 	sub	rsp, 56					; 00000038H
 ; Line 111
 	mov	r9d, 111				; 0000006fH
-	lea	r8, OFFSET FLAT:$SG47757
-	lea	rdx, OFFSET FLAT:$SG47758
+	lea	r8, OFFSET FLAT:$SG47625
+	lea	rdx, OFFSET FLAT:$SG47626
 	mov	ecx, 144				; 00000090H
 	call	ccmalloc_
 	mov	QWORD PTR e$[rsp], rax
@@ -13273,8 +13986,8 @@ ccedict_store PROC
 	sub	rsp, 56					; 00000038H
 ; Line 101
 	mov	r9d, 101				; 00000065H
-	lea	r8, OFFSET FLAT:$SG47749
-	lea	rdx, OFFSET FLAT:$SG47750
+	lea	r8, OFFSET FLAT:$SG47617
+	lea	rdx, OFFSET FLAT:$SG47618
 	mov	ecx, 144				; 00000090H
 	call	ccmalloc_
 	mov	QWORD PTR e$[rsp], rax
@@ -13307,8 +14020,8 @@ ccedict_param PROC
 	sub	rsp, 56					; 00000038H
 ; Line 90
 	mov	r9d, 90					; 0000005aH
-	lea	r8, OFFSET FLAT:$SG47740
-	lea	rdx, OFFSET FLAT:$SG47741
+	lea	r8, OFFSET FLAT:$SG47608
+	lea	rdx, OFFSET FLAT:$SG47609
 	mov	ecx, 144				; 00000090H
 	call	ccmalloc_
 	mov	QWORD PTR e$[rsp], rax
@@ -13343,8 +14056,8 @@ ccedict_local PROC
 	sub	rsp, 56					; 00000038H
 ; Line 78
 	mov	r9d, 78					; 0000004eH
-	lea	r8, OFFSET FLAT:$SG47732
-	lea	rdx, OFFSET FLAT:$SG47733
+	lea	r8, OFFSET FLAT:$SG47600
+	lea	rdx, OFFSET FLAT:$SG47601
 	mov	ecx, 144				; 00000090H
 	call	ccmalloc_
 	mov	QWORD PTR e$[rsp], rax
@@ -13430,8 +14143,8 @@ _TEXT	SEGMENT
 tv131 = 64
 tv150 = 68
 list$1 = 72
-tv206 = 80
-tv200 = 88
+tv213 = 80
+tv207 = 88
 value$2 = 96
 tree$ = 128
 cctree_solve_decl_name PROC
@@ -13513,13 +14226,13 @@ $LN24@cctree_sol:
 $LN25@cctree_sol:
 	mov	rax, QWORD PTR tree$[rsp]
 	mov	rax, QWORD PTR [rax+48]
-	mov	QWORD PTR tv206[rsp], rax
+	mov	QWORD PTR tv213[rsp], rax
 	mov	ecx, DWORD PTR tv131[rsp]
 	xor	edx, edx
 	mov	eax, ecx
 	mov	ecx, 8
 	div	rcx
-	mov	rcx, QWORD PTR tv206[rsp]
+	mov	rcx, QWORD PTR tv213[rsp]
 	mov	rcx, QWORD PTR [rcx+32]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	cmp	QWORD PTR list$1[rsp], rax
@@ -13558,13 +14271,13 @@ $LN26@cctree_sol:
 $LN27@cctree_sol:
 	mov	rax, QWORD PTR tree$[rsp]
 	mov	rax, QWORD PTR [rax+88]
-	mov	QWORD PTR tv200[rsp], rax
+	mov	QWORD PTR tv207[rsp], rax
 	mov	ecx, DWORD PTR tv150[rsp]
 	xor	edx, edx
 	mov	eax, ecx
 	mov	ecx, 8
 	div	rcx
-	mov	rcx, QWORD PTR tv200[rsp]
+	mov	rcx, QWORD PTR tv207[rsp]
 	mov	rcx, QWORD PTR [rcx+32]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	cmp	QWORD PTR list$1[rsp], rax
@@ -13582,13 +14295,13 @@ $LN14@cctree_sol:
 	mov	rax, QWORD PTR tree$[rsp]
 	mov	rax, QWORD PTR [rax+24]
 	mov	QWORD PTR [rsp+48], rax
-	lea	rax, OFFSET FLAT:$SG47537
+	lea	rax, OFFSET FLAT:$SG47405
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG47538
+	lea	rax, OFFSET FLAT:$SG47406
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG47539
+	lea	r9, OFFSET FLAT:$SG47407
 	mov	r8d, 553				; 00000229H
-	lea	rdx, OFFSET FLAT:$SG47540
+	lea	rdx, OFFSET FLAT:$SG47408
 	mov	ecx, 7
 	call	cctrace_
 	int	3
@@ -13600,13 +14313,13 @@ $LN12@cctree_sol:
 	mov	rax, QWORD PTR tree$[rsp]
 	mov	rax, QWORD PTR [rax+24]
 	mov	QWORD PTR [rsp+48], rax
-	lea	rax, OFFSET FLAT:$SG47541
+	lea	rax, OFFSET FLAT:$SG47409
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG47542
+	lea	rax, OFFSET FLAT:$SG47410
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG47543
+	lea	r9, OFFSET FLAT:$SG47411
 	mov	r8d, 555				; 0000022bH
-	lea	rdx, OFFSET FLAT:$SG47544
+	lea	rdx, OFFSET FLAT:$SG47412
 	mov	ecx, 8
 	call	cctrace_
 	int	3
@@ -13629,7 +14342,12 @@ $LN10@cctree_sol:
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR value$2[rsp], rax
 ; Line 559
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	SHORT $LN16@cctree_sol
 ; Line 560
 	mov	rax, QWORD PTR value$2[rsp]
@@ -13641,13 +14359,13 @@ $LN16@cctree_sol:
 	mov	rax, QWORD PTR tree$[rsp]
 	mov	rax, QWORD PTR [rax+24]
 	mov	QWORD PTR [rsp+48], rax
-	lea	rax, OFFSET FLAT:$SG47547
+	lea	rax, OFFSET FLAT:$SG47415
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG47548
+	lea	rax, OFFSET FLAT:$SG47416
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG47549
+	lea	r9, OFFSET FLAT:$SG47417
 	mov	r8d, 562				; 00000232H
-	lea	rdx, OFFSET FLAT:$SG47550
+	lea	rdx, OFFSET FLAT:$SG47418
 	mov	ecx, 9
 	call	cctrace_
 	int	3
@@ -13752,13 +14470,13 @@ $LN9@cctree_sol:
 	mov	rax, QWORD PTR [rax+72]
 	mov	rax, QWORD PTR [rax+24]
 	mov	QWORD PTR [rsp+48], rax
-	lea	rax, OFFSET FLAT:$SG47448
+	lea	rax, OFFSET FLAT:$SG47316
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG47449
+	lea	rax, OFFSET FLAT:$SG47317
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG47450
+	lea	r9, OFFSET FLAT:$SG47318
 	mov	r8d, 432				; 000001b0H
-	lea	rdx, OFFSET FLAT:$SG47451
+	lea	rdx, OFFSET FLAT:$SG47319
 	mov	ecx, 4
 	call	cctrace_
 	int	3
@@ -13829,13 +14547,13 @@ $LN4@cctree_sol:
 	mov	rax, QWORD PTR tree$[rsp]
 	mov	rax, QWORD PTR [rax+24]
 	mov	QWORD PTR [rsp+48], rax
-	lea	rax, OFFSET FLAT:$SG47459
+	lea	rax, OFFSET FLAT:$SG47327
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG47460
+	lea	rax, OFFSET FLAT:$SG47328
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG47461
+	lea	r9, OFFSET FLAT:$SG47329
 	mov	r8d, 445				; 000001bdH
-	lea	rdx, OFFSET FLAT:$SG47462
+	lea	rdx, OFFSET FLAT:$SG47330
 	mov	ecx, 5
 	call	cctrace_
 	int	3
@@ -13844,7 +14562,7 @@ $LN5@cctree_sol:
 	jmp	SHORT $LN2@cctree_sol
 $LN6@cctree_sol:
 ; Line 447
-	lea	rax, OFFSET FLAT:$SG47464
+	lea	rax, OFFSET FLAT:$SG47332
 	test	rax, rax
 	je	SHORT $LN8@cctree_sol
 	int	3
@@ -13889,13 +14607,13 @@ $LN5@cctree_sol:
 	mov	rax, QWORD PTR tree$[rsp]
 	mov	rax, QWORD PTR [rax+24]
 	mov	QWORD PTR [rsp+48], rax
-	lea	rax, OFFSET FLAT:$SG47473
+	lea	rax, OFFSET FLAT:$SG47341
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG47474
+	lea	rax, OFFSET FLAT:$SG47342
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG47475
+	lea	r9, OFFSET FLAT:$SG47343
 	mov	r8d, 459				; 000001cbH
-	lea	rdx, OFFSET FLAT:$SG47476
+	lea	rdx, OFFSET FLAT:$SG47344
 	mov	ecx, 6
 	call	cctrace_
 	int	3
@@ -13921,7 +14639,7 @@ $LN8@cctree_sol:
 	jmp	SHORT $LN2@cctree_sol
 $LN9@cctree_sol:
 ; Line 470
-	lea	rax, OFFSET FLAT:$SG47480
+	lea	rax, OFFSET FLAT:$SG47348
 	test	rax, rax
 	je	SHORT $LN11@cctree_sol
 	int	3
@@ -13966,7 +14684,7 @@ cctree_solve_binary ENDP
 _TEXT	ENDS
 ; Function compile flags: /Odtp
 _TEXT	SEGMENT
-tv88 = 32
+tv138 = 32
 symbol$1 = 40
 solved$ = 48
 tree$ = 80
@@ -13990,7 +14708,12 @@ cctree_resolve_symbol_allusion PROC
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR solved$[rsp], rax
 ; Line 408
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	SHORT $LN2@cctree_res
 ; Line 410
 	mov	r9, QWORD PTR tree$[rsp]
@@ -14003,7 +14726,12 @@ cctree_resolve_symbol_allusion PROC
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR symbol$1[rsp], rax
 ; Line 411
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN4@cctree_res
 	int	3
 $LN4@cctree_res:
@@ -14014,14 +14742,19 @@ $LN4@cctree_res:
 	mov	QWORD PTR [rax], rcx
 $LN2@cctree_res:
 ; Line 415
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	SHORT $LN6@cctree_res
-	mov	DWORD PTR tv88[rsp], 1
+	mov	DWORD PTR tv138[rsp], 1
 	jmp	SHORT $LN7@cctree_res
 $LN6@cctree_res:
-	mov	DWORD PTR tv88[rsp], 0
+	mov	DWORD PTR tv138[rsp], 0
 $LN7@cctree_res:
-	mov	eax, DWORD PTR tv88[rsp]
+	mov	eax, DWORD PTR tv138[rsp]
 ; Line 416
 	add	rsp, 72					; 00000048H
 	ret	0
@@ -14029,7 +14762,7 @@ cctree_resolve_symbol_allusion ENDP
 _TEXT	ENDS
 ; Function compile flags: /Odtp
 _TEXT	SEGMENT
-tv131 = 64
+tv149 = 64
 solved$ = 72
 symbol$1 = 80
 tree$ = 112
@@ -14058,7 +14791,12 @@ $LN4@cctree_res:
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR solved$[rsp], rax
 ; Line 389
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	$LN2@cctree_res
 ; Line 391
 	mov	rax, QWORD PTR solved$[rsp]
@@ -14077,7 +14815,12 @@ $LN6@cctree_res:
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR symbol$1[rsp], rax
 ; Line 394
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN8@cctree_res
 	int	3
 $LN8@cctree_res:
@@ -14092,25 +14835,30 @@ $LN8@cctree_res:
 	mov	QWORD PTR [rsp+56], rax
 	mov	rax, QWORD PTR tree$[rsp]
 	mov	QWORD PTR [rsp+48], rax
-	lea	rax, OFFSET FLAT:$SG47416
+	lea	rax, OFFSET FLAT:$SG47284
 	mov	QWORD PTR [rsp+40], rax
-	lea	rax, OFFSET FLAT:$SG47417
+	lea	rax, OFFSET FLAT:$SG47285
 	mov	QWORD PTR [rsp+32], rax
-	lea	r9, OFFSET FLAT:$SG47418
+	lea	r9, OFFSET FLAT:$SG47286
 	mov	r8d, 397				; 0000018dH
-	lea	rdx, OFFSET FLAT:$SG47419
+	lea	rdx, OFFSET FLAT:$SG47287
 	mov	ecx, 3
 	call	cctrace_
 $LN2@cctree_res:
 ; Line 400
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	SHORT $LN10@cctree_res
-	mov	DWORD PTR tv131[rsp], 1
+	mov	DWORD PTR tv149[rsp], 1
 	jmp	SHORT $LN11@cctree_res
 $LN10@cctree_res:
-	mov	DWORD PTR tv131[rsp], 0
+	mov	DWORD PTR tv149[rsp], 0
 $LN11@cctree_res:
-	mov	eax, DWORD PTR tv131[rsp]
+	mov	eax, DWORD PTR tv149[rsp]
 ; Line 401
 	add	rsp, 104				; 00000068H
 	ret	0
@@ -14119,7 +14867,7 @@ _TEXT	ENDS
 ; Function compile flags: /Odtp
 _TEXT	SEGMENT
 symbol$ = 32
-tv74 = 40
+tv80 = 40
 tree$ = 64
 cctree_resolve_symbol PROC
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -14144,16 +14892,21 @@ $LN3@cctree_res:
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR symbol$[rsp], rax
 ; Line 379
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	SHORT $LN5@cctree_res
 	mov	rax, QWORD PTR symbol$[rsp]
 	mov	rax, QWORD PTR [rax]
-	mov	QWORD PTR tv74[rsp], rax
+	mov	QWORD PTR tv80[rsp], rax
 	jmp	SHORT $LN6@cctree_res
 $LN5@cctree_res:
-	mov	QWORD PTR tv74[rsp], 0
+	mov	QWORD PTR tv80[rsp], 0
 $LN6@cctree_res:
-	mov	rax, QWORD PTR tv74[rsp]
+	mov	rax, QWORD PTR tv80[rsp]
 ; Line 380
 	add	rsp, 56					; 00000038H
 	ret	0
@@ -14161,7 +14914,7 @@ cctree_resolve_symbol ENDP
 _TEXT	ENDS
 ; Function compile flags: /Odtp
 _TEXT	SEGMENT
-tv81 = 32
+tv93 = 32
 value$ = 40
 tree$ = 64
 name$ = 72
@@ -14196,21 +14949,31 @@ $LN6@cctree_inc:
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR value$[rsp], rax
 ; Line 366
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	SHORT $LN2@cctree_inc
 	mov	rax, QWORD PTR value$[rsp]
 	mov	rcx, QWORD PTR tree$[rsp]
 	mov	QWORD PTR [rax], rcx
 $LN2@cctree_inc:
 ; Line 368
-	cmp	DWORD PTR ccerr, 0
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	SHORT $LN8@cctree_inc
-	mov	DWORD PTR tv81[rsp], 1
+	mov	DWORD PTR tv93[rsp], 1
 	jmp	SHORT $LN9@cctree_inc
 $LN8@cctree_inc:
-	mov	DWORD PTR tv81[rsp], 0
+	mov	DWORD PTR tv93[rsp], 0
 $LN9@cctree_inc:
-	mov	eax, DWORD PTR tv81[rsp]
+	mov	eax, DWORD PTR tv93[rsp]
 ; Line 369
 	add	rsp, 56					; 00000038H
 	ret	0
@@ -14304,7 +15067,7 @@ $LN13@cctree_sol:
 	jmp	SHORT $LN11@cctree_sol
 $LN10@cctree_sol:
 ; Line 523
-	lea	rax, OFFSET FLAT:$SG47513
+	lea	rax, OFFSET FLAT:$SG47381
 	test	rax, rax
 	je	SHORT $LN17@cctree_sol
 	int	3
@@ -15020,6 +15783,39 @@ $LN4@cctree_nam:
 cctree_name ENDP
 _TEXT	ENDS
 ; Function compile flags: /Odtp
+_TEXT	SEGMENT
+result$ = 32
+tree$ = 80
+cctree_clone PROC
+; File W:\cpp\void\ktt-c\cctree.h
+; Line 136
+	mov	QWORD PTR [rsp+8], rcx
+	push	rsi
+	push	rdi
+	sub	rsp, 56					; 00000038H
+	mov	rax, QWORD PTR tree$[rsp]
+	mov	r8d, DWORD PTR [rax+16]
+	mov	rax, QWORD PTR tree$[rsp]
+	mov	rdx, QWORD PTR [rax+8]
+	mov	rax, QWORD PTR tree$[rsp]
+	mov	ecx, DWORD PTR [rax]
+	call	cctree_new
+	mov	QWORD PTR result$[rsp], rax
+; Line 137
+	mov	rdi, QWORD PTR result$[rsp]
+	mov	rsi, QWORD PTR tree$[rsp]
+	mov	ecx, 184				; 000000b8H
+	rep movsb
+; Line 138
+	mov	rax, QWORD PTR result$[rsp]
+; Line 139
+	add	rsp, 56					; 00000038H
+	pop	rdi
+	pop	rsi
+	ret	0
+cctree_clone ENDP
+_TEXT	ENDS
+; Function compile flags: /Odtp
 ;	COMDAT ??__Ectype_void@@YAXXZ
 text$di	SEGMENT
 ??__Ectype_void@@YAXXZ PROC				; `dynamic initializer for 'ctype_void'', COMDAT
@@ -15209,8 +16005,8 @@ cctree_new PROC
 	mov	DWORD PTR [rsp+8], ecx
 	sub	rsp, 56					; 00000038H
 	mov	r9d, 126				; 0000007eH
-	lea	r8, OFFSET FLAT:$SG47244
-	lea	rdx, OFFSET FLAT:$SG47245
+	lea	r8, OFFSET FLAT:$SG47112
+	lea	rdx, OFFSET FLAT:$SG47113
 	mov	ecx, 184				; 000000b8H
 	call	ccmalloc_
 	mov	QWORD PTR tree$[rsp], rax
@@ -15247,8 +16043,8 @@ cctree_del PROC
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 40					; 00000028H
 	mov	r9d, 121				; 00000079H
-	lea	r8, OFFSET FLAT:$SG47234
-	lea	rdx, OFFSET FLAT:$SG47235
+	lea	r8, OFFSET FLAT:$SG47102
+	lea	rdx, OFFSET FLAT:$SG47103
 	mov	rcx, QWORD PTR tree$[rsp]
 	call	ccfree_
 ; Line 122
@@ -15258,808 +16054,39 @@ cctree_del ENDP
 _TEXT	ENDS
 ; Function compile flags: /Odtp
 _TEXT	SEGMENT
-parser$ = 48
-kind$ = 56
-cceat	PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 547
-	mov	DWORD PTR [rsp+16], edx
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 40					; 00000028H
-	mov	edx, DWORD PTR kind$[rsp]
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	ccsee
-	test	eax, eax
-	je	SHORT $LN2@cceat
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	ccgobble
-	jmp	SHORT $LN1@cceat
-$LN2@cceat:
-; Line 548
-	xor	eax, eax
-$LN1@cceat:
-; Line 549
-	add	rsp, 40					; 00000028H
-	ret	0
-cceat	ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-token$ = 32
-parser$ = 64
-kttc__peek_func_specifier PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 526
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-; Line 527
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	ccpeep
-	mov	QWORD PTR token$[rsp], rax
-; Line 529
-	mov	rax, QWORD PTR token$[rsp]
-	cmp	DWORD PTR [rax], 39			; 00000027H
-	jle	SHORT $LN2@kttc__peek
-	mov	rax, QWORD PTR token$[rsp]
-	cmp	DWORD PTR [rax], 42			; 0000002aH
-	jge	SHORT $LN2@kttc__peek
-; Line 532
-	mov	rax, QWORD PTR token$[rsp]
-	jmp	SHORT $LN1@kttc__peek
-$LN2@kttc__peek:
-; Line 534
-	xor	eax, eax
-$LN1@kttc__peek:
-; Line 535
-	add	rsp, 56					; 00000038H
-	ret	0
-kttc__peek_func_specifier ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-token$ = 32
-parser$ = 64
-kttc__peek_storage_class PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 513
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-; Line 514
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	ccpeep
-	mov	QWORD PTR token$[rsp], rax
-; Line 516
-	mov	rax, QWORD PTR token$[rsp]
-	cmp	DWORD PTR [rax], 62			; 0000003eH
-	jle	SHORT $LN2@kttc__peek
-	mov	rax, QWORD PTR token$[rsp]
-	cmp	DWORD PTR [rax], 71			; 00000047H
-	jge	SHORT $LN2@kttc__peek
-; Line 519
-	mov	rax, QWORD PTR token$[rsp]
-	jmp	SHORT $LN1@kttc__peek
-$LN2@kttc__peek:
-; Line 521
-	xor	eax, eax
-$LN1@kttc__peek:
-; Line 522
-	add	rsp, 56					; 00000038H
-	ret	0
-kttc__peek_storage_class ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-token$ = 32
-parser$ = 64
-ccsee_typespec PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 500
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-; Line 501
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	ccpeep
-	mov	QWORD PTR token$[rsp], rax
-; Line 503
-	mov	rax, QWORD PTR token$[rsp]
-	cmp	DWORD PTR [rax], 43			; 0000002bH
-	jle	SHORT $LN2@ccsee_type
-	mov	rax, QWORD PTR token$[rsp]
-	cmp	DWORD PTR [rax], 64			; 00000040H
-	jge	SHORT $LN2@ccsee_type
-; Line 506
-	mov	rax, QWORD PTR token$[rsp]
-	jmp	SHORT $LN1@ccsee_type
-$LN2@ccsee_type:
-; Line 508
-	xor	eax, eax
-$LN1@ccsee_type:
-; Line 509
-	add	rsp, 56					; 00000038H
-	ret	0
-ccsee_typespec ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-token$ = 32
-parser$ = 64
-kttc__peek_type_qualifier PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 487
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-; Line 488
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	ccpeep
-	mov	QWORD PTR token$[rsp], rax
-; Line 490
-	mov	rax, QWORD PTR token$[rsp]
-	cmp	DWORD PTR [rax], 34			; 00000022H
-	jle	SHORT $LN2@kttc__peek
-	mov	rax, QWORD PTR token$[rsp]
-	cmp	DWORD PTR [rax], 38			; 00000026H
-	jge	SHORT $LN2@kttc__peek
-; Line 493
-	mov	rax, QWORD PTR token$[rsp]
-	jmp	SHORT $LN1@kttc__peek
-$LN2@kttc__peek:
-; Line 495
-	xor	eax, eax
-$LN1@kttc__peek:
-; Line 496
-	add	rsp, 56					; 00000038H
-	ret	0
-kttc__peek_type_qualifier ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-token$ = 32
-parser$ = 64
-kttc__peek_alignment_specifier PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 474
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-; Line 475
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	ccpeep
-	mov	QWORD PTR token$[rsp], rax
-; Line 477
-	mov	rax, QWORD PTR token$[rsp]
-	cmp	DWORD PTR [rax], 30
-	jle	SHORT $LN2@kttc__peek
-	mov	rax, QWORD PTR token$[rsp]
-	cmp	DWORD PTR [rax], 33			; 00000021H
-	jge	SHORT $LN2@kttc__peek
-; Line 480
-	mov	rax, QWORD PTR token$[rsp]
-	jmp	SHORT $LN1@kttc__peek
-$LN2@kttc__peek:
-; Line 482
-	xor	eax, eax
-$LN1@kttc__peek:
-; Line 483
-	add	rsp, 56					; 00000038H
-	ret	0
-kttc__peek_alignment_specifier ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-parser$ = 48
-ccsee_end PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 427
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 40					; 00000028H
-	xor	edx, edx
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	ccsee
-; Line 428
-	add	rsp, 40					; 00000028H
-	ret	0
-ccsee_end ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-parser$ = 8
-offset$ = 16
-kttc__peek_ahead PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 407
-	mov	DWORD PTR [rsp+16], edx
-	mov	QWORD PTR [rsp+8], rcx
-	movsxd	rax, DWORD PTR offset$[rsp]
-	imul	rax, rax, 64				; 00000040H
-	mov	rcx, QWORD PTR parser$[rsp]
-	add	rax, QWORD PTR [rcx+136]
-	mov	rcx, QWORD PTR parser$[rsp]
-	cmp	rax, QWORD PTR [rcx+128]
-	jae	SHORT $LN2@kttc__peek
-; Line 408
-	movsxd	rax, DWORD PTR offset$[rsp]
-	imul	rax, rax, 64				; 00000040H
-	mov	rcx, QWORD PTR parser$[rsp]
-	add	rax, QWORD PTR [rcx+136]
-	jmp	SHORT $LN1@kttc__peek
-$LN2@kttc__peek:
-; Line 412
-	lea	rax, OFFSET FLAT:?end_tok@?1??kttc__peek_ahead@@9@4Ucctoken_t@@A
-$LN1@kttc__peek:
-; Line 413
-	ret	0
-kttc__peek_ahead ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-size$ = 32
-file$ = 40
-data$ = 48
-reader$ = 80
-name$ = 88
-ccread_include PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 384
-	mov	QWORD PTR [rsp+16], rdx
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 72					; 00000048H
-; Line 386
-	mov	rcx, QWORD PTR name$[rsp]
-	call	ccopenfile
-	mov	QWORD PTR file$[rsp], rax
-; Line 387
-	mov	DWORD PTR size$[rsp], 0
-	lea	r8, QWORD PTR size$[rsp]
-	xor	edx, edx
-	mov	rcx, QWORD PTR file$[rsp]
-	call	ccpullfile
-	mov	QWORD PTR data$[rsp], rax
-; Line 388
-	mov	rcx, QWORD PTR file$[rsp]
-	call	ccclosefile
-; Line 390
-	mov	eax, DWORD PTR size$[rsp]
-	mov	r8, QWORD PTR data$[rsp]
-	mov	edx, eax
-	mov	rcx, QWORD PTR reader$[rsp]
-	call	ccreader_move
-; Line 394
-	add	rsp, 72					; 00000048H
-	ret	0
-ccread_include ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-tv79 = 32
-parser$ = 64
-len$ = 72
-min$ = 80
-ccreader_move PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 373
-	mov	QWORD PTR [rsp+24], r8
-	mov	QWORD PTR [rsp+16], rdx
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-; Line 374
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	r8, QWORD PTR min$[rsp]
-	mov	rdx, QWORD PTR len$[rsp]
-	mov	rcx, rax
-	call	cclex_move
-; Line 375
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	ccread_all_tokens
-; Line 377
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	QWORD PTR [rax+144], 0
-; Line 378
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	rcx, QWORD PTR parser$[rsp]
-	mov	rcx, QWORD PTR [rcx+120]
-	mov	QWORD PTR [rax+136], rcx
-; Line 379
-	mov	rax, QWORD PTR parser$[rsp]
-	cmp	QWORD PTR [rax+120], 0
-	je	SHORT $LN3@ccreader_m
-	mov	eax, 4
-	imul	rax, rax, -1
-	mov	rcx, QWORD PTR parser$[rsp]
-	mov	rcx, QWORD PTR [rcx+120]
-	mov	eax, DWORD PTR [rax+rcx]
-	mov	DWORD PTR tv79[rsp], eax
-	jmp	SHORT $LN4@ccreader_m
-$LN3@ccreader_m:
-	mov	DWORD PTR tv79[rsp], 0
-$LN4@ccreader_m:
-	mov	eax, DWORD PTR tv79[rsp]
-	xor	edx, edx
-	mov	ecx, 64					; 00000040H
-	div	rcx
-	imul	rax, rax, 64				; 00000040H
-	mov	rcx, QWORD PTR parser$[rsp]
-	add	rax, QWORD PTR [rcx+120]
-	mov	rcx, QWORD PTR parser$[rsp]
-	mov	QWORD PTR [rcx+128], rax
-; Line 380
-	add	rsp, 56					; 00000038H
-	ret	0
-ccreader_move ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-token$1 = 32
-parser$ = 64
-ccread_all_tokens PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 398
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-$LN2@ccread_all:
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	rcx, rax
-	call	cclex_next_token
-	test	eax, eax
-	je	SHORT $LN3@ccread_all
-; Line 400
-	mov	rax, QWORD PTR parser$[rsp]
-	add	rax, 120				; 00000078H
-	mov	r9d, 1
-	mov	r8d, 1
-	mov	edx, 64					; 00000040H
-	mov	rcx, rax
-	call	ccdlb_arradd
-	mov	eax, eax
-	imul	rax, rax, 64				; 00000040H
-	mov	rcx, QWORD PTR parser$[rsp]
-	add	rax, QWORD PTR [rcx+120]
-	mov	QWORD PTR token$1[rsp], rax
-; Line 401
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	rdx, QWORD PTR token$1[rsp]
-	mov	rcx, rax
-	call	cclex_token
-; Line 402
-	jmp	SHORT $LN2@ccread_all
-$LN3@ccread_all:
-; Line 403
-	add	rsp, 56					; 00000038H
-	ret	0
-ccread_all_tokens ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-tv73 = 32
-parser$ = 64
-ccread_uninit PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 363
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	rcx, rax
-	call	cclex_uninit
-; Line 364
-	mov	rax, QWORD PTR parser$[rsp]
-	cmp	QWORD PTR [rax+120], 0
-	je	SHORT $LN3@ccread_uni
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	rax, QWORD PTR [rax+120]
-	sub	rax, 24
-	mov	QWORD PTR tv73[rsp], rax
-	jmp	SHORT $LN4@ccread_uni
-$LN3@ccread_uni:
-	mov	QWORD PTR tv73[rsp], 0
-$LN4@ccread_uni:
-	mov	r9d, 364				; 0000016cH
-	lea	r8, OFFSET FLAT:$SG46949
-	lea	rdx, OFFSET FLAT:$SG46950
-	mov	rcx, QWORD PTR tv73[rsp]
-	call	ccfree_
-; Line 365
-	add	rsp, 56					; 00000038H
-	ret	0
-ccread_uninit ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-parser$ = 48
-ccread_init PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 354
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 40					; 00000028H
-	mov	r8d, 152				; 00000098H
-	xor	edx, edx
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	memset
-; Line 355
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	rcx, rax
-	call	cclex_init
-; Line 356
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	QWORD PTR [rax+144], 0
-; Line 357
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	QWORD PTR [rax+136], 0
-; Line 358
-	mov	rax, QWORD PTR parser$[rsp]
-	mov	QWORD PTR [rax+128], 0
-; Line 359
-	add	rsp, 40					; 00000028H
-	ret	0
-ccread_init ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-result$ = 32
-tree$ = 80
-cctree_clone PROC
-; File W:\cpp\void\ktt-c\cctree.h
-; Line 136
-	mov	QWORD PTR [rsp+8], rcx
-	push	rsi
-	push	rdi
-	sub	rsp, 56					; 00000038H
-	mov	rax, QWORD PTR tree$[rsp]
-	mov	r8d, DWORD PTR [rax+16]
-	mov	rax, QWORD PTR tree$[rsp]
-	mov	rdx, QWORD PTR [rax+8]
-	mov	rax, QWORD PTR tree$[rsp]
-	mov	ecx, DWORD PTR [rax]
-	call	cctree_new
-	mov	QWORD PTR result$[rsp], rax
-; Line 137
-	mov	rdi, QWORD PTR result$[rsp]
-	mov	rsi, QWORD PTR tree$[rsp]
-	mov	ecx, 184				; 000000b8H
-	rep movsb
-; Line 138
-	mov	rax, QWORD PTR result$[rsp]
-; Line 139
-	add	rsp, 56					; 00000038H
-	pop	rdi
-	pop	rsi
-	ret	0
-cctree_clone ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-tv73 = 32
-reader$ = 64
-ccgobble PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 539
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-	mov	rax, QWORD PTR reader$[rsp]
-	mov	rcx, QWORD PTR reader$[rsp]
-	mov	rcx, QWORD PTR [rcx+128]
-	cmp	QWORD PTR [rax+136], rcx
-	jae	SHORT $LN2@ccgobble
-	mov	rax, QWORD PTR reader$[rsp]
-	mov	rcx, QWORD PTR reader$[rsp]
-	mov	rcx, QWORD PTR [rcx+136]
-	mov	QWORD PTR [rax+144], rcx
-	mov	rax, QWORD PTR reader$[rsp]
-	mov	rax, QWORD PTR [rax+144]
-	mov	QWORD PTR tv73[rsp], rax
-	mov	rax, QWORD PTR reader$[rsp]
-	mov	rax, QWORD PTR [rax+136]
-	add	rax, 64					; 00000040H
-	mov	rcx, QWORD PTR reader$[rsp]
-	mov	QWORD PTR [rcx+136], rax
-	mov	rax, QWORD PTR tv73[rsp]
-	jmp	SHORT $LN1@ccgobble
-$LN2@ccgobble:
-; Line 540
-	mov	rcx, QWORD PTR reader$[rsp]
-	call	ccpeep
-$LN1@ccgobble:
-; Line 541
-	add	rsp, 56					; 00000038H
-	ret	0
-ccgobble ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-tv68 = 32
-parser$ = 64
-kind$ = 72
-ccsee	PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 422
-	mov	DWORD PTR [rsp+16], edx
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	ccpeep
-	mov	ecx, DWORD PTR kind$[rsp]
-	cmp	DWORD PTR [rax], ecx
-	jne	SHORT $LN3@ccsee
-	mov	DWORD PTR tv68[rsp], 1
-	jmp	SHORT $LN4@ccsee
-$LN3@ccsee:
-	mov	DWORD PTR tv68[rsp], 0
-$LN4@ccsee:
-	mov	eax, DWORD PTR tv68[rsp]
-; Line 423
-	add	rsp, 56					; 00000038H
-	ret	0
-ccsee	ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-parser$ = 48
-ccpeep	PROC
-; File W:\cpp\void\ktt-c\ccread.h
-; Line 417
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 40					; 00000028H
-	xor	edx, edx
-	mov	rcx, QWORD PTR parser$[rsp]
-	call	kttc__peek_ahead
-; Line 418
-	add	rsp, 40					; 00000028H
-	ret	0
-ccpeep	ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-l$ = 8
-cclex_uninit PROC
-; File W:\cpp\void\ktt-c\cclex.c
-; Line 183
-	mov	QWORD PTR [rsp+8], rcx
-; Line 186
-	ret	0
-cclex_uninit ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-$T1 = 0
-l$ = 96
-token$ = 104
-cclex_token PROC
-; File W:\cpp\void\ktt-c\cclex.c
-; Line 202
-	mov	QWORD PTR [rsp+16], rdx
-	mov	QWORD PTR [rsp+8], rcx
-	push	rsi
-	push	rdi
-	sub	rsp, 72					; 00000048H
-	mov	rax, QWORD PTR l$[rsp]
-	mov	rdi, QWORD PTR token$[rsp]
-	lea	rsi, QWORD PTR [rax+56]
-	mov	ecx, 64					; 00000040H
-	rep movsb
-; Line 203
-	lea	rax, QWORD PTR $T1[rsp]
-	mov	rdi, rax
-	xor	eax, eax
-	mov	ecx, 64					; 00000040H
-	rep stosb
-	mov	rax, QWORD PTR l$[rsp]
-	lea	rcx, QWORD PTR $T1[rsp]
-	lea	rdi, QWORD PTR [rax+56]
-	mov	rsi, rcx
-	mov	ecx, 64					; 00000040H
-	rep movsb
-; Line 204
-	add	rsp, 72					; 00000048H
-	pop	rdi
-	pop	rsi
-	ret	0
-cclex_token ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-tv80 = 32
-l$ = 64
-cclex_next_token PROC
-; File W:\cpp\void\ktt-c\cclex.c
-; Line 210
-	mov	QWORD PTR [rsp+8], rcx
-	sub	rsp, 56					; 00000038H
-$LN10@cclex_next:
-$LN9@cclex_next:
-$LN8@cclex_next:
-$LN4@cclex_next:
-; Line 212
-	mov	rcx, QWORD PTR l$[rsp]
-	call	cclex_next_token_internal
-; Line 215
-	mov	rax, QWORD PTR l$[rsp]
-	cmp	DWORD PTR [rax+56], 13
-	je	SHORT $LN4@cclex_next
-	mov	rax, QWORD PTR l$[rsp]
-	cmp	DWORD PTR [rax+56], 11
-	je	SHORT $LN8@cclex_next
-	mov	rax, QWORD PTR l$[rsp]
-	cmp	DWORD PTR [rax+56], 1
-	je	SHORT $LN9@cclex_next
-	mov	rax, QWORD PTR l$[rsp]
-	cmp	DWORD PTR [rax+56], 2
-	je	SHORT $LN10@cclex_next
-; Line 218
-	mov	rax, QWORD PTR l$[rsp]
-	cmp	DWORD PTR [rax+56], 0
-	jle	SHORT $LN6@cclex_next
-	mov	DWORD PTR tv80[rsp], 1
-	jmp	SHORT $LN7@cclex_next
-$LN6@cclex_next:
-	mov	DWORD PTR tv80[rsp], 0
-$LN7@cclex_next:
-	mov	eax, DWORD PTR tv80[rsp]
-; Line 219
-	add	rsp, 56					; 00000038H
-	ret	0
-cclex_next_token ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-l$ = 8
-len$ = 16
-bed$ = 24
-cclex_move PROC
-; File W:\cpp\void\ktt-c\cclex.c
-; Line 163
-	mov	QWORD PTR [rsp+24], r8
-	mov	QWORD PTR [rsp+16], rdx
-	mov	QWORD PTR [rsp+8], rcx
-; Line 164
-	mov	rax, QWORD PTR len$[rsp]
-	mov	rcx, QWORD PTR bed$[rsp]
-	add	rcx, rax
-	mov	rax, rcx
-	mov	rcx, QWORD PTR l$[rsp]
-	mov	QWORD PTR [rcx], rax
-; Line 165
-	mov	rax, QWORD PTR l$[rsp]
-	mov	rcx, QWORD PTR bed$[rsp]
-	mov	QWORD PTR [rax+16], rcx
-	mov	rax, QWORD PTR l$[rsp]
-	mov	rcx, QWORD PTR bed$[rsp]
-	mov	QWORD PTR [rax+24], rcx
-	mov	rax, QWORD PTR l$[rsp]
-	mov	rcx, QWORD PTR bed$[rsp]
-	mov	QWORD PTR [rax+8], rcx
-; Line 166
-	ret	0
-cclex_move ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-$T1 = 32
-l$ = 128
-cclex_init PROC
-; File W:\cpp\void\ktt-c\cclex.c
-; Line 170
-	mov	QWORD PTR [rsp+8], rcx
-	push	rsi
-	push	rdi
-	sub	rsp, 104				; 00000068H
-; Line 171
-	lea	rax, QWORD PTR $T1[rsp]
-	mov	rdi, rax
-	xor	eax, eax
-	mov	ecx, 64					; 00000040H
-	rep stosb
-	mov	rax, QWORD PTR l$[rsp]
-	lea	rcx, QWORD PTR $T1[rsp]
-	lea	rdi, QWORD PTR [rax+56]
-	mov	rsi, rcx
-	mov	ecx, 64					; 00000040H
-	rep movsb
-; Line 173
-	mov	rax, QWORD PTR l$[rsp]
-	mov	DWORD PTR [rax+32], 1024		; 00000400H
-; Line 174
-	mov	rax, QWORD PTR l$[rsp]
-	mov	DWORD PTR [rax+36], 0
-; Line 175
-	mov	rax, QWORD PTR l$[rsp]
-	mov	eax, DWORD PTR [rax+32]
-	imul	rax, rax, 24
-	mov	r9d, 175				; 000000afH
-	lea	r8, OFFSET FLAT:$SG48219
-	lea	rdx, OFFSET FLAT:$SG48220
-	mov	rcx, rax
-	call	ccmalloc_
-	mov	rcx, QWORD PTR l$[rsp]
-	mov	QWORD PTR [rcx+40], rax
-; Line 176
-	mov	rax, QWORD PTR l$[rsp]
-	mov	eax, DWORD PTR [rax+32]
-	imul	rax, rax, 24
-	mov	r8, rax
-	xor	edx, edx
-	mov	rax, QWORD PTR l$[rsp]
-	mov	rcx, QWORD PTR [rax+40]
-	call	memset
-; Line 178
-	mov	rcx, QWORD PTR l$[rsp]
-	call	cclex_hash_init
-; Line 179
-	add	rsp, 104				; 00000068H
-	pop	rdi
-	pop	rsi
-	ret	0
-cclex_init ENDP
-_TEXT	ENDS
-; Function compile flags: /Odtp
-_TEXT	SEGMENT
-i$1 = 48
-key$2 = 56
-string_map$ = 64
-simple_arr$ = 72
-i$3 = 80
-i$4 = 84
-res$5 = 88
-item$ = 96
-mem$ = 104
-key$6 = 112
-tv353 = 120
-tv403 = 124
-key$7 = 128
-key$8 = 136
-pointer_map$ = 144
-tv145 = 152
-tv184 = 156
-tv224 = 160
-tv254 = 164
-tv392 = 168
-item$9 = 176
-item$10 = 184
-res$11 = 192
-res$12 = 200
-res$13 = 208
-res$14 = 216
-key$15 = 224
+i$1 = 32
+key$2 = 40
+string_map$ = 48
+simple_arr$ = 56
+i$3 = 64
+i$4 = 68
+res$5 = 72
+item$ = 80
+key$6 = 88
+tv364 = 96
+tv426 = 100
+key$7 = 104
+key$8 = 112
+pointer_map$ = 120
+tv88 = 128
+tv159 = 132
+tv205 = 136
+tv241 = 140
+tv415 = 144
+item$9 = 152
+item$10 = 160
+res$11 = 168
+res$12 = 176
+res$13 = 184
+res$14 = 192
+key$15 = 200
 ccdlb_test PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 472
-	sub	rsp, 248				; 000000f8H
-; Line 474
-	mov	QWORD PTR mem$[rsp], 0
-; Line 475
-	mov	DWORD PTR [rsp+32], 475			; 000001dbH
-	lea	r9, OFFSET FLAT:$SG46608
-	lea	r8, OFFSET FLAT:$SG46609
-	mov	edx, 24
-	mov	rcx, QWORD PTR mem$[rsp]
-	call	ccrealloc_
-	mov	QWORD PTR mem$[rsp], rax
 ; Line 476
-	mov	r9d, 476				; 000001dcH
-	lea	r8, OFFSET FLAT:$SG46610
-	lea	rdx, OFFSET FLAT:$SG46611
-	mov	rcx, QWORD PTR mem$[rsp]
-	call	ccfree_
-; Line 478
-	mov	r9d, 478				; 000001deH
-	lea	r8, OFFSET FLAT:$SG46612
-	lea	rdx, OFFSET FLAT:$SG46613
-	mov	ecx, 24
-	call	ccmalloc_
-	mov	QWORD PTR mem$[rsp], rax
-; Line 479
-	mov	DWORD PTR [rsp+32], 479			; 000001dfH
-	lea	r9, OFFSET FLAT:$SG46614
-	lea	r8, OFFSET FLAT:$SG46615
-	mov	edx, 48					; 00000030H
-	mov	rcx, QWORD PTR mem$[rsp]
-	call	ccrealloc_
-	mov	QWORD PTR mem$[rsp], rax
-; Line 480
-	mov	r9d, 480				; 000001e0H
-	lea	r8, OFFSET FLAT:$SG46616
-	lea	rdx, OFFSET FLAT:$SG46617
-	mov	rcx, QWORD PTR mem$[rsp]
-	call	ccfree_
-; Line 510
+	sub	rsp, 216				; 000000d8H
+; Line 516
 	mov	QWORD PTR simple_arr$[rsp], 0
-; Line 511
+; Line 517
 	mov	DWORD PTR i$3[rsp], 0
 	jmp	SHORT $LN4@ccdlb_test
 $LN2@ccdlb_test:
@@ -16069,7 +16096,7 @@ $LN2@ccdlb_test:
 $LN4@ccdlb_test:
 	cmp	DWORD PTR i$3[rsp], 25
 	jg	$LN3@ccdlb_test
-; Line 513
+; Line 519
 	mov	r9d, 1
 	mov	r8d, 1
 	mov	edx, 8
@@ -16079,30 +16106,30 @@ $LN4@ccdlb_test:
 	mov	rcx, QWORD PTR simple_arr$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR item$9[rsp], rax
-; Line 514
+; Line 520
 	mov	r8d, 8
 	xor	edx, edx
 	mov	rcx, QWORD PTR item$9[rsp]
 	call	memset
-; Line 515
+; Line 521
 	mov	eax, DWORD PTR i$3[rsp]
 	add	eax, 97					; 00000061H
 	mov	r8d, DWORD PTR i$3[rsp]
 	mov	edx, eax
-	lea	rcx, OFFSET FLAT:$SG46618
+	lea	rcx, OFFSET FLAT:$SG46614
 	call	ccformat
 	mov	QWORD PTR key$7[rsp], rax
-; Line 516
+; Line 522
 	mov	rcx, QWORD PTR key$7[rsp]
 	call	strlen
 	inc	eax
-	mov	DWORD PTR tv145[rsp], eax
+	mov	DWORD PTR tv88[rsp], eax
 	mov	rcx, QWORD PTR key$7[rsp]
 	call	strlen
 	inc	eax
 	mov	rcx, QWORD PTR item$9[rsp]
 	mov	r9, QWORD PTR key$7[rsp]
-	mov	edx, DWORD PTR tv145[rsp]
+	mov	edx, DWORD PTR tv88[rsp]
 	mov	r8d, edx
 	mov	edx, eax
 	call	ccdlb_stradd
@@ -16110,7 +16137,7 @@ $LN4@ccdlb_test:
 	mov	rcx, QWORD PTR item$9[rsp]
 	add	rax, QWORD PTR [rcx]
 	mov	QWORD PTR res$12[rsp], rax
-; Line 517
+; Line 523
 	mov	rdx, QWORD PTR key$7[rsp]
 	mov	rcx, QWORD PTR res$12[rsp]
 	call	strcmp
@@ -16118,10 +16145,10 @@ $LN4@ccdlb_test:
 	je	SHORT $LN18@ccdlb_test
 	int	3
 $LN18@ccdlb_test:
-; Line 518
+; Line 524
 	jmp	$LN2@ccdlb_test
 $LN3@ccdlb_test:
-; Line 519
+; Line 525
 	mov	DWORD PTR i$4[rsp], 0
 	jmp	SHORT $LN7@ccdlb_test
 $LN5@ccdlb_test:
@@ -16131,7 +16158,7 @@ $LN5@ccdlb_test:
 $LN7@ccdlb_test:
 	cmp	DWORD PTR i$4[rsp], 25
 	jg	$LN6@ccdlb_test
-; Line 521
+; Line 527
 	mov	r9d, 1
 	mov	r8d, 1
 	mov	edx, 8
@@ -16141,30 +16168,30 @@ $LN7@ccdlb_test:
 	mov	rcx, QWORD PTR simple_arr$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR item$10[rsp], rax
-; Line 522
+; Line 528
 	mov	r8d, 8
 	xor	edx, edx
 	mov	rcx, QWORD PTR item$10[rsp]
 	call	memset
-; Line 523
+; Line 529
 	mov	eax, DWORD PTR i$4[rsp]
 	add	eax, 65					; 00000041H
 	mov	r8d, DWORD PTR i$4[rsp]
 	mov	edx, eax
-	lea	rcx, OFFSET FLAT:$SG46619
+	lea	rcx, OFFSET FLAT:$SG46615
 	call	ccformat
 	mov	QWORD PTR key$8[rsp], rax
-; Line 524
+; Line 530
 	mov	rcx, QWORD PTR key$8[rsp]
 	call	strlen
 	inc	eax
-	mov	DWORD PTR tv184[rsp], eax
+	mov	DWORD PTR tv159[rsp], eax
 	mov	rcx, QWORD PTR key$8[rsp]
 	call	strlen
 	inc	eax
 	mov	rcx, QWORD PTR item$10[rsp]
 	mov	r9, QWORD PTR key$8[rsp]
-	mov	edx, DWORD PTR tv184[rsp]
+	mov	edx, DWORD PTR tv159[rsp]
 	mov	r8d, edx
 	mov	edx, eax
 	call	ccdlb_stradd
@@ -16172,7 +16199,7 @@ $LN7@ccdlb_test:
 	mov	rcx, QWORD PTR item$10[rsp]
 	add	rax, QWORD PTR [rcx]
 	mov	QWORD PTR res$13[rsp], rax
-; Line 525
+; Line 531
 	mov	rdx, QWORD PTR key$8[rsp]
 	mov	rcx, QWORD PTR res$13[rsp]
 	call	strcmp
@@ -16180,12 +16207,12 @@ $LN7@ccdlb_test:
 	je	SHORT $LN20@ccdlb_test
 	int	3
 $LN20@ccdlb_test:
-; Line 526
+; Line 532
 	jmp	$LN5@ccdlb_test
 $LN6@ccdlb_test:
-; Line 528
+; Line 534
 	mov	QWORD PTR string_map$[rsp], 0
-; Line 530
+; Line 536
 	mov	DWORD PTR i$1[rsp], 0
 	jmp	SHORT $LN10@ccdlb_test
 $LN8@ccdlb_test:
@@ -16195,15 +16222,15 @@ $LN8@ccdlb_test:
 $LN10@ccdlb_test:
 	cmp	DWORD PTR i$1[rsp], 25
 	jg	$LN9@ccdlb_test
-; Line 535
+; Line 541
 	mov	eax, DWORD PTR i$1[rsp]
 	add	eax, 97					; 00000061H
 	mov	r8d, DWORD PTR i$1[rsp]
 	mov	edx, eax
-	lea	rcx, OFFSET FLAT:$SG46620
+	lea	rcx, OFFSET FLAT:$SG46616
 	call	ccformat
 	mov	QWORD PTR key$2[rsp], rax
-; Line 536
+; Line 542
 	mov	rcx, QWORD PTR key$2[rsp]
 	call	strlen
 	mov	r9, QWORD PTR key$2[rsp]
@@ -16215,70 +16242,36 @@ $LN10@ccdlb_test:
 	mov	rcx, QWORD PTR string_map$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR res$5[rsp], rax
-; Line 537
-	cmp	DWORD PTR ccerr, 0
+; Line 543
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN22@ccdlb_test
 	int	3
 $LN22@ccdlb_test:
-; Line 538
+; Line 544
 	mov	rcx, QWORD PTR key$2[rsp]
 	call	strlen
 	inc	eax
-	mov	DWORD PTR tv224[rsp], eax
-	mov	rcx, QWORD PTR key$2[rsp]
-	call	strlen
-	inc	eax
-	mov	rcx, QWORD PTR res$5[rsp]
-	mov	r9, QWORD PTR key$2[rsp]
-	mov	edx, DWORD PTR tv224[rsp]
-	mov	r8d, edx
-	mov	edx, eax
-	call	ccdlb_stradd
-; Line 540
-	mov	eax, DWORD PTR i$1[rsp]
-	add	eax, 65					; 00000041H
-	mov	r8d, DWORD PTR i$1[rsp]
-	mov	edx, eax
-	lea	rcx, OFFSET FLAT:$SG46621
-	call	ccformat
-	mov	QWORD PTR key$2[rsp], rax
-; Line 541
-	mov	rcx, QWORD PTR key$2[rsp]
-	call	strlen
-	mov	r9, QWORD PTR key$2[rsp]
-	mov	r8d, eax
-	mov	edx, 8
-	lea	rcx, QWORD PTR string_map$[rsp]
-	call	ccdlb_tblput
-	mov	eax, eax
-	mov	rcx, QWORD PTR string_map$[rsp]
-	lea	rax, QWORD PTR [rcx+rax*8]
-	mov	QWORD PTR res$5[rsp], rax
-; Line 542
-	cmp	DWORD PTR ccerr, 0
-	je	SHORT $LN24@ccdlb_test
-	int	3
-$LN24@ccdlb_test:
-; Line 543
-	mov	rcx, QWORD PTR key$2[rsp]
-	call	strlen
-	inc	eax
-	mov	DWORD PTR tv254[rsp], eax
+	mov	DWORD PTR tv205[rsp], eax
 	mov	rcx, QWORD PTR key$2[rsp]
 	call	strlen
 	inc	eax
 	mov	rcx, QWORD PTR res$5[rsp]
 	mov	r9, QWORD PTR key$2[rsp]
-	mov	edx, DWORD PTR tv254[rsp]
+	mov	edx, DWORD PTR tv205[rsp]
 	mov	r8d, edx
 	mov	edx, eax
 	call	ccdlb_stradd
 ; Line 546
 	mov	eax, DWORD PTR i$1[rsp]
-	add	eax, 97					; 00000061H
+	add	eax, 65					; 00000041H
 	mov	r8d, DWORD PTR i$1[rsp]
 	mov	edx, eax
-	lea	rcx, OFFSET FLAT:$SG46622
+	lea	rcx, OFFSET FLAT:$SG46617
 	call	ccformat
 	mov	QWORD PTR key$2[rsp], rax
 ; Line 547
@@ -16288,34 +16281,44 @@ $LN24@ccdlb_test:
 	mov	r8d, eax
 	mov	edx, 8
 	lea	rcx, QWORD PTR string_map$[rsp]
-	call	ccdlb_tblset
+	call	ccdlb_tblput
 	mov	eax, eax
 	mov	rcx, QWORD PTR string_map$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR res$5[rsp], rax
 ; Line 548
-	cmp	DWORD PTR ccerr, 0
-	je	SHORT $LN26@ccdlb_test
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
+	je	SHORT $LN24@ccdlb_test
 	int	3
-$LN26@ccdlb_test:
+$LN24@ccdlb_test:
 ; Line 549
-	mov	rax, QWORD PTR res$5[rsp]
-	mov	rdx, QWORD PTR [rax]
 	mov	rcx, QWORD PTR key$2[rsp]
-	call	strcmp
-	test	eax, eax
-	je	SHORT $LN28@ccdlb_test
-	int	3
-$LN28@ccdlb_test:
-; Line 551
+	call	strlen
+	inc	eax
+	mov	DWORD PTR tv241[rsp], eax
+	mov	rcx, QWORD PTR key$2[rsp]
+	call	strlen
+	inc	eax
+	mov	rcx, QWORD PTR res$5[rsp]
+	mov	r9, QWORD PTR key$2[rsp]
+	mov	edx, DWORD PTR tv241[rsp]
+	mov	r8d, edx
+	mov	edx, eax
+	call	ccdlb_stradd
+; Line 552
 	mov	eax, DWORD PTR i$1[rsp]
-	add	eax, 65					; 00000041H
+	add	eax, 97					; 00000061H
 	mov	r8d, DWORD PTR i$1[rsp]
 	mov	edx, eax
-	lea	rcx, OFFSET FLAT:$SG46623
+	lea	rcx, OFFSET FLAT:$SG46618
 	call	ccformat
 	mov	QWORD PTR key$2[rsp], rax
-; Line 552
+; Line 553
 	mov	rcx, QWORD PTR key$2[rsp]
 	call	strlen
 	mov	r9, QWORD PTR key$2[rsp]
@@ -16327,26 +16330,31 @@ $LN28@ccdlb_test:
 	mov	rcx, QWORD PTR string_map$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR res$5[rsp], rax
-; Line 553
-	cmp	DWORD PTR ccerr, 0
-	je	SHORT $LN30@ccdlb_test
-	int	3
-$LN30@ccdlb_test:
 ; Line 554
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
+	je	SHORT $LN26@ccdlb_test
+	int	3
+$LN26@ccdlb_test:
+; Line 555
 	mov	rax, QWORD PTR res$5[rsp]
 	mov	rdx, QWORD PTR [rax]
 	mov	rcx, QWORD PTR key$2[rsp]
 	call	strcmp
 	test	eax, eax
-	je	SHORT $LN32@ccdlb_test
+	je	SHORT $LN28@ccdlb_test
 	int	3
-$LN32@ccdlb_test:
+$LN28@ccdlb_test:
 ; Line 557
 	mov	eax, DWORD PTR i$1[rsp]
-	add	eax, 97					; 00000061H
+	add	eax, 65					; 00000041H
 	mov	r8d, DWORD PTR i$1[rsp]
 	mov	edx, eax
-	lea	rcx, OFFSET FLAT:$SG46624
+	lea	rcx, OFFSET FLAT:$SG46619
 	call	ccformat
 	mov	QWORD PTR key$2[rsp], rax
 ; Line 558
@@ -16356,34 +16364,39 @@ $LN32@ccdlb_test:
 	mov	r8d, eax
 	mov	edx, 8
 	lea	rcx, QWORD PTR string_map$[rsp]
-	call	ccdlb_tblget
+	call	ccdlb_tblset
 	mov	eax, eax
 	mov	rcx, QWORD PTR string_map$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR res$5[rsp], rax
 ; Line 559
-	cmp	DWORD PTR ccerr, 0
-	je	SHORT $LN34@ccdlb_test
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
+	je	SHORT $LN30@ccdlb_test
 	int	3
-$LN34@ccdlb_test:
+$LN30@ccdlb_test:
 ; Line 560
 	mov	rax, QWORD PTR res$5[rsp]
 	mov	rdx, QWORD PTR [rax]
 	mov	rcx, QWORD PTR key$2[rsp]
 	call	strcmp
 	test	eax, eax
-	je	SHORT $LN36@ccdlb_test
+	je	SHORT $LN32@ccdlb_test
 	int	3
-$LN36@ccdlb_test:
-; Line 562
+$LN32@ccdlb_test:
+; Line 563
 	mov	eax, DWORD PTR i$1[rsp]
-	add	eax, 65					; 00000041H
+	add	eax, 97					; 00000061H
 	mov	r8d, DWORD PTR i$1[rsp]
 	mov	edx, eax
-	lea	rcx, OFFSET FLAT:$SG46625
+	lea	rcx, OFFSET FLAT:$SG46620
 	call	ccformat
 	mov	QWORD PTR key$2[rsp], rax
-; Line 563
+; Line 564
 	mov	rcx, QWORD PTR key$2[rsp]
 	call	strlen
 	mov	r9, QWORD PTR key$2[rsp]
@@ -16395,12 +16408,56 @@ $LN36@ccdlb_test:
 	mov	rcx, QWORD PTR string_map$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR res$5[rsp], rax
-; Line 564
-	cmp	DWORD PTR ccerr, 0
+; Line 565
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
+	je	SHORT $LN34@ccdlb_test
+	int	3
+$LN34@ccdlb_test:
+; Line 566
+	mov	rax, QWORD PTR res$5[rsp]
+	mov	rdx, QWORD PTR [rax]
+	mov	rcx, QWORD PTR key$2[rsp]
+	call	strcmp
+	test	eax, eax
+	je	SHORT $LN36@ccdlb_test
+	int	3
+$LN36@ccdlb_test:
+; Line 568
+	mov	eax, DWORD PTR i$1[rsp]
+	add	eax, 65					; 00000041H
+	mov	r8d, DWORD PTR i$1[rsp]
+	mov	edx, eax
+	lea	rcx, OFFSET FLAT:$SG46621
+	call	ccformat
+	mov	QWORD PTR key$2[rsp], rax
+; Line 569
+	mov	rcx, QWORD PTR key$2[rsp]
+	call	strlen
+	mov	r9, QWORD PTR key$2[rsp]
+	mov	r8d, eax
+	mov	edx, 8
+	lea	rcx, QWORD PTR string_map$[rsp]
+	call	ccdlb_tblget
+	mov	eax, eax
+	mov	rcx, QWORD PTR string_map$[rsp]
+	lea	rax, QWORD PTR [rcx+rax*8]
+	mov	QWORD PTR res$5[rsp], rax
+; Line 570
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN38@ccdlb_test
 	int	3
 $LN38@ccdlb_test:
-; Line 565
+; Line 571
 	mov	rax, QWORD PTR res$5[rsp]
 	mov	rdx, QWORD PTR [rax]
 	mov	rcx, QWORD PTR key$2[rsp]
@@ -16409,12 +16466,12 @@ $LN38@ccdlb_test:
 	je	SHORT $LN40@ccdlb_test
 	int	3
 $LN40@ccdlb_test:
-; Line 566
+; Line 572
 	jmp	$LN8@ccdlb_test
 $LN9@ccdlb_test:
-; Line 568
+; Line 574
 	mov	QWORD PTR pointer_map$[rsp], 0
-; Line 571
+; Line 577
 	mov	rax, QWORD PTR simple_arr$[rsp]
 	mov	QWORD PTR item$[rsp], rax
 	jmp	SHORT $LN13@ccdlb_test
@@ -16429,12 +16486,12 @@ $LN13@ccdlb_test:
 	imul	rax, rax, -1
 	mov	rcx, QWORD PTR simple_arr$[rsp]
 	mov	eax, DWORD PTR [rcx+rax]
-	mov	DWORD PTR tv353[rsp], eax
+	mov	DWORD PTR tv364[rsp], eax
 	jmp	SHORT $LN43@ccdlb_test
 $LN42@ccdlb_test:
-	mov	DWORD PTR tv353[rsp], 0
+	mov	DWORD PTR tv364[rsp], 0
 $LN43@ccdlb_test:
-	mov	eax, DWORD PTR tv353[rsp]
+	mov	eax, DWORD PTR tv364[rsp]
 	xor	edx, edx
 	mov	ecx, 8
 	div	rcx
@@ -16442,11 +16499,11 @@ $LN43@ccdlb_test:
 	lea	rax, QWORD PTR [rcx+rax*8]
 	cmp	QWORD PTR item$[rsp], rax
 	jae	$LN12@ccdlb_test
-; Line 573
+; Line 579
 	mov	rax, QWORD PTR item$[rsp]
 	mov	rax, QWORD PTR [rax]
 	mov	QWORD PTR key$6[rsp], rax
-; Line 577
+; Line 583
 	mov	rcx, QWORD PTR key$6[rsp]
 	call	strlen
 	mov	r9, QWORD PTR key$6[rsp]
@@ -16458,12 +16515,17 @@ $LN43@ccdlb_test:
 	mov	rcx, QWORD PTR string_map$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR res$11[rsp], rax
-; Line 578
-	cmp	DWORD PTR ccerr, 0
+; Line 584
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN44@ccdlb_test
 	int	3
 $LN44@ccdlb_test:
-; Line 579
+; Line 585
 	mov	rax, QWORD PTR res$11[rsp]
 	mov	rdx, QWORD PTR [rax]
 	mov	rcx, QWORD PTR key$6[rsp]
@@ -16472,7 +16534,7 @@ $LN44@ccdlb_test:
 	je	SHORT $LN46@ccdlb_test
 	int	3
 $LN46@ccdlb_test:
-; Line 581
+; Line 587
 	mov	r9, QWORD PTR item$[rsp]
 	mov	r8d, -8
 	mov	edx, 8
@@ -16482,29 +16544,34 @@ $LN46@ccdlb_test:
 	mov	rcx, QWORD PTR pointer_map$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR res$11[rsp], rax
-; Line 582
-	cmp	DWORD PTR ccerr, 0
+; Line 588
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN48@ccdlb_test
 	int	3
 $LN48@ccdlb_test:
-; Line 583
+; Line 589
 	mov	rcx, QWORD PTR key$6[rsp]
 	call	strlen
 	inc	eax
-	mov	DWORD PTR tv392[rsp], eax
+	mov	DWORD PTR tv415[rsp], eax
 	mov	rcx, QWORD PTR key$6[rsp]
 	call	strlen
 	inc	eax
 	mov	rcx, QWORD PTR res$11[rsp]
 	mov	r9, QWORD PTR key$6[rsp]
-	mov	edx, DWORD PTR tv392[rsp]
+	mov	edx, DWORD PTR tv415[rsp]
 	mov	r8d, edx
 	mov	edx, eax
 	call	ccdlb_stradd
-; Line 584
+; Line 590
 	jmp	$LN11@ccdlb_test
 $LN12@ccdlb_test:
-; Line 586
+; Line 592
 	mov	rax, QWORD PTR simple_arr$[rsp]
 	mov	QWORD PTR item$[rsp], rax
 	jmp	SHORT $LN16@ccdlb_test
@@ -16519,24 +16586,24 @@ $LN16@ccdlb_test:
 	imul	rax, rax, -1
 	mov	rcx, QWORD PTR simple_arr$[rsp]
 	mov	eax, DWORD PTR [rcx+rax]
-	mov	DWORD PTR tv403[rsp], eax
+	mov	DWORD PTR tv426[rsp], eax
 	jmp	SHORT $LN51@ccdlb_test
 $LN50@ccdlb_test:
-	mov	DWORD PTR tv403[rsp], 0
+	mov	DWORD PTR tv426[rsp], 0
 $LN51@ccdlb_test:
-	mov	eax, DWORD PTR tv403[rsp]
+	mov	eax, DWORD PTR tv426[rsp]
 	xor	edx, edx
 	mov	ecx, 8
 	div	rcx
 	mov	rcx, QWORD PTR simple_arr$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	cmp	QWORD PTR item$[rsp], rax
-	jae	SHORT $LN15@ccdlb_test
-; Line 587
+	jae	$LN15@ccdlb_test
+; Line 593
 	mov	rax, QWORD PTR item$[rsp]
 	mov	rax, QWORD PTR [rax]
 	mov	QWORD PTR key$15[rsp], rax
-; Line 589
+; Line 595
 	mov	r9, QWORD PTR item$[rsp]
 	mov	r8d, -8
 	mov	edx, 8
@@ -16546,12 +16613,17 @@ $LN51@ccdlb_test:
 	mov	rcx, QWORD PTR pointer_map$[rsp]
 	lea	rax, QWORD PTR [rcx+rax*8]
 	mov	QWORD PTR res$14[rsp], rax
-; Line 590
-	cmp	DWORD PTR ccerr, 0
+; Line 596
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	je	SHORT $LN52@ccdlb_test
 	int	3
 $LN52@ccdlb_test:
-; Line 591
+; Line 597
 	mov	rax, QWORD PTR res$14[rsp]
 	mov	rdx, QWORD PTR [rax]
 	mov	rcx, QWORD PTR key$15[rsp]
@@ -16560,11 +16632,11 @@ $LN52@ccdlb_test:
 	je	SHORT $LN54@ccdlb_test
 	int	3
 $LN54@ccdlb_test:
-; Line 592
+; Line 598
 	jmp	$LN14@ccdlb_test
 $LN15@ccdlb_test:
-; Line 593
-	add	rsp, 248				; 000000f8H
+; Line 599
+	add	rsp, 216				; 000000d8H
 	ret	0
 ccdlb_test ENDP
 _TEXT	ENDS
@@ -16576,26 +16648,26 @@ ccm$ = 64
 fmt$ = 72
 ccstr_catf PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 457
+; Line 461
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	mov	QWORD PTR [rsp+24], r8
 	mov	QWORD PTR [rsp+32], r9
 	sub	rsp, 56					; 00000038H
-; Line 459
+; Line 463
 	lea	rax, QWORD PTR fmt$[rsp+8]
 	mov	QWORD PTR vli$[rsp], rax
-; Line 462
+; Line 466
 	mov	r8, QWORD PTR vli$[rsp]
 	mov	rdx, QWORD PTR fmt$[rsp]
 	mov	rcx, QWORD PTR ccm$[rsp]
 	call	ccstr_vcatf
 	mov	DWORD PTR res$[rsp], eax
-; Line 464
+; Line 468
 	mov	QWORD PTR vli$[rsp], 0
-; Line 466
+; Line 470
 	mov	eax, DWORD PTR res$[rsp]
-; Line 467
+; Line 471
 	add	rsp, 56					; 00000038H
 	ret	0
 ccstr_catf ENDP
@@ -16609,19 +16681,19 @@ fmt$ = 72
 vli$ = 80
 ccstr_vcatf PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 448
+; Line 452
 	mov	QWORD PTR [rsp+24], r8
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
-; Line 449
+; Line 453
 	mov	r9, QWORD PTR vli$[rsp]
 	mov	r8, QWORD PTR fmt$[rsp]
 	xor	edx, edx
 	xor	ecx, ecx
 	call	stbsp_vsnprintf
 	mov	DWORD PTR len$[rsp], eax
-; Line 450
+; Line 454
 	mov	eax, DWORD PTR len$[rsp]
 	inc	eax
 	mov	r9d, DWORD PTR len$[rsp]
@@ -16630,7 +16702,7 @@ ccstr_vcatf PROC
 	mov	rcx, QWORD PTR ccm$[rsp]
 	call	ccdlb_arradd
 	mov	DWORD PTR res$[rsp], eax
-; Line 451
+; Line 455
 	mov	eax, DWORD PTR len$[rsp]
 	inc	eax
 	mov	ecx, DWORD PTR res$[rsp]
@@ -16641,9 +16713,9 @@ ccstr_vcatf PROC
 	mov	edx, eax
 	call	stbsp_vsnprintf
 	mov	DWORD PTR len$[rsp], eax
-; Line 452
+; Line 456
 	mov	eax, DWORD PTR res$[rsp]
-; Line 453
+; Line 457
 	add	rsp, 56					; 00000038H
 	ret	0
 ccstr_vcatf ENDP
@@ -16659,45 +16731,45 @@ key$ = 88
 ent$ = 96
 ccdlb_tblcat PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 351
+; Line 355
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	DWORD PTR [rsp+16], edx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
-; Line 352
+; Line 356
 	cmp	QWORD PTR tbl$[rsp], 0
 	jne	SHORT $LN6@ccdlb_tblc
 	int	3
 $LN6@ccdlb_tblc:
-; Line 353
+; Line 357
 	mov	rax, QWORD PTR tbl$[rsp]
 	cmp	QWORD PTR [rax], 0
 	jne	SHORT $LN8@ccdlb_tblc
 	int	3
 $LN8@ccdlb_tblc:
-; Line 355
+; Line 359
 	mov	rax, QWORD PTR ent$[rsp]
 	cmp	QWORD PTR [rax+16], 0
 	je	SHORT $LN2@ccdlb_tblc
-; Line 356
-	mov	r9d, 356				; 00000164H
-	lea	r8, OFFSET FLAT:$SG46460
-	lea	rdx, OFFSET FLAT:$SG46461
+; Line 360
+	mov	r9d, 360				; 00000168H
+	lea	r8, OFFSET FLAT:$SG46467
+	lea	rdx, OFFSET FLAT:$SG46468
 	mov	ecx, 32					; 00000020H
 	call	ccmalloc_
 	mov	rcx, QWORD PTR ent$[rsp]
 	mov	QWORD PTR [rcx], rax
-; Line 357
+; Line 361
 	mov	rax, QWORD PTR ent$[rsp]
 	mov	rax, QWORD PTR [rax]
 	mov	QWORD PTR ent$[rsp], rax
-; Line 358
+; Line 362
 	mov	r8d, 32					; 00000020H
 	xor	edx, edx
 	mov	rcx, QWORD PTR ent$[rsp]
 	call	memset
-; Line 359
+; Line 363
 	mov	rax, QWORD PTR tbl$[rsp]
 	mov	rax, QWORD PTR [rax]
 	add	rax, 8
@@ -16707,31 +16779,31 @@ $LN8@ccdlb_tblc:
 	mov	rcx, rax
 	call	ccdlb_arradd
 $LN2@ccdlb_tblc:
-; Line 362
+; Line 366
 	mov	rax, QWORD PTR ent$[rsp]
 	cmp	QWORD PTR [rax+16], 0
 	je	SHORT $LN10@ccdlb_tblc
 	int	3
 $LN10@ccdlb_tblc:
-; Line 363
+; Line 367
 	mov	rax, QWORD PTR ent$[rsp]
 	cmp	DWORD PTR [rax+8], 0
 	je	SHORT $LN12@ccdlb_tblc
 	int	3
 $LN12@ccdlb_tblc:
-; Line 364
+; Line 368
 	mov	rax, QWORD PTR ent$[rsp]
 	cmp	DWORD PTR [rax+24], 0
 	je	SHORT $LN14@ccdlb_tblc
 	int	3
 $LN14@ccdlb_tblc:
-; Line 367
+; Line 371
 	mov	r8d, DWORD PTR isze$[rsp]
 	mov	edx, DWORD PTR isze$[rsp]
 	mov	rcx, QWORD PTR tbl$[rsp]
 	call	ccdlb_arradd_
 	mov	DWORD PTR val$[rsp], eax
-; Line 368
+; Line 372
 	mov	eax, DWORD PTR isze$[rsp]
 	mov	rcx, QWORD PTR tbl$[rsp]
 	mov	rcx, QWORD PTR [rcx]
@@ -16740,10 +16812,10 @@ $LN14@ccdlb_tblc:
 	mov	r8d, eax
 	xor	edx, edx
 	call	memset
-; Line 371
+; Line 375
 	cmp	DWORD PTR len$[rsp], 0
 	jle	SHORT $LN3@ccdlb_tblc
-; Line 372
+; Line 376
 	mov	eax, DWORD PTR len$[rsp]
 	inc	eax
 	mov	ecx, DWORD PTR len$[rsp]
@@ -16759,22 +16831,22 @@ $LN14@ccdlb_tblc:
 	call	ccdlb_stradd
 	jmp	SHORT $LN4@ccdlb_tblc
 $LN3@ccdlb_tblc:
-; Line 374
+; Line 378
 	mov	rax, QWORD PTR ent$[rsp]
 	mov	rcx, QWORD PTR key$[rsp]
 	mov	QWORD PTR [rax+16], rcx
 $LN4@ccdlb_tblc:
-; Line 376
+; Line 380
 	mov	rax, QWORD PTR ent$[rsp]
 	mov	ecx, DWORD PTR len$[rsp]
 	mov	DWORD PTR [rax+8], ecx
-; Line 377
+; Line 381
 	mov	rax, QWORD PTR ent$[rsp]
 	mov	ecx, DWORD PTR val$[rsp]
 	mov	DWORD PTR [rax+24], ecx
-; Line 378
+; Line 382
 	mov	eax, DWORD PTR val$[rsp]
-; Line 379
+; Line 383
 	add	rsp, 56					; 00000038H
 	ret	0
 ccdlb_tblcat ENDP
@@ -16791,17 +16863,17 @@ len$ = 88
 key$ = 96
 ccdlb_tblent_ PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 332
+; Line 336
 	mov	QWORD PTR [rsp+24], r8
 	mov	DWORD PTR [rsp+16], edx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 72					; 00000048H
-; Line 333
+; Line 337
 	mov	rdx, QWORD PTR key$[rsp]
 	mov	ecx, DWORD PTR len$[rsp]
 	call	cchsh_abc
 	mov	QWORD PTR hsh$[rsp], rax
-; Line 334
+; Line 338
 	mov	rax, QWORD PTR tbl$[rsp]
 	cmp	QWORD PTR [rax+8], 0
 	je	SHORT $LN8@ccdlb_tble
@@ -16826,20 +16898,25 @@ $LN9@ccdlb_tble:
 	div	rcx
 	mov	rax, rdx
 	mov	DWORD PTR idx$[rsp], eax
-; Line 335
+; Line 339
 	mov	eax, DWORD PTR idx$[rsp]
 	imul	rax, rax, 32				; 00000020H
 	mov	rcx, QWORD PTR tbl$[rsp]
 	add	rax, QWORD PTR [rcx+8]
 	mov	QWORD PTR ent$[rsp], rax
-; Line 337
-	mov	DWORD PTR ccerr, 0
+; Line 341
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	mov	DWORD PTR [rax+rcx], 0
 $LN2@ccdlb_tble:
-; Line 338
+; Line 342
 	mov	rax, QWORD PTR ent$[rsp]
 	cmp	QWORD PTR [rax+16], 0
 	je	SHORT $LN3@ccdlb_tble
-; Line 339
+; Line 343
 	mov	rax, QWORD PTR ent$[rsp]
 	mov	ecx, DWORD PTR len$[rsp]
 	cmp	DWORD PTR [rax+8], ecx
@@ -16857,30 +16934,35 @@ $LN2@ccdlb_tble:
 	test	eax, eax
 	jne	SHORT $LN4@ccdlb_tble
 $LN5@ccdlb_tble:
-; Line 340
+; Line 344
 	mov	rax, QWORD PTR ent$[rsp]
 	jmp	SHORT $LN1@ccdlb_tble
 $LN4@ccdlb_tble:
-; Line 341
+; Line 345
 	mov	rax, QWORD PTR ent$[rsp]
 	cmp	QWORD PTR [rax], 0
 	jne	SHORT $LN6@ccdlb_tble
-; Line 342
+; Line 346
 	jmp	SHORT $LN3@ccdlb_tble
 $LN6@ccdlb_tble:
-; Line 343
+; Line 347
 	mov	rax, QWORD PTR ent$[rsp]
 	mov	rax, QWORD PTR [rax]
 	mov	QWORD PTR ent$[rsp], rax
-; Line 344
+; Line 348
 	jmp	SHORT $LN2@ccdlb_tble
 $LN3@ccdlb_tble:
-; Line 345
-	mov	DWORD PTR ccerr, 1
-; Line 346
+; Line 349
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	mov	DWORD PTR [rax+rcx], 1
+; Line 350
 	mov	rax, QWORD PTR ent$[rsp]
 $LN1@ccdlb_tble:
-; Line 347
+; Line 351
 	add	rsp, 72					; 00000048H
 	ret	0
 ccdlb_tblent_ ENDP
@@ -16895,24 +16977,24 @@ dlb_$ = 80
 isze$ = 88
 ccdlb_tblini PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 311
+; Line 315
 	mov	DWORD PTR [rsp+16], edx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 72					; 00000048H
-; Line 312
+; Line 316
 	mov	rax, QWORD PTR dlb_$[rsp]
 	mov	rax, QWORD PTR [rax]
 	mov	QWORD PTR dlb$[rsp], rax
-; Line 314
+; Line 318
 	cmp	QWORD PTR dlb$[rsp], 0
 	jne	$LN2@ccdlb_tbli
-; Line 317
+; Line 321
 	imul	eax, DWORD PTR isze$[rsp], 255		; 000000ffH
 	xor	r8d, r8d
 	mov	edx, eax
 	lea	rcx, QWORD PTR dlb$[rsp]
 	call	ccdlb_arradd_
-; Line 318
+; Line 322
 	mov	rax, QWORD PTR dlb$[rsp]
 	add	rax, 24
 	test	rax, rax
@@ -16932,7 +17014,7 @@ $LN5@ccdlb_tbli:
 	mov	r8d, eax
 	xor	edx, edx
 	call	memset
-; Line 321
+; Line 325
 	mov	rax, QWORD PTR dlb$[rsp]
 	add	rax, 8
 	xor	r9d, r9d
@@ -16940,7 +17022,7 @@ $LN5@ccdlb_tbli:
 	mov	edx, 32					; 00000020H
 	mov	rcx, rax
 	call	ccdlb_arradd
-; Line 322
+; Line 326
 	mov	rax, QWORD PTR dlb$[rsp]
 	cmp	QWORD PTR [rax+8], 0
 	je	SHORT $LN6@ccdlb_tbli
@@ -16960,7 +17042,7 @@ $LN7@ccdlb_tbli:
 	mov	rax, QWORD PTR dlb$[rsp]
 	mov	rcx, QWORD PTR [rax+8]
 	call	memset
-; Line 323
+; Line 327
 	mov	rax, QWORD PTR dlb$[rsp]
 	cmp	QWORD PTR [rax+8], 0
 	je	SHORT $LN8@ccdlb_tbli
@@ -16976,12 +17058,12 @@ $LN7@ccdlb_tbli:
 $LN8@ccdlb_tbli:
 	mov	DWORD PTR tv137[rsp], 0
 $LN9@ccdlb_tbli:
-; Line 326
+; Line 330
 	mov	rax, QWORD PTR dlb_$[rsp]
 	mov	rcx, QWORD PTR dlb$[rsp]
 	mov	QWORD PTR [rax], rcx
 $LN2@ccdlb_tbli:
-; Line 328
+; Line 332
 	add	rsp, 72					; 00000048H
 	ret	0
 ccdlb_tblini ENDP
@@ -16993,14 +17075,14 @@ len$ = 32
 key$ = 40
 cchsh_abc PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 301
+; Line 305
 	mov	QWORD PTR [rsp+16], rdx
 	mov	DWORD PTR [rsp+8], ecx
 	sub	rsp, 24
-; Line 302
+; Line 306
 	cmp	DWORD PTR len$[rsp], 0
 	jle	SHORT $LN5@cchsh_abc
-; Line 303
+; Line 307
 	mov	QWORD PTR hsh$[rsp], 5381		; 00001505H
 	jmp	SHORT $LN4@cchsh_abc
 $LN2@cchsh_abc:
@@ -17022,13 +17104,13 @@ $LN4@cchsh_abc:
 $LN3@cchsh_abc:
 	jmp	SHORT $LN6@cchsh_abc
 $LN5@cchsh_abc:
-; Line 305
+; Line 309
 	mov	rax, QWORD PTR key$[rsp]
 	mov	QWORD PTR hsh$[rsp], rax
 $LN6@cchsh_abc:
-; Line 306
+; Line 310
 	mov	rax, QWORD PTR hsh$[rsp]
-; Line 307
+; Line 311
 	add	rsp, 24
 	ret	0
 cchsh_abc ENDP
@@ -17043,35 +17125,35 @@ ccom$ = 80
 cpy$ = 88
 ccdlb_stradd PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 288
+; Line 291
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	DWORD PTR [rsp+16], edx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
-; Line 290
+; Line 293
 	cmp	DWORD PTR cres$[rsp], 0
 	jne	SHORT $LN3@ccdlb_stra
 	int	3
 $LN3@ccdlb_stra:
-; Line 291
+; Line 294
 	cmp	DWORD PTR ccom$[rsp], 0
 	jne	SHORT $LN5@ccdlb_stra
 	int	3
 $LN5@ccdlb_stra:
-; Line 292
+; Line 295
 	mov	r9d, DWORD PTR ccom$[rsp]
 	mov	r8d, DWORD PTR cres$[rsp]
 	mov	edx, 1
 	mov	rcx, QWORD PTR ccm$[rsp]
 	call	ccdlb_arradd
 	mov	DWORD PTR res$[rsp], eax
-; Line 293
+; Line 296
 	mov	eax, DWORD PTR res$[rsp]
 	mov	rcx, QWORD PTR ccm$[rsp]
 	add	rax, QWORD PTR [rcx]
 	mov	QWORD PTR cur$[rsp], rax
-; Line 294
+; Line 297
 	mov	eax, DWORD PTR cres$[rsp]
 	dec	eax
 	mov	eax, eax
@@ -17079,15 +17161,15 @@ $LN5@ccdlb_stra:
 	mov	rdx, QWORD PTR cpy$[rsp]
 	mov	rcx, QWORD PTR cur$[rsp]
 	call	memcpy
-; Line 295
+; Line 298
 	mov	eax, DWORD PTR cres$[rsp]
 	dec	eax
 	mov	eax, eax
 	mov	rcx, QWORD PTR cur$[rsp]
 	mov	BYTE PTR [rcx+rax], 0
-; Line 296
+; Line 299
 	mov	eax, DWORD PTR res$[rsp]
-; Line 297
+; Line 300
 	add	rsp, 56					; 00000038H
 	ret	0
 ccdlb_stradd ENDP
@@ -17103,13 +17185,13 @@ cres$ = 96
 ccom$ = 104
 ccdlb_arradd PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 277
+; Line 280
 	mov	DWORD PTR [rsp+32], r9d
 	mov	DWORD PTR [rsp+24], r8d
 	mov	DWORD PTR [rsp+16], edx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 72					; 00000048H
-; Line 280
+; Line 283
 	mov	rax, QWORD PTR ccm$[rsp]
 	cmp	QWORD PTR [rax], 0
 	je	SHORT $LN3@ccdlb_arra
@@ -17123,7 +17205,7 @@ $LN3@ccdlb_arra:
 $LN4@ccdlb_arra:
 	mov	rax, QWORD PTR tv66[rsp]
 	mov	QWORD PTR dlb$[rsp], rax
-; Line 281
+; Line 284
 	mov	eax, DWORD PTR isze$[rsp]
 	imul	eax, DWORD PTR ccom$[rsp]
 	mov	ecx, DWORD PTR isze$[rsp]
@@ -17133,16 +17215,16 @@ $LN4@ccdlb_arra:
 	lea	rcx, QWORD PTR dlb$[rsp]
 	call	ccdlb_arradd_
 	mov	DWORD PTR res$[rsp], eax
-; Line 282
+; Line 285
 	mov	rax, QWORD PTR dlb$[rsp]
 	add	rax, 24
 	mov	rcx, QWORD PTR ccm$[rsp]
 	mov	QWORD PTR [rcx], rax
-; Line 283
+; Line 286
 	xor	edx, edx
 	mov	eax, DWORD PTR res$[rsp]
 	div	DWORD PTR isze$[rsp]
-; Line 284
+; Line 287
 	add	rsp, 72					; 00000048H
 	ret	0
 ccdlb_arradd ENDP
@@ -17152,7 +17234,7 @@ _TEXT	SEGMENT
 sze_max$ = 48
 sze_min$ = 52
 tv65 = 56
-mno_rze$ = 60
+rem_rze$ = 60
 is_ini$ = 64
 dlb$ = 72
 dlb_$ = 96
@@ -17160,16 +17242,16 @@ rsze$ = 104
 csze$ = 112
 ccdlb_arradd_ PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 219
+; Line 225
 	mov	DWORD PTR [rsp+24], r8d
 	mov	DWORD PTR [rsp+16], edx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 88					; 00000058H
-; Line 232
+; Line 236
 	mov	rax, QWORD PTR dlb_$[rsp]
 	mov	rax, QWORD PTR [rax]
 	mov	QWORD PTR dlb$[rsp], rax
-; Line 234
+; Line 238
 	cmp	QWORD PTR dlb$[rsp], 0
 	jne	SHORT $LN7@ccdlb_arra
 	mov	DWORD PTR tv65[rsp], 1
@@ -17179,31 +17261,31 @@ $LN7@ccdlb_arra:
 $LN8@ccdlb_arra:
 	mov	eax, DWORD PTR tv65[rsp]
 	mov	DWORD PTR is_ini$[rsp], eax
-; Line 237
+; Line 241
 	mov	DWORD PTR sze_max$[rsp], 0
-; Line 238
-	mov	DWORD PTR sze_min$[rsp], 0
-; Line 240
-	mov	DWORD PTR mno_rze$[rsp], 0
 ; Line 242
+	mov	DWORD PTR sze_min$[rsp], 0
+; Line 244
+	mov	DWORD PTR rem_rze$[rsp], 0
+; Line 246
 	cmp	DWORD PTR is_ini$[rsp], 0
 	jne	SHORT $LN2@ccdlb_arra
-; Line 243
+; Line 247
 	mov	rax, QWORD PTR dlb$[rsp]
 	mov	eax, DWORD PTR [rax+16]
 	mov	DWORD PTR sze_max$[rsp], eax
-; Line 244
+; Line 248
 	mov	rax, QWORD PTR dlb$[rsp]
 	mov	eax, DWORD PTR [rax+20]
 	mov	DWORD PTR sze_min$[rsp], eax
-; Line 245
+; Line 249
 	mov	rax, QWORD PTR dlb$[rsp]
 	mov	eax, DWORD PTR [rax]
 	shr	eax, 1
 	and	eax, 1
-	mov	DWORD PTR mno_rze$[rsp], eax
+	mov	DWORD PTR rem_rze$[rsp], eax
 $LN2@ccdlb_arra:
-; Line 251
+; Line 254
 	mov	eax, DWORD PTR sze_max$[rsp]
 	mov	ecx, DWORD PTR rsze$[rsp]
 	add	ecx, eax
@@ -17213,42 +17295,42 @@ $LN2@ccdlb_arra:
 	jbe	SHORT $LN9@ccdlb_arra
 	int	3
 $LN9@ccdlb_arra:
-; Line 253
+; Line 256
 	mov	eax, DWORD PTR rsze$[rsp]
 	mov	ecx, DWORD PTR sze_min$[rsp]
 	add	ecx, eax
 	mov	eax, ecx
 	cmp	DWORD PTR sze_max$[rsp], eax
 	jae	$LN3@ccdlb_arra
-; Line 255
-	cmp	DWORD PTR mno_rze$[rsp], 0
+; Line 258
+	cmp	DWORD PTR rem_rze$[rsp], 0
 	je	SHORT $LN11@ccdlb_arra
 	int	3
 $LN11@ccdlb_arra:
-; Line 257
+; Line 260
 	mov	eax, DWORD PTR sze_max$[rsp]
 	shl	eax, 1
 	mov	DWORD PTR sze_max$[rsp], eax
-; Line 258
+; Line 261
 	mov	eax, DWORD PTR rsze$[rsp]
 	mov	ecx, DWORD PTR sze_min$[rsp]
 	add	ecx, eax
 	mov	eax, ecx
 	cmp	DWORD PTR sze_max$[rsp], eax
 	jae	SHORT $LN4@ccdlb_arra
-; Line 259
+; Line 262
 	mov	eax, DWORD PTR rsze$[rsp]
 	mov	ecx, DWORD PTR sze_min$[rsp]
 	add	ecx, eax
 	mov	eax, ecx
 	mov	DWORD PTR sze_max$[rsp], eax
 $LN4@ccdlb_arra:
-; Line 262
+; Line 265
 	mov	eax, DWORD PTR sze_max$[rsp]
 	add	rax, 24
-	mov	DWORD PTR [rsp+32], 262			; 00000106H
-	lea	r9, OFFSET FLAT:$SG46386
-	lea	r8, OFFSET FLAT:$SG46387
+	mov	DWORD PTR [rsp+32], 265			; 00000109H
+	lea	r9, OFFSET FLAT:$SG46393
+	lea	r8, OFFSET FLAT:$SG46394
 	mov	rdx, rax
 	mov	rcx, QWORD PTR dlb$[rsp]
 	call	ccrealloc_
@@ -17257,30 +17339,30 @@ $LN4@ccdlb_arra:
 	mov	rax, QWORD PTR dlb_$[rsp]
 	mov	rax, QWORD PTR [rax]
 	mov	QWORD PTR dlb$[rsp], rax
-; Line 264
+; Line 267
 	cmp	DWORD PTR is_ini$[rsp], 0
 	je	SHORT $LN5@ccdlb_arra
-; Line 266
+; Line 269
 	mov	r8d, 24
 	xor	edx, edx
 	mov	rcx, QWORD PTR dlb$[rsp]
 	call	memset
 $LN5@ccdlb_arra:
 $LN3@ccdlb_arra:
-; Line 270
+; Line 273
 	mov	rax, QWORD PTR dlb$[rsp]
 	mov	ecx, DWORD PTR sze_max$[rsp]
 	mov	DWORD PTR [rax+16], ecx
-; Line 271
+; Line 274
 	mov	eax, DWORD PTR csze$[rsp]
 	mov	ecx, DWORD PTR sze_min$[rsp]
 	add	ecx, eax
 	mov	eax, ecx
 	mov	rcx, QWORD PTR dlb$[rsp]
 	mov	DWORD PTR [rcx+20], eax
-; Line 272
+; Line 275
 	mov	eax, DWORD PTR sze_min$[rsp]
-; Line 273
+; Line 276
 	add	rsp, 88					; 00000058H
 	ret	0
 ccdlb_arradd_ ENDP
@@ -17297,13 +17379,13 @@ len$ = 112
 key$ = 120
 ccdlb_tblset PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 422
+; Line 426
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	DWORD PTR [rsp+16], edx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 88					; 00000058H
-; Line 427
+; Line 431
 	mov	rax, QWORD PTR ccm$[rsp]
 	cmp	QWORD PTR [rax], 0
 	je	SHORT $LN6@ccdlb_tbls
@@ -17317,25 +17399,30 @@ $LN6@ccdlb_tbls:
 $LN7@ccdlb_tbls:
 	mov	rax, QWORD PTR tv66[rsp]
 	mov	QWORD PTR tbl$[rsp], rax
-; Line 428
+; Line 432
 	cmp	QWORD PTR tbl$[rsp], 0
 	jne	SHORT $LN2@ccdlb_tbls
 	mov	edx, DWORD PTR isze$[rsp]
 	lea	rcx, QWORD PTR tbl$[rsp]
 	call	ccdlb_tblini
 $LN2@ccdlb_tbls:
-; Line 430
+; Line 434
 	mov	DWORD PTR val$[rsp], 0
-; Line 431
+; Line 435
 	mov	r8, QWORD PTR key$[rsp]
 	mov	edx, DWORD PTR len$[rsp]
 	mov	rcx, QWORD PTR tbl$[rsp]
 	call	ccdlb_tblent_
 	mov	QWORD PTR ent$[rsp], rax
-; Line 432
-	cmp	DWORD PTR ccerr, 1
+; Line 436
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 1
 	jne	SHORT $LN3@ccdlb_tbls
-; Line 434
+; Line 438
 	mov	rax, QWORD PTR ent$[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR key$[rsp]
@@ -17344,26 +17431,31 @@ $LN2@ccdlb_tbls:
 	lea	rcx, QWORD PTR tbl$[rsp]
 	call	ccdlb_tblcat
 	mov	DWORD PTR val$[rsp], eax
-; Line 435
+; Line 439
 	mov	rax, QWORD PTR tbl$[rsp]
 	add	rax, 24
 	mov	rcx, QWORD PTR ccm$[rsp]
 	mov	QWORD PTR [rcx], rax
-; Line 437
-	mov	DWORD PTR ccerr, 0
-; Line 438
+; Line 441
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	mov	DWORD PTR [rax+rcx], 0
+; Line 442
 	jmp	SHORT $LN4@ccdlb_tbls
 $LN3@ccdlb_tbls:
-; Line 440
+; Line 444
 	mov	rax, QWORD PTR ent$[rsp]
 	mov	eax, DWORD PTR [rax+24]
 	mov	DWORD PTR val$[rsp], eax
 $LN4@ccdlb_tbls:
-; Line 443
+; Line 447
 	xor	edx, edx
 	mov	eax, DWORD PTR val$[rsp]
 	div	DWORD PTR isze$[rsp]
-; Line 444
+; Line 448
 	add	rsp, 88					; 00000058H
 	ret	0
 ccdlb_tblset ENDP
@@ -17380,13 +17472,13 @@ len$ = 112
 key$ = 120
 ccdlb_tblput PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 397
+; Line 401
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	DWORD PTR [rsp+16], edx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 88					; 00000058H
-; Line 402
+; Line 406
 	mov	rax, QWORD PTR ccm$[rsp]
 	cmp	QWORD PTR [rax], 0
 	je	SHORT $LN6@ccdlb_tblp
@@ -17400,25 +17492,30 @@ $LN6@ccdlb_tblp:
 $LN7@ccdlb_tblp:
 	mov	rax, QWORD PTR tv66[rsp]
 	mov	QWORD PTR tbl$[rsp], rax
-; Line 403
+; Line 407
 	cmp	QWORD PTR tbl$[rsp], 0
 	jne	SHORT $LN2@ccdlb_tblp
 	mov	edx, DWORD PTR isze$[rsp]
 	lea	rcx, QWORD PTR tbl$[rsp]
 	call	ccdlb_tblini
 $LN2@ccdlb_tblp:
-; Line 405
+; Line 409
 	mov	DWORD PTR val$[rsp], 0
-; Line 406
+; Line 410
 	mov	r8, QWORD PTR key$[rsp]
 	mov	edx, DWORD PTR len$[rsp]
 	mov	rcx, QWORD PTR tbl$[rsp]
 	call	ccdlb_tblent_
 	mov	QWORD PTR ent$[rsp], rax
-; Line 407
-	cmp	DWORD PTR ccerr, 1
+; Line 411
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 1
 	jne	SHORT $LN3@ccdlb_tblp
-; Line 409
+; Line 413
 	mov	rax, QWORD PTR ent$[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	mov	r9, QWORD PTR key$[rsp]
@@ -17427,24 +17524,34 @@ $LN2@ccdlb_tblp:
 	lea	rcx, QWORD PTR tbl$[rsp]
 	call	ccdlb_tblcat
 	mov	DWORD PTR val$[rsp], eax
-; Line 410
+; Line 414
 	mov	rax, QWORD PTR tbl$[rsp]
 	add	rax, 24
 	mov	rcx, QWORD PTR ccm$[rsp]
 	mov	QWORD PTR [rcx], rax
-; Line 412
-	mov	DWORD PTR ccerr, 0
-; Line 413
+; Line 416
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	mov	DWORD PTR [rax+rcx], 0
+; Line 417
 	jmp	SHORT $LN4@ccdlb_tblp
 $LN3@ccdlb_tblp:
-; Line 415
-	mov	DWORD PTR ccerr, 2
+; Line 419
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	mov	DWORD PTR [rax+rcx], 2
 $LN4@ccdlb_tblp:
-; Line 417
+; Line 421
 	xor	edx, edx
 	mov	eax, DWORD PTR val$[rsp]
 	div	DWORD PTR isze$[rsp]
-; Line 418
+; Line 422
 	add	rsp, 88					; 00000058H
 	ret	0
 ccdlb_tblput ENDP
@@ -17461,7 +17568,7 @@ len$ = 96
 key$ = 104
 ccdlb_tblget PROC
 ; File W:\cpp\void\ktt-c\ccdlb.h
-; Line 384
+; Line 388
 	mov	QWORD PTR [rsp+32], r9
 	mov	DWORD PTR [rsp+24], r8d
 	mov	DWORD PTR [rsp+16], edx
@@ -17480,32 +17587,42 @@ $LN5@ccdlb_tblg:
 $LN6@ccdlb_tblg:
 	mov	rax, QWORD PTR tv66[rsp]
 	mov	QWORD PTR tbl$[rsp], rax
-; Line 385
+; Line 389
 	mov	DWORD PTR val$[rsp], 0
-; Line 387
-	mov	DWORD PTR ccerr, 1
-; Line 388
+; Line 391
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	mov	DWORD PTR [rax+rcx], 1
+; Line 392
 	cmp	QWORD PTR tbl$[rsp], 0
 	je	SHORT $LN2@ccdlb_tblg
-; Line 389
+; Line 393
 	mov	r8, QWORD PTR key$[rsp]
 	mov	edx, DWORD PTR len$[rsp]
 	mov	rcx, QWORD PTR tbl$[rsp]
 	call	ccdlb_tblent_
 	mov	QWORD PTR ent$1[rsp], rax
-; Line 390
-	cmp	DWORD PTR ccerr, 0
+; Line 394
+	mov	eax, OFFSET FLAT:ccerr
+	mov	eax, eax
+	mov	ecx, DWORD PTR _tls_index
+	mov	rdx, QWORD PTR gs:88
+	mov	rcx, QWORD PTR [rdx+rcx*8]
+	cmp	DWORD PTR [rax+rcx], 0
 	jne	SHORT $LN3@ccdlb_tblg
 	mov	rax, QWORD PTR ent$1[rsp]
 	mov	eax, DWORD PTR [rax+24]
 	mov	DWORD PTR val$[rsp], eax
 $LN3@ccdlb_tblg:
 $LN2@ccdlb_tblg:
-; Line 392
+; Line 396
 	xor	edx, edx
 	mov	eax, DWORD PTR val$[rsp]
 	div	DWORD PTR isze$[rsp]
-; Line 393
+; Line 397
 	add	rsp, 72					; 00000048H
 	ret	0
 ccdlb_tblget ENDP
@@ -24241,8 +24358,8 @@ $LN4@ccpullfile:
 ; Line 34
 	mov	eax, DWORD PTR length$[rsp]
 	mov	r9d, 34					; 00000022H
-	lea	r8, OFFSET FLAT:$SG46658
-	lea	rdx, OFFSET FLAT:$SG46659
+	lea	r8, OFFSET FLAT:$SG46654
+	lea	rdx, OFFSET FLAT:$SG46655
 	mov	ecx, eax
 	call	ccmalloc_
 	mov	QWORD PTR file_data$[rsp], rax
@@ -24354,33 +24471,33 @@ mem$ = 96
 sze$ = 104
 ccmem_check PROC
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 188
+; Line 191
 	mov	DWORD PTR [rsp+16], edx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 88					; 00000058H
-; Line 192
+; Line 195
 	call	QWORD PTR __imp__CrtCheckMemory
 	test	eax, eax
 	jne	SHORT $LN2@ccmem_chec
-; Line 193
+; Line 196
 	lea	rax, OFFSET FLAT:$SG44982
 	mov	QWORD PTR [rsp+40], rax
 	lea	rax, OFFSET FLAT:$SG44983
 	mov	QWORD PTR [rsp+32], rax
 	lea	r9, OFFSET FLAT:$SG44984
-	mov	r8d, 193				; 000000c1H
+	mov	r8d, 196				; 000000c4H
 	lea	rdx, OFFSET FLAT:$SG44985
 	xor	ecx, ecx
 	call	cctrace_
 	int	3
 	jmp	$LN3@ccmem_chec
 $LN2@ccmem_chec:
-; Line 195
+; Line 198
 	mov	rcx, QWORD PTR mem$[rsp]
 	call	QWORD PTR __imp__CrtIsValidHeapPointer
 	test	eax, eax
 	jne	SHORT $LN4@ccmem_chec
-; Line 196
+; Line 199
 	mov	eax, DWORD PTR sze$[rsp]
 	mov	DWORD PTR [rsp+56], eax
 	mov	rax, QWORD PTR mem$[rsp]
@@ -24390,14 +24507,14 @@ $LN2@ccmem_chec:
 	lea	rax, OFFSET FLAT:$SG44989
 	mov	QWORD PTR [rsp+32], rax
 	lea	r9, OFFSET FLAT:$SG44990
-	mov	r8d, 196				; 000000c4H
+	mov	r8d, 199				; 000000c7H
 	lea	rdx, OFFSET FLAT:$SG44991
 	mov	ecx, 1
 	call	cctrace_
 	int	3
 	jmp	SHORT $LN5@ccmem_chec
 $LN4@ccmem_chec:
-; Line 198
+; Line 201
 	lea	rax, QWORD PTR line$[rsp]
 	mov	QWORD PTR [rsp+32], rax
 	lea	r9, QWORD PTR file$[rsp]
@@ -24407,7 +24524,7 @@ $LN4@ccmem_chec:
 	call	QWORD PTR __imp__CrtIsMemoryBlock
 	test	eax, eax
 	jne	SHORT $LN6@ccmem_chec
-; Line 199
+; Line 202
 	mov	eax, DWORD PTR sze$[rsp]
 	mov	DWORD PTR [rsp+56], eax
 	mov	rax, QWORD PTR mem$[rsp]
@@ -24417,7 +24534,7 @@ $LN4@ccmem_chec:
 	lea	rax, OFFSET FLAT:$SG44994
 	mov	QWORD PTR [rsp+32], rax
 	lea	r9, OFFSET FLAT:$SG44995
-	mov	r8d, 199				; 000000c7H
+	mov	r8d, 202				; 000000caH
 	lea	rdx, OFFSET FLAT:$SG44996
 	mov	ecx, 2
 	call	cctrace_
@@ -24425,7 +24542,7 @@ $LN4@ccmem_chec:
 $LN6@ccmem_chec:
 $LN5@ccmem_chec:
 $LN3@ccmem_chec:
-; Line 200
+; Line 203
 	add	rsp, 88					; 00000058H
 	ret	0
 ccmem_check ENDP
@@ -24438,17 +24555,17 @@ func$ = 64
 line$ = 72
 ccfree_	PROC
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 220
+; Line 223
 	mov	DWORD PTR [rsp+32], r9d
 	mov	QWORD PTR [rsp+24], r8
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 40					; 00000028H
-; Line 221
+; Line 224
 	mov	edx, 4
 	mov	rcx, QWORD PTR data$[rsp]
 	call	QWORD PTR __imp__free_dbg
-; Line 223
+; Line 226
 	add	rsp, 40					; 00000028H
 	ret	0
 ccfree_	ENDP
@@ -24463,13 +24580,13 @@ func$ = 104
 line$ = 112
 ccrealloc_ PROC
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 212
+; Line 215
 	mov	QWORD PTR [rsp+32], r9
 	mov	QWORD PTR [rsp+24], r8
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 72					; 00000048H
-; Line 213
+; Line 216
 	mov	eax, DWORD PTR line$[rsp]
 	mov	DWORD PTR [rsp+32], eax
 	mov	r9, QWORD PTR file$[rsp]
@@ -24478,13 +24595,13 @@ ccrealloc_ PROC
 	mov	rcx, QWORD PTR data$[rsp]
 	call	QWORD PTR __imp__realloc_dbg
 	mov	QWORD PTR mem$[rsp], rax
-; Line 216
+; Line 219
 	mov	edx, DWORD PTR size$[rsp]
 	mov	rcx, QWORD PTR mem$[rsp]
 	call	ccmem_check
-; Line 217
+; Line 220
 	mov	rax, QWORD PTR mem$[rsp]
-; Line 218
+; Line 221
 	add	rsp, 72					; 00000048H
 	ret	0
 ccrealloc_ ENDP
@@ -24498,26 +24615,26 @@ func$ = 80
 line$ = 88
 ccmalloc_ PROC
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 203
+; Line 206
 	mov	DWORD PTR [rsp+32], r9d
 	mov	QWORD PTR [rsp+24], r8
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+8], rcx
 	sub	rsp, 56					; 00000038H
-; Line 204
+; Line 207
 	mov	r9d, DWORD PTR line$[rsp]
 	mov	r8, QWORD PTR file$[rsp]
 	mov	edx, 4
 	mov	rcx, QWORD PTR size$[rsp]
 	call	QWORD PTR __imp__malloc_dbg
 	mov	QWORD PTR mem$[rsp], rax
-; Line 207
+; Line 210
 	mov	edx, DWORD PTR size$[rsp]
 	mov	rcx, QWORD PTR mem$[rsp]
 	call	ccmem_check
-; Line 208
+; Line 211
 	mov	rax, QWORD PTR mem$[rsp]
-; Line 209
+; Line 212
 	add	rsp, 56					; 00000038H
 	ret	0
 ccmalloc_ ENDP
