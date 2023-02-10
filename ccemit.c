@@ -58,15 +58,15 @@ ccemit_const_i32(ccemit_t *emit, cci64_t value)
   return ccemit_constant(emit,ctype_int32,classic);
 }
 
-ccfunc ccblock_t *
+ccfunc ccemit_block_t *
 ccvm_block(const char *debug_label)
 {
-  ccblock_t *block=(ccblock_t *)ccmalloc(sizeof(*block));
+  ccemit_block_t *block=(ccemit_block_t *)ccmalloc(sizeof(*block));
   return ccblock_I(block,debug_label);
 }
 
-ccfunc ccblock_t *
-ccemit_label(ccblock_t *irset, const char *name)
+ccfunc ccemit_block_t *
+ccemit_label(ccemit_block_t *irset, const char *name)
 {
 #if 0
   int ait;
@@ -83,50 +83,50 @@ ccemit_label(ccblock_t *irset, const char *name)
 }
 
 ccfunc ccinle ccemit_value_t *
-ccemit_store(ccblock_t *block, ccemit_value_t *lval, ccemit_value_t *rval)
+ccemit_store(ccemit_block_t *block, ccemit_value_t *lval, ccemit_value_t *rval)
 {
   return ccblock_add_edict(block,ccedict_store(lval,rval));
 }
 
 ccfunc ccinle ccemit_value_t *
-ccemit_fetch(ccblock_t *block, ccemit_value_t *lval)
+ccemit_fetch(ccemit_block_t *block, ccemit_value_t *lval)
 {
   return ccblock_add_edict(block,ccedict_fetch(lval));
 }
 
 ccfunc ccinle ccemit_value_t *
-ccemit_arith(ccblock_t *block, cctoken_k opr, ccemit_value_t *lhs, ccemit_value_t *rhs)
+ccemit_arith(ccemit_block_t *block, cctoken_k opr, ccemit_value_t *lhs, ccemit_value_t *rhs)
 {
   return ccblock_add_edict(block,ccedict_arith(opr,lhs,rhs));
 }
 
 ccfunc ccemit_value_t *
-ccemit_enter(ccblock_t *block, ccblock_t *blc)
+ccemit_enter(ccemit_block_t *block, ccemit_block_t *blc)
 {
   return ccblock_add_edict(block,ccedict_enter(blc));
 }
 
 ccfunc ccemit_value_t *
-ccemit_return(ccblock_t *block, ccemit_value_t *value)
+ccemit_return(ccemit_block_t *block, ccemit_value_t *value)
 {
   return ccblock_add_edict(block,ccedict_return(value));
 }
 
 ccfunc ccemit_value_t *
-ccemit_ternary(ccblock_t *block, ccemit_value_t *init, ccblock_t *lval, ccblock_t *rval)
+ccemit_ternary(ccemit_block_t *block, ccemit_value_t *init, ccemit_block_t *lval, ccemit_block_t *rval)
 {
   return ccblock_add_edict(block,ccedict_ternary(init,lval,rval));
 }
 
 ccfunc ccemit_value_t *
-ccemit_invoke(ccblock_t *block, ccemit_value_t *lval, ccemit_value_t **rval)
+ccemit_invoke(ccemit_block_t *block, ccemit_value_t *lval, ccemit_value_t **rval)
 {
   return ccblock_add_edict(block,ccedict_call(lval,rval));
 }
 
 
 ccfunc ccemit_value_t *
-ccemit_resolve(ccemit_t *emit, ccfunction_t *func, cctree_t *tree)
+ccemit_resolve(ccemit_t *emit, ccemit_procd_t *func, cctree_t *tree)
 { ccnotnil(tree);
   ccnotnil(tree->kind==cctree_kIDENTIFIER);
 
@@ -139,13 +139,13 @@ ccemit_resolve(ccemit_t *emit, ccfunction_t *func, cctree_t *tree)
 }
 
 ccfunc ccemit_value_t *
-ccemit_lvalue(ccemit_t *emit, ccfunction_t *func, ccblock_t *block, cctree_t *tree);
+ccemit_lvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctree_t *tree);
 
 ccfunc ccemit_value_t *
-ccemit_rvalue(ccemit_t *emit, ccfunction_t *func, ccblock_t *block, cctree_t *tree);
+ccemit_rvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctree_t *tree);
 
 ccfunc ccemit_value_t *
-ccemit_invoke_easy(ccemit_t *emit, ccfunction_t *func, ccblock_t *block, cctree_t *tree)
+ccemit_invoke_easy(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctree_t *tree)
 {
   cctree_t *ltree=tree->lval;
   cctree_t *rtree=tree->rval;
@@ -168,7 +168,7 @@ ccemit_invoke_easy(ccemit_t *emit, ccfunction_t *func, ccblock_t *block, cctree_
 }
 
 ccfunc ccemit_value_t *
-ccemit_lvalue(ccemit_t *emit, ccfunction_t *func, ccblock_t *block, cctree_t *tree)
+ccemit_lvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctree_t *tree)
 { ccemit_value_t *value=ccnil;
   switch(tree->kind)
   { case cctree_kIDENTIFIER:
@@ -180,7 +180,7 @@ ccemit_lvalue(ccemit_t *emit, ccfunction_t *func, ccblock_t *block, cctree_t *tr
 }
 
 ccfunc ccemit_value_t *
-ccemit_rvalue(ccemit_t *emit, ccfunction_t *func, ccblock_t *block, cctree_t *tree)
+ccemit_rvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctree_t *tree)
 { ccemit_value_t *value=ccnil;
   switch(tree->kind)
   { case cctree_kINTEGER:
@@ -205,11 +205,11 @@ ccemit_rvalue(ccemit_t *emit, ccfunction_t *func, ccblock_t *block, cctree_t *tr
 
 ccfunc ccemit_value_t *
 ccemit_tree(
-  ccemit_t *emit, ccfunction_t *func, ccblock_t *irset, cctree_t *tree);
+  ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *irset, cctree_t *tree);
 
 ccfunc void
 ccemit_treelist(
-  ccemit_t *emit, ccfunction_t *func, ccblock_t *irset, cctree_t **list)
+  ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *irset, cctree_t **list)
 {
   cctree_t **it;
   ccarrfor(list,it) ccemit_tree(emit,func,irset,*it);
@@ -217,7 +217,7 @@ ccemit_treelist(
 
 
 ccfunc ccemit_value_t *
-ccemit_decl_name(ccemit_t *emit, ccfunction_t *func, cctree_t *tree)
+ccemit_decl_name(ccemit_t *emit, ccemit_procd_t *func, cctree_t *tree)
 { ccemit_value_t *lval=ccfunc_include_local(func,tree,ccfalse);
   if(tree->init)
   { ccemit_value_t *rval=ccemit_rvalue(emit,func,func->enter,tree->init);
@@ -227,20 +227,20 @@ ccemit_decl_name(ccemit_t *emit, ccfunction_t *func, cctree_t *tree)
 }
 
 ccfunc ccinle void
-ccemit_decl(ccemit_t *emit, ccfunction_t *func, cctree_t *decl)
+ccemit_decl(ccemit_t *emit, ccemit_procd_t *func, cctree_t *decl)
 { cctree_t **list;
   ccarrfor(decl->list,list) ccemit_decl_name(emit,func,*list);
 }
 
 ccfunc ccemit_value_t *
-ccemit_param(ccemit_t *emit, ccfunction_t *func, cctree_t *tree)
+ccemit_param(ccemit_t *emit, ccemit_procd_t *func, cctree_t *tree)
 { ccemit_value_t *lval=ccfunc_include_local(func,tree,cctrue);
   return lval;
 }
 
 ccfunc ccemit_value_t *
 ccemit_tree(
-  ccemit_t *emit, ccfunction_t *func, ccblock_t *irset, cctree_t *tree)
+  ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *irset, cctree_t *tree)
 {
   if(tree->kind==cctree_kDECL)
   {
@@ -265,7 +265,7 @@ ccemit_tree(
     return ccemit_return(irset,rval);
   } else
   if(tree->kind==cctree_kGOTO)
-  { // ccblock_t *label_block=ccemit_label(irset,tree->label_name);
+  { // ccemit_block_t *label_block=ccemit_label(irset,tree->label_name);
     // return ccemit_enter(irset,label_block);
   } else
   if(tree->kind==cctree_kCALL)
@@ -292,9 +292,9 @@ ccemit_tree(
   if(tree->kind==cctree_kWHILE)
   {
 #if 0
-    ccblock_t *cond_block=ccvm_block(irset,"$while::cond");
-    ccblock_t *then_block=ccvm_block(cond_block,"$while::then");
-    ccblock_t *else_block=ccvm_block(irset,"$while::else");
+    ccemit_block_t *cond_block=ccvm_block(irset,"$while::cond");
+    ccemit_block_t *then_block=ccvm_block(cond_block,"$while::then");
+    ccemit_block_t *else_block=ccvm_block(irset,"$while::else");
     ccemit_value_t cond_value=ccemit_tree(emit,func,cond_block,tree->cond_tree);
     ccemit_condi(cond_block,cond_value,then_block,else_block);
     if(tree->then_tree) ccemit_tree(emit,func,then_block,tree->then_tree);
@@ -307,8 +307,8 @@ ccemit_tree(
   } else
   if(tree->kind==cctree_kTERNARY)
   { ccemit_value_t *cond_value=ccemit_tree(emit,func,irset,tree->init);
-    ccblock_t *then_block=ccnil,*else_block=ccnil;
-    ccblock_t *done_block=ccblock(irset,"$local");
+    ccemit_block_t *then_block=ccnil,*else_block=ccnil;
+    ccemit_block_t *done_block=ccblock(irset,"$local");
     if(tree->lval)
     { then_block=ccblock(irset,"$if::then");
       ccemit_tree(emit,func,then_block,tree->lval);
@@ -332,7 +332,7 @@ ccemit_tree(
 
 
 ccfunc void
-ccemit_function(ccemit_t *emit, ccfunction_t *func, cctree_t *tree)
+ccemit_function(ccemit_t *emit, ccemit_procd_t *func, cctree_t *tree)
 {
   ccnotnil(tree);
 
@@ -364,9 +364,10 @@ ccemit_function(ccemit_t *emit, ccfunction_t *func, cctree_t *tree)
   ccarrfor(tree->type->list,list)
     ccemit_param(emit,func,*list);
 
-  // Todo:
+  // Todo: is this flawed?
+  emit->current=func->enter;
   ccarrfor(tree->blob->list,list)
-    ccemit_tree(emit,func,func->enter,ccdref(list));
+    ccemit_tree(emit,func,emit->current,ccdref(list));
 
   ccemit_enter(func->decls,func->enter);
 }
@@ -384,7 +385,7 @@ ccemit_external_decl(ccemit_t *emit, cctree_t *tree)
     {
       ccemit_value_t **value=cctblputP(emit->globals,decl);
       ccassert(ccerrnon());
-      ccfunction_t *func=ccmalloc_T(ccfunction_t);
+      ccemit_procd_t *func=ccmalloc_T(ccemit_procd_t);
   		memset(func,ccnil,sizeof(*func));
       *value=ccmalloc_T(ccemit_value_t);
       (*value)->kind=ccvalue_kFUNC;
@@ -414,9 +415,6 @@ ccemit_translation_unit(ccemit_t *emit, cctree_t *tree)
 ccfunc void
 ccemit_init(ccemit_t *emit)
 { memset(emit,ccnil,sizeof(*emit));
-
-  emit->current=ccvm_block("main");
-  emit->curirix=0;
 }
 
 #endif

@@ -75,7 +75,7 @@ ccexec_load(ccexec_t *exec, cctree_t *type, void *address)
 }
 
 ccfunc void
-ccexec_enter(ccexec_t *vm, ccblock_t *block)
+ccexec_enter(ccexec_t *vm, ccemit_block_t *block)
 {
   ccnotnil(block);
   vm->current=block;
@@ -181,7 +181,7 @@ ccfunc void
 ccexec_invoke(ccexec_t *exec, ccemit_value_t *val, ccexec_value_t *ret, ccexec_value_t *in);
 
 ccfunc int
-ccexec_edict(ccexec_t *exec, ccblock_t *irset, ccemit_value_t *value)
+ccexec_edict(ccexec_t *exec, ccemit_block_t *irset, ccemit_value_t *value)
 {
   ccnotnil(value);
   ccassert(value->kind==ccvalue_kEDICT);
@@ -308,7 +308,7 @@ ccexec_invoke(
 {
 	ret->debug_label="return_value";
 
-  ccfunction_t *func=value->func;
+  ccemit_procd_t *func=value->func;
   cctree_t *type=func->tree->type;
 
   ccassert(ccarrlen(type->list)==ccarrlen(arguments));
@@ -324,7 +324,7 @@ ccexec_invoke(
   }
 
   int 			  irindex=exec->irindex;
-  ccblock_t * current=exec->current;
+  ccemit_block_t * current=exec->current;
 
   ccexec_enter(exec,func->decls);
 
@@ -334,12 +334,11 @@ ccexec_invoke(
 
     if(!ccexec_edict(exec,exec->current,*it))
     {
-    	// Note: this is flawed ...
+    	// Note: is this flawed?
     	ccedict_t *edict=(*it)->edict;
     	if(edict->kind==ccedict_kRETURN)
-    	{
     		ccexec_yield(exec,ret,*it);
-    	}
+
     	break;
     }
   }

@@ -56,12 +56,12 @@ union
 	{ ccemit_value_t  * value;
 	} ret;
 	struct
-	{ ccblock_t       * blc;
+	{ ccemit_block_t       * blc;
 	} enter;
 	struct
 	{ ccemit_value_t * cnd;
-  	ccblock_t      * lhs;
-  	ccblock_t      * rhs;
+  	ccemit_block_t      * lhs;
+  	ccemit_block_t      * rhs;
 	} ternary;
 	struct
 	{ cctoken_k        opr;
@@ -126,7 +126,7 @@ ccedict_arith(cctoken_k opr, ccemit_value_t *lhs, ccemit_value_t *rhs)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_enter(ccblock_t *blc)
+ccedict_enter(ccemit_block_t *blc)
 {
 	ccedict_t *e=ccmalloc_T(ccedict_t);
 	e->kind=ccedict_kENTER;
@@ -158,7 +158,7 @@ ccedict_return(ccemit_value_t *value)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_ternary(ccemit_value_t *cnd, ccblock_t *lhs, ccblock_t *rhs)
+ccedict_ternary(ccemit_value_t *cnd, ccemit_block_t *lhs, ccemit_block_t *rhs)
 {
 	ccedict_t *e=ccmalloc_T(ccedict_t);
   e->kind=ccedict_kTERNARY;

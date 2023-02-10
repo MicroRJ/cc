@@ -233,15 +233,10 @@ ccfunc void ccfree_(void *data, const char *file, const char *func, int line)
 #  define free DO_NOT_USE_FREE
 #endif
 
-
-
-
-// Todo: use size_t instead ...
 _CCASSERT(sizeof(ccu64_t)==sizeof(size_t));
 _CCASSERT(sizeof(cci64_t)==sizeof(size_t));
 
-
-ccfunc int  ccrealfile(void *);
+ccfunc int ccrealfile(void *);
 ccfunc void ccclosefile(void *);
 ccfunc void *ccopenfile(const char *);
 ccfunc void *ccpullfile(void *,unsigned long int,unsigned long int *);
@@ -251,12 +246,22 @@ ccfunc unsigned long int ccfilesize(void *);
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb_sprintf.h"
 
+typedef struct ccemit_value_t ccemit_value_t;
+typedef struct ccemit_block_t ccemit_block_t;
+typedef struct ccemit_procd_t ccemit_procd_t;
+typedef struct ccexec_value_t ccexec_value_t;
+
+typedef struct cctree_t cctree_t;
+
 #include "cclog.h"
 #include "ccdlb.h"
-
-#include "ccread.h"
-
 #include "ccfio.c"
+#include "ccread.h"
+#include "cctree.h"
+#include "ccedict.h"
+#include "ccemit.h"
+#include "ccexec.h"
+
 #include "cclex.c"
 #include "ccread.c"
 #include "ccemit.c"
@@ -266,5 +271,4 @@ ccfunc unsigned long int ccfilesize(void *);
 #ifdef __cplusplus
 }
 #endif
-
 #endif

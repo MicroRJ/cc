@@ -234,33 +234,6 @@ typedef enum cctoken_k
 
 } cctoken_k;
 
-#if 0
-typedef enum cctypekind_t
-{ cctype_invalid = 0,
-  cctype_void,
-  cctype_ptr,
-  cctype_arr,
-  cctype_Kfunc,
-  cctype_enu,
-  cctype_uni,
-  cctype_stu,
-  cctype_cls,
-  cctype_int64,
-  cctype_int32,
-  cctype_int16,
-  cctype_int8,
-  cctype_uint64,
-  cctype_uint32,
-  cctype_uint16,
-  cctype_uint8,
-  cctype_float32,
-  cctype_float64,
-
-  cctype_struct_spec,
-  cctype_enum_specifier,
-} cctypekind_t;
-#endif
-
 typedef union ccclassic_t
 {
   cci64_t as_i64;
@@ -284,7 +257,6 @@ typedef struct ccloc_t
 } ccloc_t;
 
 typedef struct ccentry_t ccentry_t;
-
 typedef struct ccentry_t
 { ccentry_t   * nex;
   char        * key;
@@ -335,40 +307,6 @@ typedef struct ccread_t
   cctoken_t *bed;
 } ccread_t;
 
-#include "cctree.h"
-
-typedef enum ccedict_k ccedict_k;
-typedef enum ccvalue_k ccvalue_k;
-typedef struct ccemit_value_t ccemit_value_t;
-typedef struct ccexec_value_t ccexec_value_t;
-typedef struct ccedict_t ccedict_t;
-typedef struct ccblock_t ccblock_t;
-typedef struct ccfunction_t ccfunction_t;
-
-#include "ccvalue.h"
-#include "ccblock.h"
-#include "ccexec-value.h"
-#include "ccedict.h"
-#include "ccfunc.h"
-
-
-
-typedef struct ccemit_t
-{ ccemit_value_t ** globals;
-  ccblock_t      *  current;
-  int               curirix;
-  ccemit_value_t *  entry;
-} ccemit_t;
-
-typedef struct ccexec_t
-{ ccemit_t       * emit;
-  ccexec_value_t * values;
-  ccfunction_t   * routine;
-  ccblock_t      * current;
-  cci32_t          irindex;
-} ccexec_t;
-
-
 // TODO(RJ): make this legit!
 #ifndef ccsynerr
 #ifdef _DEBUG
@@ -380,9 +318,6 @@ typedef struct ccexec_t
 #ifndef ccsynwar
 # define ccsynwar(tok,cod,fmt, ...) cctracewar(fmt, __VA_ARGS__)
 #endif
-
-
-
 
 ccfunc void
 cclex_init(cclex_t *l);
