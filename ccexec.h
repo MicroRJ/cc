@@ -24,21 +24,18 @@ typedef struct ccexec_value_t
 	};
 } ccexec_value_t;
 
-typedef struct ccemit_block_t ccemit_block_t;
-typedef struct ccemit_block_t
-{ ccstr_t          label; // Note: for debugging?
-  ccemit_value_t **edict;
-} ccemit_block_t;
-
+typedef struct ccemit_procd_t ccemit_procd_t;
 typedef struct ccemit_procd_t
-{ cctree_t         *tree;
-  ccemit_value_t * *local;
-  ccemit_block_t   *block;
-  ccemit_block_t   *decls;
-  ccemit_block_t   *enter;
-  ccemit_block_t   *leave;
+{ cctree_t        *tree;
+  ccemit_value_t **local;
+  ccemit_block_t **block;
+
+  ccemit_block_t  *decls;
+  ccemit_block_t  *enter;
+  ccemit_block_t  *leave;
 } ccemit_procd_t;
 
+typedef struct ccexec_stack_t ccexec_stack_t;
 typedef struct ccexec_stack_t
 { ccemit_procd_t *function;
 
@@ -48,50 +45,10 @@ typedef struct ccexec_stack_t
 	ccexec_value_t *values;
 } ccexec_stack_t;
 
+typedef struct ccexec_t ccexec_t;
 typedef struct ccexec_t
 { ccemit_t * emit;
 } ccexec_t;
-
-
-ccfunc ccemit_block_t *
-ccblock_I(ccemit_block_t *block, ccstr_t label)
-{
-  block->label=label?label:"no-label";
-
-  // Todo: we don't have to this anymore
-  block->edict=ccnil;
-  ccarrres(block->edict,0xff);
-  ccarrfix(block->edict);
-
-  return block;
-}
-
-ccfunc ccemit_block_t *
-ccblock(ccemit_block_t *block, ccstr_t label)
-{
-  return ccblock_I(ccmalloc_T(ccemit_block_t),label);
-}
-
-ccfunc ccemit_value_t *
-ccblock_add(ccemit_block_t *block)
-{
-	ccemit_value_t  *v=ccmalloc_T(ccemit_value_t);
-	ccemit_value_t **t=ccarradd(block->edict,1);
-
-  memset(v,ccnil,sizeof(*v));
-
-  *t=v;
-
-  return v;
-}
-
-ccfunc ccemit_value_t *
-ccblock_add_edict(ccemit_block_t *block, ccedict_t *edict)
-{ ccemit_value_t *value=ccblock_add(block);
-	value->kind  = ccvalue_kEDICT;
-	value->edict = edict;
-  return value;
-}
 
 ccfunc ccemit_value_t *
 ccfunc_local(ccemit_procd_t *func, cctree_t *tree)

@@ -171,6 +171,7 @@ cctree_struct(cctree_t **list, cctree_t *name)
 { ccassert(list!=0);
   cctree_t *tree=cctree_new(cctree_kSTRUCT,0,0);
   tree->list=list;
+  tree->name=cctree_name(name);
   return tree;
 }
 

@@ -41,13 +41,13 @@ union
 	// Note: #lval is the lvalue to store to.
 	// Note: #rval is the rvalue to store.
 	struct
-	{ ccemit_value_t *lval;
-		ccemit_value_t *rval;
+	{ ccemit_value_t *  lval;
+		ccemit_value_t *  rval;
 	} store;
 	// Note: Produces an non-addressable rvalue ...
 	// Note: #lval is the lvalue to load.
 	struct
-	{ ccemit_value_t *lval;
+	{ ccemit_value_t  * lval;
 	} fetch;
 	// Note: Produces a non-addressable rvalue
 	struct
@@ -55,20 +55,20 @@ union
 		ccemit_value_t ** rval;
 	} invoke;
 	struct
-	{ ccemit_value_t  * value;
+	{ ccemit_value_t  * rval;
 	} ret;
 	struct
-	{ ccemit_block_t       * blc;
+	{ ccemit_block_t  * blc;
 	} enter;
 	struct
-	{ ccemit_value_t * cnd;
-  	ccemit_block_t      * lhs;
-  	ccemit_block_t      * rhs;
+	{ ccemit_value_t  * cnd;
+  	ccemit_block_t  * lhs;
+  	ccemit_block_t  * rhs;
 	} ternary;
 	struct
-	{ cctoken_k        opr;
-	  ccemit_value_t * lhs;
-	  ccemit_value_t * rhs;
+	{ cctoken_k         opr;
+	  ccemit_value_t  * lhs;
+	  ccemit_value_t  * rhs;
 	} arith;
 };
 } ccedict_t;
@@ -153,11 +153,11 @@ ccedict_call(ccemit_value_t *lval, ccemit_value_t **rval)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_return(ccemit_value_t *value)
+ccedict_return(ccemit_value_t *rval)
 {
 	ccedict_t *e=ccmalloc_T(ccedict_t);
   e->kind=ccedict_kRETURN;
-  e->ret.value=value;
+  e->ret.rval=rval;
   return e;
 }
 

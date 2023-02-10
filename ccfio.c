@@ -2,6 +2,20 @@
 #define _CCFIO
 
 #ifdef _WIN32
+
+ccfunc ccinle ccu64_t
+ccclocktick()
+{ LARGE_INTEGER l;
+	QueryPerformanceCounter(&l);
+ 	return l.QuadPart;
+}
+ccfunc ccinle ccf64_t
+ccclocksecs(ccu64_t t)
+{ LARGE_INTEGER l;
+	QueryPerformanceFrequency(&l);
+ 	return (((ccf64_t)t)/l.QuadPart);
+}
+
 ccfunc int
 ccrealfile(void *file)
 { return (HANDLE)file!=INVALID_HANDLE_VALUE;

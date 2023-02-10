@@ -54,12 +54,12 @@ extern "C" {
 // Note: suppress warnings ...
 #ifdef _MSC_VER
 # pragma warning(push)
-# pragma warning(disable:4505) // un-referenced function with internal usage
-# pragma warning(disable:4706) // assignment within conditional expression
 # pragma warning(disable:4053) // void operand for ternary expression ...
+# pragma warning(disable:4706) // assignment within conditional expression
 #ifdef _DEBUG
 # pragma warning(disable:4100)
 # pragma warning(disable:4201)
+# pragma warning(disable:4505)
 #endif
 #endif
 
@@ -254,6 +254,9 @@ ccfunc void *ccpullfile(void *,unsigned long int,unsigned long int *);
 ccfunc unsigned long int ccpushfile(void *,unsigned long int,unsigned long int,void*);
 ccfunc unsigned long int ccfilesize(void *);
 
+ccfunc ccinle ccu64_t ccclocktick();
+ccfunc ccinle ccf64_t ccclocksecs(ccu64_t);
+
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb_sprintf.h"
 
@@ -278,6 +281,11 @@ typedef struct cctree_t cctree_t;
 #include "ccemit.c"
 #include "ccexec.c"
 #include "ccemit-c.c"
+
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #ifdef __cplusplus
 }

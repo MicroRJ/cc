@@ -284,9 +284,9 @@ ccemit_tree(
   } else
   if(tree->kind==cctree_kTERNARY)
   { ccemit_value_t *cond_value=ccemit_tree(emit,func,irset,tree->init);
-    ccemit_block_t *then_block=ccblock(irset,"$if::then");
-    ccemit_block_t *else_block=ccblock(irset,"$if::else");
-    ccemit_block_t *done_block=ccblock(irset,"$local");
+    ccemit_block_t *then_block=ccblock("$if::then");
+    ccemit_block_t *else_block=ccblock("$if::else");
+    ccemit_block_t *done_block=ccblock("$local");
     if(tree->lval) ccemit_tree(emit,func,then_block,tree->lval);
     if(tree->rval) ccemit_tree(emit,func,else_block,tree->rval);
 
@@ -330,18 +330,12 @@ ccemit_function(ccemit_t *emit, ccemit_procd_t *func, cctree_t *tree)
   ccassert(tree->type->kind==cctree_kFUNC);
 
   func->tree=tree;
+  func->block=ccnil;
 
   // Todo:
-  ccarrres(func->block,8);
-  ccarrfix(func->block);
-  func->decls=ccarradd(func->block,1);
-  func->enter=ccarradd(func->block,1);
-  func->leave=ccarradd(func->block,1);
-
-  ccblock_I(func->decls,"$decls");
-  ccblock_I(func->enter,"$enter");
-  ccblock_I(func->leave,"$leave");
-
+  *ccarradd(func->block,1)=func->decls=ccblock("$decls");
+  *ccarradd(func->block,1)=func->enter=ccblock("$enter");
+  *ccarradd(func->block,1)=func->leave=ccblock("$leave");
 
   ccnotnil(tree->type);
   ccassert(tree->type->kind==cctree_kFUNC);
