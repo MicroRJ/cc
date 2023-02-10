@@ -6,36 +6,6 @@
 // austere - "severe or strict in manner, attitude, or appearance"
 // stardom - "the state or status of being a famous or exceptionally talented performer in the world of entertainment or sports"
 
-ccfunc ccemit_value_t
-ccemit_value_edict(ccedict_t *edict)
-{ ccemit_value_t value={};
-  value.kind=ccvalue_kEDICT;
-  value.edict=edict;
-  return value;
-}
-
-ccfunc ccemit_value_t
-ccemit_value_const(cctree_t *type, ccclassic_t clsc)
-{ ccemit_value_t value={};
-  value.kind=ccvalue_kCONST;
-  value.constant.type=type;
-  value.constant.clsc=clsc;
-  return value;
-}
-
-ccfunc ccemit_value_t
-ccemit_value_const_i32(cci32_t val)
-{
-  return ccemit_value_const(ctype_int32,{val});
-}
-
-ccfunc ccemit_value_t *
-ccvm_value_init(ccemit_value_t *value, ccvalue_k kind, const char *name)
-{ memset(value,ccnil,sizeof(*value));
-  value->kind=kind;
-  return value;
-}
-
 ccfunc ccemit_value_t *
 ccemit_constant(ccemit_t *emit, cctree_t *type, ccclassic_t clsc)
 {
@@ -57,82 +27,6 @@ ccemit_const_i32(ccemit_t *emit, cci64_t value)
   return ccemit_constant(emit,ctype_int32,classic);
 }
 
-ccfunc ccemit_block_t *
-ccemit_label(ccemit_block_t *irset, const char *name)
-{
-#if 0
-  int ait;
-  ccemit_value_t *value=cctblsetS(irset->local,name,&ait);
-
-  if(!ait)
-  { value->kind=ccvalue_Kblock;
-    value->block=ccvm_block(name);
-  }
-  return value->block;
-#endif
-
-  return ccnil;
-}
-
-ccfunc ccinle ccemit_value_t *
-ccemit_store(ccemit_block_t *block, ccemit_value_t *lval, ccemit_value_t *rval)
-{
-  return ccblock_add_edict(block,ccedict_store(lval,rval));
-}
-
-ccfunc ccinle ccemit_value_t *
-ccemit_fetch(ccemit_block_t *block, ccemit_value_t *lval)
-{
-  return ccblock_add_edict(block,ccedict_fetch(lval));
-}
-
-ccfunc ccinle ccemit_value_t *
-ccemit_arith(ccemit_block_t *block, cctoken_k opr, ccemit_value_t *lhs, ccemit_value_t *rhs)
-{
-  return ccblock_add_edict(block,ccedict_arith(opr,lhs,rhs));
-}
-
-ccfunc ccemit_value_t *
-ccemit_enter(ccemit_block_t *block, ccemit_block_t *blc)
-{
-  return ccblock_add_edict(block,ccedict_enter(blc));
-}
-
-ccfunc ccemit_value_t *
-ccemit_return(ccemit_block_t *block, ccemit_value_t *value)
-{
-  return ccblock_add_edict(block,ccedict_return(value));
-}
-
-ccfunc ccemit_value_t *
-ccemit_ternary(ccemit_block_t *block, ccemit_value_t *init, ccemit_block_t *lval, ccemit_block_t *rval)
-{
-  return ccblock_add_edict(block,ccedict_ternary(init,lval,rval));
-}
-
-ccfunc ccemit_value_t *
-ccemit_invoke(ccemit_block_t *block, ccemit_value_t *lval, ccemit_value_t **rval)
-{
-  return ccblock_add_edict(block,ccedict_call(lval,rval));
-}
-
-ccfunc ccemit_value_t *
-ccemit_jump(ccemit_block_t *block, ccemit_block_t *blc, ccu32_t tar)
-{
-  return ccblock_add_edict(block,ccedict_jump(blc,tar));
-}
-
-ccfunc ccemit_value_t *
-ccemit_jumpF(ccemit_block_t *block, ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
-{
-  return ccblock_add_edict(block,ccedict_jumpF(blc,tar,cnd));
-}
-
-ccfunc ccemit_value_t *
-ccemit_jumpT(ccemit_block_t *block, ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
-{
-  return ccblock_add_edict(block,ccedict_jumpT(blc,tar,cnd));
-}
 
 
 ccfunc ccemit_value_t *
@@ -265,9 +159,10 @@ ccemit_tree(
     return ccnil;
   } else
   if(tree->kind==cctree_kLABEL)
-  { irset=ccemit_label(irset,tree->name);
-    ccemit_treelist(emit,func,irset,tree->list);
-    return ccemit_enter(irset,irset);
+  {
+  	// irset=ccemit_label(irset,tree->name);
+    // ccemit_treelist(emit,func,irset,tree->list);
+    // return ccemit_enter(irset,irset);
   } else
   if(tree->kind==cctree_kRETURN)
   {
