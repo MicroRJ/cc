@@ -61,7 +61,8 @@ union
 	} ret;
 	struct
 	{ ccemit_block_t  * blc;
-		ccemit_value_t  * tar;
+		ccu32_t           tar;
+		ccemit_value_t  * cnd;
 	} jump;
 	struct
 	{ ccemit_block_t  * blc;
@@ -146,7 +147,7 @@ ccedict_enter(ccemit_block_t *blc)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_jump(ccemit_block_t *blc, ccemit_value_t *tar)
+ccedict_jump(ccemit_block_t *blc, ccu32_t tar)
 {
 	ccedict_t *e=ccmalloc_T(ccedict_t);
   e->kind=ccedict_kJUMP;
@@ -156,25 +157,26 @@ ccedict_jump(ccemit_block_t *blc, ccemit_value_t *tar)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_jumpT(ccemit_block_t *blc, ccemit_value_t *tar)
+ccedict_jumpT(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
 {
 	ccedict_t *e=ccmalloc_T(ccedict_t);
   e->kind=ccedict_kJUMPT;
   e->jump.blc=blc;
   e->jump.tar=tar;
+  e->jump.cnd=cnd;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_jumpF(ccemit_block_t *blc, ccemit_value_t *tar)
+ccedict_jumpF(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
 {
 	ccedict_t *e=ccmalloc_T(ccedict_t);
   e->kind=ccedict_kJUMPF;
   e->jump.blc=blc;
   e->jump.tar=tar;
+  e->jump.cnd=cnd;
   return e;
 }
-
 
 ccfunc ccinle ccedict_t *
 ccedict_call(ccemit_value_t *lval, ccemit_value_t **rval)

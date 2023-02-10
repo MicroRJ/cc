@@ -29,7 +29,7 @@ ccstack_yield(ccexec_stack_t *stack, ccemit_value_t *value)
   ccassert(ccerrnon());
 
   if((result->kind==ccev_kINVALID))
-  	cctraceerr("value kind is invalid, did you register this value and not set its contents?");
+    cctraceerr("value kind is invalid, did you register this value and not set its contents?");
 
   ccassert(result->kind!=ccev_kINVALID);
 
@@ -245,17 +245,43 @@ ccexec_edict(
       saved->value=rval.value;
       saved->label=rval.label;
     } break;
-    case ccedict_kENTER:
-    { ccnotnil(edict->enter.blc);
-      ccexec_enter(stack,edict->enter.blc);
-    } break;
-  	case ccedict_kJUMP:
+    case ccedict_kJUMP:
     {
-    	ccnotnil(edict->jump.blc);
-    	ccnotnil(edict->jump.tar);
-    	ccnotnil(edict->jump.tar->target);
-    	stack->current=edict->jump.blc;
-    	stack->irindex=edict->jump.tar->target;
+#ifdef _HARD_DEBUG
+      ccnotnil(edict->jump.blc);
+      ccnotnil(edict->jump.tar);
+      ccnotnil(edict->jump.tar);
+#endif
+      stack->current=edict->jump.blc;
+      stack->irindex=edict->jump.tar;
+    } break;
+    case ccedict_kJUMPF:
+    {
+#ifdef _HARD_DEBUG
+      ccnotnil(edict->jump.blc);
+      ccnotnil(edict->jump.tar);
+      ccnotnil(edict->jump.cnd);
+#endif
+      ccexec_value_t
+      rval=ccstack_yield_rvalue(stack,ccnotnil(edict->jump.cnd));
+      if(!rval.asi32)
+      { stack->current=edict->jump.blc;
+        stack->irindex=edict->jump.tar;
+      }
+    } break;
+    case ccedict_kJUMPT:
+    {
+#ifdef _HARD_DEBUG
+      ccnotnil(edict->jump.blc);
+      ccnotnil(edict->jump.tar);
+      ccnotnil(edict->jump.cnd);
+#endif
+      ccexec_value_t
+      rval=ccstack_yield_rvalue(stack,ccnotnil(edict->jump.cnd));
+      if(rval.asi32)
+      { stack->current=edict->jump.blc;
+        stack->irindex=edict->jump.tar;
+      }
     } break;
     case ccedict_kARITH:
     {
@@ -270,7 +296,9 @@ ccexec_edict(
 
     case ccedict_kINVOKE:
     {
-      ccassert(edict->invoke.call!=0);
+#ifdef _HARD_DEBUG
+      ccnotnil(edict->invoke.call);
+#endif
 
       ccexec_value_t  *rval=ccnil;
       ccemit_value_t **list=ccnil;
@@ -281,24 +309,32 @@ ccexec_edict(
       ccexec_value_t *ret=ccstack_mingle(stack,value);
       if(!ccexec_invoke(exec,edict->invoke.call,ret,rval))
       {
-      	ccassert(!"no-return value, error");
+        ccassert(!"no-return value, error");
       }
 
       ccarrdel(rval);
     } break;
-    case ccedict_kTERNARY:
+
+    // Todo: to be removed ...
+    case ccedict_kENTER:
     {
+#ifdef _HARD_DEBUG
+      ccnotnil(edict->enter.blc);
+#endif
+      ccexec_enter(stack,edict->enter.blc);
+    } break;
+    case ccedict_kTERNARY:
+    { ccassert(!"deprecated");
+
       ccexec_value_t rval;
       rval=ccstack_yield_rvalue(stack,ccnotnil(edict->ternary.cnd));
 
       // Todo: is this flawed?
       if(rval.asi32)
-      {
-        if(edict->ternary.lhs) ccexec_enter(stack,edict->ternary.lhs);
+      { if(edict->ternary.lhs) ccexec_enter(stack,edict->ternary.lhs);
       }
       else
-      {
-        if(edict->ternary.rhs) ccexec_enter(stack,edict->ternary.rhs);
+      { if(edict->ternary.rhs) ccexec_enter(stack,edict->ternary.rhs);
       }
     } break;
     default: ccassert(!"error");
@@ -364,11 +400,11 @@ ccexec_init(ccexec_t *exec)
 
 int fib(int x)
 { if(x>=2)
-	{ int l=fib(x-2);
-		int r=fib(x-1);
-		return l+r;
-	}
-	return x;
+  { int l=fib(x-2);
+    int r=fib(x-1);
+    return l+r;
+  }
+  return x;
 }
 
 
@@ -393,8 +429,8 @@ ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
   ccu64_t c_ce=ccclocktick();
 
 
-	printf("fib c:%i %f(s) - cc:%i %f(s)\n",
-		c, ccclocksecs(c_ce-c_cs), ret.asi32, ccclocksecs(cc_ce-cc_cs));
+  printf("fib c:%i %f(s) - cc:%i %f(s)\n",
+    c, ccclocksecs(c_ce-c_cs), ret.asi32, ccclocksecs(cc_ce-cc_cs));
   return 1;
 }
 
