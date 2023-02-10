@@ -6,7 +6,7 @@
 // Todo: Legit type system
 
 ccfunc ccu32_t
-ccexec_sizeof(ccexec_stack_t *stack, cctree_t *type);
+ccexec_sizeof(ccexec_stack_t *, cctype_t *);
 
 // Note: associates a value with an edict, as you can see, I have peculiar choice of words ...
 ccfunc ccexec_value_t *
@@ -74,6 +74,7 @@ ccstack_yield_lvalue(ccexec_stack_t *stack, ccemit_value_t *couple)
   { switch(couple->edict->kind)
     { case ccedict_kLOCAL:
       case ccedict_kPARAM:
+      case ccedict_kADDRESS:
         result=ccstack_yield(stack,couple);
       break;
     }
@@ -103,18 +104,17 @@ ccstack_local_alloc(
 #endif
 
   ccu32_t size=ccexec_sizeof(stack,edict->local.type);
-  ccassert(size!=0);
+  ccassert(size>=8);
 
+  void *memory=ccmalloc(size);
+  memset(memory,ccnil,size);
+
+  // Todo: stack alloc dude!
   ccexec_value_t *result=ccstack_mingle(stack,value);
-  *result=ccexec_lvalue(ccmalloc(size),"local_alloc");
+  *result=ccexec_lvalue(memory,"local_alloc");
 
+  // cctracelog("'%s': %p",value->label,result->value);
   return result;
-}
-
-ccfunc ccinle cci32_t
-ccexec_load(ccexec_stack_t *stack, cctree_t *type, void *address)
-{
-  return ccdref(cccast(cci32_t *,address));
 }
 
 ccfunc ccinle void
@@ -158,6 +158,8 @@ ccfunc int
 ccexec_edict(
   ccexec_t *exec, ccexec_stack_t *stack, ccemit_value_t *value)
 {
+	static ccexec_value_t zro=ccexec_rvalue(cccast(void*,0),"zro");
+
   ccnotnil(stack);
 
   ccnotnil(value);
@@ -175,16 +177,43 @@ ccexec_edict(
     case ccedict_kLOCAL:
     { ccstack_local_alloc(stack,value);
     } break;
+  	case ccedict_kADDRESS:
+    { ccemit_value_t *lvalue,*rvalue;
+    	lvalue=edict->addr.lval;
+    	rvalue=edict->addr.rval;
 
-    case ccedict_kFETCH:
-    {
-      ccexec_value_t lval;
-      lval=ccstack_yield_lvalue(stack,ccnotnil(edict->fetch.lval));
+    	ccassert(lvalue!=ccnil);
+    	ccassert(rvalue!=ccnil);
+
+  		ccexec_value_t lval,rval;
+			lval=ccstack_yield_lvalue(stack,lvalue);
+			rval=ccstack_yield_rvalue(stack,rvalue);
+
+			cci64_t *memory=cccast(cci64_t*,lval.value);
+			memory+=rval.asi64;
 
       ccexec_value_t *saved=ccstack_mingle(stack,value);
-      saved->kind=ccev_kRVALUE;
-      saved->asi64=ccexec_load(stack,ccnil,lval.value);
-      saved->label=ccnil;
+      *saved=ccexec_lvalue(memory,"address");
+    } break;
+    case ccedict_kFETCH:
+    {
+    	ccemit_value_t *lvalue,*rvalue;
+    	lvalue=edict->fetch.lval;
+    	rvalue=edict->fetch.rval;
+
+  		ccexec_value_t lval,rval;
+			lval=ccstack_yield_lvalue(stack,lvalue);
+
+			if(rvalue)
+				rval=ccstack_yield_rvalue(stack,rvalue);
+			else
+				rval=zro;
+
+			cci64_t *memory=cccast(cci64_t*,lval.value);
+			memory+=rval.asi64;
+
+      ccexec_value_t *saved=ccstack_mingle(stack,value);
+      *saved=ccexec_rvalue(cccast(void*,ccdref(memory)),"fetch");
     } break;
     case ccedict_kSTORE:
     {
@@ -193,7 +222,7 @@ ccexec_edict(
       rval=ccstack_yield_rvalue(stack,ccnotnil(edict->store.rval));
 
       // Todo:
-      *cccast(cci32_t*,lval.value)=rval.asi32;
+      *cccast(cci64_t*,lval.value)=rval.asi64;
 
       ccexec_value_t *saved=ccstack_mingle(stack,value);
       saved->kind=ccev_kRVALUE;
@@ -308,22 +337,23 @@ ccexec_edict(
 }
 
 ccfunc ccu32_t
-ccexec_sizeof(ccexec_stack_t *_s, cctree_t *_t)
+ccexec_sizeof(ccexec_stack_t *_s, cctype_t *_t)
 {
-	if(_t->kind==cctree_kPOINTER)
+	if(_t->kind==cctype_kARRAY)
 	{
-		return sizeof(void*);
-	} else
-	if(_t->kind==cctree_kARRAY)
-	{
-		// ccstack_yield_rvalue(_s,_t->rval);
-		// int some[10];
-	} else
-	if(_t->kind==cctree_kTYPENAME)
-	{
-		return sizeof(ccclassic_t);
-	}
+		ccexec_value_t rval;
+		rval=ccstack_yield_rvalue(_s,_t->length);
 
+		ccu32_t size=ccexec_sizeof(_s,_t->type);
+		size*=rval.asu32;
+
+		cctracelog("size %i",size);
+
+		return size;
+	} else
+	if(_t->kind==cctype_kINTEGER)
+	{ return sizeof(cci64_t);
+	}
 	ccassert(!"error");
 	return 0;
 }

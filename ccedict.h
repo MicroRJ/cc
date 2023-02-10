@@ -5,6 +5,7 @@ typedef enum ccedict_k
 {
 	ccedict_kLOCAL = 0,
 	ccedict_kPARAM,
+	ccedict_kADDRESS,
 	ccedict_kSTORE,
 	ccedict_kFETCH,
   ccedict_kARITH,
@@ -18,7 +19,7 @@ typedef enum ccedict_k
 } ccedict_k;
 
 ccglobal const char *ccedict_s[]=
-{ "LOCAL","PARAM","STORE","FETCH","ARITH","JUMP","JUMPT","JUMPF","TERNARY","ENTER","INVOKE","RETURN",
+{ "LOCAL","PARAM","ADDRESS","STORE","FETCH","ARITH","JUMP","JUMPT","JUMPF","TERNARY","ENTER","INVOKE","RETURN",
 };
 
 
@@ -33,8 +34,12 @@ ccunion
 	// Note: Produces an addressable lvalue, if param, value must be set before invoking a function ...
 	struct
 	{
-		cctree_t   *type;
+		cctype_t *type;
 	} local,param;
+	struct
+	{ ccemit_value_t * lval;
+		ccemit_value_t * rval;
+	} addr;
 	// Note: Produces a non-addressable rvalue ...
 	// Note: #lval is the lvalue to store to.
 	// Note: #rval is the rvalue to store.
@@ -46,6 +51,7 @@ ccunion
 	// Note: #lval is the lvalue to load.
 	struct
 	{ ccemit_value_t  * lval;
+		ccemit_value_t  * rval;
 	} fetch;
 	// Note: Produces a non-addressable rvalue
 	struct
@@ -76,56 +82,65 @@ ccunion
 };
 } ccedict_t;
 
+// Todo:
 ccfunc ccinle ccedict_t *
-ccedict_local(cctree_t *tree)
+ccedict(ccedict_k kind, ccstr_t label)
 {
-	// Todo: check the tree
-
 	ccedict_t *e=ccmalloc_T(ccedict_t);
-	e->kind=ccedict_kLOCAL;
-	e->label=tree->name;
+	memset(e,ccnil,sizeof(*e));
 
-	e->local.type=tree->type;
+	e->kind=kind;
+	e->label=label;
+	return e;
+}
+
+
+ccfunc ccinle ccedict_t *
+ccedict_local(cctype_t *type, ccstr_t label)
+{
+	ccnotnil(type);
+
+	// Todo: check the tree
+	ccedict_t *e=ccedict(ccedict_kLOCAL,label);
+
+	e->local.type=type;
 	return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_param(cctree_t *tree)
+ccedict_param(cctype_t *type, ccstr_t label)
 {
+	ccnotnil(type);
+
 	// Todo: check the tree
+	ccedict_t *e=ccedict(ccedict_kPARAM,label);
 
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-	e->kind=ccedict_kPARAM;
-	e->label=tree->name;
-
-	e->local.type=tree->type;
+	e->local.type=type;
 	return e;
 }
 
 ccfunc ccinle ccedict_t *
 ccedict_store(ccemit_value_t *lval, ccemit_value_t *rval)
 {
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-	e->kind=ccedict_kSTORE;
+	ccedict_t *e=ccedict(ccedict_kSTORE,"store");
 	e->store.lval=lval;
 	e->store.rval=rval;
 	return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_fetch(ccemit_value_t *lval)
+ccedict_fetch(ccemit_value_t *lval, ccemit_value_t  *rval)
 {
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-	e->kind=ccedict_kFETCH;
+	ccedict_t *e=ccedict(ccedict_kFETCH,"fetch");
 	e->fetch.lval=lval;
+	e->fetch.rval=rval;
 	return e;
 }
 
 ccfunc ccinle ccedict_t *
 ccedict_arith(cctoken_k opr, ccemit_value_t *lhs, ccemit_value_t *rhs)
 {
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-	e->kind=ccedict_kARITH;
+	ccedict_t *e=ccedict(ccedict_kARITH,"arith");
 	e->arith.opr=opr;
 	e->arith.lhs=lhs;
 	e->arith.rhs=rhs;
@@ -135,18 +150,15 @@ ccedict_arith(cctoken_k opr, ccemit_value_t *lhs, ccemit_value_t *rhs)
 ccfunc ccinle ccedict_t *
 ccedict_enter(ccemit_block_t *blc)
 {
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-	e->kind=ccedict_kENTER;
+	ccedict_t *e=ccedict(ccedict_kENTER,"enter");
 	e->enter.blc=blc;
-
 	return e;
 }
 
 ccfunc ccinle ccedict_t *
 ccedict_jump(ccemit_block_t *blc, ccu32_t tar)
 {
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-  e->kind=ccedict_kJUMP;
+	ccedict_t *e=ccedict(ccedict_kJUMP,"jump");
   e->jump.blc=blc;
   e->jump.tar=tar;
   return e;
@@ -155,8 +167,7 @@ ccedict_jump(ccemit_block_t *blc, ccu32_t tar)
 ccfunc ccinle ccedict_t *
 ccedict_tjump(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
 {
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-  e->kind=ccedict_kJUMPT;
+	ccedict_t *e=ccedict(ccedict_kJUMPT,"jump-t");
   e->jump.blc=blc;
   e->jump.tar=tar;
   e->jump.cnd=cnd;
@@ -166,8 +177,7 @@ ccedict_tjump(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
 ccfunc ccinle ccedict_t *
 ccedict_fjump(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
 {
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-  e->kind=ccedict_kJUMPF;
+	ccedict_t *e=ccedict(ccedict_kJUMPF,"jump-f");
   e->jump.blc=blc;
   e->jump.tar=tar;
   e->jump.cnd=cnd;
@@ -179,36 +189,38 @@ ccedict_call(ccemit_procd_t *lval, ccemit_value_t **rval)
 {
 	ccassert(lval!=0);
 
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-	e->kind=ccedict_kINVOKE;
+	ccedict_t *e=ccedict(ccedict_kINVOKE,"invoke");
 	e->invoke.call=lval;
 	e->invoke.rval=rval;
-
 	return e;
 }
 
 ccfunc ccinle ccedict_t *
 ccedict_return(ccemit_value_t *rval)
 {
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-  e->kind=ccedict_kRETURN;
+	ccedict_t *e=ccedict(ccedict_kRETURN,"return");
   e->ret.rval=rval;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_ternary(ccemit_value_t *cnd, ccemit_block_t *lhs, ccemit_block_t *rhs)
+ccedict_address(ccemit_value_t *lval, ccemit_value_t *rval)
 {
-	ccedict_t *e=ccmalloc_T(ccedict_t);
-  e->kind=ccedict_kTERNARY;
-  e->ternary.cnd=cnd;
-  e->ternary.lhs=lhs;
-  e->ternary.rhs=rhs;
-
+	ccedict_t *e=ccedict(ccedict_kADDRESS,"address");
+  e->addr.lval=lval;
+  e->addr.rval=rval;
   return e;
 }
 
-
-
+// Note: if anything, these should be values, that way you can execute a block, or an instruction ...
+ccfunc ccinle ccedict_t *
+ccedict_ternary(ccemit_value_t *cnd, ccemit_block_t *lhs, ccemit_block_t *rhs)
+{
+	ccedict_t *e=ccedict(ccedict_kTERNARY,"ternary");
+  e->ternary.cnd=cnd;
+  e->ternary.lhs=lhs;
+  e->ternary.rhs=rhs;
+  return e;
+}
 
 #endif

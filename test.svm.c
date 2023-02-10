@@ -7,11 +7,21 @@ int fib(int x)
 	return x;
 }
 
+int retsame(int c)
+{
+	return c;
+}
+
+
 int main(int a)
 {
+	int some[100];
+	some[24]=a;
 
-	int g;
-	g=fib(a);
+	int h;
+	h=some[24];
 
+	int g=h;
+	g=fib(g);
 	return g;
 }

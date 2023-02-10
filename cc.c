@@ -270,6 +270,7 @@ typedef struct ccemit_block_t ccemit_block_t;
 typedef struct ccemit_procd_t ccemit_procd_t;
 typedef struct ccexec_value_t ccexec_value_t;
 
+typedef struct cctype_t cctype_t;
 typedef struct cctree_t cctree_t;
 
 #include "cclog.h"

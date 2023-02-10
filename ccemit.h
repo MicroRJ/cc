@@ -1,7 +1,12 @@
 #ifndef _CCEMIT_VALUE
 #define _CCEMIT_VALUE
 
-typedef enum ccvalue_k ccvalue_k;
+typedef struct ccemit_value_t ccemit_value_t;
+typedef struct ccemit_block_t ccemit_block_t;
+typedef struct ccemit_procd_t ccemit_procd_t;
+typedef struct ccemit_t ccemit_t;
+typedef struct cctype_t cctype_t;
+
 typedef enum ccvalue_k
 { ccvalue_Kinvalid=0,
   ccvalue_kTARGET,
@@ -11,7 +16,22 @@ typedef enum ccvalue_k
   ccvalue_kEDICT,
 } ccvalue_k;
 
-typedef struct ccemit_value_t ccemit_value_t;
+typedef enum
+{
+	cctype_kINTEGER,
+	cctype_kARRAY,
+} cctype_k;
+
+typedef struct cctype_t
+{ ccstr_t   label;
+
+	cctype_k  kind;
+	cctype_t *type;
+
+	// Note: if it is an array ...
+	ccemit_value_t *length;
+} cctype_t;
+
 typedef struct ccemit_value_t
 { ccvalue_k 			 kind;
 	ccstr_t          label;
@@ -19,19 +39,17 @@ ccunion
 { ccedict_t      * edict;
 	ccemit_procd_t * procd;
 	struct
-	{ cctree_t     * type;
+	{ cctype_t     * type;
 		ccclassic_t    clsc;
 	} constant;
 };
 } ccemit_value_t;
 
-typedef struct ccemit_block_t ccemit_block_t;
 typedef struct ccemit_block_t
 { ccstr_t          label; // Note: for debugging
   ccemit_value_t **edict;
 } ccemit_block_t;
 
-typedef struct ccemit_procd_t ccemit_procd_t;
 typedef struct ccemit_procd_t
 { ccstr_t          label; // Note: for debugging
 
@@ -44,13 +62,11 @@ typedef struct ccemit_procd_t
   ccemit_block_t  *leave;
 } ccemit_procd_t;
 
-typedef struct ccemit_t ccemit_t;
 typedef struct ccemit_t
 { ccemit_value_t ** globals;
   ccemit_block_t *  current;
   ccemit_procd_t *  entry;
 } ccemit_t;
-
 
 // Todo:
 ccfunc ccinle ccemit_value_t *
@@ -59,6 +75,18 @@ ccvalue(ccstr_t label)
 	ccemit_value_t *t=ccmalloc_T(ccemit_value_t);
 	memset(t,ccnil,sizeof(*t));
 
+	t->label=label;
+  return t;
+}
+
+// Todo:
+ccfunc ccinle cctype_t *
+cctype(cctype_k kind, ccstr_t label)
+{
+	cctype_t *t=ccmalloc_T(cctype_t);
+	memset(t,ccnil,sizeof(*t));
+
+	t->kind=kind;
 	t->label=label;
   return t;
 }
@@ -148,6 +176,16 @@ ccblock_add_edict(ccemit_block_t *block, ccedict_t *edict)
   return value;
 }
 
+ccfunc ccemit_value_t *
+ccprocd_local(ccemit_procd_t *func, cctree_t *tree)
+{
+	// Todo: check tree ...
+
+	ccemit_value_t **v=cctblgetP(func->local,tree);
+	if(ccerrnon()) return *v;
+  return ccnil;
+}
+
 ccfunc ccinle ccemit_value_t *
 ccblock_store(ccemit_block_t *block, ccemit_value_t *lval, ccemit_value_t *rval)
 {
@@ -155,9 +193,15 @@ ccblock_store(ccemit_block_t *block, ccemit_value_t *lval, ccemit_value_t *rval)
 }
 
 ccfunc ccinle ccemit_value_t *
-ccblock_fetch(ccemit_block_t *block, ccemit_value_t *lval)
+ccblock_fetch(ccemit_block_t *block, ccemit_value_t *lval, ccemit_value_t *rval)
 {
-  return ccblock_add_edict(block,ccedict_fetch(lval));
+  return ccblock_add_edict(block,ccedict_fetch(lval,rval));
+}
+
+ccfunc ccinle ccemit_value_t *
+ccblock_address(ccemit_block_t *block, ccemit_value_t *lval, ccemit_value_t *rval)
+{
+  return ccblock_add_edict(block,ccedict_address(lval,rval));
 }
 
 ccfunc ccinle ccemit_value_t *

@@ -39,29 +39,6 @@ typedef struct ccexec_t
 { ccemit_t * emit;
 } ccexec_t;
 
-ccfunc ccemit_value_t *
-ccprocd_local(ccemit_procd_t *func, cctree_t *tree)
-{ // Todo: check tree ...
-	ccemit_value_t **v=cctblgetP(func->local,tree);
-	if(ccerrnon()) return *v;
-  return ccnil;
-}
-
-ccfunc ccemit_value_t *
-ccprocd_include_local(ccemit_procd_t *func, cctree_t *tree, int is_param)
-{
-	ccnotnil(tree);
-	ccassert(tree->kind==cctree_kDECLNAME);
-
-// Todo: check tree ...
-	ccedict_t *e=is_param?ccedict_param(tree):ccedict_local(tree);
-  ccemit_value_t  *i=ccblock_add_edict(func->decls,e);
-  ccemit_value_t **v=cctblputP(func->local,tree);
-  ccassert(ccerrnon());
-  *v=i;
-  return i;
-}
-
 ccfunc ccinle ccexec_value_t
 ccexec_rvalue(void *value, ccstr_t label)
 { ccexec_value_t t;

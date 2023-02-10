@@ -7,41 +7,30 @@
 //
 
 typedef enum cctree_k
-{
-  cctree_kTYPENAME,
-
+{ cctree_kTYPENAME,
   cctree_kSTRUCT,
   cctree_kENUM,
-
   cctree_kFUNC,
   cctree_kARRAY,
   cctree_kPOINTER,
-
   cctree_kIDENTIFIER,
   cctree_kINTEGER,
   cctree_kFLOAT,
   cctree_kSTRING,
-
   cctree_kBLOCK,
-
   cctree_kLABEL,
   cctree_kRETURN,
   cctree_kGOTO,
-
   cctree_kWHILE,
-
   cctree_kDECLNAME,
   cctree_kDECL,
-
   cctree_kTERNARY,
   cctree_kBINARY,
   cctree_kUNARY,
   cctree_kGROUP,
   cctree_kCALL,
   cctree_kINDEX,
-
   cctree_kTUNIT,
-
   cctree_t_designator,
   cctree_t_designation,
 } cctree_k;
@@ -71,8 +60,8 @@ ccglobal const char *cctree_s[]=
   "kCALL",
   "kINDEX",
   "kTUNIT",
-  "designator",
-  "designation",
+  "t_designator",
+  "t_designation",
 };
 
 
@@ -222,18 +211,20 @@ cctree_group(cctree_t *root, cci32_t mark, cctree_t *init)
 }
 
 ccfunc cctree_t *
-cctree_call(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval)
+cctree_call(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval, ccstr_t name)
 { cctree_t *tree=cctree_new(cctree_kCALL,root,mark);
   tree->lval=lval;
   tree->rval=rval;
+  tree->name=name;
   return tree;
 }
 
 ccfunc cctree_t *
-cctree_index(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval)
+cctree_index(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval, ccstr_t name)
 { cctree_t *tree=cctree_new(cctree_kINDEX,root,mark);
   tree->lval=lval;
   tree->rval=rval;
+  tree->name=name;
   return tree;
 }
 
@@ -379,11 +370,11 @@ cctree_solve_statement(cctree_t *);
 ccfunc int
 cctree_include_invokable(cctree_t *tree, const char *name)
 {
-	ccnotnil(tree);
-	ccnotnil(name);
+  ccnotnil(tree);
+  ccnotnil(name);
 
-	cctree_t **value=cctblputS(func_decls,tree->name);
-	if(ccerrnon()) *value=tree;
+  cctree_t **value=cctblputS(func_decls,tree->name);
+  if(ccerrnon()) *value=tree;
 
   return ccerrnon();
 }
@@ -391,13 +382,13 @@ cctree_include_invokable(cctree_t *tree, const char *name)
 ccfunc cctree_t *
 cctree_resolve_symbol(cctree_t *tree)
 {
-	ccnotnil(tree);
+  ccnotnil(tree);
 
   cctree_t **symbol=ccnil;
   symbol=cctblgetP(symbols,tree);
 
   if(ccerrsom())
-  	cctraceerr("'%s[0x%x]': uncoupled tree",cctree_s[tree->kind],tree);
+    cctraceerr("'%s[0x%x]': uncoupled tree",cctree_s[tree->kind],tree);
 
   return ccerrnon()? *symbol :ccnil;
 }
@@ -409,13 +400,15 @@ cctree_mingle(cctree_t *tree, const char *name)
 
   ccerrset(ccerr_kNIT);
 
-  if(tree->kind==cctree_kCALL)
-  	solved=cctblgetS(func_decls,name);
+  if((tree->kind==cctree_kIDENTIFIER) || // Note: to figure out what variable we're referring to ..
+     (tree->kind==cctree_kINDEX))        // Note: to figure out what variable we're referring to
+    solved=cctblgetS(vari_decls,name);
   else
-  if(tree->kind==cctree_kIDENTIFIER)
-  	solved=cctblgetS(vari_decls,name);
+  if((tree->kind==cctree_kCALL)) // Note: to figure out what function we're referring to ..
+    solved=cctblgetS(func_decls,name);
   else
-  	cctraceerr("'%s[0x%x]': invalid mingling tree, expected CALL or IDENTIFIER",cctree_s[tree->kind],tree);
+    cctraceerr("'%s[0x%x]': invalid mingling tree, expected CALL or IDENTIFIER",
+      cctree_s[tree->kind],tree);
 
   if(ccerrnon())
   {
@@ -437,11 +430,11 @@ cctree_solve_lvalue(cctree_t *tree);
 ccfunc void
 cctree_solve_call(cctree_t *tree)
 {
-	ccassert(tree->lval);
+  ccassert(tree->lval);
   ccassert(tree->rval);
 
-  if(!cctree_mingle(tree,tree->lval->name))
-      cctraceerr("%s: identifier not found",tree->lval->name);
+  if(!cctree_mingle(tree,tree->name))
+      cctraceerr("%s: identifier not found",tree->name);
 
   cctree_t *rval;
   ccarrfor(tree->rval,rval) cctree_solve_rvalue(rval);
@@ -450,10 +443,21 @@ cctree_solve_call(cctree_t *tree)
 ccfunc void
 cctree_solve_lvalue(cctree_t *tree)
 {
-	switch(tree->kind)
+  switch(tree->kind)
   {
     case cctree_kIDENTIFIER:
     {
+      if(!cctree_mingle(tree,tree->name))
+        cctraceerr("'%s': undeclared lvalue identifier",tree->name);
+    } break;
+    case cctree_kINDEX:
+    { // lval[rval]
+  		// I don't know dude, I feel like if you have a really complicated expression,
+  		// like lval[][][]
+  		// it should resolve all 3 separate indices and associate them with eachother...
+  		// (lval[])
+  		// ((lval[])[])[] ...
+  		//
       if(!cctree_mingle(tree,tree->name))
         cctraceerr("'%s': undeclared lvalue identifier",tree->name);
     } break;
@@ -464,7 +468,7 @@ cctree_solve_lvalue(cctree_t *tree)
 ccfunc void
 cctree_solve_rvalue(cctree_t *tree)
 {
-	switch(tree->kind)
+  switch(tree->kind)
   { case cctree_kINTEGER:
     break;
     case cctree_kIDENTIFIER:
@@ -477,18 +481,24 @@ cctree_solve_rvalue(cctree_t *tree)
     {
       cctree_solve_binary(tree->oper,tree->lval,tree->rval);
     } break;
-  	case cctree_kCALL:
-		{
-			cctree_solve_call(tree);
-		} break;
-  	default: ccassert(!"internal");
+    case cctree_kCALL:
+    {
+      cctree_solve_call(tree);
+    } break;
+    case cctree_kINDEX:
+    {
+    	if(!cctree_mingle(tree,tree->name))
+        cctraceerr("'%s': undeclared rvalue identifier",tree->name);
+
+    } break;
+    default: ccassert(!"internal");
   }
 }
 
 ccfunc void
 cctree_solve_binary(cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue)
 {
-	if(oper==cctoken_kASSIGN)
+  if(oper==cctoken_kASSIGN)
     cctree_solve_lvalue(lvalue);
   else
     cctree_solve_rvalue(lvalue);
@@ -502,7 +512,7 @@ cctree_solve_statement(cctree_t *tree);
 ccfunc void
 cctree_solve_block(cctree_t *block)
 {
-	cctree_t **tree;
+  cctree_t **tree;
   ccarrfor(block->list,tree) cctree_solve_statement(*tree);
 }
 
@@ -529,9 +539,9 @@ cctree_solve_statement(cctree_t *tree)
   } else
   if(tree->kind==cctree_kTERNARY)
   {
-  	cctree_solve_rvalue(tree->init);
-  	if(tree->lval) cctree_solve_block(tree->lval);
-  	if(tree->rval) cctree_solve_block(tree->rval);
+    cctree_solve_rvalue(tree->init);
+    if(tree->lval) cctree_solve_block(tree->lval);
+    if(tree->rval) cctree_solve_block(tree->rval);
   } else
   {
     ccassert(!"error");
