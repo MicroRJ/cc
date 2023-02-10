@@ -1,6 +1,8 @@
 /*****************************************************************/
 /** Copyright(C) J. Dayan Rodriguez, 2022, All rights reserved. **/
 /*****************************************************************/
+//
+// Note: No static language specific analysis done here, this file is meant to be modular in this manner...
 
 ccfunc cctree_t *
 ccread_arglist_expr(ccread_t *reader, cctree_t *root, cci32_t mark);

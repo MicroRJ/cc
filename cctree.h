@@ -356,9 +356,23 @@ cctree_solve_decl(cctree_t *);
 ccfunc ccinle void
 cctree_solve_statement(cctree_t *);
 
+ccfunc int
+cctree_include_invokeable_symbol(cctree_t *tree, const char *name)
+{
+	ccnotnil(tree);
+	ccnotnil(name);
+
+	cctree_t **value=cctblputS(func_decls,tree->name);
+	if(ccerrnon()) *value=tree;
+
+  return ccerrnon();
+}
+
 ccfunc cctree_t *
 cctree_resolve_symbol(cctree_t *tree)
 {
+	ccnotnil(tree);
+
   cctree_t **symbol=ccnil;
   symbol=cctblgetP(symbols,tree);
 
@@ -368,12 +382,19 @@ cctree_resolve_symbol(cctree_t *tree)
 ccfunc int
 cctree_resolve_call_symbol_allusion(cctree_t *tree)
 {
-  cctree_t **vdecl=cctblgetS(func_decls,tree->name);
+	ccnotnil(tree);
+
+  cctree_t **solved=cctblgetS(func_decls,tree->name);
 
   if(ccerrnon())
   {
+  	ccnotnil(*solved);
+
     cctree_t **symbol=cctblputP(symbols,tree);
-    *symbol=*vdecl;
+    ccassert(ccerrnon());
+    *symbol=*solved;
+
+  	cctracelog("%p: '%s'",tree,tree->name);
   }
 
   return ccerrnon();
@@ -382,15 +403,36 @@ cctree_resolve_call_symbol_allusion(cctree_t *tree)
 ccfunc int
 cctree_resolve_symbol_allusion(cctree_t *tree)
 {
-  cctree_t **vdecl=cctblgetS(vari_decls,tree->name);
+  cctree_t **solved=cctblgetS(vari_decls,tree->name);
 
   if(ccerrnon())
   {
     cctree_t **symbol=cctblputP(symbols,tree);
-    *symbol=*vdecl;
+    ccassert(ccerrnon());
+    *symbol=*solved;
   }
 
   return ccerrnon();
+}
+
+ccfunc void
+cctree_solve_binary(cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue);
+ccfunc void
+cctree_solve_rvalue(cctree_t *tree);
+ccfunc void
+cctree_solve_lvalue(cctree_t *tree);
+
+ccfunc void
+cctree_solve_call(cctree_t *tree)
+{
+	ccassert(tree->lval);
+  ccassert(tree->rval);
+
+  if(!cctree_resolve_call_symbol_allusion(tree->lval))
+      cctraceerr("%s: identifier not found",tree->lval->name);
+
+  cctree_t *rval;
+  ccarrfor(tree->rval,rval) cctree_solve_rvalue(rval);
 }
 
 ccfunc void
@@ -407,9 +449,6 @@ cctree_solve_lvalue(cctree_t *tree)
 }
 
 ccfunc void
-cctree_solve_binary(cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue);
-
-ccfunc void
 cctree_solve_rvalue(cctree_t *tree)
 { switch(tree->kind)
   { case cctree_kINTEGER:
@@ -424,18 +463,35 @@ cctree_solve_rvalue(cctree_t *tree)
     {
       cctree_solve_binary(tree->oper,tree->lval,tree->rval);
     } break;
+  	case cctree_kCALL:
+		{
+			cctree_solve_call(tree);
+		} break;
+  	default: ccassert(!"internal");
   }
 }
 
 ccfunc void
 cctree_solve_binary(cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue)
-{ if(oper==cctoken_kASSIGN)
+{
+	if(oper==cctoken_kASSIGN)
     cctree_solve_lvalue(lvalue);
   else
     cctree_solve_rvalue(lvalue);
 
   cctree_solve_rvalue(rvalue);
 }
+
+ccfunc void
+cctree_solve_statement(cctree_t *tree);
+
+ccfunc void
+cctree_solve_block(cctree_t *block)
+{
+	cctree_t **tree;
+  ccarrfor(block->list,tree) cctree_solve_statement(*tree);
+}
+
 ccfunc void
 cctree_solve_statement(cctree_t *tree)
 {
@@ -445,19 +501,23 @@ cctree_solve_statement(cctree_t *tree)
   } else
   if(tree->kind==cctree_kCALL)
   {
-    ccassert(tree->lval);
+    cctree_solve_call(tree);
+
+  } else
+  if(tree->kind==cctree_kRETURN)
+  {
     ccassert(tree->rval);
-
-    if(!cctree_resolve_call_symbol_allusion(tree->lval))
-        cctraceerr("%s: identifier not found",tree->lval->name);
-
-    cctree_t *rval;
-    ccarrfor(tree->rval,rval) cctree_solve_rvalue(rval);
-
+    cctree_solve_rvalue(tree->rval);
   } else
   if(tree->kind==cctree_kBINARY)
   {
     cctree_solve_binary(tree->oper,tree->lval,tree->rval);
+  } else
+  if(tree->kind==cctree_kTERNARY)
+  {
+  	cctree_solve_rvalue(tree->init);
+  	if(tree->lval) cctree_solve_block(tree->lval);
+  	if(tree->rval) cctree_solve_block(tree->rval);
   } else
   {
     ccassert(!"error");
@@ -481,8 +541,7 @@ cctree_solve_decl_name(cctree_t *tree)
   {
     if(tree->mark&cctree_mEXTERNAL)
     {
-      cctree_t **value=cctblputS(func_decls,tree->name);
-      if(ccerrnon())
+      if(cctree_include_invokeable_symbol(tree,tree->name))
       {
         cctree_t **list;
         ccarrfor(tree->type->list,list)
@@ -490,8 +549,6 @@ cctree_solve_decl_name(cctree_t *tree)
 
         ccarrfor(tree->blob->list,list)
           cctree_solve_statement(*list);
-
-        *value=tree;
       } else
           cctraceerr("%s: already has a body", tree->name);
     } else

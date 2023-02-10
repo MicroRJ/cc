@@ -14,7 +14,10 @@ typedef struct ccent_t
 } ccent_t;
 
 typedef struct ccdlb_t
-{ unsigned    can_rze: 1;
+{
+
+	unsigned    mno_add: 1;
+	unsigned    mno_rze: 1;
   ccent_t *   entries;
   ccu32_t     sze_max;
   ccu32_t     sze_min;
@@ -99,11 +102,14 @@ ccglobal ccerr_k ccerr;
 #ifndef ccarradd
 # define ccarradd(ccm,com) ((ccm)+ccarraddi(ccm,com))
 #endif
+#ifndef ccarrone
+# define ccarrone(ccm) ccarradd(ccm,1)
+#endif
 #ifndef ccarrzro
 # define ccarrzro(ccm) memset(ccm,ccnil,ccdlbmax(ccm))
 #endif
 #ifndef ccarrfix
-# define ccarrfix(ccm) ((ccm)?ccdlb_(ccm)->can_rze=cctrue:(ccnil))
+# define ccarrfix(ccm) ((ccm)?ccdlb_(ccm)->mno_rze=cctrue:(ccnil))
 #endif
 
 #ifndef ccarrfor
@@ -231,12 +237,12 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32_t rsze, ccu32_t csze)
     sze_max=ccnil,
     sze_min=ccnil;
   cci32_t
-    can_rze=ccnil;
+    mno_rze=ccnil;
 
   if(!is_ini)
   { sze_max=dlb->sze_max;
     sze_min=dlb->sze_min;
-    can_rze=dlb->can_rze;
+    mno_rze=dlb->mno_rze;
   }
 
 
@@ -246,7 +252,7 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32_t rsze, ccu32_t csze)
 
   if(sze_max<sze_min+rsze)
   {
-    ccassert(!can_rze);
+    ccassert(!mno_rze);
 
     sze_max<<=1;
     if(sze_max<sze_min+rsze)

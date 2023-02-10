@@ -20,6 +20,12 @@ ccblock_I(ccblock_t *block, const char *label)
   return block;
 }
 
+ccfunc ccblock_t *
+ccblock(ccblock_t *block, const char *label)
+{
+  return ccblock_I(ccmalloc_T(ccblock_t),label);
+}
+
 ccfunc ccemit_value_t *
 ccblock_add(ccblock_t *block)
 {

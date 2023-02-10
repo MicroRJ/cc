@@ -19,14 +19,13 @@ struct
 #else
 union
 #endif
-{ struct
+{ ccedict_t    *edict;
+	ccfunction_t *func;
+  ccblock_t    *block;
+	struct
 	{ cctree_t   * type;
 		ccclassic_t  clsc;
 	} constant;
-
-  ccfunction_t *func;
-  ccedict_t    *edict;
-  ccblock_t    *block;
 };
 } ccemit_value_t;
 

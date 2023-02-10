@@ -9,14 +9,14 @@ typedef enum ccedict_k
 	ccedict_kFETCH,
   ccedict_kARITH,
   ccedict_kBLOCK,
-  ccedict_kCONDI,
+  ccedict_kTERNARY,
   ccedict_kENTER,
   ccedict_kINVOKE,
   ccedict_kRETURN,
 } ccedict_k;
 
 ccglobal const char *ccedict_s[]=
-{ "LOCAL","PARAM","STORE","FETCH","ARITH","BLOCK","CONDI","ENTER","INVOKE","RETURN",
+{ "LOCAL","PARAM","STORE","FETCH","ARITH","BLOCK","TERNARY","ENTER","INVOKE","RETURN",
 };
 
 
@@ -49,16 +49,20 @@ union
 	} fetch;
 	// Note: Produces a non-addressable rvalue
 	struct
-	{ ccemit_value_t *call;
+	{ ccemit_value_t  * call;
+		ccemit_value_t ** rval;
 	} invoke;
 	struct
-	{ ccemit_value_t * cnd;
-  	ccblock_t      * then_blc;
-  	ccblock_t      * else_blc;
-	} condi;
+	{ ccemit_value_t  * value;
+	} ret;
 	struct
-	{ ccblock_t      * blc;
+	{ ccblock_t       * blc;
 	} enter;
+	struct
+	{ ccemit_value_t * cnd;
+  	ccblock_t      * lhs;
+  	ccblock_t      * rhs;
+	} ternary;
 	struct
 	{ cctoken_k        opr;
 	  ccemit_value_t * lhs;
@@ -132,13 +136,37 @@ ccedict_enter(ccblock_t *blc)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_call(ccemit_value_t *value)
+ccedict_call(ccemit_value_t *lval, ccemit_value_t **rval)
 {
+	ccassert(lval!=0);
+
 	ccedict_t *e=ccmalloc_T(ccedict_t);
 	e->kind=ccedict_kINVOKE;
-	e->invoke.call=value;
+	e->invoke.call=lval;
+	e->invoke.rval=rval;
 
 	return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_return(ccemit_value_t *value)
+{
+	ccedict_t *e=ccmalloc_T(ccedict_t);
+  e->kind=ccedict_kRETURN;
+  e->ret.value=value;
+  return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_ternary(ccemit_value_t *cnd, ccblock_t *lhs, ccblock_t *rhs)
+{
+	ccedict_t *e=ccmalloc_T(ccedict_t);
+  e->kind=ccedict_kTERNARY;
+  e->ternary.cnd=cnd;
+  e->ternary.lhs=lhs;
+  e->ternary.rhs=rhs;
+
+  return e;
 }
 
 #endif
