@@ -91,6 +91,13 @@ extern "C" {
 #ifndef ccfunc
 # define ccfunc static
 #endif
+#ifndef ccunion
+# ifdef _DEBUG
+#  define ccunion struct
+# else
+#  define ccunion union
+# endif
+#endif
 // Todo:
 #ifndef ccinle
 # ifdef __forceinline

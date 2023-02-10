@@ -4,7 +4,7 @@
 typedef enum ccvalue_k ccvalue_k;
 typedef enum ccvalue_k
 { ccvalue_Kinvalid=0,
-  ccvalue_Kblock,
+  ccvalue_kTARGET,
   ccvalue_kCONST,
   ccvalue_kGLOBAL,
   ccvalue_kFUNC,
@@ -15,14 +15,11 @@ typedef struct ccemit_value_t ccemit_value_t;
 typedef struct ccemit_value_t
 {
 	ccvalue_k kind;
-#if defined(_DEBUG)
-struct
-#else
-union
-#endif
-{ ccedict_t    *edict;
-	ccemit_procd_t *func;
-  ccemit_block_t    *block;
+
+ccunion
+{ ccedict_t      * edict;
+	ccu32_t          target;
+	ccemit_procd_t * func;
 	struct
 	{ cctree_t   * type;
 		ccclassic_t  clsc;
@@ -43,6 +40,14 @@ typedef struct ccemit_t
   ccemit_block_t *  current; // Todo:
 } ccemit_t;
 
+
+ccfunc ccemit_value_t *
+ccvalue_target()
+{
+	ccemit_value_t *value=ccmalloc_T(ccemit_value_t);
+	memset(value,ccnil,sizeof(*value));
+  return value;
+}
 
 ccfunc ccemit_block_t *
 ccblock(ccstr_t label)

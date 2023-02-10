@@ -249,6 +249,14 @@ ccexec_edict(
     { ccnotnil(edict->enter.blc);
       ccexec_enter(stack,edict->enter.blc);
     } break;
+  	case ccedict_kJUMP:
+    {
+    	ccnotnil(edict->jump.blc);
+    	ccnotnil(edict->jump.tar);
+    	ccnotnil(edict->jump.tar->target);
+    	stack->current=edict->jump.blc;
+    	stack->irindex=edict->jump.tar->target;
+    } break;
     case ccedict_kARITH:
     {
       ccexec_edict_arith(stack,value);
@@ -285,10 +293,13 @@ ccexec_edict(
 
       // Todo: is this flawed?
       if(rval.asi32)
-        ccexec_enter(stack,ccnotnil(edict->ternary.lhs));
+      {
+        if(edict->ternary.lhs) ccexec_enter(stack,edict->ternary.lhs);
+      }
       else
-        ccexec_enter(stack,ccnotnil(edict->ternary.rhs));
-
+      {
+        if(edict->ternary.rhs) ccexec_enter(stack,edict->ternary.rhs);
+      }
     } break;
     default: ccassert(!"error");
   }
@@ -351,12 +362,13 @@ ccexec_init(ccexec_t *exec)
 }
 
 
-ccfunc int
-ccfib(int x)
-{
-	if(x<2) return x;
-
-	return ccfib(x-2)+ccfib(x-1);
+int fib(int x)
+{ if(x>=2)
+	{ int l=fib(x-2);
+		int r=fib(x-1);
+		return l+r;
+	}
+	return x;
 }
 
 
@@ -377,11 +389,11 @@ ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
   ccu64_t cc_ce=ccclocktick();
 
   ccu64_t c_cs=ccclocktick();
-  int c=ccfib(arg->asi32);
+  int c=fib(arg->asi32);
   ccu64_t c_ce=ccclocktick();
 
 
-	printf("fib c:%i %f(s) - ccvm:%i %f(s)\n",
+	printf("fib c:%i %f(s) - cc:%i %f(s)\n",
 		c, ccclocksecs(c_ce-c_cs), ret.asi32, ccclocksecs(cc_ce-cc_cs));
   return 1;
 }

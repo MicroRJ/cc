@@ -8,7 +8,9 @@ typedef enum ccedict_k
 	ccedict_kSTORE,
 	ccedict_kFETCH,
   ccedict_kARITH,
-  ccedict_kBLOCK,
+  ccedict_kJUMP,
+  ccedict_kJUMPT,
+  ccedict_kJUMPF,
   ccedict_kTERNARY,
   ccedict_kENTER,
   ccedict_kINVOKE,
@@ -16,7 +18,7 @@ typedef enum ccedict_k
 } ccedict_k;
 
 ccglobal const char *ccedict_s[]=
-{ "LOCAL","PARAM","STORE","FETCH","ARITH","BLOCK","TERNARY","ENTER","INVOKE","RETURN",
+{ "LOCAL","PARAM","STORE","FETCH","ARITH","JUMP","JUMPT","JUMPF","TERNARY","ENTER","INVOKE","RETURN",
 };
 
 
@@ -57,6 +59,10 @@ union
 	struct
 	{ ccemit_value_t  * rval;
 	} ret;
+	struct
+	{ ccemit_block_t  * blc;
+		ccemit_value_t  * tar;
+	} jump;
 	struct
 	{ ccemit_block_t  * blc;
 	} enter;
@@ -140,6 +146,37 @@ ccedict_enter(ccemit_block_t *blc)
 }
 
 ccfunc ccinle ccedict_t *
+ccedict_jump(ccemit_block_t *blc, ccemit_value_t *tar)
+{
+	ccedict_t *e=ccmalloc_T(ccedict_t);
+  e->kind=ccedict_kJUMP;
+  e->jump.blc=blc;
+  e->jump.tar=tar;
+  return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_jumpT(ccemit_block_t *blc, ccemit_value_t *tar)
+{
+	ccedict_t *e=ccmalloc_T(ccedict_t);
+  e->kind=ccedict_kJUMPT;
+  e->jump.blc=blc;
+  e->jump.tar=tar;
+  return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_jumpF(ccemit_block_t *blc, ccemit_value_t *tar)
+{
+	ccedict_t *e=ccmalloc_T(ccedict_t);
+  e->kind=ccedict_kJUMPF;
+  e->jump.blc=blc;
+  e->jump.tar=tar;
+  return e;
+}
+
+
+ccfunc ccinle ccedict_t *
 ccedict_call(ccemit_value_t *lval, ccemit_value_t **rval)
 {
 	ccassert(lval!=0);
@@ -172,5 +209,8 @@ ccedict_ternary(ccemit_value_t *cnd, ccemit_block_t *lhs, ccemit_block_t *rhs)
 
   return e;
 }
+
+
+
 
 #endif

@@ -9,6 +9,8 @@ int fib(int x)
 
 int main(int a)
 {
-	int g=fib(a);
+	int g;
+	g=fib(a);
+
 	return g;
 }

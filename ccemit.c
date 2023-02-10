@@ -116,6 +116,12 @@ ccemit_invoke(ccemit_block_t *block, ccemit_value_t *lval, ccemit_value_t **rval
   return ccblock_add_edict(block,ccedict_call(lval,rval));
 }
 
+ccfunc ccemit_value_t *
+ccemit_jump(ccemit_block_t *block, ccemit_block_t *blc, ccemit_value_t *tar)
+{
+  return ccblock_add_edict(block,ccedict_jump(blc,tar));
+}
+
 
 ccfunc ccemit_value_t *
 ccemit_resolve(ccemit_t *emit, ccemit_procd_t *func, cctree_t *tree)
@@ -283,7 +289,9 @@ ccemit_tree(
 
   } else
   if(tree->kind==cctree_kTERNARY)
-  { ccemit_value_t *cond_value=ccemit_tree(emit,func,irset,tree->init);
+  {
+#if 0
+  	ccemit_value_t *cond_value=ccemit_tree(emit,func,irset,tree->init);
     ccemit_block_t *then_block=ccblock("$if::then");
     ccemit_block_t *else_block=ccblock("$if::else");
     ccemit_block_t *done_block=ccblock("$local");
@@ -296,6 +304,25 @@ ccemit_tree(
     ccemit_ternary(irset,cond_value,then_block,else_block);
 
     emit->current=done_block;
+#else
+  	ccemit_value_t *else_tar=ccvalue_target();
+
+  	ccemit_value_t *cond_value=ccemit_tree(emit,func,irset,tree->init);
+
+    ccemit_block_t *else_block=ccblock("$if::else");
+    ccemit_jump(else_block,irset,else_tar);
+
+    ccemit_ternary(irset,cond_value,ccnil,else_block);
+
+    if(tree->lval)
+    	ccemit_tree(emit,func,irset,tree->lval);
+
+    else_tar->target=ccarrlen(irset->edict);
+
+    if(tree->rval)
+    	ccemit_tree(emit,func,irset,tree->rval);
+
+#endif
     return ccnil;
   } else
   if(tree->kind==cctree_kWHILE)
