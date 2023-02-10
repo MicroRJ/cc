@@ -36,6 +36,7 @@ ccunion
 	{
 		cctype_t *type;
 	} local,param;
+	// Note: Produces an addressable lvalue at an offset specified by rval ...
 	struct
 	{ ccemit_value_t * lval;
 		ccemit_value_t * rval;

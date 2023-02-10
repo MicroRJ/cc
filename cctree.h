@@ -388,7 +388,7 @@ cctree_resolve_symbol(cctree_t *tree)
   symbol=cctblgetP(symbols,tree);
 
   if(ccerrsom())
-    cctraceerr("'%s[0x%x]': uncoupled tree",cctree_s[tree->kind],tree);
+    cctraceerr("'%s[0x%x]': uncoupled tree, '%s', checker did not do its job",cctree_s[tree->kind],tree,tree->name);
 
   return ccerrnon()? *symbol :ccnil;
 }
@@ -447,6 +447,18 @@ cctree_solve_call(cctree_t *tree)
 }
 
 ccfunc void
+cctree_solve_index(cctree_t *tree)
+{
+  ccassert(tree->lval);
+  ccassert(tree->rval);
+
+  if(!cctree_mingle(tree,tree->name))
+      cctraceerr("%s: identifier not found",tree->name);
+
+  cctree_solve_rvalue(tree->rval);
+}
+
+ccfunc void
 cctree_solve_lvalue(cctree_t *tree)
 {
   switch(tree->kind)
@@ -457,15 +469,8 @@ cctree_solve_lvalue(cctree_t *tree)
         cctraceerr("'%s': undeclared lvalue identifier",tree->name);
     } break;
     case cctree_kINDEX:
-    { // lval[rval]
-  		// I don't know dude, I feel like if you have a really complicated expression,
-  		// like lval[][][]
-  		// it should resolve all 3 separate indices and associate them with eachother...
-  		// (lval[])
-  		// ((lval[])[])[] ...
-  		//
-      if(!cctree_mingle(tree,tree->name))
-        cctraceerr("'%s': undeclared lvalue identifier",tree->name);
+    {
+    	cctree_solve_index(tree);
     } break;
     default: ccassert(!"internal");
   }
@@ -493,9 +498,7 @@ cctree_solve_rvalue(cctree_t *tree)
     } break;
     case cctree_kINDEX:
     {
-    	if(!cctree_mingle(tree,tree->name))
-        cctraceerr("'%s': undeclared rvalue identifier",tree->name);
-
+    	cctree_solve_index(tree);
     } break;
     default: ccassert(!"internal");
   }
@@ -511,9 +514,6 @@ cctree_solve_binary(cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue)
 
   cctree_solve_rvalue(rvalue);
 }
-
-ccfunc void
-cctree_solve_statement(cctree_t *tree);
 
 ccfunc void
 cctree_solve_block(cctree_t *block)
@@ -595,6 +595,20 @@ cctree_solve_decl_name(cctree_t *tree)
     {
       cctree_solve_rvalue(tree->init);
     }
+
+    if(tree->type->kind==cctree_kARRAY)
+    {
+
+      cctree_solve_rvalue(tree->type->rval);
+
+    } else
+    if(tree->type->kind==cctree_kTYPENAME)
+    {
+
+    } else
+    {
+    	ccassert(!"error");
+    }
   }
 }
 
@@ -605,7 +619,7 @@ cctree_solve_decl(cctree_t *decl)
 }
 
 ccfunc void
-cctree_solve(cctree_t *tree)
+cctree_solve_translation_unit(cctree_t *tree)
 { ccassert(tree->kind==cctree_kTUNIT);
 
   cctree_t **decl;

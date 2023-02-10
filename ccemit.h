@@ -18,30 +18,33 @@ typedef enum ccvalue_k
 
 typedef enum
 {
-	cctype_kINTEGER,
-	cctype_kARRAY,
+  cctype_kINTEGER,
+  cctype_kARRAY,
 } cctype_k;
 
 typedef struct cctype_t
 { ccstr_t   label;
 
-	cctype_k  kind;
-	cctype_t *type;
+  cctype_k  kind;
+  cctype_t *type;
 
-	// Note: if it is an array ...
-	ccemit_value_t *length;
+  // Note: if it is an array ...
+  ccemit_value_t *length;
 } cctype_t;
 
 typedef struct ccemit_value_t
-{ ccvalue_k 			 kind;
-	ccstr_t          label;
+{ ccvalue_k        kind;
+
+  ccstr_t label;
+  ccloc_t creator;
+
 ccunion
 { ccedict_t      * edict;
-	ccemit_procd_t * procd;
-	struct
-	{ cctype_t     * type;
-		ccclassic_t    clsc;
-	} constant;
+  ccemit_procd_t * procd;
+  struct
+  { cctype_t     * type;
+    ccclassic_t    clsc;
+  } constant;
 };
 } ccemit_value_t;
 
@@ -53,7 +56,7 @@ typedef struct ccemit_block_t
 typedef struct ccemit_procd_t
 { ccstr_t          label; // Note: for debugging
 
-	cctree_t        *tree;
+  cctree_t        *tree;
   ccemit_value_t **local;
   ccemit_block_t **block;
 
@@ -72,10 +75,10 @@ typedef struct ccemit_t
 ccfunc ccinle ccemit_value_t *
 ccvalue(ccstr_t label)
 {
-	ccemit_value_t *t=ccmalloc_T(ccemit_value_t);
-	memset(t,ccnil,sizeof(*t));
+  ccemit_value_t *t=ccmalloc_T(ccemit_value_t);
+  memset(t,ccnil,sizeof(*t));
 
-	t->label=label;
+  t->label=label;
   return t;
 }
 
@@ -83,11 +86,11 @@ ccvalue(ccstr_t label)
 ccfunc ccinle cctype_t *
 cctype(cctype_k kind, ccstr_t label)
 {
-	cctype_t *t=ccmalloc_T(cctype_t);
-	memset(t,ccnil,sizeof(*t));
+  cctype_t *t=ccmalloc_T(cctype_t);
+  memset(t,ccnil,sizeof(*t));
 
-	t->kind=kind;
-	t->label=label;
+  t->kind=kind;
+  t->label=label;
   return t;
 }
 
@@ -95,10 +98,10 @@ cctype(cctype_k kind, ccstr_t label)
 ccfunc ccinle ccemit_block_t *
 ccblock(ccstr_t label)
 {
-	ccemit_block_t *t=ccmalloc_T(ccemit_block_t);
-	memset(t,ccnil,sizeof(*t));
+  ccemit_block_t *t=ccmalloc_T(ccemit_block_t);
+  memset(t,ccnil,sizeof(*t));
 
-	t->label=label;
+  t->label=label;
   return t;
 }
 
@@ -106,10 +109,10 @@ ccblock(ccstr_t label)
 ccfunc ccinle ccemit_procd_t *
 ccprocd(ccstr_t label)
 {
-	ccemit_procd_t *t=ccmalloc_T(ccemit_procd_t);
-	memset(t,ccnil,sizeof(*t));
+  ccemit_procd_t *t=ccmalloc_T(ccemit_procd_t);
+  memset(t,ccnil,sizeof(*t));
 
-	t->label=label;
+  t->label=label;
   return t;
 }
 
@@ -119,7 +122,7 @@ ccprocd(ccstr_t label)
 ccfunc ccemit_value_t *
 ccemit_global(ccemit_t *emit, cctree_t *tree)
 {
-	ccemit_value_t **v=cctblgetP(emit->globals,tree);
+  ccemit_value_t **v=cctblgetP(emit->globals,tree);
   ccassert(ccerrnon());
 
   ccemit_value_t *value=*v;
@@ -129,7 +132,7 @@ ccemit_global(ccemit_t *emit, cctree_t *tree)
 ccfunc ccemit_value_t *
 ccemit_include_global(ccemit_t *emit, cctree_t *tree, ccstr_t label)
 {
-	ccemit_value_t **v=cctblputP(emit->globals,tree);
+  ccemit_value_t **v=cctblputP(emit->globals,tree);
   ccassert(ccerrnon());
 
   ccemit_value_t *value=ccvalue(label);
@@ -141,12 +144,12 @@ ccemit_include_global(ccemit_t *emit, cctree_t *tree, ccstr_t label)
 ccfunc ccemit_procd_t *
 ccemit_global_procd(ccemit_t *emit, cctree_t *tree, ccstr_t label)
 {
-	ccemit_value_t *v=ccemit_include_global(emit,tree,label);
-	v->kind=ccvalue_kPROCD;
+  ccemit_value_t *v=ccemit_include_global(emit,tree,label);
+  v->kind=ccvalue_kPROCD;
 
-	ccemit_procd_t *p=ccprocd(label);
+  ccemit_procd_t *p=ccprocd(label);
 
-	p->tree=tree;
+  p->tree=tree;
   p->block=ccnil;
 
   // Todo:
@@ -154,7 +157,7 @@ ccemit_global_procd(ccemit_t *emit, cctree_t *tree, ccstr_t label)
   *ccarradd(p->block,1)=p->enter=ccblock("$enter");
   *ccarradd(p->block,1)=p->leave=ccblock("$leave");
 
-	v->procd=p;
+  v->procd=p;
 
   return p;
 }
@@ -162,7 +165,7 @@ ccemit_global_procd(ccemit_t *emit, cctree_t *tree, ccstr_t label)
 ccfunc ccemit_value_t *
 ccblock_add(ccemit_block_t *block)
 { ccemit_value_t  *v=ccmalloc_T(ccemit_value_t);
-	ccemit_value_t **t=ccarradd(block->edict,1);
+  ccemit_value_t **t=ccarradd(block->edict,1);
   memset(v,ccnil,sizeof(*v));
   *t=v;
   return v;
@@ -171,18 +174,18 @@ ccblock_add(ccemit_block_t *block)
 ccfunc ccemit_value_t *
 ccblock_add_edict(ccemit_block_t *block, ccedict_t *edict)
 { ccemit_value_t *value=ccblock_add(block);
-	value->kind  = ccvalue_kEDICT;
-	value->edict = edict;
+  value->kind  = ccvalue_kEDICT;
+  value->edict = edict;
   return value;
 }
 
 ccfunc ccemit_value_t *
 ccprocd_local(ccemit_procd_t *func, cctree_t *tree)
 {
-	// Todo: check tree ...
+  // Todo: check tree ...
 
-	ccemit_value_t **v=cctblgetP(func->local,tree);
-	if(ccerrnon()) return *v;
+  ccemit_value_t **v=cctblgetP(func->local,tree);
+  if(ccerrnon()) return *v;
   return ccnil;
 }
 

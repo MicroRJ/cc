@@ -1,6 +1,7 @@
 #ifndef _CCEMIT
 #define _CCEMIT
 
+
 // warren - "a densely populated or labyrinthine building or district"
 // paisley - "a distinctive intricate pattern of curved feather-shaped figures based on an Indian pine-cone design"
 // austere - "severe or strict in manner, attitude, or appearance"
@@ -11,6 +12,11 @@ ccemit_lvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctre
 
 ccfunc ccemit_value_t *
 ccemit_rvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctree_t *tree);
+
+
+// Todo: cctree_to_type will not work with variables, this is because variables are not constant,
+// and they are not generated before the decl block adds all the locals, so when a local array
+// is added, no other instructions will be present ...
 
 // Todo: this is temporary ...
 ccfunc ccinle cctype_t *
@@ -344,7 +350,7 @@ ccemit_external_decl(ccemit_t *emit, cctree_t *tree)
 ccfunc void
 ccemit_translation_unit(ccemit_t *emit, cctree_t *tree)
 {
-  cctree_solve(tree);
+  cctree_solve_translation_unit(tree);
 
   cctree_t **decl;
   ccarrfor(tree->list,decl) ccemit_external_decl(emit,*decl);

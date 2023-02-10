@@ -13,7 +13,9 @@ int retsame(int c)
 }
 
 int main(int a)
-{ int some[100];
+{
+	int some[256];
+
 	some[24]=retsame(fib(a));
 	return some[24];
 }
