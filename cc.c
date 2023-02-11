@@ -50,6 +50,11 @@ extern "C" {
 # error 'missing __COUNTER__'
 #endif
 
+#define _CCFUNC __FUNC__
+#define _CCLINE __LINE__
+#define _CCFILE __FILE__
+
+
 
 // Note: suppress warnings ...
 #ifdef _MSC_VER
@@ -153,6 +158,7 @@ extern "C" {
 ccfunc void
 cctrace_(int guid, const char  *file, int line, const char *func, const char *tag, const char *fmt, ...);
 
+#ifdef _DEBUG
 # ifndef cctrace
 #  define cctrace(tag,fmt,...) cctrace_(__COUNTER__,__FILE__,__LINE__,__FUNC__,tag,fmt,__VA_ARGS__)
 # endif
@@ -162,7 +168,6 @@ cctrace_(int guid, const char  *file, int line, const char *func, const char *ta
 # ifndef cctracewar
 #  define cctracewar(fmt,...) cctrace("war",fmt,__VA_ARGS__)
 # endif
-# ifdef _DEBUG
 # ifndef cctraceerr
 #  define cctraceerr(fmt,...) cctrace("err",fmt,__VA_ARGS__),ccbreak()
 # endif
@@ -180,7 +185,6 @@ cctrace_(int guid, const char  *file, int line, const char *func, const char *ta
 #  define cctraceerr(fmt,...) ccnil
 # endif
 #endif
-
 
 ccfunc void *ccmalloc_ (size_t,         const char *, const char *, int);
 ccfunc void *ccrealloc_(void *, size_t, const char *, const char *, int);
@@ -216,38 +220,6 @@ ccfunc void  ccfree_   (void *,         const char *, const char *, int);
 # define ccrealloc_T(mem,type) cccast(type*,ccrealloc(mem,sizeof(type)))
 #endif
 
-#ifdef _HARD_DEBUG
-ccfunc void *ccmalloc_(size_t size, const char *file, const char *func, int line)
-{
-  // long   reqn;
-  // char * file;
-  // int    line;
-  // ccassert(_CrtIsMemoryBlock(mem,sze,&reqn,&file,&line))
-
-  void *mem=_malloc_dbg(size,_CLIENT_BLOCK,file,line);
-  return mem;
-}
-
-ccfunc void *ccrealloc_(void *data, size_t size, const char *file, const char *func, int line)
-{
-  void *mem=_realloc_dbg(data,size,_CLIENT_BLOCK,file,line);
-  return mem;
-}
-ccfunc void ccfree_(void *data, const char *file, const char *func, int line)
-{
-	ccassert(_CrtIsValidHeapPointer(data));
-
-  _free_dbg(data,_CLIENT_BLOCK);
-}
-#ifdef _DEVELOPER
-#undef malloc
-# define malloc DO_NOT_USE_MALLOC
-#undef realloc
-# define realloc DO_NOT_USE_REALLOC
-#undef free
-# define free DO_NOT_USE_FREE
-#endif
-#endif
 
 _CCASSERT(sizeof(ccu64_t)==sizeof(size_t));
 _CCASSERT(sizeof(cci64_t)==sizeof(size_t));
@@ -259,11 +231,52 @@ ccfunc void *ccpullfile(void *,unsigned long int,unsigned long int *);
 ccfunc unsigned long int ccpushfile(void *,unsigned long int,unsigned long int,void*);
 ccfunc unsigned long int ccfilesize(void *);
 
-ccfunc ccinle ccu64_t ccclocktick();
+
+typedef ccu64_t ccclocktick_t;
+ccfunc ccinle ccclocktick_t ccclocktick();
 ccfunc ccinle ccf64_t ccclocksecs(ccu64_t);
 
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb_sprintf.h"
+
+ccfunc ccinle int
+ccformatvex(char *buf, int len, const char * fmt, va_list vli)
+{
+  return stbsp_vsnprintf(buf,len,fmt,vli);
+}
+
+ccfunc ccinle char *
+ccformatv(const char * fmt, va_list vli)
+{
+  ccglobal ccthread_local char buf[0xff];
+
+  ccformatvex(buf,0xff,fmt,vli);
+
+  return buf;
+}
+
+ccfunc int
+ccformatex(char *buf, int len, const char * fmt, ...)
+{
+  va_list vli;
+  va_start(vli,fmt);
+  int res=ccformatvex(buf,len,fmt,vli);
+  va_end(vli);
+
+  return res;
+}
+
+ccfunc char *
+ccformat(const char * fmt, ...)
+{
+  va_list vli;
+  va_start(vli,fmt);
+  char *res=ccformatv(fmt,vli);
+  va_end(vli);
+
+  return res;
+}
+
 
 typedef struct ccedict_t ccedict_t;
 typedef struct ccread_t ccread_t;
@@ -281,9 +294,13 @@ typedef struct ccjump_point_t ccjump_point_t;
 typedef struct cctype_t cctype_t;
 typedef struct cctree_t cctree_t;
 
+#include "ccfio.c"
+
 #include "cclog.h"
 #include "ccdlb.h"
-#include "ccfio.c"
+#define _CCLOG_IMPL
+#include "cclog.h"
+
 #include "ccread.h"
 #include "cctree.h"
 #include "cccheck.c"
@@ -297,6 +314,70 @@ typedef struct cctree_t cctree_t;
 #include "ccexec.c"
 #include "ccemit-c.c"
 
+
+
+
+
+#ifdef _HARD_DEBUG
+
+typedef struct ccdebug_memory_label_t
+{
+	size_t size;
+} ccdebug_memory_label_t;
+
+ccfunc void *ccmalloc_(size_t size, const char *file, const char *func, int line)
+{
+	cctimed()->allocations++;
+	cctimed()->memory+=size;
+
+  ccdebug_memory_label_t *label=
+  	(ccdebug_memory_label_t*)_malloc_dbg(sizeof(*label)+size,_CLIENT_BLOCK,file,line);
+
+	label->size=size;
+
+  return label+1;
+}
+
+ccfunc void *ccrealloc_(void *data, size_t size, const char *file, const char *func, int line)
+{
+	cctimed()->reallocations++;
+
+	ccdebug_memory_label_t *label=ccnil;
+
+	if(data)
+	{ label=(ccdebug_memory_label_t*)data-1;
+		cctimed()->memory-=label->size;
+	}
+
+	cctimed()->memory+=size;
+
+	label=(ccdebug_memory_label_t*)_realloc_dbg(label,sizeof(*label)+size,_CLIENT_BLOCK,file,line);
+	label->size=size;
+
+  return label+1;
+}
+ccfunc void ccfree_(void *data, const char *file, const char *func, int line)
+{
+	cctimed()->deallocations++;
+
+	ccdebug_memory_label_t *label=ccnil;
+
+	if(data)
+	{ label=(ccdebug_memory_label_t*)data-1;
+		cctimed()->memory-=label->size;
+	}
+
+  _free_dbg(label,_CLIENT_BLOCK);
+}
+#ifdef _DEVELOPER
+#undef malloc
+# define malloc DO_NOT_USE_MALLOC
+#undef realloc
+# define realloc DO_NOT_USE_REALLOC
+#undef free
+# define free DO_NOT_USE_FREE
+#endif
+#endif
 
 #ifdef _MSC_VER
 #pragma warning(pop)

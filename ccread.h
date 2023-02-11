@@ -10,11 +10,11 @@
 
 typedef enum cctoken_k
 {
-  cctoken_Kinvalid = - 1, // <-- for the hash table this means that it wasn't there before.
+  cctoken_kINVALID = 0, // <-- for the hash table this means that it wasn't there before.
   /**
    * Group: syntactic operators.
    **/
-  cctoken_kEND     =   0,
+  cctoken_kEND,
 
   // ** this is up to the lexer to determine and the parser to interpret **
   cctoken_Kendimpl, // '\r\n'
@@ -39,7 +39,7 @@ typedef enum cctoken_k
   cctoken_Kliteral_character,
   cctoken_kLITSTR,
   cctoken_Kliteral_string_format,
-  cctoken_Kliteral_string_unterminated,
+  cctoken_kLITSTR_INVALID,
   cctoken_kLITIDENT,
   cctoken_kLITINT,
   cctoken_kLITFLO,
@@ -275,14 +275,18 @@ typedef struct cctoken_t
 
 // Note: merge the lexer and reader and make the symbol table global?
 typedef struct cclex_t
-{ const char *doc_max, *doc_min;
-  const char *max,     *min; // <-- points to the beginning and end of the token after its been parsed.
+{
+	const char *doc_max, *doc_min;
+  const char *max, *min;
 
-// Todo: remove this ....
+  cctoken_k *tbl;
+
+#if 0
   ccu32_t    tbl_max;
   ccu32_t    tbl_min;
   ccentry_t *tbl;
   ccu32_t    tbl_dbg;
+#endif
 
   cctoken_t  tok;
 } cclex_t;

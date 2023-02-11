@@ -1,30 +1,62 @@
+#define ARG 22
+
 #include "cc.c"
 
+int fib(int x)
+{ if(x>=2)
+  { int l=fib(x-2);
+    int r=fib(x-1);
+    return l+r;
+  }
+  return x;
+}
 
 int main(int argc, char **argv)
 {
+cctimedhead("root");
+
+
   ++ argv;
   -- argc;
 
-  cctracelog("log test 1");
-  cctracelog("log test 2");
-  cctracelog("log test 3");
-
 	ccdlb_test();
+
+cctimedhead("main");
 
   ccread_t read;
   ccread_init(&read);
   ccread_include(& read, "test.svm.c");
 
+cctimedhead("read");
+  cctree_t *tree;
+  tree=ccread_translation_unit(&read);
+cctimedtail("read");
+
+
+cctimedhead("emit");
   ccemit_t emit;
 	ccemit_init(&emit);
-	ccemit_translation_unit(&emit,ccread_translation_unit(&read));
+	ccemit_translation_unit(&emit,tree);
+cctimedtail("emit");
 
+cctimedhead("exec");
+  ccexec_value_t retr;
   ccexec_t exec;
   ccexec_init(&exec);
-  ccexec_translation_unit(&exec,&emit);
+  retr=ccexec_translation_unit(&exec,&emit);
+cctimedtail("exec");
 
   ccread_uninit(&read);
+
+cctimedhead("compare");
+
+	int c=fib(ARG);
+  cctracelog("c:%i - cc:%i",c,retr.asi32);
+
+cctimedtail("compare");
+
+
+cctimedtail("main");
 
 
 
@@ -73,4 +105,5 @@ int main(int argc, char **argv)
     ccclosefile(file);
   }
 
+cctimedtail("root");
 }

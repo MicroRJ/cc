@@ -1,16 +1,27 @@
 #ifndef _CCFIO
 #define _CCFIO
 
+ccfunc const char *
+ccfilename(const char *name)
+{ const char *result=name;
+	for(result=name;*name;++name)
+	{ if((*name=='\\')||(*name=='/'))
+		{ result=name+1;
+		}
+	}
+	return result;
+}
+
 #ifdef _WIN32
 
-ccfunc ccinle ccu64_t
+ccfunc ccinle ccclocktick_t
 ccclocktick()
 { LARGE_INTEGER l;
 	QueryPerformanceCounter(&l);
  	return l.QuadPart;
 }
 ccfunc ccinle ccf64_t
-ccclocksecs(ccu64_t t)
+ccclocksecs(ccclocktick_t t)
 { LARGE_INTEGER l;
 	QueryPerformanceFrequency(&l);
  	return (((ccf64_t)t)/l.QuadPart);

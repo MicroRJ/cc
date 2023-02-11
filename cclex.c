@@ -5,71 +5,7 @@
 
 #define CCLEX_WITHIN(x,l,r) (((x)>=(l))&&((x)<=(r)))
 
-
-
-// Note: I literally know nothing about cryptography ....
-ccfunc unsigned int
-cclex_hashfunc(int len, const char *str)
-{ unsigned int h = 5381;
-  while(len) h += (h << 5) + str[-- len];
-  return h;
-}
-
-ccfunc char *
-cclex_hash(cclex_t *l, int len, const char *key, int cpy, int *bit, int *fnd)
-{
-  ccassert((l->tbl_max&0x1)==0);
-  ccassert(bit!=0);
-
-  unsigned int hash=cclex_hashfunc(len,key);
-  ccentry_t *slot=l->tbl+(hash&(l->tbl_max-1));
-
-  int eql=0;
-
-  do
-  { if(eql=(slot->len==len))
-    { const char *m,*k;
-      m=slot->key;
-      k=key;
-      while((k<key+len)&&(eql=(*k++==*m++)));
-    }
-  } while((!eql) && (slot->nex) && (slot = slot->nex));
-
-  if(fnd) *fnd=eql;
-
-  if(! eql)
-  { // Note: this is either the first slot, or the last slot ... If no key, first slot, otherwise, last ...
-  	if(slot->key) slot=slot->nex=(ccentry_t *)ccmalloc(sizeof(ccentry_t));
-
-    slot->nex=0;
-    slot->key=ccnil;
-    slot->len=len;
-    slot->bit=*bit;
-
-    // Todo: replace this with a legit string arena ...
-    if(cpy) ccstrputN((char*)slot->key,len,key);
-    else slot->key=(char*)key;
-
-    ++ l->tbl_min;
-  } else
-  {
-	  if(bit) *bit=slot->bit;
-  }
-  return slot->key;
-}
-
-ccfunc void
-cclex_hashonly(cclex_t *l, int len, const char *key, cctoken_k bit)
-{
-	int fnd;
-	const char *okey=cclex_hash(l,len,key,ccfalse,(int*)&bit,&fnd);
-	(void)okey;
-	ccassert(okey==key);
-
-  if(fnd) cctraceerr("invalid key, already in hash table");
-}
-
-// I don't like this! Remove!
+// Note: this could be done at compile time? and should probably make global or something ...
 ccfunc void
 cclex_hash_init(cclex_t *lexer)
 {
@@ -78,90 +14,90 @@ cclex_hash_init(cclex_t *lexer)
    *
    *  ** these are reserved keywords **
    **/
-  cclex_hashonly(lexer,cclit("__asm"),cctoken_Kmsvc_attr_asm);
-  cclex_hashonly(lexer,cclit("__based"),cctoken_Kmsvc_attr_based);
-  cclex_hashonly(lexer,cclit("__cdecl"),cctoken_Kmsvc_attr_cdecl);
-  cclex_hashonly(lexer,cclit("__clrcall"),cctoken_Kmsvc_attr_clrcall);
-  cclex_hashonly(lexer,cclit("__fastcall"),cctoken_Kmsvc_attr_fastcall);
-  cclex_hashonly(lexer,cclit("__inline"),cctoken_Kmsvc_attr_inline);
-  cclex_hashonly(lexer,cclit("__stdcall"),cctoken_Kmsvc_attr_stdcall);
-  cclex_hashonly(lexer,cclit("__thiscall"),cctoken_Kmsvc_attr_thiscall);
-  cclex_hashonly(lexer,cclit("__vectorcal"),cctoken_Kmsvc_attr_vectorcal);
+  *cctblputL(lexer->tbl,"__asm")=cctoken_Kmsvc_attr_asm; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__based")=cctoken_Kmsvc_attr_based; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__cdecl")=cctoken_Kmsvc_attr_cdecl; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__clrcall")=cctoken_Kmsvc_attr_clrcall; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__fastcall")=cctoken_Kmsvc_attr_fastcall; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__inline")=cctoken_Kmsvc_attr_inline; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__stdcall")=cctoken_Kmsvc_attr_stdcall; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__thiscall")=cctoken_Kmsvc_attr_thiscall; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__vectorcal")=cctoken_Kmsvc_attr_vectorcal; ccassert(ccerrnon());
   /**
    * Group: alignment specifiers
    *
    * ** these are reserved keywords **
    **/
-  cclex_hashonly(lexer,cclit("_Alignof"),cctoken_Kalign_of);
-  cclex_hashonly(lexer,cclit("_Alignas"),cctoken_Kalign_as);
+  *cctblputL(lexer->tbl,"_Alignof")=cctoken_Kalign_of; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"_Alignas")=cctoken_Kalign_as; ccassert(ccerrnon());
    /**
    * Group: type qualifiers
    *
    * ** these are reserved keywords **
    **/
-  cclex_hashonly(lexer,cclit("const"),cctoken_Kconst);
-  cclex_hashonly(lexer,cclit("restrict"),cctoken_Krestrict);
-  cclex_hashonly(lexer,cclit("volatile"),cctoken_Kvolatile);
+  *cctblputL(lexer->tbl,"const")=cctoken_Kconst; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"restrict")=cctoken_Krestrict; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"volatile")=cctoken_Kvolatile; ccassert(ccerrnon());
   /**
    * Group: function specifiers.
    *
    * ** these are reseverd keywords **
    **/
-  cclex_hashonly(lexer,cclit("inline"),cctoken_Kinline);
-  cclex_hashonly(lexer,cclit("_Noreturn"),cctoken_Kno_return);
+  *cctblputL(lexer->tbl,"inline")=cctoken_Kinline; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"_Noreturn")=cctoken_Kno_return; ccassert(ccerrnon());
   /**
    * Group: type specifiers.
    *
    * ** these are reseverd keywords **
    **/
-  cclex_hashonly(lexer,cclit("signed"),cctoken_Ksigned);
-  cclex_hashonly(lexer,cclit("unsigned"),cctoken_Kunsigned);
-  cclex_hashonly(lexer,cclit("__int8"),cctoken_Kmsvc_int8);
-  cclex_hashonly(lexer,cclit("__int16"),cctoken_Kmsvc_int16);
-  cclex_hashonly(lexer,cclit("__int32"),cctoken_Kmsvc_int32);
-  cclex_hashonly(lexer,cclit("__int64"),cctoken_Kmsvc_int64);
-  cclex_hashonly(lexer,cclit("double"),cctoken_Kdouble);
-  cclex_hashonly(lexer,cclit("float"),cctoken_Kfloat);
-  cclex_hashonly(lexer,cclit("long"),cctoken_Klong);
-  cclex_hashonly(lexer,cclit("int"),cctoken_Kint);
-  cclex_hashonly(lexer,cclit("short"),cctoken_Kshort);
-  cclex_hashonly(lexer,cclit("char"),cctoken_Kchar);
-  cclex_hashonly(lexer,cclit("void"),cctoken_Kvoid);
-  cclex_hashonly(lexer,cclit("_Bool"),cctoken_Kbool);
-  cclex_hashonly(lexer,cclit("_Complex"),cctoken_Kcomplex);
-  cclex_hashonly(lexer,cclit("_Atomic"),cctoken_Katomic);
-  cclex_hashonly(lexer,cclit("enum"),cctoken_Kenum);
-  cclex_hashonly(lexer,cclit("struct"),cctoken_kSTRUCT);
+  *cctblputL(lexer->tbl,"signed")=cctoken_Ksigned; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"unsigned")=cctoken_Kunsigned; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__int8")=cctoken_Kmsvc_int8; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__int16")=cctoken_Kmsvc_int16; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__int32")=cctoken_Kmsvc_int32; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__int64")=cctoken_Kmsvc_int64; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"double")=cctoken_Kdouble; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"float")=cctoken_Kfloat; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"long")=cctoken_Klong; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"int")=cctoken_Kint; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"short")=cctoken_Kshort; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"char")=cctoken_Kchar; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"void")=cctoken_Kvoid; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"_Bool")=cctoken_Kbool; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"_Complex")=cctoken_Kcomplex; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"_Atomic")=cctoken_Katomic; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"enum")=cctoken_Kenum; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"struct")=cctoken_kSTRUCT; ccassert(ccerrnon());
   /**
    * Group: type specifier & storage class.
    **/
-  cclex_hashonly(lexer,cclit("typedef"),cctoken_Ktypedef);
+  *cctblputL(lexer->tbl,"typedef")=cctoken_Ktypedef; ccassert(ccerrnon());
   /*
    * Group: storage class.
    * ** these are reseverd keywords **
    **/
-  cclex_hashonly(lexer,cclit("auto"),cctoken_Kauto);
-  cclex_hashonly(lexer,cclit("extern"),cctoken_Kextern);
-  cclex_hashonly(lexer,cclit("register"),cctoken_Kregister);
-  cclex_hashonly(lexer,cclit("static"),cctoken_Kstatic);
-  cclex_hashonly(lexer,cclit("_Thread_local"),cctoken_Kthread_local);
-  cclex_hashonly(lexer,cclit("__declspec"),cctoken_Kmsvc_declspec);
+  *cctblputL(lexer->tbl,"auto")=cctoken_Kauto; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"extern")=cctoken_Kextern; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"register")=cctoken_Kregister; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"static")=cctoken_Kstatic; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"_Thread_local")=cctoken_Kthread_local; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__declspec")=cctoken_Kmsvc_declspec; ccassert(ccerrnon());
   /**
    * Group: control statements.
    * ** these are reseverd keywords **
    **/
-  cclex_hashonly(lexer,cclit("if"),cctoken_Kif);
-  cclex_hashonly(lexer,cclit("switch"),cctoken_Kswitch);
-  cclex_hashonly(lexer,cclit("else"),cctoken_Kelse);
-  cclex_hashonly(lexer,cclit("case"),cctoken_Kcase);
-  cclex_hashonly(lexer,cclit("default"),cctoken_Kdefault);
-  cclex_hashonly(lexer,cclit("for"),cctoken_Kfor);
-  cclex_hashonly(lexer,cclit("while"),cctoken_Kwhile);
-  cclex_hashonly(lexer,cclit("do"),cctoken_Kdo);
-  cclex_hashonly(lexer,cclit("goto"),cctoken_Kgoto);
-  cclex_hashonly(lexer,cclit("return"),cctoken_Kreturn);
-  cclex_hashonly(lexer,cclit("break"),cctoken_Kbreak);
-  cclex_hashonly(lexer,cclit("continue"),cctoken_Kcontinue);
+  *cctblputL(lexer->tbl,"if")=cctoken_Kif; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"switch")=cctoken_Kswitch; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"else")=cctoken_Kelse; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"case")=cctoken_Kcase; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"default")=cctoken_Kdefault; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"for")=cctoken_Kfor; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"while")=cctoken_Kwhile; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"do")=cctoken_Kdo; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"goto")=cctoken_Kgoto; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"return")=cctoken_Kreturn; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"break")=cctoken_Kbreak; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"continue")=cctoken_Kcontinue; ccassert(ccerrnon());
 }
 
 ccfunc void
@@ -175,12 +111,6 @@ ccfunc void
 cclex_init(cclex_t *l)
 {
   l->tok = {};
-
-  l->tbl_max = 1024; // <-- for now this is fixed.
-  l->tbl_min = 0;
-  l->tbl     = (ccentry_t *) ccmalloc(sizeof(ccentry_t) * l->tbl_max);
-  memset(l->tbl, 0, sizeof(ccentry_t) * l->tbl_max);
-
   cclex_hash_init(l);
 }
 
@@ -219,15 +149,26 @@ cclex_next_token(cclex_t *l)
           l->tok.bit == cctoken_Kendimpl ||
           l->tok.bit == cctoken_Kendexpl );
 
-  return l->tok.bit > 0;
+  return l->tok.bit != cctoken_kEND;
 }
 
 // Note:
 ccfunc const char *
 cclex_identifier(cclex_t *l, const char *str)
-{ int len=cclex_idenlen(str);
-  l->tok.bit=cctoken_kLITIDENT;
-  l->tok.str=cclex_hash(l,len,str,cctrue,(int*)&l->tok.bit,ccnil);
+{
+	int len=cclex_idenlen(str);
+
+	l->tok.bit=cctoken_kLITIDENT;
+
+  cctoken_k *k=cctblset(l->tbl,len,str);
+  if(*k!=cctoken_kINVALID)
+  { l->tok.bit=*k;
+  } else
+  { *k=l->tok.bit;
+  }
+
+  l->tok.str=cckeyget();
+
   return str+len;
 }
 
@@ -236,7 +177,7 @@ cclex_readstr(cclex_t *l, const char *str)
 {
 	// Todo: re-use this buffer ...
 	// Todo: replace this with a legit string arena ... nothing too fancy ...
-  l->tok.bit=cctoken_Kliteral_string_unterminated;
+  l->tok.bit=cctoken_kLITSTR_INVALID;
   l->tok.str=ccnil;
 
   char end=*str++;
@@ -298,7 +239,7 @@ cclex_next_token_internal(cclex_t *l)
   }
   switch(* l->max)
   { default:
-    { ++ l->max, l->tok.bit = cctoken_Kinvalid;
+    { ++ l->max, l->tok.bit = cctoken_kINVALID;
     } break;
     case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
@@ -578,9 +519,9 @@ cclex_next_token_internal(cclex_t *l)
 
     case '?':
     { if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kinvalid;
+      { l->max += 2, l->tok.bit = cctoken_kINVALID;
       } else
-      { l->max += 2, l->tok.bit = cctoken_Kinvalid;
+      { l->max += 2, l->tok.bit = cctoken_kINVALID;
       }
     } break;
 

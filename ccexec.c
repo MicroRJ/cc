@@ -346,8 +346,6 @@ ccexec_sizeof(ccexec_stack_t *_s, cctype_t *_t)
 		ccu32_t size=ccexec_sizeof(_s,_t->type);
 		size*=rval.asu32;
 
-		cctracelog("size %i",size);
-
 		return size;
 	} else
 	if(_t->kind==cctype_kINTEGER)
@@ -368,6 +366,7 @@ ccexec_invoke(
 
   ccassert(ccarrlen(type->list)==ccarrlen(_i));
 
+cctimedhead("setargs");
   cctree_t **lval;
   ccarrfor(type->list,lval)
   {
@@ -378,6 +377,7 @@ ccexec_invoke(
     ccdref(cccast(cci32_t*,rval->value))=int_value;
     _i++;
   }
+cctimedtail("setargs");
 
   ccexec_enter(&stack,_p->decls);
 
@@ -409,37 +409,18 @@ ccexec_init(ccexec_t *exec)
 }
 
 
-int fib(int x)
-{ if(x>=2)
-  { int l=fib(x-2);
-    int r=fib(x-1);
-    return l+r;
-  }
-  return x;
-}
-
-ccfunc int
+ccfunc ccexec_value_t
 ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
 {
   exec->emit=emit;
 
   ccexec_value_t *args=ccnil;
-  *ccarrone(args)=ccexec_rvalue(cccast(void*,22),"arg-0");
-
-  ccu64_t cc_cs=ccclocktick();
+  *ccarrone(args)=ccexec_rvalue(cccast(void*,ARG),"arg-0");
 
   ccexec_value_t ret;
   ccexec_invoke(exec,emit->entry,&ret,args);
 
-  ccu64_t cc_ce=ccclocktick();
-
-  ccu64_t c_cs=ccclocktick();
-  int c=fib(args->asi32);
-  ccu64_t c_ce=ccclocktick();
-
-  printf("fib c:%i %f(s) - cc:%i %f(s)\n",
-    c, ccclocksecs(c_ce-c_cs), ret.asi32, ccclocksecs(cc_ce-cc_cs));
-  return 1;
+  return ret;
 }
 
 #endif

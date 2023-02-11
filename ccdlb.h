@@ -45,6 +45,7 @@ ccglobal const char * const ccerr_s[]=
   "invalid user argument",
 };
 
+
 ccglobal ccthread_local ccerr_k ccerr;
 #define ccerrset(err) (ccerr=err)
 #define ccerrnon()    ((ccerr)==ccerr_kNON)
@@ -159,6 +160,9 @@ ccfunc ccu32_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 # define cctblgetP(ccm,ptr) ((ccm)+ccdlb_tblget(cccast(void **,ccaddr(ccm)),sizeof(*(ccm)),ccptrhsh(ptr)))
 #endif
 
+#ifndef cctblset
+# define cctblset(ccm,len,key) ((ccm)+ccdlb_tblset(cccast(void **,ccaddr(ccm)),sizeof(*ccm),len,key))
+#endif
 #ifndef cctblsetL
 # define cctblsetL(ccm,lit) ((ccm)+ccdlb_tblset(cccast(void **,ccaddr(ccm)),sizeof(*ccm),cclithsh(lit)))
 #endif
@@ -293,7 +297,9 @@ ccdlb_arradd(void **ccm, ccu32_t isze, ccu32_t cres, ccu32_t ccom)
 
 ccfunc ccu32_t
 ccdlb_stradd(char **ccm, ccu32_t cres, ccu32_t ccom, const char *cpy)
-{ // Note: use char type instead of void for preemptive type-checking ...
+{
+cctimedhead("stradd");
+	// Note: use char type instead of void for preemptive type-checking ...
   // Note: assuming that you'll reserve at-least one more byte for the null terminator ...
   ccassert(cres!=0);
   ccassert(ccom!=0);
@@ -301,6 +307,8 @@ ccdlb_stradd(char **ccm, ccu32_t cres, ccu32_t ccom, const char *cpy)
   char *cur=(char*)*ccm+res;
   memcpy(cur,cpy,cres-1);
   cur[cres-1]=0;
+
+cctimedtail("stradd");
   return res;
 }
 
@@ -326,7 +334,7 @@ ccdlb_tblini(ccdlb_t **dlb_, cci32_t isze)
     ccdlb_arradd_(&dlb,isze*0xff,0x00);
     ccarrzro(dlb+1);
 
-    // Todo: create some entries
+    // Note: create some entries
     ccarrres(dlb->entries,0xff);
     ccarrzro(dlb->entries);
     ccarrfix(dlb->entries);
@@ -346,7 +354,7 @@ ccdlb_tblcat(ccdlb_t **tbl, ccu32_t isze, int len, const char *key, ccent_t *ent
   { ent->nex=ccmalloc_T(ccent_t);
     ent=ent->nex;
     memset(ent,ccnil,sizeof(*ent));
-    ccarradd(ccdref(tbl)->entries,1);
+    // ccarradd(ccdref(tbl)->entries,1);
   }
 
   ccassert(ent->key==ccnil);
@@ -369,8 +377,11 @@ ccdlb_tblcat(ccdlb_t **tbl, ccu32_t isze, int len, const char *key, ccent_t *ent
 }
 
 ccfunc ccent_t *
-ccdlb_tblent_(ccdlb_t *tbl, int len, const char *key)
+ccdbl_query(ccdlb_t *tbl, int len, const char *key)
 {
+	ccassert(key!=0);
+	ccassert(len!=0);
+
   ccu64_t  hsh=cchsh_abc(len,key);
   ccu32_t  idx=hsh%ccarrmax(tbl->entries);
   ccent_t *ent=tbl->entries+idx;
@@ -381,6 +392,7 @@ ccdlb_tblent_(ccdlb_t *tbl, int len, const char *key)
       return ent;
     if(!ent->nex)
       break;
+    cctimed()->collisions++;
     ent=ent->nex;
   }
   ccerrset(ccerr_kNIT);
@@ -389,70 +401,85 @@ ccdlb_tblent_(ccdlb_t *tbl, int len, const char *key)
 
 ccfunc ccu32_t
 ccdlb_tblget(void **ccm, cci32_t isze, int len, const char *key)
-{ ccdlb_t * tbl=ccdlb(ccdref(ccm));
-  if(!tbl)
-    return ccnil;
+{
+cctimedhead("tblget");
 
+	ccdlb_t *tbl=ccdlb(ccdref(ccm));
   cckeyset(ccnil);
 
-  ccent_t *ent=ccdlb_tblent_(tbl,len,key);
+	// Todo: probably return an index that the user can still write to, but it won't affect other items...
+  ccu32_t val=ccnil;
 
-  if(ccerrsom())
-    return ccnil;
+  if(tbl)
+  { ccent_t *ent=ccdbl_query(tbl,len,key);
+	  if(ccerrnon())
+	  { cckeyset(ent->key);
+			val=ent->val;
+	  }
+  }
 
-  cckeyset(ent->key);
-
-  return ent->val/isze;
+cctimedtail("tblget");
+  return val/isze;
 }
 
 ccfunc ccu32_t
 ccdlb_tblput(void **ccm, cci32_t isze, int len, const char *key)
 {
-  ccdlb_t *tbl=ccdlb(ccdref(ccm));
+cctimedhead("tblput");
 
+  ccdlb_t *tbl=ccdlb(ccdref(ccm));
   if(!tbl)
     ccdlb_tblini(&tbl,isze);
-
   cckeyset(ccnil);
 
-  ccent_t *ent=ccdlb_tblent_(tbl,len,key);
+	// Todo: probably return an index that the user can still write to, but it won't affect other items...
+  ccu32_t val=ccnil;
+
+  ccent_t *ent=ccdbl_query(tbl,len,key);
 
   if(ccerrnit())
   { ccerrset(ccerr_kNON);
 
     ent=ccdlb_tblcat(&tbl,isze,len,key,ent);
-    *ccm=tbl+1;
-
     cckeyset(ent->key);
 
-    return ent->val/isze;
+    val=ent->val;
+
+    *ccm=tbl+1;
   } else
     ccerrset(ccerr_kAIT);
 
-  return ccnil;
+cctimedtail("tblput");
+  return val/isze;
 }
 
 ccfunc ccu32_t
 ccdlb_tblset(void **ccm, cci32_t isze, int len, const char *key)
 {
+cctimedhead("tblset");
+
   ccdlb_t *tbl=ccdlb(ccdref(ccm));
   if(!tbl)
     ccdlb_tblini(&tbl,isze);
 
   cckeyset(ccnil);
 
-  ccent_t *ent=ccdlb_tblent_(tbl,len,key);
+	// Todo: probably return an index that the user can still write to, but it won't affect other items...
+  ccu32_t val=ccnil;
+  ccent_t *ent=ccdbl_query(tbl,len,key);
 
   if(ccerrnit())
   { ccerrset(ccerr_kNON);
-
     ent=ccdlb_tblcat(&tbl,isze,len,key,ent);
     *ccm=tbl+1;
   }
 
+  val=ent->val;
+
   cckeyset(ent->key);
 
-  return ent->val/isze;
+cctimedtail("tblset");
+  return val/isze;
 }
 
 ccfunc ccu32_t
