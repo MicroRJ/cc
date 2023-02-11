@@ -14,9 +14,8 @@ ccstack_mingle(ccexec_stack_t *stack, ccemit_value_t *value)
 {
   ccassert(value!=0);
 
-
-  ccexec_value_t *result=cctblputP(stack->values,value);
-  ccassert(ccerrnon());
+  ccexec_value_t *result=cctblsetP(stack->values,value);
+  // ccassert(ccerrnon());
 
   return result;
 }
@@ -134,9 +133,9 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
     case cctoken_kGTE:
       return ccexec_rvalue(cccast(void*,lval.asi64>=rval.asi64),">=");
     case cctoken_kLTN:
-      return ccexec_rvalue(cccast(void*,lval.asi64>rval.asi64),"<");
+      return ccexec_rvalue(cccast(void*,lval.asi64<rval.asi64),"<");
     case cctoken_kLTE:
-      return ccexec_rvalue(cccast(void*,lval.asi64>rval.asi64),"<=");
+      return ccexec_rvalue(cccast(void*,lval.asi64<=rval.asi64),"<=");
     case cctoken_kMUL:
       return ccexec_rvalue(cccast(void*,lval.asi64*rval.asi64),"*");
     case cctoken_kDIV:

@@ -12,6 +12,7 @@ typedef enum ccedict_k
   ccedict_kJUMP,
   ccedict_kJUMPT,
   ccedict_kJUMPF,
+  ccedict_kJUMPC,
   ccedict_kTERNARY,
   ccedict_kENTER,
   ccedict_kINVOKE,
@@ -19,11 +20,12 @@ typedef enum ccedict_k
 } ccedict_k;
 
 ccglobal const char *ccedict_s[]=
-{ "LOCAL","PARAM","ADDRESS","STORE","FETCH","ARITH","JUMP","JUMPT","JUMPF","TERNARY","ENTER","INVOKE","RETURN",
+{ "LOCAL","PARAM","ADDRESS","STORE","FETCH","ARITH","JUMP","JUMPT","JUMPF","JUMPC","TERNARY","ENTER","INVOKE","RETURN",
 };
 
 
-// Note: perhas each edict should have a flag that indicates whether to produce a value or not.
+// Note: perhaps each edict should have a flag that indicates whether to produce a value or not.
+typedef struct ccedict_t ccedict_t;
 typedef struct ccedict_t
 {
 	ccedict_k   kind;
@@ -83,6 +85,13 @@ ccunion
 };
 } ccedict_t;
 
+typedef struct ccjump_point_t ccjump_point_t;
+typedef struct ccjump_point_t
+{ ccstr_t         label; // Note: for debugging
+  ccemit_block_t *block;
+  ccu32_t         index;
+} ccjump_point_t;
+
 // Todo:
 ccfunc ccinle ccedict_t *
 ccedict(ccedict_k kind, ccstr_t label)
@@ -118,6 +127,13 @@ ccedict_param(cctype_t *type, ccstr_t label)
 
 	e->local.type=type;
 	return e;
+}
+
+ccfunc ccinle void
+ccedict_retarget(ccedict_t *e, ccjump_point_t p)
+{
+	e->jump.blc=p.block;
+	e->jump.tar=p.index;
 }
 
 ccfunc ccinle ccedict_t *
@@ -157,30 +173,40 @@ ccedict_enter(ccemit_block_t *blc)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_jump(ccemit_block_t *blc, ccu32_t tar)
+ccedict_jump(ccjump_point_t point)
 {
-	ccedict_t *e=ccedict(ccedict_kJUMP,"jump");
-  e->jump.blc=blc;
-  e->jump.tar=tar;
+	ccedict_t *e=ccedict(ccedict_kJUMP,point.label);
+  e->jump.blc=point.block;
+  e->jump.tar=point.index;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_tjump(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
+ccedict_tjump(ccjump_point_t point, ccemit_value_t *cnd)
 {
-	ccedict_t *e=ccedict(ccedict_kJUMPT,"jump-t");
-  e->jump.blc=blc;
-  e->jump.tar=tar;
+	ccedict_t *e=ccedict(ccedict_kJUMPT,point.label);
+  e->jump.blc=point.block;
+  e->jump.tar=point.index;
   e->jump.cnd=cnd;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_fjump(ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
+ccedict_fjump(ccjump_point_t point, ccemit_value_t *cnd)
 {
-	ccedict_t *e=ccedict(ccedict_kJUMPF,"jump-f");
-  e->jump.blc=blc;
-  e->jump.tar=tar;
+	ccedict_t *e=ccedict(ccedict_kJUMPF,point.label);
+  e->jump.blc=point.block;
+  e->jump.tar=point.index;
+  e->jump.cnd=cnd;
+  return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_cjump(ccjump_point_t point, ccemit_value_t *cnd)
+{
+	ccedict_t *e=ccedict(ccedict_kJUMPC,"jump-c");
+  e->jump.blc=point.block;
+  e->jump.tar=point.index;
   e->jump.cnd=cnd;
   return e;
 }

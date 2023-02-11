@@ -162,6 +162,24 @@ ccemit_global_procd(ccemit_t *emit, cctree_t *tree, ccstr_t label)
   return p;
 }
 
+ccfunc ccinle void
+ccvalue_retarget(ccemit_value_t *value, ccjump_point_t p)
+{
+	ccassert(value!=ccnil);
+	ccassert(value->kind==ccvalue_kEDICT);
+
+  ccedict_retarget(value->edict,p);
+}
+
+ccfunc ccjump_point_t
+ccblock_label(ccemit_block_t *block, ccstr_t label)
+{ ccjump_point_t t;
+  t.label=label;
+  t.block=block;
+  t.index=ccarrlen(block->edict);
+  return t;
+}
+
 ccfunc ccemit_value_t *
 ccblock_add(ccemit_block_t *block)
 { ccemit_value_t  *v=ccmalloc_T(ccemit_value_t);
@@ -238,21 +256,27 @@ ccblock_invoke(ccemit_block_t *block, ccemit_procd_t *p, ccemit_value_t **i)
 }
 
 ccfunc ccinle ccemit_value_t *
-ccblock_jump(ccemit_block_t *block, ccemit_block_t *blc, ccu32_t tar)
+ccblock_jump(ccemit_block_t *block, ccjump_point_t point)
 {
-  return ccblock_add_edict(block,ccedict_jump(blc,tar));
+  return ccblock_add_edict(block,ccedict_jump(point));
 }
 
 ccfunc ccinle ccemit_value_t *
-ccblock_fjump(ccemit_block_t *block, ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
+ccblock_cjump(ccemit_block_t *block, ccjump_point_t point, ccemit_value_t *cnd)
 {
-  return ccblock_add_edict(block,ccedict_fjump(blc,tar,cnd));
+  return ccblock_add_edict(block,ccedict_cjump(point,cnd));
 }
 
 ccfunc ccinle ccemit_value_t *
-ccblock_tjump(ccemit_block_t *block, ccemit_block_t *blc, ccu32_t tar, ccemit_value_t *cnd)
+ccblock_fjump(ccemit_block_t *block, ccjump_point_t point, ccemit_value_t *cnd)
 {
-  return ccblock_add_edict(block,ccedict_tjump(blc,tar,cnd));
+  return ccblock_add_edict(block,ccedict_fjump(point,cnd));
+}
+
+ccfunc ccinle ccemit_value_t *
+ccblock_tjump(ccemit_block_t *block, ccjump_point_t point, ccemit_value_t *cnd)
+{
+  return ccblock_add_edict(block,ccedict_tjump(point,cnd));
 }
 
 #endif

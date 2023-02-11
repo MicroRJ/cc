@@ -525,6 +525,12 @@ cctree_solve_block(cctree_t *block)
 ccfunc void
 cctree_solve_statement(cctree_t *tree)
 {
+	if(tree->kind==cctree_kBLOCK)
+  {
+  	cctree_t **list;
+    ccarrfor(tree->list,list)
+      cctree_solve_statement(*list);
+  } else
   if(tree->kind==cctree_kDECL)
   {
     cctree_solve_decl(tree);
@@ -542,6 +548,11 @@ cctree_solve_statement(cctree_t *tree)
   if(tree->kind==cctree_kBINARY)
   {
     cctree_solve_binary(tree->oper,tree->lval,tree->rval);
+  } else
+  if(tree->kind==cctree_kWHILE)
+  {
+    cctree_solve_rvalue(tree->init);
+    cctree_solve_statement(tree->lval);
   } else
   if(tree->kind==cctree_kTERNARY)
   {

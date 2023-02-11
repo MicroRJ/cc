@@ -265,30 +265,35 @@ ccemit_tree(
   if(tree->kind==cctree_kTERNARY)
   { ccemit_value_t *cvalue=ccemit_tree(emit,func,irset,tree->init);
 
-  	ccemit_value_t *jump;
-    jump=ccblock_fjump(irset,irset,0xffff,cvalue);
+  	ccemit_value_t *j;
+    j=ccblock_fjump(irset,{},cvalue);
 
     if(tree->lval) ccemit_tree(emit,func,irset,tree->lval);
-    jump->edict->jump.tar=ccarrlen(irset->edict);
+
+    ccvalue_retarget(j,
+    	ccblock_label(irset,".JP-E"));
+
     if(tree->rval) ccemit_tree(emit,func,irset,tree->rval);
 
     return ccnil;
   } else
   if(tree->kind==cctree_kWHILE)
   {
-#if 0
-    ccemit_block_t *cond_block=ccvm_block(irset,"$while::cond");
-    ccemit_block_t *then_block=ccvm_block(cond_block,"$while::then");
-    ccemit_block_t *else_block=ccvm_block(irset,"$while::else");
-    ccemit_value_t cond_value=ccemit_tree(emit,func,cond_block,tree->cond_tree);
-    ccemit_condi(cond_block,cond_value,then_block,else_block);
-    if(tree->then_tree) ccemit_tree(emit,func,then_block,tree->then_tree);
-    ccblock_enter(then_block,cond_block);
-    ccblock_enter(irset,cond_block);
-    emit->current=else_block;
-    emit->curirix=0;
-#endif
+  	ccemit_value_t *l,*c,*v;
+  	ccjump_point_t p;
 
+    p=ccblock_label(irset,".JP-WL");
+  	v=ccemit_rvalue(emit,func,irset,tree->init);
+    c=ccblock_fjump(irset,{},v);
+
+  	ccemit_tree(emit,func,irset,tree->lval);
+
+    l=ccblock_jump(irset,p);
+
+    ccvalue_retarget(c,
+    	ccblock_label(irset,".JP-WE"));
+
+    return ccnil;
   }
 
   ccassert(!"error");

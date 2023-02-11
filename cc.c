@@ -265,10 +265,18 @@ ccfunc ccinle ccf64_t ccclocksecs(ccu64_t);
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb_sprintf.h"
 
+typedef struct ccedict_t ccedict_t;
+typedef struct ccread_t ccread_t;
+typedef struct ccemit_t ccemit_t;
+typedef struct ccexec_t ccexec_t;
+
+
 typedef struct ccemit_value_t ccemit_value_t;
 typedef struct ccemit_block_t ccemit_block_t;
 typedef struct ccemit_procd_t ccemit_procd_t;
 typedef struct ccexec_value_t ccexec_value_t;
+
+typedef struct ccjump_point_t ccjump_point_t;
 
 typedef struct cctype_t cctype_t;
 typedef struct cctree_t cctree_t;

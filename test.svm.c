@@ -16,6 +16,12 @@ int main(int a)
 {
 	int some[256];
 
+	int i=0;
+	while(i<256)
+	{ some[i]=i;
+		i=i+1;
+	}
+
 	some[24]=retsame(fib(a));
-	return some[24];
+	return some[2];
 }
