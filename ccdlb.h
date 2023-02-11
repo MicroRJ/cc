@@ -21,7 +21,7 @@ typedef struct ccent_t
 // Todo: custom allocator support, custom alignment support ...
 typedef struct ccdlb_t
 { unsigned    rem_add: 1;
-	unsigned    rem_rze: 1;
+  unsigned    rem_rze: 1;
   ccent_t *   entries;
   ccu32_t     sze_max;
   ccu32_t     sze_min;
@@ -39,10 +39,10 @@ typedef enum ccerr_k
 
 ccglobal const char * const ccerr_s[]=
 { "none",
-	"not in table",
-	"already in table",
-	"out of memory",
-	"invalid user argument",
+  "not in table",
+  "already in table",
+  "out of memory",
+  "invalid user argument",
 };
 
 ccglobal ccthread_local ccerr_k ccerr;
@@ -336,7 +336,7 @@ ccdlb_tblini(ccdlb_t **dlb_, cci32_t isze)
   }
 }
 
-ccfunc ccu32_t
+ccfunc ccent_t *
 ccdlb_tblcat(ccdlb_t **tbl, ccu32_t isze, int len, const char *key, ccent_t *ent)
 {
   ccnotnil(tbl);
@@ -365,7 +365,7 @@ ccdlb_tblcat(ccdlb_t **tbl, ccu32_t isze, int len, const char *key, ccent_t *ent
 
   ent->len=len;
   ent->val=val;
-  return val;
+  return ent;
 }
 
 ccfunc ccent_t *
@@ -390,65 +390,69 @@ ccdlb_tblent_(ccdlb_t *tbl, int len, const char *key)
 ccfunc ccu32_t
 ccdlb_tblget(void **ccm, cci32_t isze, int len, const char *key)
 { ccdlb_t * tbl=ccdlb(ccdref(ccm));
-  ccu32_t   val=ccnil;
+  if(!tbl)
+    return ccnil;
 
-  ccerrset(ccerr_kNIT);
-  if(tbl)
-  { ccent_t *ent=ccdlb_tblent_(tbl,len,key);
-    if(ccerrnon()) val=ent->val;
-  }
-  return val/isze;
+  cckeyset(ccnil);
+
+  ccent_t *ent=ccdlb_tblent_(tbl,len,key);
+
+  if(ccerrsom())
+    return ccnil;
+
+  cckeyset(ent->key);
+
+  return ent->val/isze;
 }
 
 ccfunc ccu32_t
 ccdlb_tblput(void **ccm, cci32_t isze, int len, const char *key)
 {
-  ccdlb_t *tbl;
-  ccent_t *ent;
-  ccu32_t  val;
+  ccdlb_t *tbl=ccdlb(ccdref(ccm));
 
-  tbl=ccdlb(ccdref(ccm));
-  if(!tbl) ccdlb_tblini(&tbl,isze);
+  if(!tbl)
+    ccdlb_tblini(&tbl,isze);
 
-  val=ccnil;
-  ent=ccdlb_tblent_(tbl,len,key);
+  cckeyset(ccnil);
+
+  ccent_t *ent=ccdlb_tblent_(tbl,len,key);
+
   if(ccerrnit())
-  {
-    val=ccdlb_tblcat(&tbl,isze,len,key,ent);
+  { ccerrset(ccerr_kNON);
+
+    ent=ccdlb_tblcat(&tbl,isze,len,key,ent);
     *ccm=tbl+1;
 
-    ccerrset(ccerr_kNON);
+    cckeyset(ent->key);
+
+    return ent->val/isze;
   } else
-  {
     ccerrset(ccerr_kAIT);
-  }
-  return val/isze;
+
+  return ccnil;
 }
 
 ccfunc ccu32_t
 ccdlb_tblset(void **ccm, cci32_t isze, int len, const char *key)
 {
-  ccdlb_t *tbl;
-  ccent_t *ent;
-  ccu32_t  val;
+  ccdlb_t *tbl=ccdlb(ccdref(ccm));
+  if(!tbl)
+    ccdlb_tblini(&tbl,isze);
 
-  tbl=ccdlb(ccdref(ccm));
-  if(!tbl) ccdlb_tblini(&tbl,isze);
+  cckeyset(ccnil);
 
-  val=ccnil;
-  ent=ccdlb_tblent_(tbl,len,key);
+  ccent_t *ent=ccdlb_tblent_(tbl,len,key);
+
   if(ccerrnit())
-  {
-    val=ccdlb_tblcat(&tbl,isze,len,key,ent);
-    *ccm=tbl+1;
+  { ccerrset(ccerr_kNON);
 
-    ccerrset(ccerr_kNON);
-  } else
-  {
-    val=ent->val;
+    ent=ccdlb_tblcat(&tbl,isze,len,key,ent);
+    *ccm=tbl+1;
   }
 
-  return val/isze;
+  cckeyset(ent->key);
+
+  return ent->val/isze;
 }
 
 ccfunc ccu32_t

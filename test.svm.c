@@ -23,5 +23,5 @@ int main(int a)
 	}
 
 	some[24]=retsame(fib(a));
-	return some[255];
+	return some[24];
 }
