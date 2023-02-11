@@ -136,20 +136,51 @@ cctimed()
   return cctimed_enabled && cctimedthis? cctimedthis :&dummy;
 }
 
-ccfunc void
-cctimeddump(cctimed_t *root)
+ccfunc ccinle ccf64_t
+ccclockperc(ccclocktick_t total, ccclocktick_t local)
 {
-  for(int i=0;i<root->level*2;++i)
+	return 100.0 * ( cccast(ccf64_t,local) /
+								   cccast(ccf64_t,total) );
+}
+
+ccfunc const char *
+ccbytecountreadable(ccu64_t b, ccf64_t *f)
+{
+	if(b>1024*1024)
+	{ *f=b/1024.0/1024.0;
+		return "Mb";
+	} else
+	if(b>1024)
+	{ *f=b/1024.0;
+		return "Kb";
+	} else
+	{
+		*f=(ccf64_t)b;
+		return "b";
+	}
+}
+
+ccfunc void
+cctimeddump(cctimed_t *r, cctimed_t *t)
+{
+  for(int i=0;i<t->level*2;++i)
     printf(" ");
 
-  printf("#%i %s[%i] %s(): %i '%s' %f(s) %i-%i,%i = %llu !%i\n",
-    root->caller.guid,root->caller.file,root->caller.line,root->caller.func,
-      root->event,root->label,ccclocksecs(root->total),
-        root->allocations,root->deallocations,root->reallocations,root->memory,root->collisions);
+  ccclocktick_t total=r? r->total :t->total;
 
-  cctimed_t *child;
-  ccarrfor(root->child,child)
-    cctimeddump(child);
+  ccf64_t memory;
+  const char *suffix;
+  suffix=ccbytecountreadable(t->memory,&memory);
+
+  printf("#%i %s[%i] %s(): %i '%s' %%%.2f @ %f(s) %i-%i,%i = %.2f%s !%i\n",
+    t->caller.guid,t->caller.file,t->caller.line,t->caller.func,
+      t->event,t->label,ccclockperc(total,t->total),ccclocksecs(t->total),
+        t->allocations,t->deallocations,t->reallocations,
+        	memory,suffix,t->collisions);
+
+  cctimed_t *c;
+  ccarrfor(t->child,c)
+    cctimeddump(t,c);
 }
 
 ccfunc void
@@ -206,7 +237,7 @@ cctimedtail_(const char *label)
   if(!cctimedthis)
   {
     printf("timed:\n");
-    cctimeddump(&cctimedroot);
+    cctimeddump(ccnil,&cctimedroot);
   }
 }
 
