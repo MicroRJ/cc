@@ -299,7 +299,7 @@ ccread_unary_expr(ccread_t *reader, cctree_t *root, cci32_t mark)
     if(cceat(reader,cctoken_kADD))
     { // TODO(RJ): this is dumb, remove...
       cctoken_t clo=*tok;
-      clo.sig=cctoken_Kpre_increment;
+      clo.asi64=cctoken_Kpre_increment;
       result=cctree_unary(root,mark, & clo, ccread_cast_expr(reader,root,mark));
     } else
     { result=cctree_unary(root,mark, tok, ccread_cast_expr(reader,root,mark));
@@ -310,7 +310,7 @@ ccread_unary_expr(ccread_t *reader, cctree_t *root, cci32_t mark)
     if(cceat(reader,cctoken_kSUB))
     { // TODO(RJ): this is dumb, remove...
       cctoken_t clo=*tok;
-      clo.sig=cctoken_Kpre_decrement;
+      clo.asi64=cctoken_Kpre_decrement;
       result=cctree_unary(root,mark, & clo, ccread_cast_expr(reader,root,mark));
     } else
     { result=cctree_unary(root,mark, tok, ccread_cast_expr(reader,root,mark));
@@ -320,8 +320,8 @@ ccread_unary_expr(ccread_t *reader, cctree_t *root, cci32_t mark)
   {
     // TODO(RJ): this is dumb, remove...
     cctoken_t *tok = ccgobble(reader);
-    cctoken_t clo = *tok;
-    clo.sig = cctoken_Kptr_dereference;
+    cctoken_t clo=*tok;
+    clo.asi64=cctoken_Kptr_dereference;
 
     result = cctree_unary(root,mark, & clo, ccread_cast_expr(reader,root,mark));
   } else

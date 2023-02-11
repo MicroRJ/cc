@@ -1,11 +1,14 @@
 #ifndef _CCDLB
 #define _CCDLB
 
-// Todo: pending string arena ...
-
 typedef struct ccent_t ccent_t;
+
 // Note: dynamic length buffer
 typedef struct ccdlb_t ccdlb_t;
+
+// Note: This is a helper type for when you want to make it abundantly clear
+// that there's dlb metadata associated with the string ..
+typedef char *ccstr_t;
 
 typedef struct ccent_t
 { ccent_t * nex;
@@ -14,6 +17,7 @@ typedef struct ccent_t
   ccu32_t   val;
 } ccent_t;
 
+// Todo: pending string arena ...
 // Todo: custom allocator support, custom alignment support ...
 typedef struct ccdlb_t
 { unsigned    rem_add: 1;
@@ -47,6 +51,10 @@ ccglobal ccthread_local ccerr_k ccerr;
 #define ccerrsom()    ((ccerr)!=ccerr_kNON)
 #define ccerrnit()    ((ccerr)==ccerr_kNIT)
 #define ccerrait()    ((ccerr)==ccerr_kAIT)
+
+ccglobal ccthread_local ccstr_t cckey;
+#define cckeyset(key) (cckey=key)
+#define cckeyget()    (cckey)
 
 // Note: C string utils ...
 #ifndef ccstrlenS
@@ -170,9 +178,6 @@ ccfunc ccu32_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 #ifndef cctblputP
 # define cctblputP(ccm,ptr) ((ccm)+ccdlb_tblput(cccast(void **,ccaddr(ccm)),sizeof(*ccm),ccptrhsh(ptr)))
 #endif
-
-// Note: String
-typedef char *ccstr_t;
 
 #ifndef ccstrdel
 # define ccstrdel ccarrdel
@@ -331,25 +336,6 @@ ccdlb_tblini(ccdlb_t **dlb_, cci32_t isze)
   }
 }
 
-ccfunc ccent_t *
-ccdlb_tblent_(ccdlb_t *tbl, int len, const char *key)
-{
-  ccu64_t  hsh=cchsh_abc(len,key);
-  ccu32_t  idx=hsh%ccarrmax(tbl->entries);
-  ccent_t *ent=tbl->entries+idx;
-
-  ccerrset(ccerr_kNON);
-  while(ent->key)
-  { if((ent->len==len)&&((ent->key==key)||(!memcmp(ent->key,key,len))))
-      return ent;
-    if(!ent->nex)
-      break;
-    ent=ent->nex;
-  }
-  ccerrset(ccerr_kNIT);
-  return ent;
-}
-
 ccfunc ccu32_t
 ccdlb_tblcat(ccdlb_t **tbl, ccu32_t isze, int len, const char *key, ccent_t *ent)
 {
@@ -382,6 +368,24 @@ ccdlb_tblcat(ccdlb_t **tbl, ccu32_t isze, int len, const char *key, ccent_t *ent
   return val;
 }
 
+ccfunc ccent_t *
+ccdlb_tblent_(ccdlb_t *tbl, int len, const char *key)
+{
+  ccu64_t  hsh=cchsh_abc(len,key);
+  ccu32_t  idx=hsh%ccarrmax(tbl->entries);
+  ccent_t *ent=tbl->entries+idx;
+
+  ccerrset(ccerr_kNON);
+  while(ent->key)
+  { if((ent->len==len)&&((ent->key==key)||(!memcmp(ent->key,key,len))))
+      return ent;
+    if(!ent->nex)
+      break;
+    ent=ent->nex;
+  }
+  ccerrset(ccerr_kNIT);
+  return ent;
+}
 
 ccfunc ccu32_t
 ccdlb_tblget(void **ccm, cci32_t isze, int len, const char *key)

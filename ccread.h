@@ -241,9 +241,7 @@ typedef struct ccclassic_t
     ccu32_t   asi32; ccu32_t   asu32;
     ccu16_t   asi16; ccu16_t   asu16;
     ccu8_t    asi8;  ccu8_t    asu8;
-
     ccf64_t   asf64; ccf32_t   asf32;
-    void    * asptr;
   };
 } ccclassic_t;
 
@@ -257,33 +255,22 @@ typedef struct ccloc_t
 
 typedef struct ccentry_t ccentry_t;
 typedef struct ccentry_t
-{ ccentry_t   * nex;
-  char        * key;
-  int           len;
-  int           bit;
+{ ccentry_t * nex;
+  char      * key;
+  int         len;
+  int         bit;
 } ccentry_t;
 
-// Tokens produced by the lexer are very simple, so the parser may modify them after lexical analysis,
-// the lexer however, will check for keywords and format strings.
 typedef struct cctoken_t
-{
-  cctoken_k bit;
-
+{ cctoken_k bit;
+  unsigned  term_impl: 1;
+  unsigned  term_expl: 1;
   union
-  { unsigned long long int sig;
-    unsigned long long int uns;
-    double                 flo;
-    ccstr_t                str;
+  { cci64_t asi64;
+    ccu64_t asu64;
+    ccf64_t asf64;
+    ccstr_t str;
   };
-
-#ifdef _DEBUG
-  const char *doc;
-#endif
-
-  ccloc_t loc;
-
-  unsigned term_impl: 1;
-  unsigned term_expl: 1;
 } cctoken_t;
 
 // Note: merge the lexer and reader and make the symbol table global?

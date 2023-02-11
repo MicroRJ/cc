@@ -280,14 +280,14 @@ cctree_litide(cctree_t *root, cci32_t mark, ccstr_t name)
 ccfunc cctree_t *
 cctree_litint(cctree_t *root, cci32_t mark, cctoken_t *token)
 { cctree_t *result = cctree_new(cctree_kLITINT,root,mark);
-  result->as_i64=token->sig;
+  result->as_i64=token->asi64;
   return result;
 }
 
 ccfunc cctree_t *
 cctree_litflo(cctree_t *root, cci32_t mark, cctoken_t *token)
 { cctree_t *result = cctree_new(cctree_kLITFLO,root,mark);
-  result->as_i64=token->sig;
+  result->as_i64=token->asi64;
   return result;
 }
 

@@ -3,6 +3,10 @@
 
 // ** Hashing **
 
+#define CCLEX_WITHIN(x,l,r) (((x)>=(l))&&((x)<=(r)))
+
+
+
 // Note: I literally know nothing about cryptography ....
 ccfunc unsigned int
 cclex_hashfunc(int len, const char *str)
@@ -187,10 +191,8 @@ cclex_uninit(cclex_t *l)
   // ccarrdel(l->buf);
 }
 
-#define CCLEX_WITHIN(x,l,r) (((x)>=(l))&&((x)<=(r)))
-
-// Todo: if would be could if you'd hash at the same time ...
-static int
+// Todo: return the hash, check if the identifier is already in the table ...
+static ccinle int
 cclex_idenlen(const char *s)
 { int l;
   for(l=0; CCLEX_WITHIN(s[l],'a','z') ||
@@ -290,11 +292,6 @@ cclex_next_token_internal(cclex_t *l)
 {
   l->min = l->max;
 
-  // TODO(RJ): TEMPORARY!
-#ifdef _DEBUG
-  l->tok.doc = l->min;
-#endif
-
   if(l->max >= l->doc_max)
   { l->tok.bit = cctoken_kEND;
     return;
@@ -303,8 +300,6 @@ cclex_next_token_internal(cclex_t *l)
   { default:
     { ++ l->max, l->tok.bit = cctoken_Kinvalid;
     } break;
-    // NOTE(RJ):
-    // ; Numbers!
     case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
     {
@@ -369,11 +364,11 @@ cclex_next_token_internal(cclex_t *l)
           { break;
           }
         }
-        l->tok.bit = cctoken_kLITFLO;
-        l->tok.flo = u + d / p;
+        l->tok.bit   = cctoken_kLITFLO;
+        l->tok.asf64 = u + d / p;
       } else
       { l->tok.bit = cctoken_kLITINT;
-        l->tok.uns = u;
+        l->tok.asu64 = u;
       }
     } break;
 
