@@ -130,8 +130,9 @@ ccemit_lvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctre
     	ccassert(tree->rval!=ccnil);
 
     	ccemit_value_t *lval,*rval;
-    	lval=ccemit_resolve(emit,func,tree);
+    	lval=ccemit_lvalue(emit,func,block,tree->lval);
     	rval=ccemit_rvalue(emit,func,block,tree->rval);
+
     	value=ccblock_address(block,lval,rval);
     } break;
 
@@ -164,8 +165,9 @@ ccemit_rvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctre
     	ccassert(tree->rval!=ccnil);
 
     	ccemit_value_t *lval,*rval;
-    	lval=ccemit_resolve(emit,func,tree);
+    	lval=ccemit_lvalue(emit,func,block,tree->lval);
     	rval=ccemit_rvalue(emit,func,block,tree->rval);
+
     	value=ccblock_fetch(block,lval,rval);
     } break;
     default: ccassert(!"internal");

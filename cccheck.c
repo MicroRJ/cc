@@ -53,7 +53,7 @@ cctree_mingle(cctree_t *tree, const char *name)
   }
 
   if((tree->kind==cctree_kLITIDE) || // Note: to figure out what variable we're referring to ..
-     (tree->kind==cctree_kINDEX))        // Note: to figure out what variable we're referring to
+     (tree->kind==cctree_kINDEX))    // Note: to figure out what variable we're referring to
     solved=cctblgetS(vari_decls,name);
   else
   if((tree->kind==cctree_kCALL)) // Note: to figure out what function we're referring to ..
@@ -98,8 +98,16 @@ cctree_solve_index(cctree_t *tree)
   ccassert(tree->lval);
   ccassert(tree->rval);
 
-  if(!cctree_mingle(tree,tree->name))
-      cctraceerr("%s: identifier not found",tree->name);
+  // a[][]
+  cctree_t *lval=tree->lval;
+  while(lval&&lval->kind!=cctree_kLITIDE)
+  	lval=lval->lval;
+
+  ccassert(lval!=ccnil);
+  ccassert(lval->kind==cctree_kLITIDE);
+
+  if(!cctree_mingle(lval,lval->name))
+      cctraceerr("%s: identifier not found",lval->name);
 
   cctree_solve_rvalue(tree->rval);
 }
@@ -211,8 +219,6 @@ cctree_solve_statement(cctree_t *tree)
   }
 }
 
-// Todo: the root of a decl name should always be a declaration,
-// with the exception of function parameters ...
 ccfunc void
 cctree_solve_decl_name(cctree_t *tree)
 {
