@@ -112,6 +112,50 @@ _CCASSERT(sizeof(cci64_t)==sizeof(size_t));
 // Note:
 typedef ccu64_t ccclocktime_t;
 
+
+// Note: universal error codes
+typedef enum ccerr_k
+{
+  ccerr_kNON=0,
+  ccerr_kNIT=1,
+  ccerr_kAIT=2,
+  ccerr_kOOM=3,
+  ccerr_kIUA=4,
+} ccerr_k;
+
+ccglobal const char * const ccerr_s[]=
+{ "none",
+  "not in table",
+  "already in table",
+  "out of memory",
+  "invalid user argument",
+};
+
+// Note: dynamic length buffer, dlb for short ... each dlb will also support a hash-table ...
+
+// Note: This is a helper type for when you want to make it abundantly clear
+// that there's dlb metadata associated with the string ..
+typedef char *ccstr_t;
+
+typedef struct ccent_t ccent_t;
+typedef struct ccent_t
+{ ccent_t * nex;
+  cci32_t   len;
+  char     *key;
+  ccu32_t   val;
+} ccent_t;
+
+// Todo: pending string arena ...
+// Todo: custom allocator support, custom alignment support ...
+typedef struct ccdlb_t ccdlb_t;
+typedef struct ccdlb_t
+{ unsigned    rem_add: 1;
+  unsigned    rem_rze: 1;
+  ccent_t *   entries;
+  ccu32_t     sze_max;
+  ccu32_t     sze_min;
+} ccdlb_t;
+
 // Note: debugging utilities
 typedef struct cccaller_t cccaller_t;
 typedef struct cccaller_t
@@ -170,6 +214,7 @@ typedef struct ccdebug_t
 } ccdebug_t;
 
 
+
 // Note: do not access these directly ...
 ccglobal ccthread_local cccaller_t  cccallstack[0x04];
 ccglobal ccthread_local cci32_t     cccallindex;
@@ -180,6 +225,16 @@ ccglobal ccthread_local ccdebug_t  *ccdebugthis;
 
 // Note: enable debug features
 ccglobal ccthread_local cci32_t     cctimed_enabled=cctrue;
+
+
+
+
+
+
+
+
+
+
 
 // Note:
 ccfunc void *ccmalloc_ (size_t);

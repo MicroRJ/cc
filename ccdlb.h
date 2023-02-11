@@ -1,49 +1,7 @@
 #ifndef _CCDLB
 #define _CCDLB
 
-typedef struct ccent_t ccent_t;
 
-// Note: dynamic length buffer
-typedef struct ccdlb_t ccdlb_t;
-
-// Note: This is a helper type for when you want to make it abundantly clear
-// that there's dlb metadata associated with the string ..
-typedef char *ccstr_t;
-
-typedef struct ccent_t
-{ ccent_t * nex;
-  cci32_t   len;
-  char     *key;
-  ccu32_t   val;
-} ccent_t;
-
-// Todo: pending string arena ...
-// Todo: custom allocator support, custom alignment support ...
-typedef struct ccdlb_t
-{ unsigned    rem_add: 1;
-  unsigned    rem_rze: 1;
-  ccent_t *   entries;
-  ccu32_t     sze_max;
-  ccu32_t     sze_min;
-} ccdlb_t;
-
-// Note: I don't want to propagate this too much, let's just use it here ...
-typedef enum ccerr_k
-{
-  ccerr_kNON=0,
-  ccerr_kNIT=1,
-  ccerr_kAIT=2,
-  ccerr_kOOM=3,
-  ccerr_kIUA=4,
-} ccerr_k;
-
-ccglobal const char * const ccerr_s[]=
-{ "none",
-  "not in table",
-  "already in table",
-  "out of memory",
-  "invalid user argument",
-};
 
 
 ccglobal ccthread_local ccerr_k ccerr;
