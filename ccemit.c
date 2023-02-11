@@ -82,7 +82,7 @@ ccemit_const_i32(ccemit_t *emit, cci64_t value)
 ccfunc ccemit_value_t *
 ccemit_resolve(ccemit_t *emit, ccemit_procd_t *func, cctree_t *tree)
 { ccnotnil(tree);
-  ccassert((tree->kind==cctree_kIDENTIFIER)||
+  ccassert((tree->kind==cctree_kLITIDE)||
   				 (tree->kind==cctree_kINDEX));
 
   cctree_t *couple=cctree_resolve_symbol(tree);
@@ -101,7 +101,7 @@ ccemit_invoke_easy(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, 
   cctree_t *ltree=tree->lval;
   cctree_t *rtree=tree->rval;
 
-  ccassert(ltree->kind==cctree_kIDENTIFIER);
+  ccassert(ltree->kind==cctree_kLITIDE);
 
   cctree_t *allude=cctree_resolve_symbol(tree);
   ccnotnil(allude);
@@ -121,7 +121,7 @@ ccfunc ccemit_value_t *
 ccemit_lvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctree_t *tree)
 { ccemit_value_t *value=ccnil;
   switch(tree->kind)
-  { case cctree_kIDENTIFIER:
+  { case cctree_kLITIDE:
     { value=ccemit_resolve(emit,func,tree);
     } break;
 
@@ -144,7 +144,7 @@ ccfunc ccemit_value_t *
 ccemit_rvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctree_t *tree)
 { ccemit_value_t *value=ccnil;
   switch(tree->kind)
-  { case cctree_kINTEGER:
+  { case cctree_kLITINT:
     { value=ccemit_const_i32(emit,tree->as_i32);
     } break;
     case cctree_kBINARY:
@@ -153,7 +153,7 @@ ccemit_rvalue(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, cctre
           ccemit_rvalue(emit,func,block,tree->lval),
           ccemit_rvalue(emit,func,block,tree->rval));
     } break;
-    case cctree_kIDENTIFIER:
+    case cctree_kLITIDE:
     { value=ccblock_fetch(block,ccemit_resolve(emit,func,tree),ccnil);
     } break;
     case cctree_kCALL:

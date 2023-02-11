@@ -286,6 +286,7 @@ typedef struct cctree_t cctree_t;
 #include "ccfio.c"
 #include "ccread.h"
 #include "cctree.h"
+#include "cccheck.c"
 #include "ccedict.h"
 #include "ccemit.h"
 #include "ccexec.h"

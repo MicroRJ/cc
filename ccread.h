@@ -37,12 +37,12 @@ typedef enum cctoken_k
   cctoken_Kliteral_ellipsis,
   cctoken_Kliteral_comment,
   cctoken_Kliteral_character,
-  cctoken_kLITSTRING,
+  cctoken_kLITSTR,
   cctoken_Kliteral_string_format,
   cctoken_Kliteral_string_unterminated,
   cctoken_kLITIDENT,
-  cctoken_kLITINTEGER,
-  cctoken_kLITFLOAT,
+  cctoken_kLITINT,
+  cctoken_kLITFLO,
   /**
    * Group: msvc attributes.
    *

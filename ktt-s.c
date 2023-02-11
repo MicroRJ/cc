@@ -12,10 +12,10 @@ kttc__token2s(char **buf, cctoken_t *token)
   { case cctoken_Kendexpl:           ccstr_catf(buf, ";"); break;
     case cctoken_Kliteral_ellipsis:  ccstr_catf(buf, "..."); break;
     case cctoken_Kliteral_character: ccstr_catf(buf, "%c", token->sig); break;
-    case cctoken_kLITINTEGER:   ccstr_catf(buf, "%lli", token->sig); break;
-    case cctoken_kLITFLOAT:     ccstr_catf(buf, "%f", token->flo); break;
+    case cctoken_kLITINT:   ccstr_catf(buf, "%lli", token->sig); break;
+    case cctoken_kLITFLO:     ccstr_catf(buf, "%f", token->flo); break;
     case cctoken_kLITIDENT: ccstr_catf(buf, "%s",token->str); break;
-    case cctoken_kLITSTRING: ccstr_catf(buf, "\"%s\"",token->str); break;
+    case cctoken_kLITSTR: ccstr_catf(buf, "\"%s\"",token->str); break;
     case cctoken_kLPAREN:  ccstr_catf(buf, "("); break;
     case cctoken_kRPAREN:  ccstr_catf(buf, ")"); break;
     case cctoken_Klcurly:  ccstr_catf(buf, "["); break;
@@ -195,11 +195,11 @@ cctree_t2s(ccread_t *parser, char **buf, cctree_t *tree)
       cctree_t2s(parser, buf, tree->uop.mhs);
       ccstr_catf(buf, ")");
     } break;
-    case cctree_kIDENTIFIER:
+    case cctree_kLITIDE:
     case cctree_t_tname:
-    case cctree_kINTEGER:
-    case cctree_kFLOAT:
-    case cctree_kSTRING:
+    case cctree_kLITINT:
+    case cctree_kLITFLO:
+    case cctree_kLITSTR:
     { kttc__token2s(buf, & tree->constant.token);
     } break;
   }

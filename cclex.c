@@ -250,7 +250,7 @@ cclex_readstr(cclex_t *l, const char *str)
           str++;
           com++; // Note: account for the null terminator
 
-        l->tok.bit=cctoken_kLITSTRING;
+        l->tok.bit=cctoken_kLITSTR;
         ccstradd((char*)l->tok.str,0,com);
         return str;
       } else
@@ -369,10 +369,10 @@ cclex_next_token_internal(cclex_t *l)
           { break;
           }
         }
-        l->tok.bit = cctoken_kLITFLOAT;
+        l->tok.bit = cctoken_kLITFLO;
         l->tok.flo = u + d / p;
       } else
-      { l->tok.bit = cctoken_kLITINTEGER;
+      { l->tok.bit = cctoken_kLITINT;
         l->tok.uns = u;
       }
     } break;
