@@ -14,12 +14,18 @@ int fib(int x)
 int main(int argc, char **argv)
 {
 cctimedhead("root");
-
-
   ++ argv;
   -- argc;
 
 	ccdlb_test();
+
+	void *mem=ccnil;
+	for(int i=0;i<1000;++i)
+	{
+		mem=ccrealloc(mem,i*256);
+	}
+
+	ccfree(mem);
 
 cctimedhead("main");
 
@@ -104,6 +110,5 @@ cctimedtail("main");
     ccpushfile(file,0,ccstrlen(out),out);
     ccclosefile(file);
   }
-
 cctimedtail("root");
 }

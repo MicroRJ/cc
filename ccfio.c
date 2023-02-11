@@ -14,14 +14,14 @@ ccfilename(const char *name)
 
 #ifdef _WIN32
 
-ccfunc ccinle ccclocktick_t
+ccfunc ccinle ccclocktime_t
 ccclocktick()
 { LARGE_INTEGER l;
 	QueryPerformanceCounter(&l);
  	return l.QuadPart;
 }
 ccfunc ccinle ccf64_t
-ccclocksecs(ccclocktick_t t)
+ccclocksecs(ccclocktime_t t)
 { LARGE_INTEGER l;
 	QueryPerformanceFrequency(&l);
  	return (((ccf64_t)t)/l.QuadPart);

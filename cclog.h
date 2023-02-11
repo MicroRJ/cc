@@ -5,85 +5,12 @@
 #define _CCLOG
 
 // Note: ensure caller guid is never 0 ...
-typedef struct cccaller_t cccaller_t;
-typedef struct cccaller_t
-{ int           guid;
-  const char   *file;
-  int           line;
-  const char   *func;
-} cccaller_t;
 
-typedef struct cctimed_t cctimed_t;
-typedef struct cctimed_t
-{
-  cccaller_t    caller;
-
-  const char   *label;
-  cctimed_t    *super;
-  cctimed_t    *child;
-  cci32_t       level;
-
-
-  cci32_t       event;
-
-  ccclocktick_t clock;
-  ccclocktick_t total;
-
-  cci32_t allocations;
-  cci32_t deallocations;
-  cci32_t reallocations;
-  cci32_t collisions;
-
-  ccu64_t memory;
-
-} cctimed_t;
-
-
-ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
-ccfunc ccinle cccaller_t ccmycaller();
-
-ccfunc void ccpushcaller_(cccaller_t);
-ccfunc void ccpullcaller_(cccaller_t);
-
-#ifndef ccpushcaller
-# define ccpushcaller() ccpushcaller_(cccaller(1+__COUNTER__,ccfilename(_CCFILE),_CCLINE,_CCFUNC))
-#endif
-
-#ifndef ccpullcaller
-# define ccpullcaller() ccpullcaller_(cccaller(1+__COUNTER__,ccfilename(_CCFILE),_CCLINE,_CCFUNC))
-#endif
-
-#ifndef cccall
-# define cccall(expression) (ccpushcaller(),expression,ccpullcaller())
-#endif
-
-#ifndef cctimedhead
-# define cctimedhead(label) cccall(cctimedhead_(label))
-#endif
-
-#ifndef cctimedtail
-# define cctimedtail(label) (ccpushcaller(),cctimedtail_(label))
-#endif
-
-ccfunc void cctimedhead_(const char *label);
-ccfunc void cctimedtail_(const char *label);
-
-ccfunc ccinle cctimed_t *cctimed();
 
 
 #endif
 
 #if defined(_CCLOG) && defined(_CCLOG_IMPL)
-
-// Note: getting a little too comfortable with globals
-ccglobal ccthread_local cccaller_t  cccallstack[0x04];
-ccglobal ccthread_local cci32_t     cccallindex;
-
-
-ccglobal ccthread_local cctimed_t   cctimedroot;
-ccglobal ccthread_local cctimed_t  *cctimedthis;
-ccglobal ccthread_local cci32_t     cctimed_enabled=cctrue;
-
 
 ccfunc ccinle cccaller_t
 cccaller(int guid, const char *file, int line, const char *func)
@@ -95,14 +22,6 @@ cccaller(int guid, const char *file, int line, const char *func)
   t.func=func;
 
   return t;
-}
-
-ccfunc ccinle cccaller_t
-ccmycaller()
-{
-  ccassert(cccallindex>=1);
-
-  return cccallstack[cccallindex-1];
 }
 
 ccfunc void
@@ -121,23 +40,54 @@ ccpushcaller_(cccaller_t caller)
   cccallstack[cccallindex++]=caller;
 }
 
-ccfunc void
-ccpullcaller_(cccaller_t caller)
+ccfunc ccinle cccaller_t
+ccpullcaller()
 {
   ccassert(cccallindex>=1);
 
-  cccallindex --;
+  return cccallstack[--cccallindex];
 }
 
-ccfunc ccinle cctimed_t *
+ccfunc ccinle ccdebug_t *
 cctimed()
 {
-  ccglobal cctimed_t dummy;
-  return cctimed_enabled && cctimedthis? cctimedthis :&dummy;
+  ccglobal ccdebug_t dummy;
+  return cctimed_enabled && ccdebugthis? ccdebugthis :&dummy;
+}
+
+ccfunc ccinle ccdebug_event_t *
+ccstats()
+{
+  return &cctimed()->event;
+}
+
+
+ccfunc ccinle void
+cctimed_addoverhead(ccdebug_t *timed, ccclocktime_t start)
+{
+	timed->event.overhead_clock_ticks += ccclocktick()-start;
+}
+
+ccfunc ccinle void
+cctimed_bubble(ccdebug_t *timed)
+{ if(!timed->super)
+		return;
+
+	size_t *a,*c,*s;
+	a=timed->event.e;
+	c=timed->last_event.e;
+	s=timed->super->event.e;
+
+	for(int i=0; i<5; ++i)
+	{ // Note: calculate difference between actual and cached, add to super ...
+		*s++ += *a - *c;
+		// Note: update cached with actual
+		*c++=*a++;
+	}
 }
 
 ccfunc ccinle ccf64_t
-ccclockperc(ccclocktick_t total, ccclocktick_t local)
+ccclockperc(ccclocktime_t total, ccclocktime_t local)
 {
 	return 100.0 * ( cccast(ccf64_t,local) /
 								   cccast(ccf64_t,total) );
@@ -146,12 +96,16 @@ ccclockperc(ccclocktick_t total, ccclocktick_t local)
 ccfunc const char *
 ccbytecountreadable(ccu64_t b, ccf64_t *f)
 {
-	if(b>1024*1024)
-	{ *f=b/1024.0/1024.0;
+	if(b>(1024*1024*1024))
+	{ *f=b/(1024.0*1024.0*1024.0);
+		return "Gb";
+	} else
+	if(b>(1024*1024))
+	{ *f=b/(1024.0*1024.0);
 		return "Mb";
 	} else
-	if(b>1024)
-	{ *f=b/1024.0;
+	if(b>(1024))
+	{ *f=b/(1024.0);
 		return "Kb";
 	} else
 	{
@@ -161,26 +115,49 @@ ccbytecountreadable(ccu64_t b, ccf64_t *f)
 }
 
 ccfunc void
-cctimeddump(cctimed_t *r, cctimed_t *t)
+cctimeddump_(ccdebug_t *r, ccdebug_t *t)
 {
-  for(int i=0;i<t->level*2;++i)
-    printf(" ");
 
-  ccclocktick_t total=r? r->total :t->total;
+  ccclocktime_t overhead_clock_ticks;
+  overhead_clock_ticks=t->event.overhead_clock_ticks;
+
+  ccf64_t seconds_used,percent_used;
+  seconds_used=ccclocksecs(t->total_event_ticks-overhead_clock_ticks);
+  percent_used=ccclockperc(r? r->total_event_ticks :t->total_event_ticks,t->total_event_ticks);
+
+  size_t heap_blocks=t->event.heap_block_count;
+
+  // ccdebug_block_t *block;
+ 	// for(block=t->last_heap_block;block;block=block->prev)
+ 	// {
+ 	//    heap_blocks++;
+ 	// }
+
+ 	const char *leak_string;
+ 	if(!r) leak_string="leaked";
+ 	else leak_string="deferred";
 
   ccf64_t memory;
   const char *suffix;
-  suffix=ccbytecountreadable(t->memory,&memory);
+  suffix=ccbytecountreadable(t->event.memory,&memory);
 
-  printf("#%i %s[%i] %s(): %i '%s' %%%.2f @ %f(s) %i-%i,%i = %.2f%s !%i\n",
+	for(int i=0;i<t->level*2;++i)
+    printf(" ");
+  printf("#%i in %s[%i] %s(): %i '%s' event(s), took %f(s)(%%%.2f) also [%lli-%lli,%lli]=%.2f%s %s in %lli block(s), %lli collision(s)\n",
     t->caller.guid,t->caller.file,t->caller.line,t->caller.func,
-      t->event,t->label,ccclockperc(total,t->total),ccclocksecs(t->total),
-        t->allocations,t->deallocations,t->reallocations,
-        	memory,suffix,t->collisions);
+      t->event_count,t->label,seconds_used,percent_used,
+        t->event.allocations,t->event.deallocations,t->event.reallocations,
+        	memory,suffix,leak_string,heap_blocks,t->event.collisions);
 
-  cctimed_t *c;
+  ccdebug_t *c;
   ccarrfor(t->child,c)
-    cctimeddump(t,c);
+    cctimeddump_(t,c);
+}
+
+ccfunc void
+cctimeddump(ccdebug_t *r, ccdebug_t *t)
+{
+	cctimeddump_(r,t);
 }
 
 ccfunc void
@@ -189,31 +166,38 @@ cctimedhead_(const char *label)
   if(!cctimed_enabled)
     return;
 
-  cctimed_t *super=cctimedthis;
+	ccu64_t tick=ccclocktick();
 
-  cccaller_t caller=ccmycaller();
+  ccdebug_t *super=ccdebugthis;
 
-  if(!cctimedthis)
+  cccaller_t caller=ccpullcaller();
+
+  if(!ccdebugthis)
   {
-    cctimedthis=&cctimedroot;
+    ccdebugthis=&ccdebugroot;
   } else
   {
     cctimed_enabled=ccfalse;
-    cctimedthis=cctblsetP(cctimedthis->child,cccast(cci64_t,caller.guid));
+    ccdebugthis=cctblsetP(ccdebugthis->child,cccast(cci64_t,caller.guid));
     cctimed_enabled=cctrue;
   }
 
 
-  if(cctimedthis->event==0)
-  { cctimedthis->caller=caller;
-    cctimedthis->super=super;
-    cctimedthis->label=label;
-    cctimedthis->level=super?super->level+1:0;
+  if(ccdebugthis->event_count==0)
+  { ccdebugthis->caller=caller;
+    ccdebugthis->super=super;
+    ccdebugthis->label=label;
+    ccdebugthis->level=super?super->level+1:0;
   }
-  cctimedthis->event++;
 
-  cctimedthis->clock=ccclocktick();
+  ccdebugthis->event_count++;
+
+  ccdebugthis->start_event_ticks=tick;
+
+  cctimed_addoverhead(ccdebugthis,tick);
 }
+
+
 
 ccfunc void
 cctimedtail_(const char *label)
@@ -221,23 +205,28 @@ cctimedtail_(const char *label)
   if(!cctimed_enabled)
     return;
 
-  ccassert(cctimedthis!=0);
+	ccu64_t tick=ccclocktick();
 
-  cccaller_t caller=ccmycaller();
+  ccassert(ccdebugthis!=0);
 
-  ccassert(strcmp(cctimedthis->caller.file,caller.file)==0);
-  ccassert(strcmp(cctimedthis->caller.func,caller.func)==0);
+  cccaller_t caller=ccpullcaller();
 
-  ccclocktick_t tick=ccclocktick();
-  ccclocktick_t span=tick-cctimedthis->clock;
-  cctimedthis->total+=span;
+  ccassert(strcmp(ccdebugthis->caller.file,caller.file)==0);
+  ccassert(strcmp(ccdebugthis->caller.func,caller.func)==0);
 
-  cctimedthis=cctimedthis->super;
+  ccclocktime_t span=tick-ccdebugthis->start_event_ticks;
+  ccdebugthis->total_event_ticks+=span;
 
-  if(!cctimedthis)
+  cctimed_addoverhead(ccdebugthis,tick);
+
+  cctimed_bubble(ccdebugthis);
+
+  ccdebugthis=ccdebugthis->super;
+
+  if(!ccdebugthis)
   {
     printf("timed:\n");
-    cctimeddump(ccnil,&cctimedroot);
+    cctimeddump(ccnil,&ccdebugroot);
   }
 }
 

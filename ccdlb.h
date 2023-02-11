@@ -392,7 +392,7 @@ ccdbl_query(ccdlb_t *tbl, int len, const char *key)
       return ent;
     if(!ent->nex)
       break;
-    cctimed()->collisions++;
+    ccstats()->collisions++;
     ent=ent->nex;
   }
   ccerrset(ccerr_kNIT);
@@ -509,7 +509,7 @@ ccstr_catf(char **ccm, const char *fmt, ...)
 ccfunc void
 ccdlb_test()
 {
-#ifdef _HARD_DEBUG
+#ifdef _DLB_TESTS
 #if 0
   void *mem=ccnil;
   mem=ccrealloc(mem,24);
