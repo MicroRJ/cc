@@ -34,10 +34,18 @@ ccenter("emit");
 ccleave("emit");
 
 ccenter("exec");
+
+#ifndef _HARD_DEBUG
+	ccclocktime_t tick=ccclocktick();
+#endif
   ccexec_value_t retr;
   ccexec_t exec;
   ccexec_init(&exec);
   retr=ccexec_translation_unit(&exec,&emit);
+
+#ifndef _HARD_DEBUG
+  printf("done in %f\n", ccclocksecs(ccclocktick()-tick));
+#endif
 ccleave("exec");
 
   ccread_uninit(&read);

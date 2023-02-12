@@ -142,6 +142,7 @@ ccfunc void cclex_next_token_internal(cclex_t *l);
 ccfunc cci32_t
 cclex_next_token(cclex_t *l)
 {
+ccenter("next_token");
   do
   { cclex_next_token_internal(l);
   } while(l->tok.bit == cctoken_Kliteral_comment ||
@@ -149,6 +150,7 @@ cclex_next_token(cclex_t *l)
           l->tok.bit == cctoken_Kendimpl ||
           l->tok.bit == cctoken_Kendexpl );
 
+ccleave("next_token");
   return l->tok.bit != cctoken_kEND;
 }
 
@@ -156,6 +158,7 @@ cclex_next_token(cclex_t *l)
 ccfunc const char *
 cclex_identifier(cclex_t *l, const char *str)
 {
+ccenter("identifier");
 	int len=cclex_idenlen(str);
 
 	l->tok.bit=cctoken_kLITIDENT;
@@ -169,12 +172,15 @@ cclex_identifier(cclex_t *l, const char *str)
 
   l->tok.str=cckeyget();
 
+ccleave("identifier");
   return str+len;
 }
 
 ccfunc const char *
 cclex_readstr(cclex_t *l, const char *str)
 {
+ccenter("string_token");
+
 	// Todo: re-use this buffer ...
 	// Todo: replace this with a legit string arena ... nothing too fancy ...
   l->tok.bit=cctoken_kLITSTR_INVALID;
@@ -195,7 +201,7 @@ cclex_readstr(cclex_t *l, const char *str)
 
         l->tok.bit=cctoken_kLITSTR;
         ccstradd((char*)l->tok.str,0,com);
-        return str;
+        goto leave;
       } else
       if(*str=='\\')
       { switch(str[1])
@@ -224,6 +230,8 @@ cclex_readstr(cclex_t *l, const char *str)
       } else *cur++=*str++;
     }
   }
+leave:
+ccleave("string_token");
   return str;
 }
 
@@ -231,13 +239,14 @@ cclex_readstr(cclex_t *l, const char *str)
 ccfunc void
 cclex_next_token_internal(cclex_t *l)
 {
+ccenter("next_token_internal");
   l->min = l->max;
 
   l->tok.loc=l->min;
 
   if(l->max >= l->doc_max)
   { l->tok.bit = cctoken_kEND;
-    return;
+    goto leave;
   }
   switch(* l->max)
   { default:
@@ -554,7 +563,8 @@ cclex_next_token_internal(cclex_t *l)
   l->tok.term_expl = 0;
   l->tok.term_expl = 0;
 
-  while(l->max < l->doc_max)
+ccenter("token-trailing");
+  while(l->max<l->doc_max)
   { switch(*l->max)
     { case ' ': case '\t': case '\f': case '\v': case '\b':
       { ++ l->max;
@@ -575,11 +585,15 @@ cclex_next_token_internal(cclex_t *l)
       { l->max += 1;
         l->tok.term_expl ++;
       } continue;
-      default:
-      {
-      } return;
     }
+    goto leave_token_trailing;
   }
-} // end of function
+
+leave_token_trailing:
+ccleave("token-trailing");
+
+leave:
+ccleave("next_token_internal");
+}
 
 #endif

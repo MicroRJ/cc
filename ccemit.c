@@ -103,6 +103,9 @@ ccemit_invoke_easy(ccemit_t *emit, ccemit_procd_t *func, ccemit_block_t *block, 
 
   ccassert(ltree->kind==cctree_kLITIDE);
 
+  // Todo:
+  (void)ltree;
+
   cctree_t *allude=cctree_resolve_symbol(tree);
   ccnotnil(allude);
 

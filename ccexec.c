@@ -95,8 +95,9 @@ ccstack_local_alloc(
 #endif
 
 
-#ifdef _HARD_DEBUG
   ccedict_t *edict=value->edict;
+
+#ifdef _HARD_DEBUG
   ccnotnil((edict));
   ccassert((edict->kind==ccedict_kLOCAL)||(edict->kind==ccedict_kPARAM),
     "cannot allocate local, expected an edict of type LOCAL or PARAM");

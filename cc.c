@@ -272,6 +272,7 @@ ccfunc void *ccinternalalloctr_(size_t,void*);
 // Note:
 ccglobal ccthread_local ccclocktime_t ccclockfreqc;
 
+#ifdef _HARD_DEBUG
 // Note: do not access these directly ...
 ccglobal ccthread_local cccaller_t  cccallstack[0x04];
 ccglobal ccthread_local cci32_t     cccallindex;
@@ -283,6 +284,9 @@ ccglobal ccthread_local ccdebug_t  *ccdebugthis;
 
 // Note: enable debug features, if you're going to use this, make sure you restore it properly by stacking the previous state ...
 ccglobal ccthread_local cci32_t     ccdebug_disabled;
+#endif
+
+
 
 // Note: global error code
 ccglobal ccthread_local ccerr_k ccerr;
@@ -313,35 +317,59 @@ ccglobal ccthread_local ccalloctr_t *ccalloctr=ccuseralloctr_;
 # define ccstrlenL(lstr) cccast(ccu32_t,sizeof(lstr)-1)
 #endif
 
-// Note: debug caller mechanism, this useful because it enables you to enhance debug data without
+
+// Note:
+// Debug caller mechanism, useful as it enables you to much enhance debug data without
 // having to modify your code too much ...
-ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
-ccfunc void ccpushcaller(cccaller_t);
-
-
-// Note: ensure that this is the first intruction in your function, before anything else ... pretty please ...
-ccfunc ccinle cccaller_t ccpullcaller();
+// You must ensure pull caller is the first instruction in in your function, this is
+// to prevent other functions from "stealing" your caller ...
+// This behavior will probably change later ...
 
 #ifndef cccallee
 # define cccallee ccfunc
 #endif
-// Note: the function that you're calling must pull the caller ...
-#ifndef cccallas
-# define cccallas(caller,callee) (ccpushcaller(caller),(callee))
-#endif
-#ifndef cccall
-# define cccall(callee) cccallas(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),callee)
+
+#ifdef _HARD_DEBUG
+ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
+ccfunc void ccpushcaller(cccaller_t);
+ccfunc ccinle cccaller_t ccpullcaller();
+ccfunc void cctimedhead_(const char *label);
+ccfunc void cctimedtail_(const char *label);
+// Todo: this is deprecated ... how are you going to expand this to zero later on?
+# ifndef ccdebug
+#  define ccdebug() cccall(ccdebug_())
+# endif
+# ifndef ccevent
+#  define ccevent() cccall(ccevent_())
+# endif
+# ifndef cccallas
+#  define cccallas(caller,callee) (ccpushcaller(caller),(callee))
+# endif
+# ifndef cccall
+#  define cccall(callee) cccallas(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),callee)
+# endif
+#else
+# define cctimedhead_(x) 0
+# define cctimedtail_(x) 0
+# define ccpullcaller() {}
+ccglobal ccdebug_t dummy;
+# ifndef ccdebug
+#  define ccdebug() (&dummy)
+# endif
+# ifndef ccevent
+#  define ccevent() (&dummy.event)
+# endif
+# ifndef cccallas
+#  define cccallas(caller,callee) (callee)
+# endif
+# ifndef cccall
+#  define cccall(callee) (callee)
+# endif
 #endif
 
 ccfunc ccinle ccdebug_event_t *ccevent_();
 ccfunc ccinle ccdebug_t       *ccdebug_();
 
-#ifndef ccdebug
-# define ccdebug() cccall(ccdebug_())
-#endif
-#ifndef ccevent
-# define ccevent() cccall(ccevent_())
-#endif
 
 
 // Note: simple trace logging ...
@@ -373,10 +401,7 @@ cccallee void cctrace_(const char *label, const char *format, ...);
 # define ccfree(data) cccall(ccuseralloctr_(ccnil,data))
 #endif
 
-// Note:
-// Todo: rename these
-ccfunc void cctimedhead_(const char *label);
-ccfunc void cctimedtail_(const char *label);
+
 
 #ifndef ccenter
 # define ccenter(label) cccall(cctimedhead_(label))
@@ -523,8 +548,19 @@ typedef struct cctree_t cctree_t;
 #define _CCLOG_IMPL
 #include "cclog.h"
 
-#ifdef _HARD_DEBUG
+ccfunc void *ccinternalalloctr_(size_t size,void *data)
+{ ccpullcaller();
+	if(size)
+	{ if(data)
+			return realloc(data,size);
+		else
+		  return malloc(size);
+	}
+	free(data);
+	return ccnil;
+}
 
+#ifdef _HARD_DEBUG
 ccfunc void
 ccdebug_handleoverwrite(ccslb_t *block)
 {
@@ -610,22 +646,6 @@ ccenter("user-allocator");
 ccleave("user-allocator");
 	return block+1;
 }
-
-ccfunc void *ccinternalalloctr_(size_t size,void *data)
-{ ccpullcaller();
-
-	if(size)
-	{ if(data)
-			return realloc(data,size);
-		else
-		  return malloc(size);
-	}
-
-	free(data);
-	return ccnil;
-}
-
-
 #ifdef _DEVELOPER
 #undef malloc
 # define malloc DO_NOT_USE_MALLOC
@@ -634,8 +654,12 @@ ccfunc void *ccinternalalloctr_(size_t size,void *data)
 #undef free
 # define free DO_NOT_USE_FREE
 #endif
+#else
+ccfunc void *ccuseralloctr_(size_t size,void *data)
+{
+	return ccinternalalloctr_(size,data);
+}
 #endif
-
 // Note:
 #include "ccread.h"
 #include "cctree.h"

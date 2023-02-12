@@ -12,6 +12,8 @@
 
 #if defined(_CCLOG) && defined(_CCLOG_IMPL)
 
+#ifdef _HARD_DEBUG
+
 ccfunc ccinle cccaller_t
 cccaller(int guid, const char *file, int line, const char *func)
 {
@@ -122,12 +124,14 @@ ccbytecountreadable(cci64_t b, ccf64_t *f)
 	}
 }
 
+// Todo:
 ccfunc void
 cctextcolor()
 {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_RED);
 }
 
+// Todo:
 ccfunc void
 cctextreset()
 {
@@ -238,6 +242,8 @@ cctimedtail_(const char *label)
   	ccdebugdump();
   }
 }
+#endif
+
 
 ccfunc void
 ccout(const char *string)
