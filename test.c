@@ -13,21 +13,9 @@ int fib(int x)
 
 int main(int argc, char **argv)
 {
-cctimedhead("root");
+cctimedhead("main");
   ++ argv;
   -- argc;
-
-	ccdlb_test();
-
-	void *mem=ccnil;
-	for(int i=0;i<1000;++i)
-	{
-		mem=ccrealloc(mem,i*256);
-	}
-
-	ccfree(mem);
-
-cctimedhead("main");
 
   ccread_t read;
   ccread_init(&read);
@@ -60,11 +48,6 @@ cctimedhead("compare");
   cctracelog("c:%i - cc:%i",c,retr.asi32);
 
 cctimedtail("compare");
-
-
-cctimedtail("main");
-
-
 
   // Todo:
   { char *out = ccnil;
@@ -110,5 +93,6 @@ cctimedtail("main");
     ccpushfile(file,0,ccstrlen(out),out);
     ccclosefile(file);
   }
-cctimedtail("root");
+
+cctimedtail("main");
 }

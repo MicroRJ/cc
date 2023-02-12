@@ -1,28 +1,6 @@
 #ifndef _CCDLB
 #define _CCDLB
 
-
-
-
-ccglobal ccthread_local ccerr_k ccerr;
-#define ccerrset(err) (ccerr=err)
-#define ccerrnon()    ((ccerr)==ccerr_kNON)
-#define ccerrsom()    ((ccerr)!=ccerr_kNON)
-#define ccerrnit()    ((ccerr)==ccerr_kNIT)
-#define ccerrait()    ((ccerr)==ccerr_kAIT)
-
-ccglobal ccthread_local ccstr_t cckey;
-#define cckeyset(key) (cckey=key)
-#define cckeyget()    (cckey)
-
-// Note: C string utils ...
-#ifndef ccstrlenS
-# define ccstrlenS(cstr) cccast(ccu32_t,strlen(cstr))
-#endif
-#ifndef ccstrlenL
-# define ccstrlenL(lstr) cccast(ccu32_t,sizeof(lstr)-1)
-#endif
-
 #ifndef ccdlb_
 # define ccdlb_(ccm) (cccast(ccdlb_t*,ccm)-1)
 #endif
@@ -31,10 +9,10 @@ ccglobal ccthread_local ccstr_t cckey;
 #endif
 
 #ifndef ccdlbmax
-# define ccdlbmax(ccm) ((ccm)?cccast(ccu32_t *,ccm)[-2]:0)
+# define ccdlbmax(ccm) ((ccm)?cccast(size_t *,ccm)[-2]:0)
 #endif
 #ifndef ccdlbmin
-# define ccdlbmin(ccm) ((ccm)?cccast(ccu32_t *,ccm)[-1]:0)
+# define ccdlbmin(ccm) ((ccm)?cccast(size_t *,ccm)[-1]:0)
 #endif
 #ifndef ccdlbdel
 # define ccdlbdel(ccm) ccfree(ccdlb(ccm))
@@ -52,7 +30,10 @@ ccglobal ccthread_local ccstr_t cckey;
 # define ccarrmin(arr) (ccdlbmin(arr)/sizeof(*(arr))) // Note: null safe
 #endif
 #ifndef ccarrlen
-# define ccarrlen ccarrmin
+# define ccarrlen(arr) cccast(ccu32_t,ccarrmin(arr))
+#endif
+#ifndef ccarrleni
+# define ccarrleni(arr) cccast(cci32_t,ccarrmin(arr))
 #endif
 
 #ifndef ccarrend_max
@@ -104,9 +85,9 @@ ccglobal ccthread_local ccstr_t cckey;
 #endif
 
 // Note: these use the global error code _ccerr_ ... something I'm not very fond of ...
-ccfunc ccu32_t ccdlb_tblget(void **, cci32_t, cci32_t, const char *);
-ccfunc ccu32_t ccdlb_tblput(void **, cci32_t, cci32_t, const char *);
-ccfunc ccu32_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
+ccfunc size_t ccdlb_tblget(void **, cci32_t, cci32_t, const char *);
+ccfunc size_t ccdlb_tblput(void **, cci32_t, cci32_t, const char *);
+ccfunc size_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 
 #ifndef cctblgetL
 # define cctblgetL(ccm,lit) ((ccm)+ccdlb_tblget(cccast(void **,ccaddr(ccm)),sizeof(*(ccm)),cclithsh(lit)))
@@ -187,8 +168,8 @@ ccfunc ccu32_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 # define ccstrcatf(ccm,fmt,...) ccstr_catf(&ccm,fmt,__VA_ARGS__)
 #endif
 
-ccfunc ccu32_t
-ccdlb_arradd_(ccdlb_t **dlb_, ccu32_t rsze, ccu32_t csze)
+ccfunc size_t
+ccdlb_arradd_(ccdlb_t **dlb_, size_t rsze, size_t csze)
 {
 /* ccdlb_arradd_:
 **  rsze: size to reserve
@@ -204,16 +185,19 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32_t rsze, ccu32_t csze)
 
   int is_ini=!dlb;
 
-  ccu32_t
+  size_t
     sze_max=ccnil,
     sze_min=ccnil;
   cci32_t
     rem_rze=ccnil;
+  ccalloctr_t
+   *alloctr=ccalloctr;
 
   if(!is_ini)
   { sze_max=dlb->sze_max;
     sze_min=dlb->sze_min;
     rem_rze=dlb->rem_rze;
+    alloctr=dlb->alloctr;
   }
 
   // Note: ensure that we never commit past what we're about to reserve or what
@@ -226,14 +210,16 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32_t rsze, ccu32_t csze)
 
     sze_max<<=1;
     if(sze_max<sze_min+rsze)
-    { sze_max=sze_min+rsze;
-    }
+    	sze_max=sze_min+rsze;
 
-    dlb=*dlb_=(ccdlb_t*)ccrealloc(dlb,sizeof(*dlb)+sze_max);
+    dlb=(ccdlb_t*)cccall(alloctr(sizeof(*dlb)+sze_max,dlb));
+    *dlb_=dlb;
 
     if(is_ini)
-    {
-      memset(dlb,ccnil,sizeof(*dlb));
+    { dlb->rem_rze=ccfalse;
+      dlb->rem_add=ccfalse;
+      dlb->entries=ccfalse;
+      dlb->alloctr=alloctr;
     }
   }
 
@@ -242,26 +228,26 @@ ccdlb_arradd_(ccdlb_t **dlb_, ccu32_t rsze, ccu32_t csze)
   return sze_min;
 }
 
-ccfunc ccinle ccu32_t
-ccdlb_arradd(void **ccm, ccu32_t isze, ccu32_t cres, ccu32_t ccom)
+ccfunc ccinle size_t
+ccdlb_arradd(void **ccm, size_t isze, size_t cres, size_t ccom)
 {
 // Note: ccdlb_arradd
 // This could be made into a macro, but it would look rather funky, like me and ain't no-one likes me ...
   ccdlb_t *dlb=ccdlb(*ccm);
-  ccu32_t res=ccdlb_arradd_(&dlb,isze*cres,isze*ccom);
+  size_t res=ccdlb_arradd_(&dlb,isze*cres,isze*ccom);
   *ccm=dlb+1;
   return res/isze;
 }
 
-ccfunc ccu32_t
-ccdlb_stradd(char **ccm, ccu32_t cres, ccu32_t ccom, const char *cpy)
+ccfunc size_t
+ccdlb_stradd(char **ccm, size_t cres, size_t ccom, const char *cpy)
 {
 cctimedhead("stradd");
 	// Note: use char type instead of void for preemptive type-checking ...
   // Note: assuming that you'll reserve at-least one more byte for the null terminator ...
   ccassert(cres!=0);
   ccassert(ccom!=0);
-  ccu32_t res=ccdlb_arradd(cccast(void**,ccm),1,cres,ccom);
+  size_t res=ccdlb_arradd(cccast(void**,ccm),1,cres,ccom);
   char *cur=(char*)*ccm+res;
   memcpy(cur,cpy,cres-1);
   cur[cres-1]=0;
@@ -303,7 +289,7 @@ ccdlb_tblini(ccdlb_t **dlb_, cci32_t isze)
 }
 
 ccfunc ccent_t *
-ccdlb_tblcat(ccdlb_t **tbl, ccu32_t isze, int len, const char *key, ccent_t *ent)
+ccdlb_tblcat(ccdlb_t **tbl, size_t isze, int len, const char *key, ccent_t *ent)
 {
   ccnotnil(tbl);
   ccnotnil(*tbl);
@@ -320,7 +306,7 @@ ccdlb_tblcat(ccdlb_t **tbl, ccu32_t isze, int len, const char *key, ccent_t *ent
   ccassert(ent->val==ccnil);
 
   // Note: must zero the item
-  ccu32_t val=ccdlb_arradd_(tbl,isze,isze);
+  size_t val=ccdlb_arradd_(tbl,isze,isze);
   memset(cccast(char*,ccdref(tbl)+1)+val,ccnil,isze);
 
   // Todo:
@@ -341,7 +327,8 @@ ccdbl_query(ccdlb_t *tbl, int len, const char *key)
 	ccassert(len!=0);
 
   ccu64_t  hsh=cchsh_abc(len,key);
-  ccu32_t  idx=hsh%ccarrmax(tbl->entries);
+  size_t   idx=hsh%ccarrmax(tbl->entries);
+
   ccent_t *ent=tbl->entries+idx;
 
   ccerrset(ccerr_kNON);
@@ -350,14 +337,14 @@ ccdbl_query(ccdlb_t *tbl, int len, const char *key)
       return ent;
     if(!ent->nex)
       break;
-    ccstats()->collisions++;
+    ccevent()->collisions++;
     ent=ent->nex;
   }
   ccerrset(ccerr_kNIT);
   return ent;
 }
 
-ccfunc ccu32_t
+ccfunc size_t
 ccdlb_tblget(void **ccm, cci32_t isze, int len, const char *key)
 {
 cctimedhead("tblget");
@@ -366,7 +353,7 @@ cctimedhead("tblget");
   cckeyset(ccnil);
 
 	// Todo: probably return an index that the user can still write to, but it won't affect other items...
-  ccu32_t val=ccnil;
+  size_t val=ccnil;
 
   if(tbl)
   { ccent_t *ent=ccdbl_query(tbl,len,key);
@@ -380,7 +367,7 @@ cctimedtail("tblget");
   return val/isze;
 }
 
-ccfunc ccu32_t
+ccfunc size_t
 ccdlb_tblput(void **ccm, cci32_t isze, int len, const char *key)
 {
 cctimedhead("tblput");
@@ -391,7 +378,7 @@ cctimedhead("tblput");
   cckeyset(ccnil);
 
 	// Todo: probably return an index that the user can still write to, but it won't affect other items...
-  ccu32_t val=ccnil;
+  size_t val=ccnil;
 
   ccent_t *ent=ccdbl_query(tbl,len,key);
 
@@ -411,7 +398,7 @@ cctimedtail("tblput");
   return val/isze;
 }
 
-ccfunc ccu32_t
+ccfunc size_t
 ccdlb_tblset(void **ccm, cci32_t isze, int len, const char *key)
 {
 cctimedhead("tblset");
@@ -423,7 +410,7 @@ cctimedhead("tblset");
   cckeyset(ccnil);
 
 	// Todo: probably return an index that the user can still write to, but it won't affect other items...
-  ccu32_t val=ccnil;
+  size_t val=ccnil;
   ccent_t *ent=ccdbl_query(tbl,len,key);
 
   if(ccerrnit())
@@ -440,29 +427,22 @@ cctimedtail("tblset");
   return val/isze;
 }
 
-ccfunc ccu32_t
+ccfunc size_t
 ccstr_vcatf(char **ccm, const char *fmt, va_list vli)
-{
-  int len=stbsp_vsnprintf(0,0,fmt,vli);
-  ccu32_t res=ccdlb_arradd(cccast(void**,ccm),1,len+1,len);
+{ int len=stbsp_vsnprintf(0,0,fmt,vli);
+  size_t res=ccdlb_arradd(cccast(void**,ccm),1,len+1,len);
   len=stbsp_vsnprintf((char*)*ccm+res,len+1,fmt,vli);
   return res;
 }
 
-ccfunc ccu32_t
+ccfunc size_t
 ccstr_catf(char **ccm, const char *fmt, ...)
-{
-  va_list vli;
+{ va_list vli;
   va_start(vli,fmt);
-
-  ccu32_t res;
-  res=ccstr_vcatf(ccm,fmt,vli);
-
+  size_t res=ccstr_vcatf(ccm,fmt,vli);
   va_end(vli);
-
   return res;
 }
-
 
 ccfunc void
 ccdlb_test()

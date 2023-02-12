@@ -2,6 +2,9 @@
 #ifndef _CC
 #define _CC
 
+// Todo: pending string arena ...
+// Todo: custom allocator support, custom alignment support ...
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -131,30 +134,16 @@ ccglobal const char * const ccerr_s[]=
   "invalid user argument",
 };
 
-// Note: dynamic length buffer, dlb for short ... each dlb will also support a hash-table ...
-
 // Note: This is a helper type for when you want to make it abundantly clear
-// that there's dlb metadata associated with the string ..
+// that there's metadata associated with the string ..
 typedef char *ccstr_t;
 
-typedef struct ccent_t ccent_t;
-typedef struct ccent_t
-{ ccent_t * nex;
-  cci32_t   len;
-  char     *key;
-  ccu32_t   val;
-} ccent_t;
-
-// Todo: pending string arena ...
-// Todo: custom allocator support, custom alignment support ...
-typedef struct ccdlb_t ccdlb_t;
-typedef struct ccdlb_t
-{ unsigned    rem_add: 1;
-  unsigned    rem_rze: 1;
-  ccent_t *   entries;
-  ccu32_t     sze_max;
-  ccu32_t     sze_min;
-} ccdlb_t;
+// Note: entity state, nit: not in table, ait: already in table ...
+typedef enum ccent_k
+{
+	ccent_kNIT=0,
+  ccent_kAIT=1,
+} ccent_k;
 
 // Note: debugging utilities
 typedef struct cccaller_t cccaller_t;
@@ -165,18 +154,61 @@ typedef struct cccaller_t
   const char   *func;
 } cccaller_t;
 
-typedef struct ccdebug_block_t ccdebug_block_t;
-typedef struct ccdebug_block_t
-{ ccdebug_block_t *prev;
-  ccdebug_block_t *next;
-  cccaller_t      caller;
-  size_t          size;
-  int             removed;
-  char underwrite[4];
-} ccdebug_block_t;
+typedef void *(ccalloctr_t)(size_t,void *);
+
+// Note: general table entry
+typedef struct ccent_t ccent_t;
+typedef struct ccent_t
+{ ccent_t * nex;
+  cci32_t   len;
+  char    * key;
+  size_t    val;
+} ccent_t;
+
+// Note: static length buffer, slb for short... slb's are use for regular heap allocations ...
+typedef struct ccslb_t ccslb_t;
+typedef struct ccslb_t
+{ cccaller_t  caller;
+	ccslb_t    *prev, *next;
+  size_t      size;
+  char        guard[0x04];
+} ccslb_t;
+
+// Note: dynamic length buffer, dlb for short ... each dlb will also support a hash-table ...
+// Note: At the moment, slb's and dlb's are NOT integrated, for instance, a dlb is intended to be a
+// superset of a slb, so you'd allocate a slb, and then add dlb metadata:
+//
+// ccslb_t
+// ccdlb_t
+// head_bytes
+// user_bytes
+// tail_bytes
+//
+// This is only if the allocator adds the slb metadata, (the default one does) however,
+// I do not expect - you, the user to use the provided allocator, in which case, dlb's have a sze_max field.
+//
+// Point is, if we're going to fully commit to this whole slb dlb style of memory management and introspection,
+// we could save some overhead memory by not storing a sze_max and making entries be part of slb, which would,
+// enable hashing on a fixed sized buffer and dynamic ones as well.
+//
+// Note: It is important to note that in practice dlb's are entirely independent of slb's, it is simply
+// functionality wise that their relation is meaningful... by that I mean that the only difference between an slb
+// and dlb is the functionality that is related to each which in most cases overlaps.
+//
+// Todo: be a little more conservative with the size_t's
+typedef struct ccdlb_t ccdlb_t;
+typedef struct ccdlb_t
+{ unsigned        rem_add: 1;
+  unsigned        rem_rze: 1;
+  ccalloctr_t * alloctr;
+  ccent_t *       entries;
+  size_t          sze_max;
+  size_t          sze_min;
+} ccdlb_t;
 
 // Note: each debug event contains a set of metrics that can be used to diff the next event's metrics,
-// this makes it relatively fast to bubble child metrics, although realistically, you'd do this at the end ...
+// this makes it relatively fast to bubble child metrics, although realistically, you'd do this at the end
+// for no perfomance cost however comma we're not smart...
 typedef union ccdebug_event_t ccdebug_event_t;
 typedef union ccdebug_event_t
 { size_t e[6];
@@ -186,20 +218,18 @@ typedef union ccdebug_event_t
     size_t reallocations;
     size_t memory;
     size_t heap_block_count;
-
     size_t collisions;
-    size_t overhead_clock_ticks;
   };
 } ccdebug_event_t;
 
 typedef struct ccdebug_t ccdebug_t;
 typedef struct ccdebug_t
-{
+{ const char * label;
+
   ccdebug_t  * super;
   ccdebug_t  * child; // hash-map
 
   cccaller_t   caller;
-  const char * label;
   cci32_t      level;
 
   ccclocktime_t start_event_ticks;
@@ -210,38 +240,161 @@ typedef struct ccdebug_t
   cci32_t         event_count;
   ccdebug_event_t event;
 
-  ccdebug_block_t *last_heap_block;
+  // Note: only the root debug context may have heap blocks ...
+  ccslb_t *last_heap_block;
 } ccdebug_t;
 
 
+// Todo: enhance these assertions ...
+#ifndef ccassert
+# ifdef _DEBUG
+#  define ccassert(is_true,...) (!(is_true)?ccbreak():ccnil)
+# else
+#  define ccassert(is_true,...) ccnil
+# endif
+#endif
+
+#ifndef ccnotnil
+# ifdef _DEBUG
+#  define ccnotnil(val) (ccassert((val)!=ccnil),val)
+# else
+#  define ccnotnil(val) (val)
+# endif
+#endif
+
+ccfunc void *ccuseralloctr_(size_t,void*);
+ccfunc void *ccinternalalloctr_(size_t,void*);
+
+// Note:
+ccglobal ccthread_local ccclocktime_t ccclockfreqc;
 
 // Note: do not access these directly ...
 ccglobal ccthread_local cccaller_t  cccallstack[0x04];
 ccglobal ccthread_local cci32_t     cccallindex;
+ccglobal ccthread_local cci32_t     cchascaller;
 
-// Note:
+// Note: do not access these directly ... use the ccdebug() and ccevent() functions instead ...
 ccglobal ccthread_local ccdebug_t   ccdebugroot;
 ccglobal ccthread_local ccdebug_t  *ccdebugthis;
 
-// Note: enable debug features
-ccglobal ccthread_local cci32_t     cctimed_enabled=cctrue;
+// Note: enable debug features, if you're going to use this, make sure you restore it properly by stacking the previous state ...
+ccglobal ccthread_local cci32_t     ccdebug_disabled;
+
+// Note: global error code
+ccglobal ccthread_local ccerr_k ccerr;
+
+// Note: global key, cckey_ this is to prevent the user from changing the key by doing cckeyget()=
+ccglobal ccthread_local ccstr_t cckey;
+ccglobal ccthread_local ccstr_t cckey_;
+
+// Note: you have to stack this manually if you wish to change it
+ccglobal ccthread_local ccalloctr_t *ccalloctr=ccuseralloctr_;
+
+// Note: global error
+#define ccerrset(err) (ccerr=err)
+#define ccerrnon()    ((ccerr)==ccerr_kNON)
+#define ccerrsom()    ((ccerr)!=ccerr_kNON)
+#define ccerrnit()    ((ccerr)==ccerr_kNIT)
+#define ccerrait()    ((ccerr)==ccerr_kAIT)
+
+// Note: global key
+#define cckeyset(key) (cckey=key)
+#define cckeyget()    (cckey_=cckey)
 
 
+// Note: C string utils ...
+#ifndef ccstrlenS
+# define ccstrlenS(cstr) cccast(ccu32_t,strlen(cstr))
+#endif
+#ifndef ccstrlenL
+# define ccstrlenL(lstr) cccast(ccu32_t,sizeof(lstr)-1)
+#endif
+
+// Note: debug caller mechanism, this useful because it enables you to enhance debug data without
+// having to modify your code too much ...
+ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
+ccfunc void ccpushcaller(cccaller_t);
 
 
+// Note: ensure that this is the first intruction in your function, before anything else ... pretty please ...
+ccfunc ccinle cccaller_t ccpullcaller();
+
+#ifndef cccallee
+# define cccallee ccfunc
+#endif
+// Note: the function that you're calling must pull the caller ...
+#ifndef cccallas
+# define cccallas(caller,callee) (ccpushcaller(caller),(callee))
+#endif
+#ifndef cccall
+# define cccall(callee) cccallas(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),callee)
+#endif
+
+ccfunc ccinle ccdebug_event_t *ccevent_();
+ccfunc ccinle ccdebug_t       *ccdebug_();
+
+#ifndef ccdebug
+# define ccdebug() cccall(ccdebug_())
+#endif
+#ifndef ccevent
+# define ccevent() cccall(ccevent_())
+#endif
 
 
+// Note: simple trace logging ...
+cccallee void cctrace_(const char *label, const char *format, ...);
 
+#ifndef cctracelog
+# define cctracelog(fmt,...) (cccall(0),cctrace_("log",fmt,__VA_ARGS__))
+#endif
+#ifndef cctracewar
+# define cctracewar(fmt,...) (cccall(0),cctrace_("war",fmt,__VA_ARGS__))
+#endif
+#ifndef cctraceerr
+# define cctraceerr(fmt,...) (cccall(0),cctrace_("err",fmt,__VA_ARGS__))
+#endif
 
-
-
+// Note: the idea is that the function you're calling knows that a caller will be put on the stack,
+// and so that function must call ccpullcaller. Such functions shall end in '_', for instance 'ccmalloc_', there should be
+// an accompanying macro 'ccmalloc' that pushes the caller onto the stack automatically.
 
 // Note:
-ccfunc void *ccmalloc_ (size_t);
-ccfunc void *ccrealloc_(void *,size_t);
-ccfunc void  ccfree_   (void *);
 
+#ifndef ccmalloc
+# define ccmalloc(size) cccall(ccuseralloctr_(size,ccnil))
+#endif
+#ifndef ccrealloc
+# define ccrealloc(data,size) cccall(ccuseralloctr_(size,data))
+#endif
+#ifndef ccfree
+# define ccfree(data) cccall(ccuseralloctr_(ccnil,data))
+#endif
 
+// Note:
+// Todo: rename these
+ccfunc void cctimedhead_(const char *label);
+ccfunc void cctimedtail_(const char *label);
+
+#ifndef cctimedhead
+# define cctimedhead(label) cccall(cctimedhead_(label))
+#endif
+#ifndef cctimedtail
+# define cctimedtail(label) cccall(cctimedtail_(label))
+#endif
+
+ccfunc const char *ccfilename(const char *name);
+
+// Todo: cache clock frequency
+// Note: some platform functions...
+ccfunc ccinle ccclocktime_t ccclocktick();
+ccfunc ccinle ccf64_t ccclocksecs(ccu64_t);
+
+ccfunc int ccrealfile(void *);
+ccfunc void ccclosefile(void *);
+ccfunc void *ccopenfile(const char *);
+ccfunc void *ccpullfile(void *,unsigned long int,unsigned long int *);
+ccfunc unsigned long int ccpushfile(void *,unsigned long int,unsigned long int,void*);
+ccfunc unsigned long int ccfilesize(void *);
 
 #ifdef _WIN32
 #ifndef CINTERFACE
@@ -265,102 +418,32 @@ ccfunc void  ccfree_   (void *);
 #include <memory.h>
 #include <string.h>
 
-ccfunc ccinle ccdebug_event_t *ccstats();
-ccfunc ccinle ccdebug_t *cctimed();
 
 
 
-// Note: the idea is that the function you're calling knows that a caller will be put on the stack,
-// and so that function must call ccpullcaller. Such functions shall end in '_', for instance 'ccmalloc_', there should be
-// an accompanying macro 'ccmalloc' that pushes the caller onto the stack automatically.
-
-ccfunc void ccpushcaller_(cccaller_t);
-ccfunc ccinle cccaller_t ccpullcaller();
-
-#ifndef ccpushcaller
-# define ccpushcaller() ccpushcaller_(cccaller(1+__COUNTER__,ccfilename(_CCFILE),_CCLINE,_CCFUNC))
-#endif
-
-#ifndef cccall
-# define cccall(call) (ccpushcaller(),call)
-#endif
-
-#ifndef cctimedhead
-# define cctimedhead(label) cccall(cctimedhead_(label))
-#endif
-
-#ifndef cctimedtail
-# define cctimedtail(label) (ccpushcaller(),cctimedtail_(label))
-#endif
-
-ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
-
-ccfunc void cctimedhead_(const char *label);
-ccfunc void cctimedtail_(const char *label);
 
 
-#ifdef _DEBUG
-# define ccassert(is_true,...) (!(is_true)?ccbreak():ccnil)
-#else
-# define ccassert(is_true,...) ccnil
-#endif
-
-#ifndef ccnotnil
-# define ccnotnil(val) (ccassert((val)!=ccnil),val)
-#endif
-
-ccfunc void
-cctrace_(int guid, const char  *file, int line, const char *func, const char *tag, const char *fmt, ...);
-
-#ifdef _DEBUG
-# ifndef cctrace
-#  define cctrace(tag,fmt,...) cctrace_(__COUNTER__,__FILE__,__LINE__,_CCFUNC,tag,fmt,__VA_ARGS__)
-# endif
-# ifndef cctracelog
-#  define cctracelog(fmt,...) cctrace("log",fmt,__VA_ARGS__)
-# endif
-# ifndef cctracewar
-#  define cctracewar(fmt,...) cctrace("war",fmt,__VA_ARGS__)
-# endif
-# ifndef cctraceerr
-#  define cctraceerr(fmt,...) cctrace("err",fmt,__VA_ARGS__),ccbreak()
-# endif
-#else
-# ifndef cctrace
-#  define cctrace(tag,fmt,...) 0
-# endif
-# ifndef cctracelog
-#  define cctracelog(fmt,...) ccnil
-# endif
-# ifndef cctracewar
-#  define cctracewar(fmt,...) ccnil
-# endif
-# ifndef cctraceerr
-#  define cctraceerr(fmt,...) ccnil
-# endif
-#endif
-
-#ifdef _HARD_DEBUG
-# ifndef ccmalloc
-#  define ccmalloc(len) cccall(ccmalloc_(len))
-# endif
-# ifndef ccrealloc
-#  define ccrealloc(mem,len) cccall(ccrealloc_(mem,len))
-# endif
-# ifndef ccfree
-#  define ccfree(mem) cccall(ccfree_(mem))
-# endif
-#else
-# ifndef ccmalloc
-#  define ccmalloc(len) malloc(len)
-# endif
-# ifndef ccrealloc
-#  define ccrealloc(mem,len) realloc(mem,len)
-# endif
-# ifndef ccfree
-#  define ccfree(mem) free(mem)
-# endif
-#endif // #ifdef _HARD_DEBUG
+// #ifdef _HARD_DEBUG
+// # ifndef ccmalloc
+// #  define ccmalloc(len) cccall(ccmalloc_(len))
+// # endif
+// # ifndef ccrealloc
+// #  define ccrealloc(mem,len) cccall(ccrealloc_(mem,len))
+// # endif
+// # ifndef ccfree
+// #  define ccfree(mem) cccall(ccfree_(mem))
+// # endif
+// #else
+// # ifndef ccmalloc
+// #  define ccmalloc(len) malloc(len)
+// # endif
+// # ifndef ccrealloc
+// #  define ccrealloc(mem,len) realloc(mem,len)
+// # endif
+// # ifndef ccfree
+// #  define ccfree(mem) free(mem)
+// # endif
+// #endif // #ifdef _HARD_DEBUG
 
 #ifndef ccmalloc_T
 # define ccmalloc_T(type) cccast(type*,ccmalloc(sizeof(type)))
@@ -371,16 +454,6 @@ cctrace_(int guid, const char  *file, int line, const char *func, const char *ta
 
 
 
-
-ccfunc int ccrealfile(void *);
-ccfunc void ccclosefile(void *);
-ccfunc void *ccopenfile(const char *);
-ccfunc void *ccpullfile(void *,unsigned long int,unsigned long int *);
-ccfunc unsigned long int ccpushfile(void *,unsigned long int,unsigned long int,void*);
-ccfunc unsigned long int ccfilesize(void *);
-
-ccfunc ccinle ccclocktime_t ccclocktick();
-ccfunc ccinle ccf64_t ccclocksecs(ccu64_t);
 
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb_sprintf.h"
@@ -447,149 +520,96 @@ typedef struct cctree_t cctree_t;
 #define _CCLOG_IMPL
 #include "cclog.h"
 
-
-
 #ifdef _HARD_DEBUG
 
 ccfunc void
-cctimed_checkheapblock(ccdebug_t *timed, ccdebug_block_t *block)
+ccdebug_checkblock(ccslb_t *block)
 {
-  ccassert(!block->removed);
-
-  ccassert(!block->prev||block->prev->next==block);
+	ccassert(!block->prev||block->prev->next==block);
   ccassert(!block->next||block->next->prev==block);
   ccassert(!block->next||block->next!=block);
   ccassert(!block->prev||block->prev!=block);
-
-  ccassert(block->next||block==timed->last_heap_block);
 }
 
-
-ccfunc void *
-cctimed_addheapblock(ccdebug_block_t *block, cccaller_t caller, size_t size)
+ccfunc void *ccuseralloctr_(size_t size,void *data)
 {
-  ccdebug_t *timed=cctimed();
+cccaller_t caller=ccpullcaller();
 
-  memset(block,ccnil,sizeof(*block));
+cctimedhead("user-allocator");
+  ccdebug_t *debug=ccdebug();
 
-  block->prev=ccnil;
-  block->next=ccnil;
-  block->caller=caller;
-  block->size=size;
+	ccslb_t *block;
+	if(!size)
+	{ block=(ccslb_t*)data-1;
 
-  if(!timed->last_heap_block)
-  { timed->last_heap_block=block;
-  } else
-  { block->prev=timed->last_heap_block;
-    timed->last_heap_block->next=block;
-    timed->last_heap_block=block;
-  }
+		ccdebug_checkblock(block);
+	  if(block->prev) block->prev->next=block->next;
+	  if(block->next) block->next->prev=block->prev;
+	  else ccdebugroot.last_heap_block=block->prev;
 
-  cctimed_checkheapblock(timed,block);
-  timed->event.heap_block_count++;
+	  block->next=ccnil;
+	  block->prev=ccnil;
+	  block->caller=caller;
+	  debug->event.heap_block_count--;
+	  debug->event.deallocations++;
+	  debug->event.memory-=block->size;
+	  free(block);
+	  block=ccnil;
+	} else
+	{ if(data)
+		{ block=(ccslb_t*)data-1;
 
-  return block+1;
+  		ccdebug_checkblock(block);
+
+	    debug->event.memory+=size-block->size;
+
+	    ccassert(ccdebugroot.last_heap_block!=0);
+	    int is_last=block==ccdebugroot.last_heap_block;
+	    block=(ccslb_t*)realloc(block,sizeof(*block)+size);
+	    block->caller=caller;
+	    block->size=size;
+	    if(block->prev) block->prev->next=block;
+	    if(block->next) block->next->prev=block;
+	    if(is_last) ccdebugroot.last_heap_block=block;
+		} else
+		{ block=(ccslb_t*)malloc(sizeof(*block)+size);
+  		memset(block,ccnil,sizeof(*block));
+
+  		block->caller=caller;
+  		block->size=size;
+
+		  if(!ccdebugroot.last_heap_block)
+		  { ccdebugroot.last_heap_block=block;
+		  } else
+		  { block->prev=ccdebugroot.last_heap_block;
+		    ccdebugroot.last_heap_block->next=block;
+		    ccdebugroot.last_heap_block=block;
+		  }
+  		ccdebug_checkblock(block);
+
+  		debug->event.heap_block_count++;
+  		debug->event.allocations++;
+		  debug->event.memory+=size;
+		}
+	}
+cctimedtail("user-allocator");
+	return block+1;
 }
 
-ccfunc void
-cctimed_remheapblock(ccdebug_block_t *block, cccaller_t caller)
-{
-  ccdebug_t *timed=cctimed();
+ccfunc void *ccinternalalloctr_(size_t size,void *data)
+{ ccpullcaller();
 
-  cctimed_checkheapblock(timed,block);
-  timed->event.heap_block_count--;
+	if(size)
+	{ if(data)
+			return realloc(data,size);
+		else
+		  return malloc(size);
+	}
 
-
-  block->removed=cctrue;
-
-  if(block->prev) block->prev->next=block->next;
-  if(block->next) block->next->prev=block->prev;
-  else timed->last_heap_block=block->prev;
-
-  block->next=ccnil;
-  block->prev=ccnil;
-  block->caller=caller;
+	free(data);
+	return ccnil;
 }
 
-// Todo: have two sets of allocations functions, one for the user, and one for the debug info ...
-// This way we can measure precisely how much time we've spend allocating ...
-
-ccfunc void *ccmalloc_(size_t size)
-{
-  cccaller_t caller=ccpullcaller();
-
-  ccclocktime_t tick=ccclocktick();
-  ccdebug_t *timed=cctimed();
-
-  ccstats()->allocations++;
-  ccstats()->memory+=size;
-
-  ccdebug_block_t *block=
-    (ccdebug_block_t*)malloc(sizeof(*block)+size);
-
-  cctimed_addheapblock(block,caller,size);
-
-  cctimed_addoverhead(timed,tick);
-  return block+1;
-}
-
-ccfunc void *ccrealloc_(void *data, size_t size)
-{
-  cccaller_t caller=ccpullcaller();
-
-  ccclocktime_t tick=ccclocktick();
-  ccdebug_t *timed=cctimed();
-
-  ccstats()->reallocations++;
-
-  ccdebug_block_t *block;
-  if(data)
-  { block=(ccdebug_block_t*)data-1;
-    ccstats()->memory+=size-block->size;
-
-    // Note: if we're reallocating, we're implying that there's at-least one block already in memory ...
-    ccassert(timed->last_heap_block!=0);
-
-    int is_last=block==timed->last_heap_block;
-
-    block=(ccdebug_block_t*)realloc(block,sizeof(*block)+size);
-    block->caller=caller;
-    block->size=size;
-
-    if(block->prev) block->prev->next=block;
-    if(block->next) block->next->prev=block;
-
-    if(is_last)
-      timed->last_heap_block=block;
-  } else
-  { ccstats()->memory+=size;
-    block=(ccdebug_block_t*)realloc(ccnil,sizeof(*block)+size);
-    cctimed_addheapblock(block,caller,size);
-  }
-
-  cctimed_addoverhead(timed,tick);
-  return block+1;
-}
-
-ccfunc void ccfree_(void *data)
-{
-  cccaller_t caller=ccpullcaller();
-
-  ccclocktime_t tick=ccclocktick();
-  ccdebug_t *timed=cctimed();
-
-  ccdebug_block_t *block=
-    (ccdebug_block_t*)data-1;
-
-  ccstats()->deallocations++;
-  ccstats()->memory-=block->size;
-
-  cctimed_remheapblock(block,caller);
-
-  free(block);
-
-  cctimed_addoverhead(timed,tick);
-}
 
 #ifdef _DEVELOPER
 #undef malloc
@@ -600,7 +620,6 @@ ccfunc void ccfree_(void *data)
 # define free DO_NOT_USE_FREE
 #endif
 #endif
-
 
 // Note:
 #include "ccread.h"

@@ -381,7 +381,7 @@ cctimedtail("setargs");
 
   ccexec_enter(&stack,_p->decls);
 
-  while(stack.irindex<ccarrlen(stack.current->edict))
+  while(stack.irindex<ccarrleni(stack.current->edict))
   {
     ccemit_value_t **it=stack.current->edict+stack.irindex;
     stack.irindex++;
