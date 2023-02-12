@@ -168,44 +168,26 @@ typedef struct ccent_t
   size_t    val;
 } ccent_t;
 
-// Note: static length buffer, slb for short... slb's are use for regular heap allocations ...
-typedef struct ccslb_t ccslb_t;
-typedef struct ccslb_t
-{ char          head_guard[0x04];
-	cccaller_t    caller;
-	ccslb_t     * prev, * next;
-  ccalloctr_t * alloctr;
-  size_t        max_sze;
-  char          tail_guard[0x04];
-} ccslb_t;
-
-// Note: dynamic length buffer, dlb for short ... each dlb will also support a hash-table ...
-// Note: At the moment, slb's and dlb's are NOT integrated, for instance, a dlb is intended to be a
-// superset of a slb, so you'd allocate a slb, and then add dlb metadata:
-//
-// ccslb_t
-// ccdlb_t
-// head_bytes
-// user_bytes
-// tail_bytes
+// Note: dynamic length buffer, dlb for short ... each dlb also supports a hash-table, which yet another dlb ...
 //
 // This is only if the allocator adds the slb metadata, (the default one does) however,
-// I do not expect - you, the user to use the provided allocator, in which case, dlb's have a sze_max field.
+// I do not expect - you, the user to use the provided allocator, in which case, dlb's are designed to follow
+// the zero is uninitialized rule, so they will automatically allocate if zeroed ...
 //
-// Point is, if we're going to fully commit to this whole slb dlb style of memory management and introspection,
-// we could save some overhead memory by not storing a sze_max and making entries be part of slb, which would,
-// enable hashing on a fixed sized buffer and dynamic ones as well.
-//
-// Note: It is important to note that in practice dlb's are entirely independent of slb's, it is simply
-// functionality wise that their relation is meaningful... by that I mean that the only difference between an slb
-// and dlb is the functionality that is related to each which in most cases overlaps.
+// Note: It is important to note that dlb's incur an insane amount of overhead so you should use them properly.
+// Due to my style of programming dlb's are not all that expensive, since most of the time I only have few
+// laying around, but keep in mind that ccmalloc, ccrealloc and ccfree expect memory with dlb metadata...
+// dlb's are dynamic only by functionality and by that I mean that the only difference between an dlb
+// and regular memory are the set of functions used to determine what to do with such metadata...
 //
 // Todo: be a little more conservative with the size_t's
 typedef struct ccdlb_t ccdlb_t;
 typedef struct ccdlb_t
-{ unsigned        rem_add: 1;
-  unsigned        rem_rze: 1;
+{ cccaller_t      caller;
+	ccdlb_t       * prev, * next;
   ccalloctr_t   * alloctr;
+	unsigned        rem_add: 1;
+  unsigned        rem_rze: 1;
   ccent_t *       entries;
   size_t          sze_max;
   size_t          sze_min;
@@ -246,7 +228,7 @@ typedef struct ccdebug_t
   ccdebug_event_t event;
 
   // Note: only the root debug context may have heap blocks ...
-  ccslb_t *last_heap_block;
+  ccdlb_t *last_heap_block;
 } ccdebug_t;
 
 
@@ -563,18 +545,20 @@ ccfunc void *ccinternalalloctr_(size_t size,void *data)
 
 #ifdef _HARD_DEBUG
 ccfunc void
-ccdebug_handleoverwrite(ccslb_t *block)
+ccdebug_handleoverwrite(ccdlb_t *block)
 {
 	ccassert(!"not implemented");
 }
 
 ccfunc void
-ccdebug_checkblock(ccslb_t *block)
+ccdebug_checkblock(ccdlb_t *block)
 {
+#if 0
 	for(int i=0; i<4; ++i)
 		if(block->head_guard[i]!=ccnil) ccdebug_handleoverwrite(block);
 	for(int i=0; i<4; ++i)
 		if(block->tail_guard[i]!=ccnil) ccdebug_handleoverwrite(block);
+#endif
 
 	ccassert(block->alloctr==ccuseralloctr_);
 	ccassert(!block->prev||block->prev->next==block);
@@ -590,9 +574,9 @@ ccfunc void *ccuseralloctr_(size_t size,void *data)
 ccenter("user-allocator");
   ccdebug_t *debug=ccdebug();
 
-	ccslb_t *block;
+	ccdlb_t *block;
 	if(!size)
-	{ block=(ccslb_t*)data-1;
+	{ block=(ccdlb_t*)data-1;
 
 		ccdebug_checkblock(block);
 	  if(block->prev) block->prev->next=block->next;
@@ -604,31 +588,31 @@ ccenter("user-allocator");
 	  block->caller=caller;
 	  debug->event.heap_block_count--;
 	  debug->event.deallocations++;
-	  debug->event.memory-=block->max_sze;
+	  debug->event.memory-=block->sze_max;
 	  free(block);
 	  block=ccnil;
 	} else
 	{ if(data)
-		{ block=(ccslb_t*)data-1;
+		{ block=(ccdlb_t*)data-1;
 
   		ccdebug_checkblock(block);
 
-	    debug->event.memory+=size-block->max_sze;
+	    debug->event.memory+=size-block->sze_max;
 
 	    ccassert(ccdebugroot.last_heap_block!=0);
 	    int is_last=block==ccdebugroot.last_heap_block;
-	    block=(ccslb_t*)realloc(block,sizeof(*block)+size);
+	    block=(ccdlb_t*)realloc(block,sizeof(*block)+size);
 	    block->caller=caller;
-	    block->max_sze=size;
+	    block->sze_max=size;
 	    if(block->prev) block->prev->next=block;
 	    if(block->next) block->next->prev=block;
 	    if(is_last) ccdebugroot.last_heap_block=block;
 		} else
-		{ block=(ccslb_t*)malloc(sizeof(*block)+size);
+		{ block=(ccdlb_t*)malloc(sizeof(*block)+size);
   		memset(block,ccnil,sizeof(*block));
   		block->alloctr=ccuseralloctr_;
   		block->caller=caller;
-  		block->max_sze=size;
+  		block->sze_max=size;
 
 		  if(!ccdebugroot.last_heap_block)
 		  { ccdebugroot.last_heap_block=block;

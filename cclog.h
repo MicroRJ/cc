@@ -186,8 +186,8 @@ ccdebugdump()
 
 	int freed_count=0;
 
-	ccslb_t *f;
-	for(ccslb_t *i=ccdebugroot.last_heap_block;i;freed_count++)
+	ccdlb_t *f;
+	for(ccdlb_t *i=ccdebugroot.last_heap_block;i;freed_count++)
 	{
 		f=i;
 		i=i->prev;

@@ -5,14 +5,14 @@
 # define ccdlb_(ccm) (cccast(ccdlb_t*,ccm)-1)
 #endif
 #ifndef ccdlb
-# define ccdlb(ccm) ((ccm)?ccdlb_(ccm):(cccast(ccdlb_t*,ccnil)))
+# define ccdlb(ccm) ((ccm)?ccdlb_(ccm):cccast(ccdlb_t*,ccnil))
 #endif
 
 #ifndef ccdlbmax
-# define ccdlbmax(ccm) ((ccm)?cccast(size_t *,ccm)[-2]:0)
+# define ccdlbmax(ccm) ((ccm)?(ccdlb_(ccm)->sze_max):(ccnil))
 #endif
 #ifndef ccdlbmin
-# define ccdlbmin(ccm) ((ccm)?cccast(size_t *,ccm)[-1]:0)
+# define ccdlbmin(ccm) ((ccm)?(ccdlb_(ccm)->sze_min):(ccnil))
 #endif
 #ifndef ccdlbdel
 # define ccdlbdel(ccm) ccfree(ccdlb(ccm))
