@@ -43,10 +43,8 @@ cctimedtail("exec");
   ccread_uninit(&read);
 
 cctimedhead("compare");
-
 	int c=fib(ARG);
   cctracelog("c:%i - cc:%i",c,retr.asi32);
-
 cctimedtail("compare");
 
   // Todo:

@@ -283,15 +283,14 @@ ccglobal ccthread_local cci32_t     ccdebug_disabled;
 // Note: global error code
 ccglobal ccthread_local ccerr_k ccerr;
 
-// Note: global key, cckey_ this is to prevent the user from changing the key by doing cckeyget()=
+// Note: global key
 ccglobal ccthread_local ccstr_t cckey;
-ccglobal ccthread_local ccstr_t cckey_;
 
 // Note: you have to stack this manually if you wish to change it
 ccglobal ccthread_local ccalloctr_t *ccalloctr=ccuseralloctr_;
 
 // Note: global error
-#define ccerrset(err) (ccerr=err)
+#define ccerrset(err) ((ccerr=err),0)
 #define ccerrnon()    ((ccerr)==ccerr_kNON)
 #define ccerrsom()    ((ccerr)!=ccerr_kNON)
 #define ccerrnit()    ((ccerr)==ccerr_kNIT)
@@ -299,7 +298,7 @@ ccglobal ccthread_local ccalloctr_t *ccalloctr=ccuseralloctr_;
 
 // Note: global key
 #define cckeyset(key) (cckey=key)
-#define cckeyget()    (cckey_=cckey)
+#define cckeyget()    (cckey)
 
 
 // Note: C string utils ...

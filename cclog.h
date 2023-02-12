@@ -128,8 +128,21 @@ ccbytecountreadable(ccu64_t b, ccf64_t *f)
 }
 
 ccfunc void
-ccdebugdump_(ccdebug_t *r, ccdebug_t *t)
-{ ccf64_t seconds_used,percent_used;
+cctextcolor()
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_RED);
+}
+
+ccfunc void
+cctextreset()
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
+}
+
+ccfunc void
+ccdebugdump_(ccdebug_t *r, ccdebug_t *h, ccdebug_t *t)
+{
+	ccf64_t seconds_used,percent_used;
   seconds_used=ccclocksecs(t->total_event_ticks);
   percent_used=ccclockperc(r? r->total_event_ticks :t->total_event_ticks,t->total_event_ticks);
   size_t heap_blocks=t->event.heap_block_count;
@@ -140,25 +153,34 @@ ccdebugdump_(ccdebug_t *r, ccdebug_t *t)
   const char *suffix;
   suffix=ccbytecountreadable(t->event.memory,&memory);
 
-	for(int i=0;i<t->level*2;++i)
-    printf(" ");
-
+  if(h==t && t!=&ccdebugroot) cctextcolor();
+	for(int i=0;i<t->level*4;++i) printf(" ");
   printf("#%i in %s[%i] %s(): %i '%s' event(s), took %f(s)(%%%.2f) with [%lli-%lli,%lli] allocations %s %.2f%s in %lli block(s), %lli collision(s)\n",
     t->caller.guid,ccfilename(t->caller.file),t->caller.line,t->caller.func,
       t->event_count,t->label,seconds_used,percent_used,
         t->event.allocations,t->event.deallocations,t->event.reallocations,
         	leak_string,memory,suffix,heap_blocks,t->event.collisions);
+  if(h==t && t!=&ccdebugroot) cctextreset();
+
 
   ccdebug_t *c;
+
+  ccdebug_t *n=ccnil;
+
+  if(h==t)
+  { ccarrfor(t->child,c)
+	  	if(!n||c->total_event_ticks>n->total_event_ticks) n=c;
+  }
+
   ccarrfor(t->child,c)
-    ccdebugdump_(t,c);
+    ccdebugdump_(t,n,c);
 }
 
 ccfunc ccinle void
 ccdebugdump()
 {
 	cctracelog("Debug Dump:");
-	ccdebugdump_(ccnil,&ccdebugroot);
+	ccdebugdump_(ccnil,&ccdebugroot,&ccdebugroot);
 }
 
 ccfunc void

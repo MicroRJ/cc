@@ -171,6 +171,8 @@ ccfunc size_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 ccfunc size_t
 ccdlb_arradd_(ccdlb_t **dlb_, size_t rsze, size_t csze)
 {
+cctimedhead("arradd");
+
 /* ccdlb_arradd_:
 **  rsze: size to reserve
 **  csze: size to commit, can be 0
@@ -225,6 +227,8 @@ ccdlb_arradd_(ccdlb_t **dlb_, size_t rsze, size_t csze)
 
   dlb->sze_max=sze_max;
   dlb->sze_min=sze_min+csze;
+
+cctimedtail("arradd");
   return sze_min;
 }
 
