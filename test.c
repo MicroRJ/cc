@@ -13,7 +13,7 @@ int fib(int x)
 
 int main(int argc, char **argv)
 {
-cctimedhead("main");
+ccenter("main");
   ++ argv;
   -- argc;
 
@@ -21,31 +21,31 @@ cctimedhead("main");
   ccread_init(&read);
   ccread_include(& read, "test.svm.c");
 
-cctimedhead("read");
+ccenter("read");
   cctree_t *tree;
   tree=ccread_translation_unit(&read);
-cctimedtail("read");
+ccleave("read");
 
 
-cctimedhead("emit");
+ccenter("emit");
   ccemit_t emit;
 	ccemit_init(&emit);
 	ccemit_translation_unit(&emit,tree);
-cctimedtail("emit");
+ccleave("emit");
 
-cctimedhead("exec");
+ccenter("exec");
   ccexec_value_t retr;
   ccexec_t exec;
   ccexec_init(&exec);
   retr=ccexec_translation_unit(&exec,&emit);
-cctimedtail("exec");
+ccleave("exec");
 
   ccread_uninit(&read);
 
-cctimedhead("compare");
+ccenter("compare");
 	int c=fib(ARG);
   cctracelog("c:%i - cc:%i",c,retr.asi32);
-cctimedtail("compare");
+ccleave("compare");
 
   // Todo:
   { char *out = ccnil;
@@ -92,5 +92,5 @@ cctimedtail("compare");
     ccclosefile(file);
   }
 
-cctimedtail("main");
+ccleave("main");
 }

@@ -3,7 +3,9 @@
 #define _CC
 
 // Todo: pending string arena ...
-// Todo: custom allocator support, custom alignment support ...
+// Todo: custom alignment support ...
+// Todo: bug with negative memory when low debug resultion ...
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -168,10 +170,12 @@ typedef struct ccent_t
 // Note: static length buffer, slb for short... slb's are use for regular heap allocations ...
 typedef struct ccslb_t ccslb_t;
 typedef struct ccslb_t
-{ cccaller_t  caller;
-	ccslb_t    *prev, *next;
-  size_t      size;
-  char        guard[0x04];
+{ char          head_guard[0x04];
+	cccaller_t    caller;
+  ccalloctr_t * alloctr;
+	ccslb_t     * prev, * next;
+  size_t        size;
+  char          tail_guard[0x04];
 } ccslb_t;
 
 // Note: dynamic length buffer, dlb for short ... each dlb will also support a hash-table ...
@@ -200,7 +204,7 @@ typedef struct ccdlb_t ccdlb_t;
 typedef struct ccdlb_t
 { unsigned        rem_add: 1;
   unsigned        rem_rze: 1;
-  ccalloctr_t * alloctr;
+  ccalloctr_t   * alloctr;
   ccent_t *       entries;
   size_t          sze_max;
   size_t          sze_min;
@@ -211,14 +215,14 @@ typedef struct ccdlb_t
 // for no perfomance cost however comma we're not smart...
 typedef union ccdebug_event_t ccdebug_event_t;
 typedef union ccdebug_event_t
-{ size_t e[6];
+{ cci64_t e[6];
   struct
-  { size_t allocations;
-    size_t deallocations;
-    size_t reallocations;
-    size_t memory;
-    size_t heap_block_count;
-    size_t collisions;
+  { cci64_t allocations;
+    cci64_t deallocations;
+    cci64_t reallocations;
+    cci64_t memory;
+    cci64_t heap_block_count;
+    cci64_t collisions;
   };
 } ccdebug_event_t;
 
@@ -374,11 +378,11 @@ cccallee void cctrace_(const char *label, const char *format, ...);
 ccfunc void cctimedhead_(const char *label);
 ccfunc void cctimedtail_(const char *label);
 
-#ifndef cctimedhead
-# define cctimedhead(label) cccall(cctimedhead_(label))
+#ifndef ccenter
+# define ccenter(label) cccall(cctimedhead_(label))
 #endif
-#ifndef cctimedtail
-# define cctimedtail(label) cccall(cctimedtail_(label))
+#ifndef ccleave
+# define ccleave(label) cccall(cctimedtail_(label))
 #endif
 
 ccfunc const char *ccfilename(const char *name);
@@ -522,8 +526,20 @@ typedef struct cctree_t cctree_t;
 #ifdef _HARD_DEBUG
 
 ccfunc void
+ccdebug_handleoverwrite(ccslb_t *block)
+{
+	ccassert(!"not implemented");
+}
+
+ccfunc void
 ccdebug_checkblock(ccslb_t *block)
 {
+	for(int i=0; i<4; ++i)
+		if(block->head_guard[i]!=ccnil) ccdebug_handleoverwrite(block);
+	for(int i=0; i<4; ++i)
+		if(block->tail_guard[i]!=ccnil) ccdebug_handleoverwrite(block);
+
+	ccassert(block->alloctr==ccuseralloctr_);
 	ccassert(!block->prev||block->prev->next==block);
   ccassert(!block->next||block->next->prev==block);
   ccassert(!block->next||block->next!=block);
@@ -532,9 +548,9 @@ ccdebug_checkblock(ccslb_t *block)
 
 ccfunc void *ccuseralloctr_(size_t size,void *data)
 {
-cccaller_t caller=ccpullcaller();
+ cccaller_t caller=ccpullcaller();
 
-cctimedhead("user-allocator");
+ccenter("user-allocator");
   ccdebug_t *debug=ccdebug();
 
 	ccslb_t *block;
@@ -573,7 +589,7 @@ cctimedhead("user-allocator");
 		} else
 		{ block=(ccslb_t*)malloc(sizeof(*block)+size);
   		memset(block,ccnil,sizeof(*block));
-
+  		block->alloctr=ccuseralloctr_;
   		block->caller=caller;
   		block->size=size;
 
@@ -591,7 +607,7 @@ cctimedhead("user-allocator");
 		  debug->event.memory+=size;
 		}
 	}
-cctimedtail("user-allocator");
+ccleave("user-allocator");
 	return block+1;
 }
 

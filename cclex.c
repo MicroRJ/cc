@@ -233,6 +233,8 @@ cclex_next_token_internal(cclex_t *l)
 {
   l->min = l->max;
 
+  l->tok.loc=l->min;
+
   if(l->max >= l->doc_max)
   { l->tok.bit = cctoken_kEND;
     return;

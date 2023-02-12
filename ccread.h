@@ -262,7 +262,11 @@ typedef struct ccentry_t
 } ccentry_t;
 
 typedef struct cctoken_t
-{ cctoken_k bit;
+{
+	cctoken_k bit;
+
+	const char *loc;
+
   unsigned  term_impl: 1;
   unsigned  term_expl: 1;
   union

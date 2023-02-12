@@ -83,18 +83,13 @@ ccevent_()
 
 ccfunc ccinle void
 cctimed_bubble(ccdebug_t *timed)
-{ if(!timed->super)
-		return;
-
-	size_t *a,*c,*s;
+{ if(!timed->super) return;
+	cci64_t *a,*c,*s;
 	a=timed->event.e;
 	c=timed->last_event.e;
 	s=timed->super->event.e;
-
 	for(int i=0; i<6; ++i)
-	{ // Note: calculate difference between actual and cached, add to super ...
-		*s++ += *a - *c;
-		// Note: update cached with actual
+	{ *s+++=*a-*c;
 		*c++=*a++;
 	}
 }
@@ -107,7 +102,7 @@ ccclockperc(ccclocktime_t total, ccclocktime_t local)
 }
 
 ccfunc const char *
-ccbytecountreadable(ccu64_t b, ccf64_t *f)
+ccbytecountreadable(cci64_t b, ccf64_t *f)
 {
 	if(b>(1024*1024*1024))
 	{ *f=b/(1024.0*1024.0*1024.0);
@@ -154,7 +149,7 @@ ccdebugdump_(ccdebug_t *r, ccdebug_t *h, ccdebug_t *t)
   suffix=ccbytecountreadable(t->event.memory,&memory);
 
   if(h==t && t!=&ccdebugroot) cctextcolor();
-	for(int i=0;i<t->level*4;++i) printf(" ");
+	for(int i=0;i<t->level*1;++i) printf(" ");
   printf("#%i in %s[%i] %s(): %i '%s' event(s), took %f(s)(%%%.2f) with [%lli-%lli,%lli] allocations %s %.2f%s in %lli block(s), %lli collision(s)\n",
     t->caller.guid,ccfilename(t->caller.file),t->caller.line,t->caller.func,
       t->event_count,t->label,seconds_used,percent_used,
@@ -181,6 +176,22 @@ ccdebugdump()
 {
 	cctracelog("Debug Dump:");
 	ccdebugdump_(ccnil,&ccdebugroot,&ccdebugroot);
+
+	ccdebug_disabled=cctrue;
+
+
+	int freed_count=0;
+
+	ccslb_t *f;
+	for(ccslb_t *i=ccdebugroot.last_heap_block;i;freed_count++)
+	{
+		f=i;
+		i=i->prev;
+
+		ccfree(f+1);
+	}
+
+	cctracelog("freed %i block(s) for you", freed_count);
 }
 
 ccfunc void

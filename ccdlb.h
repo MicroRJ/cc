@@ -171,7 +171,7 @@ ccfunc size_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 ccfunc size_t
 ccdlb_arradd_(ccdlb_t **dlb_, size_t rsze, size_t csze)
 {
-cctimedhead("arradd");
+ccenter("arradd");
 
 /* ccdlb_arradd_:
 **  rsze: size to reserve
@@ -228,7 +228,7 @@ cctimedhead("arradd");
   dlb->sze_max=sze_max;
   dlb->sze_min=sze_min+csze;
 
-cctimedtail("arradd");
+ccleave("arradd");
   return sze_min;
 }
 
@@ -246,7 +246,7 @@ ccdlb_arradd(void **ccm, size_t isze, size_t cres, size_t ccom)
 ccfunc size_t
 ccdlb_stradd(char **ccm, size_t cres, size_t ccom, const char *cpy)
 {
-cctimedhead("stradd");
+ccenter("stradd");
 	// Note: use char type instead of void for preemptive type-checking ...
   // Note: assuming that you'll reserve at-least one more byte for the null terminator ...
   ccassert(cres!=0);
@@ -256,7 +256,7 @@ cctimedhead("stradd");
   memcpy(cur,cpy,cres-1);
   cur[cres-1]=0;
 
-cctimedtail("stradd");
+ccleave("stradd");
   return res;
 }
 
@@ -351,7 +351,7 @@ ccdbl_query(ccdlb_t *tbl, int len, const char *key)
 ccfunc size_t
 ccdlb_tblget(void **ccm, cci32_t isze, int len, const char *key)
 {
-cctimedhead("tblget");
+ccenter("tblget");
 
 	ccdlb_t *tbl=ccdlb(ccdref(ccm));
   cckeyset(ccnil);
@@ -367,14 +367,14 @@ cctimedhead("tblget");
 	  }
   }
 
-cctimedtail("tblget");
+ccleave("tblget");
   return val/isze;
 }
 
 ccfunc size_t
 ccdlb_tblput(void **ccm, cci32_t isze, int len, const char *key)
 {
-cctimedhead("tblput");
+ccenter("tblput");
 
   ccdlb_t *tbl=ccdlb(ccdref(ccm));
   if(!tbl)
@@ -398,14 +398,14 @@ cctimedhead("tblput");
   } else
     ccerrset(ccerr_kAIT);
 
-cctimedtail("tblput");
+ccleave("tblput");
   return val/isze;
 }
 
 ccfunc size_t
 ccdlb_tblset(void **ccm, cci32_t isze, int len, const char *key)
 {
-cctimedhead("tblset");
+ccenter("tblset");
 
   ccdlb_t *tbl=ccdlb(ccdref(ccm));
   if(!tbl)
@@ -427,7 +427,7 @@ cctimedhead("tblset");
 
   cckeyset(ent->key);
 
-cctimedtail("tblset");
+ccleave("tblset");
   return val/isze;
 }
 

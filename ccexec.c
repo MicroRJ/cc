@@ -366,7 +366,7 @@ ccexec_invoke(
 
   ccassert(ccarrlen(type->list)==ccarrlen(_i));
 
-cctimedhead("setargs");
+ccenter("setargs");
   cctree_t **lval;
   ccarrfor(type->list,lval)
   {
@@ -377,7 +377,7 @@ cctimedhead("setargs");
     ccdref(cccast(cci32_t*,rval->value))=int_value;
     _i++;
   }
-cctimedtail("setargs");
+ccleave("setargs");
 
   ccexec_enter(&stack,_p->decls);
 
