@@ -24,19 +24,23 @@ typedef struct ccexec_value_t
 	};
 } ccexec_value_t;
 
-typedef struct ccexec_stack_t ccexec_stack_t;
-typedef struct ccexec_stack_t
+typedef struct ccexec_frame_t ccexec_frame_t;
+typedef struct ccexec_frame_t
 { ccemit_procd_t *function;
 
 	ccemit_block_t *current;
 	cci32_t         irindex;
 
 	ccexec_value_t *values;
-} ccexec_stack_t;
+} ccexec_frame_t;
 
 typedef struct ccexec_t ccexec_t;
 typedef struct ccexec_t
 { ccemit_t * emit;
+
+	void  * stack;
+	size_t  stack_sze;
+	size_t  stack_idx;
 } ccexec_t;
 
 ccfunc ccinle ccexec_value_t

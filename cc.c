@@ -136,11 +136,12 @@ ccglobal const char * const ccerr_s[]=
   "invalid user argument",
 };
 
-// Note: This is a helper type for when you want to make it abundantly clear
+// Note: This is a tag type for when you want to make it abundantly clear
 // that there's metadata associated with the string ..
 typedef char *ccstr_t;
 
-// Note: entity state, nit: not in table, ait: already in table ...
+// Note: entity state, nit: not in table, ait: already in table, this is used along with the global
+// error codes ...
 typedef enum ccent_k
 {
 	ccent_kNIT=0,
@@ -172,9 +173,9 @@ typedef struct ccslb_t ccslb_t;
 typedef struct ccslb_t
 { char          head_guard[0x04];
 	cccaller_t    caller;
-  ccalloctr_t * alloctr;
 	ccslb_t     * prev, * next;
-  size_t        size;
+  ccalloctr_t * alloctr;
+  size_t        max_sze;
   char          tail_guard[0x04];
 } ccslb_t;
 
@@ -603,7 +604,7 @@ ccenter("user-allocator");
 	  block->caller=caller;
 	  debug->event.heap_block_count--;
 	  debug->event.deallocations++;
-	  debug->event.memory-=block->size;
+	  debug->event.memory-=block->max_sze;
 	  free(block);
 	  block=ccnil;
 	} else
@@ -612,13 +613,13 @@ ccenter("user-allocator");
 
   		ccdebug_checkblock(block);
 
-	    debug->event.memory+=size-block->size;
+	    debug->event.memory+=size-block->max_sze;
 
 	    ccassert(ccdebugroot.last_heap_block!=0);
 	    int is_last=block==ccdebugroot.last_heap_block;
 	    block=(ccslb_t*)realloc(block,sizeof(*block)+size);
 	    block->caller=caller;
-	    block->size=size;
+	    block->max_sze=size;
 	    if(block->prev) block->prev->next=block;
 	    if(block->next) block->next->prev=block;
 	    if(is_last) ccdebugroot.last_heap_block=block;
@@ -627,7 +628,7 @@ ccenter("user-allocator");
   		memset(block,ccnil,sizeof(*block));
   		block->alloctr=ccuseralloctr_;
   		block->caller=caller;
-  		block->size=size;
+  		block->max_sze=size;
 
 		  if(!ccdebugroot.last_heap_block)
 		  { ccdebugroot.last_heap_block=block;

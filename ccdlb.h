@@ -220,7 +220,7 @@ ccenter("arradd");
     if(is_ini)
     { dlb->rem_rze=ccfalse;
       dlb->rem_add=ccfalse;
-      dlb->entries=ccfalse;
+      dlb->entries=ccnil;
       dlb->alloctr=alloctr;
     }
   }

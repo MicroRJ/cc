@@ -2031,7 +2031,7 @@ pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
 $pdata$ccstack_local_alloc DD imagerel ccstack_local_alloc
-	DD	imagerel ccstack_local_alloc+180
+	DD	imagerel ccstack_local_alloc+185
 	DD	imagerel $unwind$ccstack_local_alloc
 pdata	ENDS
 ;	COMDAT pdata
@@ -2043,43 +2043,43 @@ pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
 $pdata$4$ccexec_invoke DD imagerel ccexec_invoke+44
-	DD	imagerel ccexec_invoke+592
+	DD	imagerel ccexec_invoke+576
 	DD	imagerel $chain$4$ccexec_invoke
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$5$ccexec_invoke DD imagerel ccexec_invoke+592
-	DD	imagerel ccexec_invoke+803
+$pdata$5$ccexec_invoke DD imagerel ccexec_invoke+576
+	DD	imagerel ccexec_invoke+794
 	DD	imagerel $chain$5$ccexec_invoke
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
 $pdata$ccexec_edict DD imagerel ccexec_edict
-	DD	imagerel ccexec_edict+86
+	DD	imagerel ccexec_edict+92
 	DD	imagerel $unwind$ccexec_edict
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$0$ccexec_edict DD imagerel ccexec_edict+86
-	DD	imagerel ccexec_edict+1064
+$pdata$0$ccexec_edict DD imagerel ccexec_edict+92
+	DD	imagerel ccexec_edict+1070
 	DD	imagerel $chain$0$ccexec_edict
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$2$ccexec_edict DD imagerel ccexec_edict+1064
-	DD	imagerel ccexec_edict+1412
+$pdata$2$ccexec_edict DD imagerel ccexec_edict+1070
+	DD	imagerel ccexec_edict+1418
 	DD	imagerel $chain$2$ccexec_edict
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$3$ccexec_edict DD imagerel ccexec_edict+1412
-	DD	imagerel ccexec_edict+1512
+$pdata$3$ccexec_edict DD imagerel ccexec_edict+1418
+	DD	imagerel ccexec_edict+1518
 	DD	imagerel $chain$3$ccexec_edict
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$4$ccexec_edict DD imagerel ccexec_edict+1512
-	DD	imagerel ccexec_edict+1719
+$pdata$4$ccexec_edict DD imagerel ccexec_edict+1518
+	DD	imagerel ccexec_edict+1727
 	DD	imagerel $chain$4$ccexec_edict
 pdata	ENDS
 ;	COMDAT pdata
@@ -2087,6 +2087,12 @@ pdata	SEGMENT
 $pdata$ccexec_translation_unit DD imagerel ccexec_translation_unit
 	DD	imagerel ccexec_translation_unit+192
 	DD	imagerel $unwind$ccexec_translation_unit
+pdata	ENDS
+;	COMDAT pdata
+pdata	SEGMENT
+$pdata$ccexec_init DD imagerel ccexec_init
+	DD	imagerel ccexec_init+60
+	DD	imagerel $unwind$ccexec_init
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
@@ -2246,38 +2252,38 @@ $pdata$1$?fib@@YAHH@Z DD imagerel $LN5+49
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$main DD	imagerel $LN296
-	DD	imagerel $LN296+27
+$pdata$main DD	imagerel $LN303
+	DD	imagerel $LN303+27
 	DD	imagerel $unwind$main
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$1$main DD imagerel $LN296+27
-	DD	imagerel $LN296+111
+$pdata$1$main DD imagerel $LN303+27
+	DD	imagerel $LN303+115
 	DD	imagerel $chain$1$main
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$2$main DD imagerel $LN296+111
-	DD	imagerel $LN296+704
+$pdata$2$main DD imagerel $LN303+115
+	DD	imagerel $LN303+706
 	DD	imagerel $chain$2$main
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$3$main DD imagerel $LN296+704
-	DD	imagerel $LN296+978
+$pdata$3$main DD imagerel $LN303+706
+	DD	imagerel $LN303+1006
 	DD	imagerel $chain$3$main
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$4$main DD imagerel $LN296+978
-	DD	imagerel $LN296+1613
+$pdata$4$main DD imagerel $LN303+1006
+	DD	imagerel $LN303+1645
 	DD	imagerel $chain$4$main
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$5$main DD imagerel $LN296+1613
-	DD	imagerel $LN296+1687
+$pdata$5$main DD imagerel $LN303+1645
+	DD	imagerel $LN303+1719
 	DD	imagerel $chain$5$main
 pdata	ENDS
 ;	COMDAT __xmm@80000000000000008000000000000000
@@ -3028,46 +3034,46 @@ _DATA	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$5$main DD 021H
-	DD	imagerel $LN296
-	DD	imagerel $LN296+27
+	DD	imagerel $LN303
+	DD	imagerel $LN303+27
 	DD	imagerel $unwind$main
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$4$main DD 020021H
-	DD	01ef400H
-	DD	imagerel $LN296
-	DD	imagerel $LN296+27
+	DD	022f400H
+	DD	imagerel $LN303
+	DD	imagerel $LN303+27
 	DD	imagerel $unwind$main
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$3$main DD 021H
-	DD	imagerel $LN296+27
-	DD	imagerel $LN296+111
+	DD	imagerel $LN303+27
+	DD	imagerel $LN303+115
 	DD	imagerel $chain$1$main
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$2$main DD 020821H
-	DD	01fd408H
-	DD	imagerel $LN296+27
-	DD	imagerel $LN296+111
+	DD	023d408H
+	DD	imagerel $LN303+27
+	DD	imagerel $LN303+115
 	DD	imagerel $chain$1$main
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$1$main DD 040c21H
-	DD	01ef40cH
-	DD	026c404H
-	DD	imagerel $LN296
-	DD	imagerel $LN296+27
+	DD	022f40cH
+	DD	02ac404H
+	DD	imagerel $LN303
+	DD	imagerel $LN303+27
 	DD	imagerel $unwind$main
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $unwind$main DD	071801H
-	DD	0200118H
+	DD	0240118H
 	DD	0700be00dH
 	DD	03009600aH
 	DD	05008H
@@ -3258,6 +3264,11 @@ $unwind$gen_type DD 020601H
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
+$unwind$ccexec_init DD 020601H
+	DD	030023206H
+xdata	ENDS
+;	COMDAT xdata
+xdata	SEGMENT
 $unwind$ccexec_translation_unit DD 081401H
 	DD	0c6414H
 	DD	0b5414H
@@ -3268,14 +3279,14 @@ xdata	ENDS
 xdata	SEGMENT
 $chain$4$ccexec_edict DD 021H
 	DD	imagerel ccexec_edict
-	DD	imagerel ccexec_edict+86
+	DD	imagerel ccexec_edict+92
 	DD	imagerel $unwind$ccexec_edict
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$3$ccexec_edict DD 021H
-	DD	imagerel ccexec_edict+86
-	DD	imagerel ccexec_edict+1064
+	DD	imagerel ccexec_edict+92
+	DD	imagerel ccexec_edict+1070
 	DD	imagerel $chain$0$ccexec_edict
 xdata	ENDS
 ;	COMDAT xdata
@@ -3283,8 +3294,8 @@ xdata	SEGMENT
 $chain$2$ccexec_edict DD 041321H
 	DD	016f413H
 	DD	017d408H
-	DD	imagerel ccexec_edict+86
-	DD	imagerel ccexec_edict+1064
+	DD	imagerel ccexec_edict+92
+	DD	imagerel ccexec_edict+1070
 	DD	imagerel $chain$0$ccexec_edict
 xdata	ENDS
 ;	COMDAT xdata
@@ -3292,7 +3303,7 @@ xdata	SEGMENT
 $chain$0$ccexec_edict DD 020821H
 	DD	01f3408H
 	DD	imagerel ccexec_edict
-	DD	imagerel ccexec_edict+86
+	DD	imagerel ccexec_edict+92
 	DD	imagerel $unwind$ccexec_edict
 xdata	ENDS
 ;	COMDAT xdata
@@ -3305,8 +3316,9 @@ $unwind$ccexec_edict DD 071d01H
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
-$chain$5$ccexec_invoke DD 020021H
-	DD	01b3400H
+$chain$5$ccexec_invoke DD 040021H
+	DD	011e400H
+	DD	0183400H
 	DD	imagerel ccexec_invoke
 	DD	imagerel ccexec_invoke+44
 	DD	imagerel $unwind$ccexec_invoke
@@ -3314,11 +3326,11 @@ xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$4$ccexec_invoke DD 0a3221H
-	DD	01b3432H
-	DD	010f419H
-	DD	011d411H
-	DD	012c40aH
-	DD	0136404H
+	DD	011e432H
+	DD	0183419H
+	DD	010f411H
+	DD	012c40bH
+	DD	0137404H
 	DD	imagerel ccexec_invoke
 	DD	imagerel ccexec_invoke+44
 	DD	imagerel $unwind$ccexec_invoke
@@ -3327,16 +3339,17 @@ xdata	ENDS
 xdata	SEGMENT
 $unwind$ccexec_invoke DD 051a01H
 	DD	014011aH
-	DD	0700de00fH
+	DD	0600dd00fH
 	DD	0500cH
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
-$unwind$ccstack_local_alloc DD 081401H
-	DD	0c6414H
-	DD	0b5414H
-	DD	0a3414H
-	DD	070107214H
+$unwind$ccstack_local_alloc DD 0a1a01H
+	DD	0d741aH
+	DD	0c641aH
+	DD	0b541aH
+	DD	0a341aH
+	DD	0e016721aH
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
@@ -5079,18 +5092,18 @@ _TEXT	SEGMENT
 $T1 = 64
 $T2 = 64
 read$ = 96
-l$3 = 208
-emit$ = 216
-argc$ = 304
-l$4 = 312
-out$5 = 312
-argv$ = 312
-exec$ = 320
-l$6 = 328
+emit$ = 208
+exec$ = 232
+argc$ = 336
+l$3 = 344
+out$4 = 344
+argv$ = 344
+l$5 = 352
+l$6 = 360
 main	PROC						; COMDAT
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 15
-$LN296:
+$LN303:
 	mov	rax, rsp
 	mov	QWORD PTR [rax+16], rdx
 	push	rbp
@@ -5098,47 +5111,47 @@ $LN296:
 	push	rsi
 	push	rdi
 	push	r14
-	lea	rbp, QWORD PTR [rax-95]
-	sub	rsp, 256				; 00000100H
+	lea	rbp, QWORD PTR [rax-72]
+	sub	rsp, 288				; 00000120H
 	xorps	xmm0, xmm0
 	mov	QWORD PTR [rax+8], r12
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 10
-	movups	XMMWORD PTR read$[rbp-153], xmm0
+	movups	XMMWORD PTR read$[rbp-208], xmm0
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 15
 	mov	QWORD PTR [rax-56], r15
 ; File W:\cpp\void\ktt-c\cclex.c
 ; Line 114
-	lea	rcx, QWORD PTR read$[rbp-201]
+	lea	rcx, QWORD PTR read$[rsp]
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 10
 	xor	eax, eax
-	movups	XMMWORD PTR read$[rbp-169], xmm0
-	mov	QWORD PTR read$[rbp-105], rax
-	movups	XMMWORD PTR read$[rbp-137], xmm0
-	movups	XMMWORD PTR read$[rbp-201], xmm0
-	movups	XMMWORD PTR read$[rbp-185], xmm0
-	movups	XMMWORD PTR read$[rbp-121], xmm0
+	movups	XMMWORD PTR read$[rbp-224], xmm0
+	mov	QWORD PTR read$[rbp-160], rax
+	movups	XMMWORD PTR read$[rbp-192], xmm0
+	movups	XMMWORD PTR read$[rsp], xmm0
+	movups	XMMWORD PTR read$[rsp+16], xmm0
+	movups	XMMWORD PTR read$[rbp-176], xmm0
 ; File W:\cpp\void\ktt-c\cclex.c
 ; Line 113
-	movups	XMMWORD PTR read$[rbp-161], xmm0
-	movups	XMMWORD PTR read$[rbp-145], xmm0
+	movups	XMMWORD PTR read$[rbp-216], xmm0
+	movups	XMMWORD PTR read$[rbp-200], xmm0
 ; Line 114
 	call	cclex_hash_init
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 22
 	lea	rdx, OFFSET FLAT:??_C@_0L@NNJAJELN@test?4svm?4c@
-	lea	rcx, QWORD PTR read$[rbp-201]
+	lea	rcx, QWORD PTR read$[rsp]
 	call	ccread_include
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	mov	rsi, rax
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
-	mov	QWORD PTR [rsp+248], r13
+	mov	QWORD PTR [rsp+280], r13
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 134
@@ -5155,12 +5168,12 @@ $LN296:
 	mov	QWORD PTR [rsi+144], rax
 ; Line 135
 	mov	DWORD PTR [rsi], 23
-$LN294@main:
+$LN301@main:
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 62
-	mov	rcx, QWORD PTR read$[rbp-113]
+	mov	rcx, QWORD PTR read$[rbp-168]
 	lea	rdi, OFFSET FLAT:?end_tok@?1??ccpeek@@9@4Ucctoken_t@@A
-	mov	rdx, QWORD PTR read$[rbp-121]
+	mov	rdx, QWORD PTR read$[rbp-176]
 	xor	r14d, r14d
 	mov	r12, QWORD PTR gs:88
 	cmp	rcx, rdx
@@ -5176,19 +5189,19 @@ $LN294@main:
 	cmp	rcx, rdx
 	jae	SHORT $LN108@main
 ; Line 96
-	mov	QWORD PTR read$[rbp-105], rcx
+	mov	QWORD PTR read$[rbp-160], rcx
 	add	rcx, 32					; 00000020H
-	mov	QWORD PTR read$[rbp-113], rcx
+	mov	QWORD PTR read$[rbp-168], rcx
 $LN108@main:
 ; Line 1005
 	mov	r8d, 20
-	lea	rcx, QWORD PTR read$[rbp-201]
+	lea	rcx, QWORD PTR read$[rsp]
 	mov	rdx, rsi
 	call	ccread_type_specifier
 ; Line 62
-	mov	rdx, QWORD PTR read$[rbp-113]
+	mov	rdx, QWORD PTR read$[rbp-168]
 	mov	rcx, rdi
-	mov	r8, QWORD PTR read$[rbp-121]
+	mov	r8, QWORD PTR read$[rbp-176]
 ; Line 1005
 	mov	rbx, rax
 ; Line 62
@@ -5203,9 +5216,9 @@ $LN108@main:
 	cmp	rdx, r8
 	jae	SHORT $LN145@main
 ; Line 96
-	mov	QWORD PTR read$[rbp-105], rdx
+	mov	QWORD PTR read$[rbp-160], rdx
 	add	rdx, 32					; 00000020H
-	mov	QWORD PTR read$[rbp-113], rdx
+	mov	QWORD PTR read$[rbp-168], rdx
 $LN129@main:
 ; Line 64
 	mov	rax, rdx
@@ -5224,9 +5237,9 @@ $LN144@main:
 	cmp	rdx, r8
 	jae	SHORT $LN148@main
 ; Line 96
-	mov	QWORD PTR read$[rbp-105], rdx
+	mov	QWORD PTR read$[rbp-160], rdx
 	add	rdx, 32					; 00000020H
-	mov	QWORD PTR read$[rbp-113], rdx
+	mov	QWORD PTR read$[rbp-168], rdx
 $LN148@main:
 ; Line 62
 	cmp	rdx, r8
@@ -5241,16 +5254,16 @@ $LN148@main:
 	cmp	rdx, r8
 	jae	SHORT $LN167@main
 ; Line 96
-	mov	QWORD PTR read$[rbp-105], rdx
+	mov	QWORD PTR read$[rbp-160], rdx
 	add	rdx, 32					; 00000020H
-	mov	QWORD PTR read$[rbp-113], rdx
+	mov	QWORD PTR read$[rbp-168], rdx
 $LN167@main:
 ; Line 840
 	test	rbx, rbx
 	je	$LN92@main
 ; Line 842
 	mov	r9, rbx
-	lea	rcx, QWORD PTR read$[rbp-201]
+	lea	rcx, QWORD PTR read$[rsp]
 	mov	r8d, 20
 	mov	rdx, rsi
 	call	ccread_init_decl_name_list
@@ -5275,7 +5288,7 @@ $LN167@main:
 	jne	SHORT $LN83@main
 ; Line 1276
 	xor	r8d, r8d
-	lea	rcx, QWORD PTR read$[rbp-201]
+	lea	rcx, QWORD PTR read$[rsp]
 	mov	rdx, rbx
 	call	ccread_block
 	mov	QWORD PTR [rbx+88], rax
@@ -5285,7 +5298,7 @@ $LN167@main:
 $LN83@main:
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 240
-	mov	rax, QWORD PTR read$[rbp-105]
+	mov	rax, QWORD PTR read$[rbp-160]
 	test	BYTE PTR [rax+16], 2
 	jne	SHORT $LN86@main
 	lea	rdx, OFFSET FLAT:??_C@_0N@BDNLGGP@expected?5?8?$DL?8@
@@ -5353,7 +5366,7 @@ $LN191@main:
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 1250
 	mov	QWORD PTR [rax+r14*8], r13
-	jmp	$LN294@main
+	jmp	$LN301@main
 $LN91@main:
 ; Line 844
 	lea	rdx, OFFSET FLAT:??_C@_0BE@MJILOMBI@expected?5declarator@
@@ -5362,17 +5375,16 @@ $LN91@main:
 $LN92@main:
 ; File W:\cpp\void\ktt-c\cccheck.c
 ; Line 289
-	mov	r13, QWORD PTR [rsp+248]
+	mov	r13, QWORD PTR [rsp+280]
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 371
 	xor	eax, eax
-	movups	XMMWORD PTR emit$[rbp-201], xmm0
-	mov	QWORD PTR emit$[rbp-185], rax
+	movups	XMMWORD PTR emit$[rbp-256], xmm0
+	mov	QWORD PTR emit$[rbp-240], rax
 ; File W:\cpp\void\ktt-c\cccheck.c
 ; Line 289
 	mov	rdi, QWORD PTR [rsi+32]
-	npad	5
 $LL216@main:
 	mov	rbx, QWORD PTR [rsi+32]
 	test	rbx, rbx
@@ -5390,7 +5402,7 @@ $LN219@main:
 	call	cctree_solve_decl
 	add	rdi, 8
 	jmp	SHORT $LL216@main
-	npad	4
+	npad	2
 $LL215@main:
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 366
@@ -5407,51 +5419,66 @@ $LN212@main:
 	cmp	rbx, rax
 	jae	SHORT $LN208@main
 	mov	rdx, QWORD PTR [rbx]
-	lea	rcx, QWORD PTR emit$[rbp-201]
+	lea	rcx, QWORD PTR emit$[rbp-256]
 	call	ccemit_external_decl
 	add	rbx, 8
 	jmp	SHORT $LL215@main
 $LN208@main:
 ; File W:\cpp\void\ktt-c\ccfio.c
 ; Line 20
-	lea	rcx, QWORD PTR l$6[rbp-201]
+	lea	rcx, QWORD PTR l$5[rbp-256]
 	call	QWORD PTR __imp_QueryPerformanceCounter
+; File W:\cpp\void\ktt-c\cc.c
+; Line 558
+	mov	ecx, 1073741824				; 40000000H
+	call	malloc
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
 	mov	rsi, QWORD PTR [r12+r15*8]
-; File W:\cpp\void\ktt-c\ccexec.c
-; Line 416
-	lea	rax, QWORD PTR emit$[rbp-201]
-	mov	QWORD PTR exec$[rbp-201], rax
-; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 217
 	xor	edx, edx
+; File W:\cpp\void\ktt-c\cc.c
+; Line 558
+	mov	QWORD PTR exec$[rbp-248], rax
+; File W:\cpp\void\ktt-c\ccexec.c
+; Line 405
+	lea	rax, QWORD PTR emit$[rbp-256]
+	mov	QWORD PTR exec$[rbp-256], rax
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_05EHKFBNPG@arg?90@
-	mov	DWORD PTR $T1[rsp+8], 1
 	mov	QWORD PTR $T1[rsp], rax
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
 	mov	eax, OFFSET FLAT:ccalloctr
 ; Line 217
 	lea	ecx, QWORD PTR [rdx+64]
+; File W:\cpp\void\ktt-c\ccexec.c
+; Line 421
+	mov	QWORD PTR exec$[rbp-240], 1073741824	; 40000000H
+; Line 422
+	mov	QWORD PTR exec$[rbp-232], r14
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
-	mov	QWORD PTR $T1[rbp-185], 22
+; Line 49
+	mov	DWORD PTR $T1[rsp+8], 1
+; File W:\cpp\void\ktt-c\ccdlb.h
+; Line 196
+	mov	rbx, QWORD PTR [rax+rsi]
+; File W:\cpp\void\ktt-c\ccexec.h
+; Line 50
+	mov	QWORD PTR $T1[rsp+16], 22
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
 	mov	edi, eax
-	mov	rbx, QWORD PTR [rax+rsi]
 ; Line 217
 	call	rbx
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 419
+; Line 408
 	movups	xmm0, XMMWORD PTR $T1[rsp]
-; Line 422
+; Line 411
 	lea	r8, QWORD PTR $T2[rsp]
-	movsd	xmm1, QWORD PTR $T1[rbp-185]
-	lea	rcx, QWORD PTR exec$[rbp-201]
+	movsd	xmm1, QWORD PTR $T1[rsp+16]
+	lea	rcx, QWORD PTR exec$[rbp-256]
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 222
 	and	DWORD PTR [rax], -4			; fffffffcH
@@ -5466,50 +5493,50 @@ $LN208@main:
 ; Line 229
 	mov	QWORD PTR [rax+32], 24
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 419
+; Line 408
 	movups	XMMWORD PTR [r9], xmm0
 	movsd	QWORD PTR [r9+16], xmm1
-; Line 422
-	mov	rdx, QWORD PTR emit$[rbp-185]
+; Line 411
+	mov	rdx, QWORD PTR emit$[rbp-240]
 	call	ccexec_invoke
 ; File W:\cpp\void\ktt-c\ccfio.c
 ; Line 20
-	lea	rcx, QWORD PTR l$4[rbp-201]
+	lea	rcx, QWORD PTR l$3[rbp-256]
 	call	QWORD PTR __imp_QueryPerformanceCounter
 ; Line 21
-	mov	rbx, QWORD PTR l$4[rbp-201]
+	mov	rbx, QWORD PTR l$3[rbp-256]
 ; Line 26
-	lea	rcx, QWORD PTR l$3[rbp-201]
+	lea	rcx, QWORD PTR l$6[rbp-256]
 	call	QWORD PTR __imp_QueryPerformanceFrequency
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 47
-	sub	rbx, QWORD PTR l$6[rbp-201]
+	sub	rbx, QWORD PTR l$5[rbp-256]
 ; File W:\cpp\void\ktt-c\ccfio.c
 ; Line 27
 	xorps	xmm1, xmm1
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 47
-	mov	r12, QWORD PTR [rsp+304]
+	mov	r12, QWORD PTR [rsp+336]
 ; File W:\cpp\void\ktt-c\ccfio.c
 ; Line 27
-	js	SHORT $LN287@main
+	js	SHORT $LN294@main
 	cvtsi2sd xmm1, rbx
-	jmp	SHORT $LN288@main
-$LN287@main:
+	jmp	SHORT $LN295@main
+$LN294@main:
 	mov	rax, rbx
 	and	ebx, 1
 	shr	rax, 1
 	or	rax, rbx
 	cvtsi2sd xmm1, rax
 	addsd	xmm1, xmm1
-$LN288@main:
+$LN295@main:
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 47
 	lea	rcx, OFFSET FLAT:??_C@_0M@IALGNGGL@done?5in?5?$CFf?6@
 ; File W:\cpp\void\ktt-c\ccfio.c
 ; Line 27
-	cvtsi2sd xmm0, QWORD PTR l$3[rbp-201]
+	cvtsi2sd xmm0, QWORD PTR l$6[rbp-256]
 	divsd	xmm1, xmm0
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 47
@@ -5517,14 +5544,14 @@ $LN288@main:
 	call	printf
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 18
-	mov	rax, QWORD PTR read$[rbp-129]
+	mov	rax, QWORD PTR read$[rbp-184]
 	lea	rcx, QWORD PTR [rax-40]
 	test	rax, rax
-	jne	SHORT $LN245@main
+	jne	SHORT $LN252@main
 	mov	rcx, r14
-$LN245@main:
+$LN252@main:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 559
+; Line 560
 	call	free
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 8
@@ -5534,7 +5561,7 @@ $LN245@main:
 	mov	ebx, eax
 	call	?fib@@YAHH@Z				; fib
 ; Line 55
-	mov	r9d, DWORD PTR $T2[rbp-185]
+	mov	r9d, DWORD PTR $T2[rsp+16]
 	lea	rdx, OFFSET FLAT:??_C@_0N@NHHCNFG@c?3?$CFi?5?9?5cc?3?$CFi@
 	lea	rcx, OFFSET FLAT:??_C@_03MGHMBJCF@log@
 ; Line 9
@@ -5567,8 +5594,9 @@ $LN245@main:
 ; Line 256
 	mov	eax, 4
 ; Line 242
-	mov	QWORD PTR out$5[rbp-201], r8
-$LL286@main:
+	mov	QWORD PTR out$4[rbp-256], r8
+	npad	2
+$LL293@main:
 ; Line 256
 	lea	rcx, QWORD PTR [rcx+128]
 	movups	xmm0, XMMWORD PTR [rdx]
@@ -5589,12 +5617,12 @@ $LL286@main:
 	movups	xmm1, XMMWORD PTR [rdx-16]
 	movups	XMMWORD PTR [rcx-16], xmm1
 	sub	rax, 1
-	jne	SHORT $LL286@main
+	jne	SHORT $LL293@main
 	movups	xmm0, XMMWORD PTR [rdx]
 ; Line 228
 	mov	r15d, r14d
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 559
+; Line 560
 	lea	rsi, OFFSET FLAT:?ts@?2??main@@9@4QBUkttcc_type@@B+8
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 256
@@ -5613,7 +5641,7 @@ $LL286@main:
 	mov	WORD PTR [rcx+76], ax
 ; Line 257
 	mov	BYTE PTR [r8+590], 0
-	npad	6
+	npad	7
 $LL4@main:
 ; File W:\cpp\void\ktt-c\ccemit-c.c
 ; Line 325
@@ -5628,7 +5656,7 @@ $LL11@main:
 ; Line 329
 	mov	ebx, DWORD PTR [rsi-4]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 	mov	ecx, 32					; 00000020H
@@ -5643,12 +5671,12 @@ $LL11@main:
 ; Line 76
 	mov	DWORD PTR [rax+16], r14d
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
 ; Line 331
 	mov	rdx, rax
-	lea	rcx, QWORD PTR out$5[rbp-201]
+	lea	rcx, QWORD PTR out$4[rbp-256]
 ; Line 35
 	mov	DWORD PTR [rax], 4
 ; Line 45
@@ -5658,13 +5686,13 @@ $LL11@main:
 ; Line 331
 	call	emit_vectype
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
 ; Line 332
 	mov	rdx, rax
-	lea	rcx, QWORD PTR out$5[rbp-201]
+	lea	rcx, QWORD PTR out$4[rbp-256]
 ; Line 35
 	mov	DWORD PTR [rax], 4
 ; Line 45
@@ -5674,13 +5702,13 @@ $LL11@main:
 ; Line 332
 	call	emit_vectype
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
 ; Line 333
 	mov	rdx, rax
-	lea	rcx, QWORD PTR out$5[rbp-201]
+	lea	rcx, QWORD PTR out$4[rbp-256]
 ; Line 35
 	mov	DWORD PTR [rax], 4
 ; Line 45
@@ -5712,13 +5740,13 @@ $LN2@main:
 	call	QWORD PTR __imp_CreateFileA
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 99
-	mov	rdi, QWORD PTR out$5[rbp-201]
+	mov	rdi, QWORD PTR out$4[rbp-256]
 ; File W:\cpp\void\ktt-c\ccfio.c
 ; Line 48
 	mov	ebx, r14d
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 99
-	mov	r15, QWORD PTR [rsp+240]
+	mov	r15, QWORD PTR [rsp+272]
 ; File W:\cpp\void\ktt-c\ccfio.c
 ; Line 32
 	cmp	rax, -1
@@ -5756,7 +5784,7 @@ $LN65@main:
 ; File W:\cpp\void\ktt-c\test.c
 ; Line 104
 	xor	eax, eax
-	add	rsp, 256				; 00000100H
+	add	rsp, 288				; 00000120H
 	pop	r14
 	pop	rdi
 	pop	rsi
@@ -5831,7 +5859,7 @@ $LL4@emit_type:
 ; Line 329
 	mov	edi, DWORD PTR [rbx+4]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 	mov	ecx, 32					; 00000020H
@@ -5846,7 +5874,7 @@ $LL4@emit_type:
 ; Line 76
 	mov	DWORD PTR [rax+16], ebp
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
 ; Line 331
@@ -5861,7 +5889,7 @@ $LL4@emit_type:
 ; Line 331
 	call	emit_vectype
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
@@ -5877,7 +5905,7 @@ $LL4@emit_type:
 ; Line 332
 	call	emit_vectype
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
@@ -7188,7 +7216,7 @@ $LN13:
 	mov	ebx, ecx
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
@@ -7225,13 +7253,13 @@ $LN13:
 	mov	ebx, ecx
 	mov	esi, r8d
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 ; File W:\cpp\void\ktt-c\ccemit-c.c
 ; Line 61
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
 ; Line 64
@@ -7264,7 +7292,7 @@ $LN13:
 	sub	rsp, 32					; 00000020H
 	mov	rbx, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
@@ -7293,7 +7321,7 @@ $LN13:
 	mov	rbx, rcx
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
@@ -7323,7 +7351,7 @@ $LN11:
 	sub	rsp, 32					; 00000020H
 	mov	ebx, ecx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit-c.c
@@ -7338,6 +7366,36 @@ $LN11:
 gen_type ENDP
 _TEXT	ENDS
 ; Function compile flags: /Ogtpy
+;	COMDAT ccexec_init
+_TEXT	SEGMENT
+exec$ = 48
+ccexec_init PROC					; COMDAT
+; File W:\cpp\void\ktt-c\ccexec.c
+; Line 418
+	push	rbx
+	sub	rsp, 32					; 00000020H
+	xorps	xmm0, xmm0
+	mov	rbx, rcx
+	movups	XMMWORD PTR [rcx], xmm0
+	movups	XMMWORD PTR [rcx+16], xmm0
+; File W:\cpp\void\ktt-c\cc.c
+; Line 558
+	mov	ecx, 1073741824				; 40000000H
+	call	malloc
+; File W:\cpp\void\ktt-c\ccexec.c
+; Line 420
+	mov	QWORD PTR [rbx+8], rax
+; Line 423
+	mov	eax, 1
+	mov	QWORD PTR [rbx+16], 1073741824		; 40000000H
+	mov	QWORD PTR [rbx+24], 0
+; Line 424
+	add	rsp, 32					; 00000020H
+	pop	rbx
+	ret	0
+ccexec_init ENDP
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
 ;	COMDAT ccexec_translation_unit
 _TEXT	SEGMENT
 $T1 = 32
@@ -7346,7 +7404,7 @@ exec$ = 88
 emit$ = 96
 ccexec_translation_unit PROC				; COMDAT
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 415
+; Line 404
 	mov	QWORD PTR [rsp+8], rbx
 	mov	QWORD PTR [rsp+16], rbp
 	mov	QWORD PTR [rsp+24], rsi
@@ -7356,19 +7414,19 @@ ccexec_translation_unit PROC				; COMDAT
 ; Line 196
 	mov	r9d, DWORD PTR _tls_index
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_05EHKFBNPG@arg?90@
 	mov	QWORD PTR $T1[rsp], rax
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 415
+; Line 404
 	mov	rsi, rdx
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
 	mov	rax, QWORD PTR gs:88
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 415
+; Line 404
 	mov	rbp, rcx
-; Line 416
+; Line 405
 	mov	QWORD PTR [rdx], r8
 	mov	rdi, r8
 ; File W:\cpp\void\ktt-c\ccdlb.h
@@ -7376,13 +7434,13 @@ ccexec_translation_unit PROC				; COMDAT
 	xor	edx, edx
 	mov	ebx, OFFSET FLAT:ccalloctr
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 45
+; Line 49
 	mov	DWORD PTR $T1[rsp+8], 1
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
 	mov	rax, QWORD PTR [rax+r9*8]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	QWORD PTR $T1[rsp+16], 22
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 217
@@ -7390,9 +7448,9 @@ ccexec_translation_unit PROC				; COMDAT
 	mov	rbx, QWORD PTR [rbx+rax]
 	call	rbx
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 419
+; Line 408
 	movups	xmm0, XMMWORD PTR $T1[rsp]
-; Line 422
+; Line 411
 	mov	r8, rbp
 	mov	rcx, rsi
 	movsd	xmm1, QWORD PTR $T1[rsp+16]
@@ -7410,13 +7468,13 @@ ccexec_translation_unit PROC				; COMDAT
 ; Line 229
 	mov	QWORD PTR [rax+32], 24
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 419
+; Line 408
 	movups	XMMWORD PTR [r9], xmm0
 	movsd	QWORD PTR [r9+16], xmm1
-; Line 422
+; Line 411
 	mov	rdx, QWORD PTR [rdi+16]
 	call	ccexec_invoke
-; Line 425
+; Line 414
 	mov	rbx, QWORD PTR [rsp+80]
 	mov	rax, rbp
 	mov	rbp, QWORD PTR [rsp+88]
@@ -7425,21 +7483,6 @@ ccexec_translation_unit PROC				; COMDAT
 	pop	rdi
 	ret	0
 ccexec_translation_unit ENDP
-_TEXT	ENDS
-; Function compile flags: /Ogtpy
-;	COMDAT ccexec_init
-_TEXT	SEGMENT
-exec$ = 8
-ccexec_init PROC					; COMDAT
-; File W:\cpp\void\ktt-c\ccexec.c
-; Line 408
-	xor	eax, eax
-	mov	QWORD PTR [rcx], rax
-; Line 409
-	mov	eax, 1
-; Line 410
-	ret	0
-ccexec_init ENDP
 _TEXT	ENDS
 ; Function compile flags: /Ogtpy
 ;	COMDAT ccexec_edict
@@ -7483,7 +7526,7 @@ value$ = 256
 sze_min$1$ = 264
 ccexec_edict PROC					; COMDAT
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 160
+; Line 156
 	mov	QWORD PTR [rsp+24], r8
 	mov	QWORD PTR [rsp+8], rcx
 	push	rbp
@@ -7493,28 +7536,31 @@ ccexec_edict PROC					; COMDAT
 	push	r14
 	lea	rbp, QWORD PTR [rsp-55]
 	sub	rsp, 192				; 000000c0H
-; Line 161
+; Line 157
 	mov	r9d, DWORD PTR _tls_index
-	xor	esi, esi
-	mov	rax, QWORD PTR gs:88
-	mov	r12, r8
-	mov	ecx, OFFSET FLAT:_Init_thread_epoch
 	mov	rdi, rdx
+	mov	rax, QWORD PTR gs:88
+	xor	esi, esi
+	mov	edx, OFFSET FLAT:_Init_thread_epoch
+	mov	r12, r8
 	mov	rax, QWORD PTR [rax+r9*8]
 	mov	QWORD PTR tv923[rbp-137], rax
-	mov	eax, DWORD PTR [rcx+rax]
+	mov	eax, DWORD PTR [rdx+rax]
 	cmp	DWORD PTR ?$TSS0@?1??ccexec_edict@@9@4HA, eax
-	jg	$LN178@ccexec_edi
+	jg	$LN172@ccexec_edi
+	jmp	SHORT $LN2@ccexec_edi
+$LN165@ccexec_edi:
+; Line 164
+	mov	rcx, QWORD PTR exec$[rbp-137]
 $LN2@ccexec_edi:
-; Line 168
 	mov	r14, QWORD PTR [r12+48]
 	mov	QWORD PTR [rsp+248], rbx
-; Line 170
+; Line 166
 	movsxd	rax, DWORD PTR [r14]
 	cmp	eax, 13
 	ja	$LN29@ccexec_edi
 	lea	rbx, OFFSET FLAT:__ImageBase
-	mov	eax, DWORD PTR $LN170@ccexec_edi[rbx+rax*4]
+	mov	eax, DWORD PTR $LN163@ccexec_edi[rbx+rax*4]
 	add	rax, rbx
 	jmp	rax
 $LN8@ccexec_edi:
@@ -7533,63 +7579,63 @@ $LN8@ccexec_edi:
 	lea	rdx, OFFSET FLAT:??_C@_0EN@PNPBLILH@value?5kind?5is?5invalid?0?5did?5you?5@
 	lea	rcx, OFFSET FLAT:??_C@_03JIDPIAJI@err@
 	call	cctrace_
-; Line 175
+; Line 171
 	jmp	$LN29@ccexec_edi
 $LN9@ccexec_edi:
-; Line 178
-	mov	rdx, r12
-	mov	rcx, rdi
+; Line 174
+	mov	r8, r12
+	mov	rdx, rdi
 	call	ccstack_local_alloc
-; Line 179
+; Line 175
 	jmp	$LN29@ccexec_edi
 $LN10@ccexec_edi:
-; Line 189
+; Line 185
 	mov	r8, QWORD PTR [r14+16]
 	lea	rcx, QWORD PTR $T13[rbp-137]
 	mov	rbx, QWORD PTR [r14+24]
 	mov	rdx, rdi
 	call	ccstack_yield_lvalue
-; Line 190
+; Line 186
 	mov	r8, rbx
 	lea	rcx, QWORD PTR $T12[rbp-137]
 	mov	rdx, rdi
 	movsd	xmm1, QWORD PTR [rax+16]
 	movsd	QWORD PTR lval$4[rbp-121], xmm1
 	call	ccstack_yield_rvalue
-; Line 195
+; Line 191
 	mov	rdx, r12
 	movsd	xmm1, QWORD PTR [rax+16]
 	mov	rax, QWORD PTR lval$4[rbp-121]
 	movsd	QWORD PTR rval$18[rbp-121], xmm1
 	mov	rcx, QWORD PTR rval$18[rbp-121]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 54
+; Line 58
 	mov	DWORD PTR $T11[rbp-129], 2
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 193
+; Line 189
 	lea	rcx, QWORD PTR [rax+rcx*8]
 	mov	QWORD PTR $T11[rbp-121], rcx
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 56
+; Line 60
 	lea	rax, OFFSET FLAT:??_C@_07LHEPONKL@address@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 195
+; Line 191
 	mov	rcx, rdi
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 56
+; Line 60
 	mov	QWORD PTR $T11[rbp-137], rax
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 195
+; Line 191
 	call	ccstack_mingle
-; Line 196
+; Line 192
 	movups	xmm0, XMMWORD PTR $T11[rbp-137]
 	movsd	xmm1, QWORD PTR $T11[rbp-121]
 	movups	XMMWORD PTR [rax], xmm0
 	movsd	QWORD PTR [rax+16], xmm1
-; Line 197
+; Line 193
 	jmp	$LN29@ccexec_edi
 $LN11@ccexec_edi:
-; Line 205
+; Line 201
 	mov	r8, QWORD PTR [r14+16]
 	lea	rcx, QWORD PTR $T30[rbp-137]
 	mov	rbx, QWORD PTR [r14+24]
@@ -7597,61 +7643,61 @@ $LN11@ccexec_edi:
 	call	ccstack_yield_lvalue
 	movsd	xmm1, QWORD PTR [rax+16]
 	movsd	QWORD PTR lval$3[rbp-121], xmm1
-; Line 207
+; Line 203
 	test	rbx, rbx
 	je	SHORT $LN12@ccexec_edi
-; Line 208
+; Line 204
 	mov	r8, rbx
 	lea	rcx, QWORD PTR $T27[rbp-137]
 	mov	rdx, rdi
 	call	ccstack_yield_rvalue
 	movsd	xmm1, QWORD PTR [rax+16]
-	jmp	SHORT $LN172@ccexec_edi
+	jmp	SHORT $LN166@ccexec_edi
 $LN12@ccexec_edi:
-; Line 210
+; Line 206
 	movsd	xmm1, QWORD PTR ?zro@?1??ccexec_edict@@9@4Uccexec_value_t@@A+16
-$LN172@ccexec_edi:
-; Line 215
+$LN166@ccexec_edi:
+; Line 211
 	mov	rdx, r12
 	movsd	QWORD PTR rval$10[rbp-121], xmm1
 	mov	rcx, rdi
 	call	ccstack_mingle
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	rcx, QWORD PTR rval$10[rbp-121]
 	mov	rdx, QWORD PTR lval$3[rbp-121]
 	mov	DWORD PTR $T17[rbp-129], 1
 	mov	rdx, QWORD PTR [rdx+rcx*8]
-; Line 47
+; Line 51
 	lea	rcx, OFFSET FLAT:??_C@_05MCKKOJDL@fetch@
 	mov	QWORD PTR $T17[rbp-137], rcx
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 216
+; Line 212
 	movups	xmm0, XMMWORD PTR $T17[rbp-137]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	QWORD PTR $T17[rbp-121], rdx
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 216
+; Line 212
 	movsd	xmm1, QWORD PTR $T17[rbp-121]
 	movups	XMMWORD PTR [rax], xmm0
 	movsd	QWORD PTR [rax+16], xmm1
-; Line 217
+; Line 213
 	jmp	$LN29@ccexec_edi
 $LN14@ccexec_edi:
-; Line 221
+; Line 217
 	mov	r8, QWORD PTR [r14+16]
 	lea	rcx, QWORD PTR $T26[rbp-137]
 	mov	rdx, rdi
 	call	ccstack_yield_lvalue
-; Line 222
+; Line 218
 	mov	r8, QWORD PTR [r14+24]
 	lea	rcx, QWORD PTR $T29[rbp-137]
 	mov	rdx, rdi
 	movsd	xmm1, QWORD PTR [rax+16]
 	movsd	QWORD PTR lval$9[rbp-121], xmm1
 	call	ccstack_yield_rvalue
-; Line 227
+; Line 223
 	mov	rdx, r12
 	mov	rcx, rdi
 	movups	xmm0, XMMWORD PTR [rax]
@@ -7662,196 +7708,196 @@ $LN14@ccexec_edi:
 	mov	rbx, QWORD PTR rval$16[rbp-121]
 	mov	QWORD PTR [rax], rbx
 	call	ccstack_mingle
-; Line 230
+; Line 226
 	movups	xmm0, XMMWORD PTR rval$3$[rbp-137]
 	movq	QWORD PTR [rax], xmm0
 	mov	DWORD PTR [rax+8], 1
 	mov	QWORD PTR [rax+16], rbx
-; Line 231
+; Line 227
 	jmp	$LN29@ccexec_edi
 $LN16@ccexec_edi:
-; Line 250
+; Line 246
 	mov	r8, QWORD PTR [r14+32]
 	lea	rcx, QWORD PTR $T25[rbp-137]
 	mov	rdx, rdi
 	call	ccstack_yield_rvalue
 	movsd	xmm1, QWORD PTR [rax+16]
 	movsd	QWORD PTR rval$8[rbp-121], xmm1
-; Line 251
+; Line 247
 	cmp	DWORD PTR rval$8[rbp-121], esi
 	jne	$LN29@ccexec_edi
 $LN15@ccexec_edi:
-; Line 336
+; Line 332
 	mov	rax, QWORD PTR [r14+16]
 	mov	QWORD PTR [rdi+8], rax
 	mov	eax, DWORD PTR [r14+24]
 	mov	DWORD PTR [rdi+16], eax
 	jmp	$LN29@ccexec_edi
 $LN18@ccexec_edi:
-; Line 264
+; Line 260
 	mov	r8, QWORD PTR [r14+32]
 	lea	rcx, QWORD PTR $T24[rbp-137]
 	mov	rdx, rdi
 	call	ccstack_yield_rvalue
 	movsd	xmm1, QWORD PTR [rax+16]
 	movsd	QWORD PTR rval$7[rbp-121], xmm1
-; Line 265
+; Line 261
 	cmp	DWORD PTR rval$7[rbp-121], esi
 	je	$LN29@ccexec_edi
-; Line 266
+; Line 262
 	mov	rax, QWORD PTR [r14+16]
 	mov	QWORD PTR [rdi+8], rax
-; Line 267
+; Line 263
 	mov	eax, DWORD PTR [r14+24]
 	mov	DWORD PTR [rdi+16], eax
-; Line 269
+; Line 265
 	jmp	$LN29@ccexec_edi
 $LN20@ccexec_edi:
-; Line 278
+; Line 274
 	mov	r8, QWORD PTR [r14+24]
 	lea	rcx, QWORD PTR $T23[rbp-137]
 	mov	rdx, rdi
 	call	ccstack_yield_rvalue
-; Line 279
+; Line 275
 	mov	r8, QWORD PTR [r14+32]
 	lea	rcx, QWORD PTR $T22[rbp-137]
 	mov	rdx, rdi
 	movsd	xmm1, QWORD PTR [rax+16]
 	movsd	QWORD PTR lval$15[rbp-121], xmm1
 	call	ccstack_yield_rvalue
-; Line 281
+; Line 277
 	mov	rdx, r12
 	mov	rcx, rdi
 	movsd	xmm1, QWORD PTR [rax+16]
 	movsd	QWORD PTR rval$6[rbp-121], xmm1
 	call	ccstack_mingle
-; Line 131
+; Line 127
 	mov	ecx, DWORD PTR [r14+16]
-; Line 281
+; Line 277
 	mov	r8, rax
-; Line 131
+; Line 127
 	add	ecx, -93				; ffffffffffffffa3H
 	cmp	ecx, 26
-	ja	$LN139@ccexec_edi
+	ja	$LN132@ccexec_edi
 	movsxd	rcx, ecx
-	movzx	ecx, BYTE PTR $LN168@ccexec_edi[rbx+rcx]
-	mov	edx, DWORD PTR $LN169@ccexec_edi[rbx+rcx*4]
+	movzx	ecx, BYTE PTR $LN161@ccexec_edi[rbx+rcx]
+	mov	edx, DWORD PTR $LN162@ccexec_edi[rbx+rcx*4]
 	add	rdx, rbx
 	jmp	rdx
-$LN131@ccexec_edi:
-; Line 133
+$LN124@ccexec_edi:
+; Line 129
 	mov	rax, QWORD PTR rval$6[rbp-121]
 	cmp	QWORD PTR lval$15[rbp-121], rax
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01PPODPGHN@?$DO@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 133
+; Line 129
 	setg	sil
-	jmp	$LN173@ccexec_edi
-$LN132@ccexec_edi:
-; Line 135
+	jmp	$LN167@ccexec_edi
+$LN125@ccexec_edi:
+; Line 131
 	mov	rax, QWORD PTR rval$6[rbp-121]
 	cmp	QWORD PTR lval$15[rbp-121], rax
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_02EEKDKGMJ@?$DO?$DN@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 135
+; Line 131
 	setge	sil
-	jmp	$LN173@ccexec_edi
-$LN133@ccexec_edi:
-; Line 137
+	jmp	$LN167@ccexec_edi
+$LN126@ccexec_edi:
+; Line 133
 	mov	rax, QWORD PTR rval$6[rbp-121]
 	cmp	QWORD PTR lval$15[rbp-121], rax
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01MNNFJEPP@?$DM@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 137
+; Line 133
 	setl	sil
-	jmp	SHORT $LN173@ccexec_edi
-$LN134@ccexec_edi:
-; Line 139
+	jmp	SHORT $LN167@ccexec_edi
+$LN127@ccexec_edi:
+; Line 135
 	mov	rax, QWORD PTR rval$6[rbp-121]
 	cmp	QWORD PTR lval$15[rbp-121], rax
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_02EHCHHCKH@?$DM?$DN@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 139
+; Line 135
 	setle	sil
-	jmp	SHORT $LN173@ccexec_edi
-$LN135@ccexec_edi:
-; Line 141
+	jmp	SHORT $LN167@ccexec_edi
+$LN128@ccexec_edi:
+; Line 137
 	mov	rax, QWORD PTR rval$6[rbp-121]
 	imul	rax, QWORD PTR lval$15[rbp-121]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	QWORD PTR $T2[rbp-121], rax
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01NBENCBCI@?$CK@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 141
-	jmp	SHORT $LN174@ccexec_edi
-$LN136@ccexec_edi:
-; Line 143
+; Line 137
+	jmp	SHORT $LN168@ccexec_edi
+$LN129@ccexec_edi:
+; Line 139
 	mov	rax, QWORD PTR lval$15[rbp-121]
 	cdq
 	idiv	QWORD PTR rval$6[rbp-121]
 	mov	QWORD PTR $T2[rbp-121], rax
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01KMDKNFGN@?1@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 143
-	jmp	SHORT $LN174@ccexec_edi
-$LN137@ccexec_edi:
-; Line 145
+; Line 139
+	jmp	SHORT $LN168@ccexec_edi
+$LN130@ccexec_edi:
+; Line 141
 	mov	rax, QWORD PTR lval$15[rbp-121]
 	sub	rax, QWORD PTR rval$6[rbp-121]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	QWORD PTR $T2[rbp-121], rax
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01JOAMLHOP@?9@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 145
-	jmp	SHORT $LN174@ccexec_edi
-$LN138@ccexec_edi:
-; Line 147
+; Line 141
+	jmp	SHORT $LN168@ccexec_edi
+$LN131@ccexec_edi:
+; Line 143
 	mov	rcx, QWORD PTR lval$15[rbp-121]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01MIFGBAGJ@?$CL@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 147
+; Line 143
 	add	rcx, QWORD PTR rval$6[rbp-121]
 	mov	QWORD PTR $T2[rbp-121], rcx
-	jmp	SHORT $LN174@ccexec_edi
-$LN139@ccexec_edi:
+	jmp	SHORT $LN168@ccexec_edi
+$LN132@ccexec_edi:
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_0P@NOFDAMLB@internal?9error@
-$LN173@ccexec_edi:
+$LN167@ccexec_edi:
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 282
+; Line 278
 	mov	QWORD PTR $T2[rbp-121], rsi
-$LN174@ccexec_edi:
+$LN168@ccexec_edi:
 	movsd	xmm1, QWORD PTR $T2[rbp-121]
 	mov	DWORD PTR $T2[rbp-129], 1
 	mov	QWORD PTR $T2[rbp-137], rax
 	movups	xmm0, XMMWORD PTR $T2[rbp-137]
 	movups	XMMWORD PTR [r8], xmm0
 	movsd	QWORD PTR [r8+16], xmm1
-; Line 283
+; Line 279
 	jmp	$LN29@ccexec_edi
 $LN21@ccexec_edi:
-; Line 287
+; Line 283
 	mov	rdx, r12
 	mov	rcx, rdi
 	call	ccstack_mingle
-; Line 288
+; Line 284
 	mov	r8, QWORD PTR [r14+16]
 	lea	rcx, QWORD PTR $T21[rbp-137]
 	mov	rdx, rdi
@@ -7859,18 +7905,18 @@ $LN21@ccexec_edi:
 	call	ccstack_yield_rvalue
 	movups	xmm1, XMMWORD PTR [rax]
 	movsd	xmm0, QWORD PTR [rax+16]
-; Line 289
+; Line 285
 	xor	eax, eax
 	movups	XMMWORD PTR [rbx], xmm1
 	movsd	QWORD PTR [rbx+16], xmm0
 	jmp	$LN1@ccexec_edi
 $LN22@ccexec_edi:
-; Line 299
+; Line 295
 	mov	rdx, QWORD PTR [r14+24]
 	mov	QWORD PTR [rsp+184], r13
 	mov	r13, rsi
 	mov	QWORD PTR [rsp+176], r15
-$LN175@ccexec_edi:
+$LN169@ccexec_edi:
 	mov	rcx, QWORD PTR [r14+24]
 	mov	QWORD PTR list$1$[rbp-137], rdx
 	test	rcx, rcx
@@ -7885,7 +7931,7 @@ $LN33@ccexec_edi:
 	add	rax, rcx
 	cmp	rdx, rax
 	jae	$LN6@ccexec_edi
-; Line 300
+; Line 296
 	mov	r8, QWORD PTR [rdx]
 	lea	rcx, QWORD PTR $T20[rbp-137]
 	mov	rdx, rdi
@@ -7904,7 +7950,7 @@ $LN33@ccexec_edi:
 ; Line 192
 	mov	r12, rsi
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 300
+; Line 296
 	movsd	xmm1, QWORD PTR [rax+16]
 	movsd	QWORD PTR $T28[rbp-137], xmm1
 	movups	xmm0, XMMWORD PTR [rax]
@@ -7912,7 +7958,7 @@ $LN33@ccexec_edi:
 ; Line 196
 	mov	eax, OFFSET FLAT:ccalloctr
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 300
+; Line 296
 	movups	XMMWORD PTR $T1[rbp-137], xmm0
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
@@ -7963,14 +8009,14 @@ $LN46@ccexec_edi:
 	mul	QWORD PTR sze_min$1$[rbp-137]
 	shr	rdx, 4
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 300
+; Line 296
 	lea	rax, QWORD PTR [rdx+rdx*2]
 	mov	rdx, QWORD PTR list$1$[rbp-137]
 	movups	XMMWORD PTR [r13+rax*8], xmm0
 	add	rdx, 8
 	movsd	xmm0, QWORD PTR $T28[rbp-137]
 	movsd	QWORD PTR [r13+rax*8+16], xmm0
-	jmp	$LN175@ccexec_edi
+	jmp	$LN169@ccexec_edi
 $LN6@ccexec_edi:
 ; Line 17
 	mov	r9, QWORD PTR value$[rbp-137]
@@ -7978,7 +8024,7 @@ $LN6@ccexec_edi:
 	mov	edx, 24
 	lea	r8d, QWORD PTR [rdx-32]
 	call	ccdlb_tblset
-; Line 304
+; Line 300
 	mov	rdx, QWORD PTR [r14+16]
 	mov	r9, r13
 	mov	rcx, QWORD PTR exec$[rbp-137]
@@ -7986,10 +8032,10 @@ $LN6@ccexec_edi:
 	lea	r8, QWORD PTR [rax+rax*2]
 	shl	r8, 3
 	add	r8, QWORD PTR [rdi+24]
-; Line 304
+; Line 300
 	call	ccexec_invoke
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 559
+; Line 560
 	test	r13, r13
 	cmove	r15, rsi
 	mov	rcx, r15
@@ -7997,48 +8043,48 @@ $LN6@ccexec_edi:
 	mov	r15, QWORD PTR [rsp+176]
 	mov	r13, QWORD PTR [rsp+184]
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 310
+; Line 306
 	jmp	SHORT $LN29@ccexec_edi
 $LN24@ccexec_edi:
-; Line 123
+; Line 119
 	mov	rax, QWORD PTR [r14+16]
 	mov	QWORD PTR [rdi+8], rax
-; Line 319
-	jmp	SHORT $LN176@ccexec_edi
+; Line 315
+	jmp	SHORT $LN170@ccexec_edi
 $LN25@ccexec_edi:
-; Line 324
+; Line 320
 	mov	r8, QWORD PTR [r14+16]
 	lea	rcx, QWORD PTR $T19[rbp-137]
 	mov	rdx, rdi
 	call	ccstack_yield_rvalue
 	movsd	xmm1, QWORD PTR [rax+16]
 	movsd	QWORD PTR rval$5[rbp-121], xmm1
-; Line 327
+; Line 323
 	cmp	DWORD PTR rval$5[rbp-121], esi
 	je	SHORT $LN26@ccexec_edi
-; Line 328
+; Line 324
 	mov	rax, QWORD PTR [r14+24]
 	test	rax, rax
 	je	SHORT $LN29@ccexec_edi
-; Line 123
+; Line 119
 	mov	QWORD PTR [rdi+8], rax
-; Line 329
-	jmp	SHORT $LN176@ccexec_edi
+; Line 325
+	jmp	SHORT $LN170@ccexec_edi
 $LN26@ccexec_edi:
-; Line 331
+; Line 327
 	mov	rcx, QWORD PTR [r14+32]
 	test	rcx, rcx
 	je	SHORT $LN29@ccexec_edi
-; Line 123
+; Line 119
 	mov	QWORD PTR [rdi+8], rcx
-$LN176@ccexec_edi:
-; Line 336
+$LN170@ccexec_edi:
+; Line 332
 	mov	DWORD PTR [rdi+16], esi
 $LN29@ccexec_edi:
 	mov	eax, 1
 $LN1@ccexec_edi:
 	mov	rbx, QWORD PTR [rsp+248]
-; Line 337
+; Line 333
 	add	rsp, 192				; 000000c0H
 	pop	r14
 	pop	r12
@@ -8046,33 +8092,34 @@ $LN1@ccexec_edi:
 	pop	rsi
 	pop	rbp
 	ret	0
-$LN178@ccexec_edi:
-; Line 161
+$LN172@ccexec_edi:
+; Line 157
 	lea	rcx, OFFSET FLAT:?$TSS0@?1??ccexec_edict@@9@4HA
 	call	_Init_thread_header
 	cmp	DWORD PTR ?$TSS0@?1??ccexec_edict@@9@4HA, -1
-	jne	$LN2@ccexec_edi
+	jne	$LN165@ccexec_edi
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_03GPCJKLEN@zro@
 	mov	DWORD PTR $T14[rbp-129], 1
 	mov	QWORD PTR $T14[rbp-137], rax
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 161
+; Line 157
 	lea	rcx, OFFSET FLAT:?$TSS0@?1??ccexec_edict@@9@4HA
 	movups	xmm0, XMMWORD PTR $T14[rbp-137]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	QWORD PTR $T14[rbp-121], rsi
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 161
+; Line 157
 	movsd	xmm1, QWORD PTR $T14[rbp-121]
 	movups	XMMWORD PTR ?zro@?1??ccexec_edict@@9@4Uccexec_value_t@@A, xmm0
 	movsd	QWORD PTR ?zro@?1??ccexec_edict@@9@4Uccexec_value_t@@A+16, xmm1
 	call	_Init_thread_footer
-	jmp	$LN2@ccexec_edi
-$LN170@ccexec_edi:
-; Line 337
+	jmp	$LN165@ccexec_edi
+	npad	2
+$LN163@ccexec_edi:
+; Line 333
 	DD	$LN9@ccexec_edi
 	DD	$LN8@ccexec_edi
 	DD	$LN10@ccexec_edi
@@ -8087,17 +8134,17 @@ $LN170@ccexec_edi:
 	DD	$LN24@ccexec_edi
 	DD	$LN22@ccexec_edi
 	DD	$LN21@ccexec_edi
-$LN169@ccexec_edi:
-	DD	$LN135@ccexec_edi
-	DD	$LN136@ccexec_edi
-	DD	$LN138@ccexec_edi
-	DD	$LN137@ccexec_edi
+$LN162@ccexec_edi:
+	DD	$LN128@ccexec_edi
+	DD	$LN129@ccexec_edi
 	DD	$LN131@ccexec_edi
-	DD	$LN133@ccexec_edi
+	DD	$LN130@ccexec_edi
+	DD	$LN124@ccexec_edi
+	DD	$LN126@ccexec_edi
+	DD	$LN125@ccexec_edi
+	DD	$LN127@ccexec_edi
 	DD	$LN132@ccexec_edi
-	DD	$LN134@ccexec_edi
-	DD	$LN139@ccexec_edi
-$LN168@ccexec_edi:
+$LN161@ccexec_edi:
 	DB	0
 	DB	1
 	DB	8
@@ -8130,71 +8177,70 @@ _TEXT	ENDS
 ; Function compile flags: /Ogtpy
 ;	COMDAT ccexec_invoke
 _TEXT	SEGMENT
-tv557 = 32
-$T1 = 40
-$T2 = 64
-$T3 = 64
-stack$ = 88
-_e$ = 192
-tv551 = 200
-_p$ = 200
-_r$ = 208
-_i$ = 216
+tv585 = 32
+tv592 = 40
+$T1 = 48
+$T2 = 72
+$T3 = 72
+stack$ = 96
+exec$ = 192
+procd$ = 200
+r$ = 208
+i$ = 216
 ccexec_invoke PROC					; COMDAT
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 362
+; Line 358
 	mov	r11, rsp
 	mov	QWORD PTR [r11+24], r8
-	mov	QWORD PTR [r11+8], rcx
+	mov	QWORD PTR [r11+16], rdx
 	push	rbp
-	push	rdi
-	push	r14
+	push	rsi
+	push	r13
 	lea	rbp, QWORD PTR [r11-95]
 	sub	rsp, 160				; 000000a0H
-; Line 366
+; Line 362
 	mov	rax, QWORD PTR [rdx+8]
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 206
 	mov	r10d, DWORD PTR _tls_index
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 364
+; Line 360
 	add	r9, 16
-	mov	QWORD PTR [r11-32], rsi
-	xor	edi, edi
+	mov	QWORD PTR [r11-32], rdi
+	mov	r13, rcx
 	mov	QWORD PTR [r11-40], r12
-	mov	r12, rdx
-	mov	QWORD PTR [r11-48], r13
-	movups	XMMWORD PTR stack$[rbp-89], xmm0
+	xor	esi, esi
 	mov	QWORD PTR [r11-56], r15
+	movups	XMMWORD PTR stack$[rbp-89], xmm0
+	mov	QWORD PTR [r11+8], rbx
 	movups	XMMWORD PTR stack$[rbp-73], xmm0
-; Line 366
-	mov	r13, QWORD PTR [rax+48]
+; Line 362
+	mov	r12, QWORD PTR [rax+48]
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 206
 	mov	rax, QWORD PTR gs:88
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 364
-	mov	QWORD PTR tv551[rbp-89], r9
-	mov	QWORD PTR [r11+32], rbx
-; Line 372
-	mov	r15, QWORD PTR [r13+32]
+; Line 360
+	mov	QWORD PTR tv585[rbp-89], r9
+	mov	QWORD PTR [r11-48], r14
+; Line 368
+	mov	r15, QWORD PTR [r12+32]
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 206
-	lea	rsi, QWORD PTR [rax+r10*8]
-	mov	QWORD PTR tv557[rbp-89], rsi
-$LN77@ccexec_inv:
+	lea	rdi, QWORD PTR [rax+r10*8]
+	mov	QWORD PTR tv592[rbp-89], rdi
+$LN70@ccexec_inv:
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 372
-	mov	rcx, QWORD PTR [r13+32]
-	mov	edx, 8
-	mov	r14d, OFFSET FLAT:ccerr
+; Line 368
+	mov	rcx, QWORD PTR [r12+32]
+	mov	r10d, 8
 	test	rcx, rcx
 	je	SHORT $LN10@ccexec_inv
 	mov	rax, QWORD PTR [rcx-8]
 	jmp	SHORT $LN11@ccexec_inv
 $LN10@ccexec_inv:
-	mov	rax, rdi
+	mov	rax, rsi
 $LN11@ccexec_inv:
 	and	rax, -8
 	add	rax, rcx
@@ -8203,33 +8249,35 @@ $LN11@ccexec_inv:
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 205
 	mov	r9, QWORD PTR [r15]
-	lea	rcx, QWORD PTR [r12+16]
+	lea	rbx, QWORD PTR [rdx+16]
+	mov	rcx, rbx
 	mov	r8d, -8
+	mov	edx, r10d
 	call	ccdlb_tblget
-	mov	rdx, rax
+	mov	r14, rax
 ; Line 206
-	mov	ecx, r14d
-	mov	rax, QWORD PTR [rsi]
-	shl	rdx, 3
-	add	rdx, QWORD PTR [r12+16]
-	cmp	DWORD PTR [rcx+rax], edi
+	mov	ecx, OFFSET FLAT:ccerr
+	mov	rax, QWORD PTR [rdi]
+	shl	r14, 3
+	add	r14, QWORD PTR [rbx]
+	cmp	DWORD PTR [rcx+rax], esi
 	jne	SHORT $LN17@ccexec_inv
-	mov	r14, QWORD PTR [rdx]
+	mov	r14, QWORD PTR [r14]
 	jmp	SHORT $LN16@ccexec_inv
 $LN17@ccexec_inv:
 ; Line 207
-	mov	r14, rdi
+	mov	r14, rsi
 $LN16@ccexec_inv:
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 106
+; Line 101
 	mov	rax, QWORD PTR [r14+48]
-	mov	rsi, QWORD PTR [rax+16]
-; Line 342
-	mov	ecx, DWORD PTR [rsi+8]
+	mov	rdi, QWORD PTR [rax+16]
+; Line 338
+	mov	ecx, DWORD PTR [rdi+8]
 	cmp	ecx, 1
 	jne	$LN22@ccexec_inv
-; Line 345
-	mov	r8, QWORD PTR [rsi+24]
+; Line 341
+	mov	r8, QWORD PTR [rdi+24]
 ; Line 44
 	xor	eax, eax
 	mov	QWORD PTR $T1[rbp-73], rax
@@ -8258,7 +8306,7 @@ $LN32@ccexec_inv:
 	lea	rcx, QWORD PTR [rax+rax*2]
 	mov	rax, QWORD PTR stack$[rbp-65]
 ; Line 32
-	cmp	DWORD PTR [rax+rcx*8+8], edi
+	cmp	DWORD PTR [rax+rcx*8+8], esi
 	lea	rbx, QWORD PTR [rax+rcx*8]
 	jne	SHORT $LN40@ccexec_inv
 ; Line 33
@@ -8269,151 +8317,139 @@ $LN40@ccexec_inv:
 ; Line 52
 	movsd	xmm1, QWORD PTR [rbx+16]
 ; Line 55
-	jmp	SHORT $LN76@ccexec_inv
+	jmp	SHORT $LN69@ccexec_inv
 $LN35@ccexec_inv:
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	rax, QWORD PTR [r8+56]
 	mov	QWORD PTR $T2[rbp-73], rax
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_0P@CGIBHDEL@constant?9value@
 ; File W:\cpp\void\ktt-c\ccexec.c
 ; Line 57
 	movsd	xmm1, QWORD PTR $T2[rbp-73]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	mov	QWORD PTR $T2[rbp-89], rax
 	mov	DWORD PTR $T2[rbp-81], 1
-$LN76@ccexec_inv:
+$LN69@ccexec_inv:
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 347
+; Line 343
 	movsd	QWORD PTR $T1[rbp-73], xmm1
 $LN27@ccexec_inv:
-	mov	rdx, QWORD PTR [rsi+16]
+	mov	rdx, QWORD PTR [rdi+16]
 	lea	rcx, QWORD PTR stack$[rbp-89]
 	call	ccexec_sizeof
-; Line 348
+; Line 344
 	imul	eax, DWORD PTR $T1[rbp-73]
-; Line 350
+; Line 346
 	jmp	SHORT $LN24@ccexec_inv
 $LN22@ccexec_inv:
-; Line 352
+; Line 348
 	test	ecx, ecx
-	mov	eax, edi
+	mov	eax, esi
 	mov	ecx, 8
 	cmove	eax, ecx
 $LN24@ccexec_inv:
-; Line 109
-	mov	ebx, eax
-; File W:\cpp\void\ktt-c\cc.c
-; Line 553
-	test	eax, eax
-	je	SHORT $LN47@ccexec_inv
-; Line 557
-	mov	ecx, ebx
-	call	malloc
-	mov	rsi, rax
-	jmp	SHORT $LN44@ccexec_inv
-$LN47@ccexec_inv:
-; Line 559
-	xor	ecx, ecx
-	call	free
-; Line 560
-	mov	rsi, rdi
-$LN44@ccexec_inv:
-; File W:\cpp\void\ktt-c\ccexec.c
-; Line 110
-	mov	r8, rbx
+; Line 104
+	mov	rdi, QWORD PTR [r13+8]
+; Line 105
 	xor	edx, edx
-	mov	rcx, rsi
+	add	rdi, QWORD PTR [r13+24]
+	mov	rcx, rdi
+	mov	r8d, eax
+	mov	ebx, eax
 	call	memset
+; Line 106
+	add	QWORD PTR [r13+24], rbx
 ; Line 17
-	mov	edx, 24
 	lea	rcx, QWORD PTR stack$[rbp-65]
+	mov	edx, 24
 	mov	r9, r14
 	lea	r8d, QWORD PTR [rdx-32]
 	call	ccdlb_tblset
+; Line 374
+	mov	r8, QWORD PTR tv585[rbp-89]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 56
+; Line 60
 	lea	rdx, OFFSET FLAT:??_C@_0M@KKIOMGKI@local_alloc@
-	mov	QWORD PTR $T3[rbp-73], rsi
+	mov	QWORD PTR $T3[rbp-89], rdx
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 114
-	movsd	xmm1, QWORD PTR $T3[rbp-73]
-; Line 372
-	mov	rsi, QWORD PTR tv557[rbp-89]
+; Line 368
+	mov	rdx, QWORD PTR procd$[rbp-89]
 ; Line 17
 	lea	rcx, QWORD PTR [rax+rax*2]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 56
-	mov	QWORD PTR $T3[rbp-89], rdx
+; Line 59
+	mov	QWORD PTR $T3[rbp-73], rdi
 ; File W:\cpp\void\ktt-c\ccexec.c
 ; Line 17
 	mov	rax, QWORD PTR stack$[rbp-65]
-; Line 378
-	mov	rdx, QWORD PTR tv551[rbp-89]
+; Line 110
+	movsd	xmm1, QWORD PTR $T3[rbp-73]
+; Line 368
+	mov	rdi, QWORD PTR tv592[rbp-89]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 54
+; Line 58
 	mov	DWORD PTR $T3[rbp-81], 2
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 114
+; Line 110
 	movups	xmm0, XMMWORD PTR $T3[rbp-89]
 	movups	XMMWORD PTR [rax+rcx*8], xmm0
 	movsd	QWORD PTR [rax+rcx*8+16], xmm1
-; Line 378
+; Line 374
 	mov	rcx, QWORD PTR [rax+rcx*8+16]
-	mov	eax, DWORD PTR [rdx]
-; Line 379
-	add	rdx, 24
-	mov	QWORD PTR tv551[rbp-89], rdx
+	mov	eax, DWORD PTR [r8]
+; Line 375
+	add	r8, 24
+	mov	QWORD PTR tv585[rbp-89], r8
 	add	r15, 8
 	mov	DWORD PTR [rcx], eax
-	jmp	$LN77@ccexec_inv
+	jmp	$LN70@ccexec_inv
 $LN3@ccexec_inv:
-; Line 123
-	mov	rdx, QWORD PTR [r12+32]
-; Line 124
-	mov	ecx, edi
+; Line 119
+	mov	rdx, QWORD PTR [rdx+32]
+; Line 120
+	mov	ecx, esi
 	mov	r15, QWORD PTR [rsp+128]
-	mov	r13, QWORD PTR [rsp+136]
 	mov	r12, QWORD PTR [rsp+144]
-	mov	rsi, QWORD PTR [rsp+152]
+	mov	rdi, QWORD PTR [rsp+152]
 	mov	QWORD PTR stack$[rbp-81], rdx
 	mov	DWORD PTR stack$[rbp-73], ecx
 	npad	4
 $LL5@ccexec_inv:
-; Line 385
+; Line 381
 	mov	rdx, QWORD PTR [rdx+8]
 	test	rdx, rdx
 	je	SHORT $LN12@ccexec_inv
 	mov	rax, QWORD PTR [rdx-8]
 	jmp	SHORT $LN13@ccexec_inv
 $LN12@ccexec_inv:
-	mov	rax, rdi
+	mov	rax, rsi
 $LN13@ccexec_inv:
 	shr	rax, 3
 	cmp	ecx, eax
 	jge	$LN6@ccexec_inv
-; Line 387
+; Line 383
 	movsxd	rax, ecx
-; Line 388
+; Line 384
 	inc	ecx
 	lea	rbx, QWORD PTR [rdx+rax*8]
 	mov	DWORD PTR stack$[rbp-73], ecx
-; Line 390
+; Line 386
 	mov	r8, QWORD PTR [rbx]
 	lea	rdx, QWORD PTR stack$[rbp-89]
-	mov	rcx, QWORD PTR _e$[rbp-89]
+	mov	rcx, r13
 	call	ccexec_edict
 	test	eax, eax
-	je	SHORT $LN75@ccexec_inv
+	je	SHORT $LN68@ccexec_inv
 	mov	ecx, DWORD PTR stack$[rbp-73]
 	mov	rdx, QWORD PTR stack$[rbp-81]
 	jmp	SHORT $LL5@ccexec_inv
-$LN75@ccexec_inv:
-; Line 393
+$LN68@ccexec_inv:
+; Line 389
 	mov	r9, QWORD PTR [rbx]
-; Line 395
+; Line 391
 	mov	rax, QWORD PTR [r9+48]
 	cmp	DWORD PTR [rax], 13
 	jne	SHORT $LN8@ccexec_inv
@@ -8425,46 +8461,47 @@ $LN75@ccexec_inv:
 	lea	r8, QWORD PTR [rax+rax*2]
 	mov	rax, QWORD PTR stack$[rbp-65]
 ; Line 32
-	cmp	DWORD PTR [rax+r8*8+8], edi
+	cmp	DWORD PTR [rax+r8*8+8], esi
 	lea	rbx, QWORD PTR [rax+r8*8]
-	jne	SHORT $LN63@ccexec_inv
+	jne	SHORT $LN56@ccexec_inv
 ; Line 33
 	lea	rdx, OFFSET FLAT:??_C@_0EN@PNPBLILH@value?5kind?5is?5invalid?0?5did?5you?5@
 	lea	rcx, OFFSET FLAT:??_C@_03JIDPIAJI@err@
 	call	cctrace_
-$LN63@ccexec_inv:
-; Line 396
-	mov	r14, QWORD PTR _r$[rbp-89]
+$LN56@ccexec_inv:
+; Line 392
+	mov	r14, QWORD PTR r$[rbp-89]
 ; Line 37
 	movups	xmm1, XMMWORD PTR [rbx]
 	movsd	xmm0, QWORD PTR [rbx+16]
-; Line 396
+; Line 392
 	movups	XMMWORD PTR [r14], xmm1
 	movsd	QWORD PTR [r14+16], xmm0
 $LN8@ccexec_inv:
-; Line 397
+; Line 393
 	mov	eax, 1
 	jmp	SHORT $LN1@ccexec_inv
 $LN6@ccexec_inv:
-; Line 401
+; Line 397
 	mov	rax, QWORD PTR stack$[rbp-65]
 	test	rax, rax
 	je	SHORT $LN14@ccexec_inv
-	lea	rdi, QWORD PTR [rax-40]
+	lea	rsi, QWORD PTR [rax-40]
 $LN14@ccexec_inv:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 559
-	mov	rcx, rdi
+; Line 560
+	mov	rcx, rsi
 	call	free
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 403
+; Line 399
 	xor	eax, eax
 $LN1@ccexec_inv:
-	mov	rbx, QWORD PTR [rsp+216]
-; Line 404
+; Line 400
+	mov	r14, QWORD PTR [rsp+136]
+	mov	rbx, QWORD PTR [rsp+192]
 	add	rsp, 160				; 000000a0H
-	pop	r14
-	pop	rdi
+	pop	r13
+	pop	rsi
 	pop	rbp
 	ret	0
 ccexec_invoke ENDP
@@ -8478,7 +8515,7 @@ lval$ = 24
 rval$ = 32
 ccexec_edict_arith PROC					; COMDAT
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 131
+; Line 127
 	add	edx, -93				; ffffffffffffffa3H
 	cmp	edx, 26
 	ja	$LN12@ccexec_edi
@@ -8489,15 +8526,15 @@ ccexec_edict_arith PROC					; COMDAT
 	add	rdx, r10
 	jmp	rdx
 $LN4@ccexec_edi:
-; Line 133
+; Line 129
 	mov	rax, QWORD PTR [r9+16]
 	xor	edx, edx
 	cmp	QWORD PTR [r8+16], rax
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01PPODPGHN@?$DO@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 151
+; Line 147
 	mov	QWORD PTR [rcx], rax
 	mov	rax, rcx
 	setg	dl
@@ -8505,15 +8542,15 @@ $LN4@ccexec_edi:
 	mov	QWORD PTR [rcx+16], rdx
 	ret	0
 $LN5@ccexec_edi:
-; Line 135
+; Line 131
 	mov	rax, QWORD PTR [r9+16]
 	xor	edx, edx
 	cmp	QWORD PTR [r8+16], rax
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_02EEKDKGMJ@?$DO?$DN@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 151
+; Line 147
 	mov	QWORD PTR [rcx], rax
 	mov	rax, rcx
 	setge	dl
@@ -8521,15 +8558,15 @@ $LN5@ccexec_edi:
 	mov	QWORD PTR [rcx+16], rdx
 	ret	0
 $LN6@ccexec_edi:
-; Line 137
+; Line 133
 	mov	rax, QWORD PTR [r9+16]
 	xor	edx, edx
 	cmp	QWORD PTR [r8+16], rax
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01MNNFJEPP@?$DM@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 151
+; Line 147
 	mov	QWORD PTR [rcx], rax
 	mov	rax, rcx
 	setl	dl
@@ -8537,15 +8574,15 @@ $LN6@ccexec_edi:
 	mov	QWORD PTR [rcx+16], rdx
 	ret	0
 $LN7@ccexec_edi:
-; Line 139
+; Line 135
 	mov	rax, QWORD PTR [r9+16]
 	xor	edx, edx
 	cmp	QWORD PTR [r8+16], rax
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_02EHCHHCKH@?$DM?$DN@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 151
+; Line 147
 	mov	QWORD PTR [rcx], rax
 	mov	rax, rcx
 	setle	dl
@@ -8553,80 +8590,80 @@ $LN7@ccexec_edi:
 	mov	QWORD PTR [rcx+16], rdx
 	ret	0
 $LN8@ccexec_edi:
-; Line 141
+; Line 137
 	mov	rax, QWORD PTR [r8+16]
 	imul	rax, QWORD PTR [r9+16]
-; Line 151
+; Line 147
 	mov	DWORD PTR [rcx+8], 1
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	QWORD PTR [rcx+16], rax
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01NBENCBCI@?$CK@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 151
+; Line 147
 	mov	QWORD PTR [rcx], rax
 	mov	rax, rcx
 	ret	0
 $LN9@ccexec_edi:
-; Line 143
+; Line 139
 	mov	rax, QWORD PTR [r8+16]
 	cdq
-; Line 151
+; Line 147
 	mov	DWORD PTR [rcx+8], 1
 	idiv	QWORD PTR [r9+16]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	QWORD PTR [rcx+16], rax
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01KMDKNFGN@?1@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 151
+; Line 147
 	mov	QWORD PTR [rcx], rax
 	mov	rax, rcx
 	ret	0
 $LN10@ccexec_edi:
-; Line 145
+; Line 141
 	mov	rax, QWORD PTR [r8+16]
 	sub	rax, QWORD PTR [r9+16]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	QWORD PTR [rcx+16], rax
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01JOAMLHOP@?9@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 151
+; Line 147
 	mov	QWORD PTR [rcx], rax
 	mov	rax, rcx
 	mov	DWORD PTR [rcx+8], 1
 	ret	0
 $LN11@ccexec_edi:
-; Line 147
+; Line 143
 	mov	rax, QWORD PTR [r8+16]
 	add	rax, QWORD PTR [r9+16]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	QWORD PTR [rcx+16], rax
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_01MIFGBAGJ@?$CL@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 151
+; Line 147
 	mov	QWORD PTR [rcx], rax
 	mov	rax, rcx
 	mov	DWORD PTR [rcx+8], 1
 	ret	0
 $LN12@ccexec_edi:
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_0P@NOFDAMLB@internal?9error@
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 151
+; Line 147
 	mov	DWORD PTR [rcx+8], 1
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	xor	edx, edx
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 151
+; Line 147
 	mov	QWORD PTR [rcx], rax
 	mov	rax, rcx
 	mov	QWORD PTR [rcx+16], rdx
@@ -8679,11 +8716,11 @@ stack$ = 8
 block$ = 16
 ccexec_enter PROC					; COMDAT
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 123
+; Line 119
 	mov	QWORD PTR [rcx+8], rdx
-; Line 124
+; Line 120
 	mov	DWORD PTR [rcx+16], 0
-; Line 125
+; Line 121
 	ret	0
 ccexec_enter ENDP
 _TEXT	ENDS
@@ -8691,86 +8728,79 @@ _TEXT	ENDS
 ;	COMDAT ccstack_local_alloc
 _TEXT	SEGMENT
 $T1 = 32
-stack$ = 80
-value$ = 88
+exec$ = 80
+stack$ = 88
+value$ = 96
 ccstack_local_alloc PROC				; COMDAT
 ; File W:\cpp\void\ktt-c\ccexec.c
 ; Line 90
 	mov	QWORD PTR [rsp+8], rbx
 	mov	QWORD PTR [rsp+16], rbp
 	mov	QWORD PTR [rsp+24], rsi
-	push	rdi
+	mov	QWORD PTR [rsp+32], rdi
+	push	r14
 	sub	rsp, 64					; 00000040H
 	mov	rsi, rdx
-	mov	rbp, rcx
-; Line 98
-	mov	rdx, QWORD PTR [rdx+48]
-; Line 106
+	mov	rdi, rcx
+; Line 95
+	mov	rdx, QWORD PTR [r8+48]
+; Line 101
+	mov	rcx, rsi
+	mov	rbp, r8
 	mov	rdx, QWORD PTR [rdx+16]
 	call	ccexec_sizeof
-	mov	ebx, eax
-; File W:\cpp\void\ktt-c\cc.c
-; Line 553
-	test	eax, eax
-	je	SHORT $LN8@ccstack_lo
-; Line 557
-	mov	ecx, ebx
-	call	malloc
-	mov	rdi, rax
-	jmp	SHORT $LN5@ccstack_lo
-$LN8@ccstack_lo:
-; Line 559
-	xor	ecx, ecx
-	call	free
-; Line 560
-	xor	edi, edi
-$LN5@ccstack_lo:
-; File W:\cpp\void\ktt-c\ccexec.c
-; Line 110
-	mov	r8, rbx
+; Line 104
+	mov	r14, QWORD PTR [rdi+8]
+; Line 105
 	xor	edx, edx
-	mov	rcx, rdi
+	add	r14, QWORD PTR [rdi+24]
+	mov	rcx, r14
+	mov	r8d, eax
+	mov	ebx, eax
 	call	memset
+; Line 106
+	add	QWORD PTR [rdi+24], rbx
 ; Line 17
+	lea	rcx, QWORD PTR [rsi+24]
 	mov	edx, 24
-	lea	rcx, QWORD PTR [rbp+24]
-	mov	r9, rsi
+	mov	r9, rbp
 	lea	r8d, QWORD PTR [rdx-32]
 	call	ccdlb_tblset
-; Line 118
+; Line 114
 	mov	rbx, QWORD PTR [rsp+80]
-	mov	rsi, QWORD PTR [rsp+96]
-; File W:\cpp\void\ktt-c\ccexec.h
-; Line 54
-	mov	DWORD PTR $T1[rsp+8], 2
-; File W:\cpp\void\ktt-c\ccexec.c
+	mov	rbp, QWORD PTR [rsp+88]
+	mov	rdi, QWORD PTR [rsp+104]
 ; Line 17
 	lea	rcx, QWORD PTR [rax+rax*2]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 55
-	mov	QWORD PTR $T1[rsp+16], rdi
+; Line 58
+	mov	DWORD PTR $T1[rsp+8], 2
 ; File W:\cpp\void\ktt-c\ccexec.c
 ; Line 17
-	mov	rax, QWORD PTR [rbp+24]
+	mov	rax, QWORD PTR [rsi+24]
 ; Line 114
-	movsd	xmm1, QWORD PTR $T1[rsp+16]
-; Line 118
-	mov	rbp, QWORD PTR [rsp+88]
+	mov	rsi, QWORD PTR [rsp+96]
 ; Line 17
 	shl	rcx, 3
 	add	rax, rcx
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 56
+; Line 59
+	mov	QWORD PTR $T1[rsp+16], r14
+; File W:\cpp\void\ktt-c\ccexec.c
+; Line 110
+	movsd	xmm1, QWORD PTR $T1[rsp+16]
+; File W:\cpp\void\ktt-c\ccexec.h
+; Line 60
 	lea	rcx, OFFSET FLAT:??_C@_0M@KKIOMGKI@local_alloc@
 	mov	QWORD PTR $T1[rsp], rcx
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 114
+; Line 110
 	movups	xmm0, XMMWORD PTR $T1[rsp]
 	movups	XMMWORD PTR [rax], xmm0
 	movsd	QWORD PTR [rax+16], xmm1
-; Line 118
+; Line 114
 	add	rsp, 64					; 00000040H
-	pop	rdi
+	pop	r14
 	ret	0
 ccstack_local_alloc ENDP
 _TEXT	ENDS
@@ -8906,16 +8936,16 @@ $LN15@ccstack_yi:
 	ret	0
 $LN10@ccstack_yi:
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 46
+; Line 50
 	mov	rax, QWORD PTR [r8+56]
 	mov	QWORD PTR $T1[rsp+16], rax
-; Line 47
+; Line 51
 	lea	rax, OFFSET FLAT:??_C@_0P@CGIBHDEL@constant?9value@
 ; File W:\cpp\void\ktt-c\ccexec.c
 ; Line 57
 	movsd	xmm1, QWORD PTR $T1[rsp+16]
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 47
+; Line 51
 	mov	QWORD PTR $T1[rsp], rax
 	mov	DWORD PTR $T1[rsp+8], 1
 ; File W:\cpp\void\ktt-c\ccexec.c
@@ -9013,30 +9043,30 @@ _s$ = 96
 _t$ = 104
 ccexec_sizeof PROC					; COMDAT
 ; File W:\cpp\void\ktt-c\ccexec.c
-; Line 341
+; Line 337
 	mov	QWORD PTR [rsp+8], rbx
 	push	rdi
 	sub	rsp, 80					; 00000050H
-; Line 342
+; Line 338
 	mov	r8d, DWORD PTR [rdx+8]
 	mov	rbx, rdx
 	mov	rdi, rcx
 	cmp	r8d, 1
 	jne	SHORT $LN2@ccexec_siz
-; Line 345
+; Line 341
 	mov	r8, QWORD PTR [rdx+24]
 	mov	rdx, rcx
 	lea	rcx, QWORD PTR $T2[rsp]
 	call	ccstack_yield_rvalue
-; Line 347
+; Line 343
 	mov	rdx, QWORD PTR [rbx+16]
 	mov	rcx, rdi
 	movsd	xmm1, QWORD PTR [rax+16]
 	movsd	QWORD PTR rval$1[rsp+16], xmm1
 	call	ccexec_sizeof
-; Line 348
+; Line 344
 	imul	eax, DWORD PTR rval$1[rsp+16]
-; Line 357
+; Line 353
 	mov	rbx, QWORD PTR [rsp+96]
 	add	rsp, 80					; 00000050H
 	pop	rdi
@@ -9218,13 +9248,13 @@ $LN20@ccemit_ext:
 ; Line 50
 	mov	rbx, QWORD PTR [rsi+24]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 47
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -9291,13 +9321,13 @@ $LN16@ccemit_ext:
 ; Line 332
 	mov	rbx, QWORD PTR [r15+40]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 332
 	mov	rdi, QWORD PTR [r15+32]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 103
@@ -9406,13 +9436,13 @@ $LN10@ccemit_fun:
 ; Line 50
 	mov	rbx, QWORD PTR [rsi+24]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 47
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 54
@@ -9478,13 +9508,13 @@ $LN6@ccemit_fun:
 ; Line 332
 	mov	rbx, QWORD PTR [r15+40]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 332
 	mov	rdi, QWORD PTR [r15+32]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 103
@@ -9542,13 +9572,13 @@ ccemit_param PROC					; COMDAT
 ; Line 50
 	mov	rbx, QWORD PTR [rbp+24]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 47
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -9641,13 +9671,13 @@ $LN7@ccemit_dec:
 ; Line 50
 	mov	rbx, QWORD PTR [rsi+24]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 47
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -9688,13 +9718,13 @@ $LN7@ccemit_dec:
 	mov	rcx, r12
 	call	ccemit_rvalue
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 198
 	mov	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 103
@@ -9768,13 +9798,13 @@ ccemit_decl_name PROC					; COMDAT
 ; Line 50
 	mov	rbx, QWORD PTR [rsi+24]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 47
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -9815,13 +9845,13 @@ ccemit_decl_name PROC					; COMDAT
 	mov	rcx, r15
 	call	ccemit_rvalue
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	lea	ecx, QWORD PTR [r12+40]
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 198
 	mov	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 103
@@ -9969,13 +9999,13 @@ $LN30@ccemit_tre:
 ; Line 50
 	mov	rdi, QWORD PTR [rbp+24]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 47
 	mov	rsi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 54
@@ -10013,13 +10043,13 @@ $LN30@ccemit_tre:
 	mov	rcx, r13
 	call	ccemit_rvalue
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 198
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 103
@@ -10089,13 +10119,13 @@ $LN4@ccemit_tre:
 	mov	r9, QWORD PTR [r9+80]
 	call	ccemit_rvalue
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 239
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -10177,20 +10207,20 @@ $LN14@ccemit_tre:
 	mov	r9, QWORD PTR [r9+64]
 	call	ccemit_tree
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 271
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
 	xor	ebx, ebx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	rdx, rax
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 273
@@ -10276,13 +10306,13 @@ $LN117@ccemit_tre:
 ; Line 291
 	call	ccemit_rvalue
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 291
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 	mov	rdx, rax
@@ -10317,7 +10347,7 @@ $LN117@ccemit_tre:
 ; Line 294
 	call	ccemit_tree
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -10542,13 +10572,13 @@ $LN3@ccemit_inv:
 ; Line 120
 	mov	rbx, QWORD PTR call$1$[rsp]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 120
 	mov	rbx, QWORD PTR [rbx+48]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 103
@@ -10646,13 +10676,13 @@ ccemit_const_i32 PROC					; COMDAT
 	push	rbx
 	sub	rsp, 32					; 00000020H
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 64					; 00000040H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 77
 	mov	rbx, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 66
@@ -10688,14 +10718,14 @@ ccemit_constant PROC					; COMDAT
 	push	rdi
 	sub	rsp, 32					; 00000020H
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 64					; 00000040H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 63
 	mov	rbx, r8
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 66
@@ -10812,7 +10842,7 @@ cctree_to_type PROC					; COMDAT
 	cmp	eax, 4
 	jne	SHORT $LN2@cctree_to_
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	lea	ecx, QWORD PTR [rax+28]
 	mov	QWORD PTR [rsp+64], rbx
 	call	malloc
@@ -10854,7 +10884,7 @@ $LN2@cctree_to_:
 	test	eax, eax
 	jne	SHORT $LN25@cctree_to_
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	lea	ecx, QWORD PTR [rax+32]
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.h
@@ -10972,7 +11002,7 @@ $LN4@ccemit_rva:
 ; Line 152
 	movsxd	rbx, DWORD PTR [r9+96]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 64					; 00000040H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.c
@@ -11039,13 +11069,13 @@ ccemit_lvalue PROC					; COMDAT
 	mov	rdi, rax
 	call	ccemit_rvalue
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.c
 ; Line 137
 	mov	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 103
@@ -11108,14 +11138,14 @@ ccread_translation_unit PROC				; COMDAT
 	sub	rsp, 32					; 00000020H
 	mov	rbp, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
 	mov	ecx, DWORD PTR _tls_index
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	r14, rax
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\ccdlb.h
@@ -11514,13 +11544,13 @@ $LN139@ccread_sta:
 	mov	rcx, rsi
 	call	ccread_expression
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 1126
 	mov	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rdi, rax
 	xorps	xmm0, xmm0
@@ -11611,7 +11641,7 @@ $LN18@ccread_sta:
 	call	cctrace_
 $LN20@ccread_sta:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	mov	rdi, rax
@@ -11661,7 +11691,7 @@ $LN14@ccread_sta:
 	call	cctrace_
 $LN23@ccread_sta:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	mov	rdi, rax
@@ -11850,7 +11880,7 @@ $LN27@ccread_sta:
 	mov	rbx, rax
 $LN42@ccread_sta:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	mov	rcx, rax
@@ -12103,7 +12133,7 @@ $LN15@ccread_blo:
 	test	r9, r9
 	je	$LN54@ccread_blo
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	mov	QWORD PTR [rsp+48], rdi
 	call	malloc
@@ -13098,7 +13128,7 @@ $LN157@ccread_str:
 	call	cctrace_
 $LN8@ccread_str:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	xorps	xmm0, xmm0
@@ -13912,13 +13942,13 @@ $LN14@ccread_dec:
 ; Line 774
 	call	ccread_decl_name_modifier_maybe
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 774
 	mov	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -14092,7 +14122,7 @@ $LN4@ccread_dir:
 	mov	rcx, rbx
 	call	ccread_direct_decl_name_modifier
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 559
+; Line 560
 	mov	rcx, rax
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 757
@@ -14117,7 +14147,7 @@ $LN4@ccread_dir:
 	movsd	xmm1, QWORD PTR [rax+144]
 	movsd	QWORD PTR [rdi+144], xmm1
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 559
+; Line 560
 	call	free
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 759
@@ -14145,13 +14175,13 @@ $LN9@ccread_dir:
 	mov	rdi, rax
 	call	ccread_direct_decl_name_modifier
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 763
 	mov	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -14196,13 +14226,13 @@ $LN5@ccread_dir:
 ; Line 766
 	call	ccread_direct_decl_name_modifier
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 766
 	mov	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -14497,7 +14527,7 @@ $LN5@ccread_dir:
 	call	cctrace_
 $LN6@ccread_dir:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	xorps	xmm0, xmm0
@@ -14602,13 +14632,13 @@ $LN8@ccread_dir:
 	mov	rcx, rbx
 	call	ccread_direct_decl_name_modifier
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 740
 	mov	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -15295,13 +15325,13 @@ $LN12@ccread_log:
 	mov	rcx, rsi
 	call	ccread_logical_and
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 528
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -15408,13 +15438,13 @@ $LN12@ccread_log:
 	mov	rcx, rsi
 	call	ccread_bitwise_or
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 510
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -15521,13 +15551,13 @@ $LN12@ccread_bit:
 	mov	rcx, rsi
 	call	ccread_bitwise_xor
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 492
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -15634,13 +15664,13 @@ $LN12@ccread_bit:
 	mov	rcx, rsi
 	call	ccread_bitwise_and
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 474
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -15747,13 +15777,13 @@ $LN12@ccread_bit:
 	mov	rcx, rsi
 	call	ccread_equality
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 456
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -15885,13 +15915,13 @@ $LN17@ccread_equ:
 	mov	rcx, rsi
 	call	ccread_shift
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 417
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -16066,13 +16096,13 @@ $LN13@ccread_rel:
 	mov	rcx, rsi
 	call	ccread_shift
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 417
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -16188,13 +16218,13 @@ $LN13@ccread_shi:
 	mov	rcx, rsi
 	call	ccread_additive
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 392
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -16310,13 +16340,13 @@ $LN13@ccread_add:
 	mov	rcx, rsi
 	call	ccread_multiplicative
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 372
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -16440,13 +16470,13 @@ $LN13@ccread_mul:
 	mov	rcx, rsi
 	call	ccread_unary
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 351
 	mov	rdi, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -16581,13 +16611,13 @@ $LN41@ccread_una:
 	movups	XMMWORD PTR clo$2$[rsp], xmm0
 	call	ccread_cast
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 277
 	mov	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -16972,7 +17002,7 @@ $LN241@ccread_pos:
 	jmp	$LL35@ccread_pos
 $LN36@ccread_pos:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 559
+; Line 560
 	mov	rcx, rbp
 	call	free
 ; File W:\cpp\void\ktt-c\ccread.c
@@ -17017,13 +17047,13 @@ $LN4@ccread_pos:
 ; Line 244
 	mov	r14, QWORD PTR result$6$[rsp]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\ccread.c
 ; Line 244
 	mov	rbx, QWORD PTR [r14+24]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -17128,7 +17158,7 @@ $LN7@ccread_pos:
 ; Line 250
 	mov	rbx, QWORD PTR [r14+24]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	xorps	xmm0, xmm0
@@ -17333,7 +17363,7 @@ $LN42@ccread_pri:
 	mov	rbx, r14
 $LN36@ccread_pri:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	mov	rcx, rax
@@ -17378,7 +17408,7 @@ $LN23@ccread_pri:
 	mov	rbx, r14
 $LN17@ccread_pri:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	xorps	xmm0, xmm0
@@ -17454,7 +17484,7 @@ $LN145@ccread_pri:
 	call	cctrace_
 $LN10@ccread_pri:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	xorps	xmm0, xmm0
@@ -17541,7 +17571,7 @@ $LN14@ccread_lit:
 	je	SHORT $LN5@ccread_lit
 	mov	rbx, QWORD PTR [rbx+24]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	xorps	xmm0, xmm0
@@ -17899,7 +17929,7 @@ $LN123@ccread_arg:
 	jmp	$LL4@ccread_arg
 $LN5@ccread_arg:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 559
+; Line 560
 	mov	rcx, rsi
 	call	free
 $LN125@ccread_arg:
@@ -18232,18 +18262,18 @@ $LN9@ccread_inc:
 ; Line 59
 	mov	ecx, esi
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 553
+; Line 554
 	test	esi, esi
 	je	SHORT $LN25@ccread_inc
-; Line 557
+; Line 558
 	call	malloc
 	mov	rdi, rax
 	jmp	SHORT $LN22@ccread_inc
 $LN25@ccread_inc:
-; Line 559
+; Line 560
 	xor	ecx, ecx
 	call	free
-; Line 560
+; Line 561
 	mov	rdi, rbp
 $LN22@ccread_inc:
 ; File W:\cpp\void\ktt-c\ccfio.c
@@ -18729,7 +18759,7 @@ ccread_uninit PROC					; COMDAT
 ; Line 18
 	mov	rax, QWORD PTR [rcx+72]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 559
+; Line 560
 	xor	edx, edx
 	test	rax, rax
 	lea	rcx, QWORD PTR [rax-40]
@@ -20766,13 +20796,13 @@ value$ = 16
 label$ = 24
 ccexec_lvalue PROC					; COMDAT
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 54
+; Line 58
 	mov	DWORD PTR [rcx+8], 2
-; Line 57
+; Line 61
 	mov	rax, rcx
 	mov	QWORD PTR [rcx+16], rdx
 	mov	QWORD PTR [rcx], r8
-; Line 58
+; Line 62
 	ret	0
 ccexec_lvalue ENDP
 _TEXT	ENDS
@@ -20784,13 +20814,13 @@ value$ = 16
 label$ = 24
 ccexec_rvalue PROC					; COMDAT
 ; File W:\cpp\void\ktt-c\ccexec.h
-; Line 45
+; Line 49
 	mov	DWORD PTR [rcx+8], 1
-; Line 48
+; Line 52
 	mov	rax, rcx
 	mov	QWORD PTR [rcx+16], rdx
 	mov	QWORD PTR [rcx], r8
-; Line 49
+; Line 53
 	ret	0
 ccexec_rvalue ENDP
 _TEXT	ENDS
@@ -20813,7 +20843,7 @@ ccblock_fjump PROC					; COMDAT
 	mov	rdi, rcx
 	mov	rbx, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 273
@@ -20821,7 +20851,7 @@ ccblock_fjump PROC					; COMDAT
 	movsd	xmm0, QWORD PTR [rdx+16]
 	movsd	QWORD PTR $T2[rsp+16], xmm0
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rdx, rax
 ; File W:\cpp\void\ktt-c\ccemit.h
@@ -20871,7 +20901,7 @@ ccblock_jump PROC					; COMDAT
 	movups	xmm0, XMMWORD PTR [rdx]
 	mov	rbx, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 261
@@ -20879,7 +20909,7 @@ ccblock_jump PROC					; COMDAT
 	movsd	xmm0, QWORD PTR [rdx+16]
 	movsd	QWORD PTR $T2[rsp+16], xmm0
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rdx, rax
 ; File W:\cpp\void\ktt-c\ccemit.h
@@ -20927,13 +20957,13 @@ ccblock_invoke PROC					; COMDAT
 	mov	rsi, rcx
 	mov	rdi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 254
 	mov	rbx, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -20980,7 +21010,7 @@ ccblock_return PROC					; COMDAT
 	mov	rdi, rcx
 	mov	rbx, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -21026,7 +21056,7 @@ ccblock_enter PROC					; COMDAT
 	mov	rdi, rcx
 	mov	rbx, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -21076,14 +21106,14 @@ ccblock_arith PROC					; COMDAT
 	mov	rsi, rcx
 	mov	rbp, r9
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 230
 	mov	rdi, r8
 	mov	ebx, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -21135,13 +21165,13 @@ ccblock_address PROC					; COMDAT
 	mov	rsi, rcx
 	mov	rdi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 224
 	mov	rbx, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -21190,13 +21220,13 @@ ccblock_fetch PROC					; COMDAT
 	mov	rsi, rcx
 	mov	rdi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 218
 	mov	rbx, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -21245,13 +21275,13 @@ ccblock_store PROC					; COMDAT
 	mov	rsi, rcx
 	mov	rdi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 212
 	mov	rbx, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -21344,7 +21374,7 @@ ccblock_add_edict PROC					; COMDAT
 	mov	r13, rcx
 	mov	r12, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 64					; 00000040H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccdlb.h
@@ -21353,7 +21383,7 @@ ccblock_add_edict PROC					; COMDAT
 ; Line 241
 	xor	edx, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	rbx, rax
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
@@ -21475,7 +21505,7 @@ ccblock_add PROC					; COMDAT
 	sub	rsp, 32					; 00000020H
 	mov	r13, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 64					; 00000040H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccdlb.h
@@ -21486,7 +21516,7 @@ ccblock_add PROC					; COMDAT
 ; Line 196
 	mov	ecx, DWORD PTR _tls_index
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	rsi, rax
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
@@ -21670,27 +21700,27 @@ ccemit_global_procd PROC				; COMDAT
 	call	ccdlb_tblput
 	mov	rbx, QWORD PTR [rbx]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 64					; 00000040H
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 135
 	shl	rax, 3
 	add	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 79
 	xor	ebp, ebp
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	r13, rax
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 79
 	mov	DWORD PTR [rax+4], ebp
 	mov	QWORD PTR [rax+16], rbp
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	lea	ecx, QWORD PTR [rbp+56]
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 79
@@ -21706,7 +21736,7 @@ ccemit_global_procd PROC				; COMDAT
 ; Line 148
 	mov	DWORD PTR [rax], 4
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	lea	ecx, QWORD PTR [rbp+16]
 	mov	r14, rax
@@ -21723,7 +21753,7 @@ ccemit_global_procd PROC				; COMDAT
 ; Line 153
 	mov	QWORD PTR [rax+24], rbp
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	r12, rax
 ; File W:\cpp\void\ktt-c\ccdlb.h
@@ -21795,7 +21825,7 @@ $LN40@ccemit_glo:
 ; Line 228
 	mov	QWORD PTR [rax+24], rbx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 16
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 229
@@ -21809,7 +21839,7 @@ $LN40@ccemit_glo:
 ; Line 156
 	mov	QWORD PTR [rax+rbp*8], r12
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 196
@@ -21818,7 +21848,7 @@ $LN40@ccemit_glo:
 ; Line 102
 	xor	edx, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	r12, rax
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 191
@@ -21883,7 +21913,7 @@ $LN59@ccemit_glo:
 ; Line 228
 	mov	QWORD PTR [rax+24], rbx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 16
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 229
@@ -21897,13 +21927,13 @@ $LN59@ccemit_glo:
 ; Line 157
 	mov	QWORD PTR [rax+rsi*8], r12
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 102
 	xor	edx, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	r12, rax
 ; File W:\cpp\void\ktt-c\ccdlb.h
 ; Line 191
@@ -22022,14 +22052,14 @@ ccemit_include_global PROC				; COMDAT
 	call	ccdlb_tblput
 	mov	rbx, QWORD PTR [rbx]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 64					; 00000040H
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 135
 	shl	rax, 3
 	add	rbx, rax
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.h
 ; Line 79
@@ -22088,7 +22118,7 @@ ccprocd	PROC						; COMDAT
 	sub	rsp, 32					; 00000020H
 	mov	rbx, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 56					; 00000038H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.h
@@ -22119,7 +22149,7 @@ ccblock	PROC						; COMDAT
 	sub	rsp, 32					; 00000020H
 	mov	rbx, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 16
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.h
@@ -22147,7 +22177,7 @@ cctype	PROC						; COMDAT
 	mov	ebx, ecx
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.h
@@ -22177,7 +22207,7 @@ ccvalue	PROC						; COMDAT
 	sub	rsp, 32					; 00000020H
 	mov	rbx, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 64					; 00000040H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccemit.h
@@ -22212,7 +22242,7 @@ ccedict_address PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -22248,7 +22278,7 @@ ccedict_return PROC					; COMDAT
 	sub	rsp, 32					; 00000020H
 	mov	rbx, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -22283,7 +22313,7 @@ ccedict_call PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -22322,7 +22352,7 @@ ccedict_fjump PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -22360,7 +22390,7 @@ ccedict_jump PROC					; COMDAT
 	sub	rsp, 32					; 00000020H
 	mov	rbx, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -22398,7 +22428,7 @@ ccedict_enter PROC					; COMDAT
 	sub	rsp, 32					; 00000020H
 	mov	rbx, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -22435,13 +22465,13 @@ ccedict_arith PROC					; COMDAT
 	mov	ebx, ecx
 	mov	rsi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 159
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
 ; Line 100
@@ -22481,7 +22511,7 @@ ccedict_fetch PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -22520,7 +22550,7 @@ ccedict_store PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -22576,7 +22606,7 @@ ccedict_param PROC					; COMDAT
 	mov	rdi, rcx
 	mov	rbx, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -22610,7 +22640,7 @@ ccedict_local PROC					; COMDAT
 	mov	rdi, rcx
 	mov	rbx, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -22644,7 +22674,7 @@ ccedict	PROC						; COMDAT
 	mov	ebx, ecx
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 40					; 00000028H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccedict.h
@@ -24019,14 +24049,14 @@ cctree_ternary PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rbp, r9
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 313
 	mov	rsi, r8
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -24085,14 +24115,14 @@ cctree_binary PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rbp, r9
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 304
 	mov	rsi, r8
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -24150,14 +24180,14 @@ cctree_unary PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rbp, r9
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 296
 	mov	rsi, r8
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -24211,13 +24241,13 @@ cctree_litflo PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rsi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 289
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -24269,13 +24299,13 @@ cctree_litint PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rsi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 282
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -24327,13 +24357,13 @@ cctree_litide PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rsi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 275
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -24383,14 +24413,14 @@ cctree_decl PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rbp, r9
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 267
 	mov	rsi, r8
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -24444,14 +24474,14 @@ cctree_decl_name PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rbp, r9
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 257
 	mov	rsi, r8
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -24512,13 +24542,13 @@ cctree_return PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rsi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 250
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -24566,13 +24596,13 @@ cctree_goto PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rsi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 243
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -24628,14 +24658,14 @@ cctree_label PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rbp, r9
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 235
 	mov	rsi, r8
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -24691,14 +24721,14 @@ cctree_while PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rbp, r9
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 226
 	mov	rsi, r8
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -24748,13 +24778,13 @@ cctree_block PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rsi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 219
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -24805,14 +24835,14 @@ cctree_index PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rbp, r9
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 210
 	mov	rsi, r8
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -24871,14 +24901,14 @@ cctree_call PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rbp, r9
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 201
 	mov	rsi, r8
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	mov	rcx, rax
 	xorps	xmm0, xmm0
@@ -24934,13 +24964,13 @@ cctree_group PROC					; COMDAT
 	mov	rbx, rcx
 	mov	rsi, r8
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 194
 	mov	edi, edx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -24980,7 +25010,7 @@ cctree_translation_unit PROC				; COMDAT
 ; Line 188
 	sub	rsp, 40					; 00000028H
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	xorps	xmm0, xmm0
@@ -25018,7 +25048,7 @@ cctreee_struct_specifier PROC				; COMDAT
 	mov	rbx, rcx
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	mov	rcx, rax
@@ -25068,7 +25098,7 @@ cctreee_function_modifier PROC				; COMDAT
 	mov	rbx, rcx
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	xorps	xmm0, xmm0
@@ -25113,7 +25143,7 @@ cctreee_array_modifier PROC				; COMDAT
 	mov	rbx, rcx
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	xorps	xmm0, xmm0
@@ -25155,7 +25185,7 @@ cctreee_pointer_modifier PROC				; COMDAT
 	sub	rsp, 32					; 00000020H
 	mov	rbx, rcx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 	call	malloc
 	xorps	xmm0, xmm0
@@ -25258,13 +25288,13 @@ cctree_new PROC						; COMDAT
 	mov	ebx, ecx
 	mov	esi, r8d
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 152				; 00000098H
 ; File W:\cpp\void\ktt-c\cctree.h
 ; Line 133
 	mov	rdi, rdx
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	call	malloc
 	xorps	xmm0, xmm0
 ; File W:\cpp\void\ktt-c\cctree.h
@@ -25299,7 +25329,7 @@ tree$ = 8
 cctree_del PROC						; COMDAT
 ; File W:\cpp\void\ktt-c\cctree.h
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 559
+; Line 560
 	jmp	free
 cctree_del ENDP
 _TEXT	ENDS
@@ -25583,7 +25613,7 @@ ccdlb_tblcat PROC					; COMDAT
 	cmp	QWORD PTR [rbx+16], 0
 	je	SHORT $LN2@ccdlb_tblc
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 557
+; Line 558
 	mov	ecx, 32					; 00000020H
 	call	malloc
 ; File W:\cpp\void\ktt-c\ccdlb.h
@@ -26237,32 +26267,32 @@ _TEXT	SEGMENT
 fmt$ = 48
 ccformat PROC						; COMDAT
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 518
+; Line 519
 	mov	QWORD PTR [rsp+8], rcx
 	mov	QWORD PTR [rsp+16], rdx
 	mov	QWORD PTR [rsp+24], r8
 	mov	QWORD PTR [rsp+32], r9
 	push	rbx
 	sub	rsp, 32					; 00000020H
-; Line 500
+; Line 501
 	mov	edx, DWORD PTR _tls_index
-; Line 520
+; Line 521
 	lea	r9, QWORD PTR fmt$[rsp+8]
-; Line 500
+; Line 501
 	mov	rax, QWORD PTR gs:88
 	mov	r8d, OFFSET FLAT:?buf@?1??ccformatv@@9@4PADA
 	mov	rbx, QWORD PTR [rax+rdx*8]
-; Line 492
+; Line 493
 	mov	edx, 255				; 000000ffH
-; Line 500
+; Line 501
 	add	rbx, r8
-; Line 492
+; Line 493
 	mov	r8, rcx
 	mov	rcx, rbx
 	call	stbsp_vsnprintf
-; Line 524
-	mov	rax, rbx
 ; Line 525
+	mov	rax, rbx
+; Line 526
 	add	rsp, 32					; 00000020H
 	pop	rbx
 	ret	0
@@ -26276,15 +26306,15 @@ len$ = 56
 fmt$ = 64
 ccformatex PROC						; COMDAT
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 507
+; Line 508
 	mov	QWORD PTR [rsp+24], r8
 	mov	QWORD PTR [rsp+32], r9
 	sub	rsp, 40					; 00000028H
-; Line 509
+; Line 510
 	lea	r9, QWORD PTR fmt$[rsp+8]
-; Line 492
+; Line 493
 	call	stbsp_vsnprintf
-; Line 514
+; Line 515
 	add	rsp, 40					; 00000028H
 	ret	0
 ccformatex ENDP
@@ -26296,26 +26326,26 @@ fmt$ = 48
 vli$ = 56
 ccformatv PROC						; COMDAT
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 497
+; Line 498
 	push	rbx
 	sub	rsp, 32					; 00000020H
-; Line 500
+; Line 501
 	mov	r8d, DWORD PTR _tls_index
 	mov	rax, QWORD PTR gs:88
 	mov	r9d, OFFSET FLAT:?buf@?1??ccformatv@@9@4PADA
 	mov	rbx, QWORD PTR [rax+r8*8]
-; Line 492
+; Line 493
 	mov	r8, rcx
-; Line 500
+; Line 501
 	add	rbx, r9
-; Line 492
+; Line 493
 	mov	r9, rdx
 	mov	edx, 255				; 000000ffH
 	mov	rcx, rbx
 	call	stbsp_vsnprintf
-; Line 502
-	mov	rax, rbx
 ; Line 503
+	mov	rax, rbx
+; Line 504
 	add	rsp, 32					; 00000020H
 	pop	rbx
 	ret	0
@@ -26330,7 +26360,7 @@ fmt$ = 24
 vli$ = 32
 ccformatvex PROC					; COMDAT
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 492
+; Line 493
 	jmp	stbsp_vsnprintf
 ccformatvex ENDP
 _TEXT	ENDS
@@ -30928,17 +30958,17 @@ $LN9@ccpullfile:
 	mov	rcx, r9
 $LN4@ccpullfile:
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 553
+; Line 554
 	test	rcx, rcx
 	je	SHORT $LN19@ccpullfile
-; Line 557
+; Line 558
 	call	malloc
 	mov	rbx, rax
 	jmp	SHORT $LN16@ccpullfile
 $LN19@ccpullfile:
-; Line 559
-	call	free
 ; Line 560
+	call	free
+; Line 561
 	mov	rbx, rbp
 $LN16@ccpullfile:
 ; File W:\cpp\void\ktt-c\ccfio.c
@@ -31105,14 +31135,14 @@ cctrace_ PROC						; COMDAT
 	mov	ebp, OFFSET FLAT:?buf@?1??cctrace_@@9@4PADA
 	mov	rbx, QWORD PTR [rax+r8*8]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 492
+; Line 493
 	mov	r8, rdx
 	mov	edx, 255				; 000000ffH
 ; File W:\cpp\void\ktt-c\cclog.h
 ; Line 273
 	lea	rdi, QWORD PTR [rbx+rbp]
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 492
+; Line 493
 	mov	rcx, rdi
 	call	stbsp_vsnprintf
 ; File W:\cpp\void\ktt-c\cclog.h
@@ -31155,34 +31185,34 @@ size$ = 48
 data$ = 56
 ccinternalalloctr_ PROC					; COMDAT
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 552
+; Line 553
 	sub	rsp, 40					; 00000028H
 	mov	rax, rdx
-; Line 553
+; Line 554
 	test	rcx, rcx
 	je	SHORT $LN4@ccinternal
-; Line 554
+; Line 555
 	test	rdx, rdx
 	je	SHORT $LN3@ccinternal
-; Line 555
+; Line 556
 	mov	rdx, rcx
 	mov	rcx, rax
-; Line 561
+; Line 562
 	add	rsp, 40					; 00000028H
-; Line 555
+; Line 556
 	jmp	realloc
 $LN3@ccinternal:
-; Line 561
+; Line 562
 	add	rsp, 40					; 00000028H
-; Line 557
+; Line 558
 	jmp	malloc
 $LN4@ccinternal:
-; Line 559
+; Line 560
 	mov	rcx, rax
 	call	free
-; Line 560
-	xor	eax, eax
 ; Line 561
+	xor	eax, eax
+; Line 562
 	add	rsp, 40					; 00000028H
 	ret	0
 ccinternalalloctr_ ENDP
@@ -31194,34 +31224,34 @@ size$ = 48
 data$ = 56
 ccuseralloctr_ PROC					; COMDAT
 ; File W:\cpp\void\ktt-c\cc.c
-; Line 659
+; Line 660
 	sub	rsp, 40					; 00000028H
 	mov	rax, rdx
-; Line 553
+; Line 554
 	test	rcx, rcx
 	je	SHORT $LN6@ccuserallo
-; Line 554
+; Line 555
 	test	rdx, rdx
 	je	SHORT $LN5@ccuserallo
-; Line 555
+; Line 556
 	mov	rdx, rcx
 	mov	rcx, rax
-; Line 661
+; Line 662
 	add	rsp, 40					; 00000028H
-; Line 555
+; Line 556
 	jmp	realloc
 $LN5@ccuserallo:
-; Line 661
+; Line 662
 	add	rsp, 40					; 00000028H
-; Line 557
+; Line 558
 	jmp	malloc
 $LN6@ccuserallo:
-; Line 559
+; Line 560
 	mov	rcx, rax
 	call	free
-; Line 660
-	xor	eax, eax
 ; Line 661
+	xor	eax, eax
+; Line 662
 	add	rsp, 40					; 00000028H
 	ret	0
 ccuseralloctr_ ENDP
