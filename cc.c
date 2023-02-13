@@ -1,10 +1,10 @@
-/** Copyright(C) J. Dayan Rodriguez, 2022, All rights reserved. **/
+/** Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved. **/
 #ifndef _CC
 #define _CC
-// Note: CC stands for (C)ommon (C)ode and it was originally meant
-// to be a simple set of structures and functionality that you'd
-// use on almost any project ...
-// It is still meant to be as such ...
+
+// Note: CC stands for 'c-cures' and it was originally meant to be a simple set of structures and functionality that you'd
+// use on almost any c project ...
+// This file more optimized towards ease of use rather than performance although it is taken into account ...
 
 #ifdef __cplusplus
 extern "C" {
@@ -144,7 +144,7 @@ typedef struct cccaller_t
   const char   *func;
 } cccaller_t;
 
-// Note: common error codes ... let's try to keep this conservative as I don't want to keep promoting
+// Note: common error codes ... let's try to keep this conservative, I don't want to keep promoting
 // the use of global status codes ... these are the ones absolutely necessary as of now ...
 typedef enum ccerr_k
 {
@@ -176,7 +176,7 @@ typedef enum ccent_k
   ccent_kAIT=2,
 } ccent_k;
 
-// Note: general table entry
+// Note: general table entry, ideally allocated with no overhead ... but that is not the case yet ...
 typedef struct ccentry_t ccentry_t;
 typedef struct ccentry_t
 { ccentry_t * nex;
@@ -206,18 +206,16 @@ typedef union ccdebug_event_t
     cci64_t deallocations;
     cci64_t reallocations;
     cci64_t heap_block_count;
+
     cci64_t memory;
 
     cci64_t collisions;
   };
 } ccdebug_event_t;
 
-// Note: A debug context tracks a specific debug event, since the debug event could occur multiple times
-// two versions must be stored, this to differentiate the event's metrics, this is what I call "tracking"
-// or keeping track of the change over a set of occurrences.
-// This difference is then simply be added up to the super context and thus constituting the "tracking"
-// bit.
-// Debug contexts also collect child debug contexts by means of dlb ...
+// Note: A debug sentry watches over specific set of instructions and generates debug events each time it
+// is triggered, the last debug event is kept to differentiate the event's metrics, although not very necessary ...
+// Sentries report to super sentries in a hierarchy ...
 typedef struct ccdebug_sentry_t ccdebug_sentry_t;
 typedef struct ccdebug_sentry_t
 { const char * label;
@@ -258,15 +256,15 @@ ccglobal ccthread_local ccallocator_t *ccallocator=ccuserallocator_;
 
 #ifdef _HARD_DEBUG
 // Note: do not access these directly ...
-ccglobal ccthread_local cccaller_t  cccallstack[0x04];
+ccglobal ccthread_local cccaller_t  cccallstack[4];
 ccglobal ccthread_local cci32_t     cccallindex;
 ccglobal ccthread_local cci32_t     cchascaller;
 
-// Note: do not access these directly ... use the ccdebug() and ccevent() functions instead ...
+// Note: do not access these directly ...
 ccglobal ccthread_local ccdebug_sentry_t   ccdebugroot;
 ccglobal ccthread_local ccdebug_sentry_t  *ccdebugthis;
-ccglobal ccthread_local cci32_t     ccdebugnone;
-ccglobal ccthread_local cci32_t     ccnopushrob;
+ccglobal ccthread_local cci32_t            ccdebugnone;
+ccglobal ccthread_local cci32_t            ccnopushrob;
 // #ccnopushrob
 // Set this when you want to ensure the next function you call won't rob your push
 // #ccdebugnone
@@ -323,9 +321,9 @@ ccglobal ccthread_local cci32_t     ccnopushrob;
 #define cckeyset(key) (cckey=key)
 #define cckeyget()    (cckey)
 
-ccfunc ccinle ccdebug_event_t *ccevent_();
-ccfunc ccinle ccdebug_sentry_t       *ccdebug_();
-
+// Todo: to be removed !
+ccfunc ccinle ccdebug_event_t   *ccevent_();
+ccfunc ccinle ccdebug_sentry_t  *ccdebug_();
 #ifdef _HARD_DEBUG
 ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
 ccfunc void ccpushcaller(cccaller_t);
@@ -444,42 +442,12 @@ ccfunc unsigned long int ccfilesize(void *);
 #include <memory.h>
 #include <string.h>
 
-
-
-
-
-
-// #ifdef _HARD_DEBUG
-// # ifndef ccmalloc
-// #  define ccmalloc(len) cccall(ccmalloc_(len))
-// # endif
-// # ifndef ccrealloc
-// #  define ccrealloc(mem,len) cccall(ccrealloc_(mem,len))
-// # endif
-// # ifndef ccfree
-// #  define ccfree(mem) cccall(ccfree_(mem))
-// # endif
-// #else
-// # ifndef ccmalloc
-// #  define ccmalloc(len) malloc(len)
-// # endif
-// # ifndef ccrealloc
-// #  define ccrealloc(mem,len) realloc(mem,len)
-// # endif
-// # ifndef ccfree
-// #  define ccfree(mem) free(mem)
-// # endif
-// #endif // #ifdef _HARD_DEBUG
-
 #ifndef ccmalloc_T
 # define ccmalloc_T(type) cccast(type*,ccmalloc(sizeof(type)))
 #endif
 #ifndef ccrealloc_T
 # define ccrealloc_T(mem,type) cccast(type*,ccrealloc(mem,sizeof(type)))
 #endif
-
-
-
 
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb_sprintf.h"
@@ -522,12 +490,10 @@ ccformat(const char * fmt, ...)
   return res;
 }
 
-
 typedef struct ccedict_t ccedict_t;
-typedef struct ccread_t ccread_t;
-typedef struct ccemit_t ccemit_t;
-typedef struct ccexec_t ccexec_t;
-
+typedef struct ccread_t  ccread_t;
+typedef struct ccemit_t  ccemit_t;
+typedef struct ccexec_t  ccexec_t;
 
 typedef struct ccemit_value_t ccemit_value_t;
 typedef struct ccemit_block_t ccemit_block_t;
@@ -578,11 +544,11 @@ ccfunc void *ccuserallocator_(size_t size,void *data)
 	cccaller_t caller=ccpullcaller();
 
 ccenter("user-allocator");
-  ccdebug_sentry_t *debug=ccdebug();
   ccheap_block_t *block;
   if(!size)
   {
 ccenter("free");
+  	ccdebug_sentry_t *debug=ccdebug();
   	block=(ccheap_block_t*)data-1;
     ccdebug_checkblock(ccuserallocator_,block);
     if(block->prev) block->prev->next=block->next;
@@ -601,6 +567,7 @@ ccleave("free");
   { if(data)
     {
 ccenter("ccrealloc");
+  		ccdebug_sentry_t *debug=ccdebug();
     	block=(ccheap_block_t*)data-1;
       ccdebug_checkblock(ccuserallocator_,block);
 
@@ -619,6 +586,7 @@ ccleave("ccrealloc");
     } else
     {
 ccenter("malloc");
+  		ccdebug_sentry_t *debug=ccdebug();
     	block=(ccheap_block_t*)malloc(sizeof(*block)+size);
       memset(block,ccnil,sizeof(*block));
       block->allocator=ccuserallocator_;

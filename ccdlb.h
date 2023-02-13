@@ -173,16 +173,25 @@ ccfunc size_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 ccfunc void
 ccdlbdel_(void **dlb_)
 { ccdlb_t *dlb=ccdlb(ccdref(dlb_));
+
+
 	ccallocator_t *a;
 	a=dlb->allocator;
-	ccentry_t *i,*f,*e;
-	ccarrfor(dlb->entries,e)
-	{ for(i=e;i;)
-		{ f=i;
-			i=i->nex;
-			cccall(a(0,f));
+
+	if(dlb->entries)
+	{ ccentry_t *i,*f,*e;
+		ccarrfor(dlb->entries,e)
+		{
+			// Note: the first entry is part of the array ...
+			for(i=e->nex;i;)
+			{ f=i;
+				i=i->nex;
+				cccall(a(0,f));
+			}
 		}
+		ccarrdel(dlb->entries);
 	}
+
 	cccall(a(0,dlb));
 }
 
@@ -301,7 +310,7 @@ ccdlb_tblini(ccdlb_t **dlb_, cci32_t isze)
     ccarrzro(dlb+1);
 
     // Note: create some entries
-    ccarrres(dlb->entries,0xff);
+    ccarradd(dlb->entries,0xff);
     ccarrzro(dlb->entries);
     ccarrfix(dlb->entries);
 
@@ -320,9 +329,7 @@ ccdlb_tblcat(ccdlb_t **tbl, size_t isze, int len, const char *key, ccentry_t *en
   { ent->nex=ccmalloc_T(ccentry_t);
     ent=ent->nex;
     memset(ent,ccnil,sizeof(*ent));
-    // ccarradd(ccdref(tbl)->entries,1);
   }
-
   ccassert(ent->key==ccnil);
   ccassert(ent->len==ccnil);
   ccassert(ent->val==ccnil);

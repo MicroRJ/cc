@@ -35,11 +35,10 @@ ccleave("test-debug-system");
 #endif // _HARD_DEBUG
 
 
+ccenter("read");
   ccread_t read;
   ccread_init(&read);
   ccread_include(& read, "test.svm.c");
-
-ccenter("read");
   cctree_t *tree;
   tree=ccread_translation_unit(&read);
 ccleave("read");
@@ -60,10 +59,12 @@ ccenter("exec");
   ccexec_t exec;
   ccexec_init(&exec);
   retr=ccexec_translation_unit(&exec,&emit);
+  ccexec_uninit(&exec);
 
 #ifndef _HARD_DEBUG
   printf("done in %f\n", ccclocksecs(ccclocktick()-tick));
 #endif
+
 ccleave("exec");
 
   ccread_uninit(&read);
@@ -73,6 +74,8 @@ ccenter("compare");
   cctracelog("c:%i - cc:%i",c,retr.asi32);
 ccleave("compare");
 
+#if 0
+ccenter("emit-c");
   // Todo:
   { char *out = ccnil;
 
@@ -117,6 +120,8 @@ ccleave("compare");
     ccpushfile(file,0,ccstrlen(out),out);
     ccclosefile(file);
   }
+ccleave("emit-c");
+#endif
 
 ccleave("main");
 

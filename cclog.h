@@ -126,19 +126,35 @@ ccbytecountreadable(cci64_t b, ccf64_t *f)
 	}
 }
 
+// 0        (no-leaks) (sealed)
+//  ++5
+//    ++10
+//    ++10
+//  --15
+// --5 (sealed)
 
-
-
+// ++10
+//  ++10
+//   ++10
+//   ++10
+//  --10 (+10)
+//  ++10
+//   ++10
+//   ++10
+//  --10 (+10)
+// --10 (+10)
 #include "cccolor.c"
 
 ccfunc void
-ccdebugdump_(ccdebug_sentry_t *r, ccdebug_sentry_t *h, ccdebug_sentry_t *t)
+ccdebugdump_(
+	ccdebug_sentry_t  * r,
+	ccdebug_sentry_t  * h,
+	ccdebug_sentry_t  * t)
 {
-	if(t!=h && t->level>4) return;
-
 	ccf64_t seconds_used,percent_used;
   seconds_used=ccclocksecs(t->total_event_ticks);
   percent_used=ccclockperc(r? r->total_event_ticks :t->total_event_ticks,t->total_event_ticks);
+
   size_t heap_blocks=t->event.heap_block_count;
  	const char *leak_string="deferred";
  	if(!r) leak_string="leaked";
@@ -148,12 +164,12 @@ ccdebugdump_(ccdebug_sentry_t *r, ccdebug_sentry_t *h, ccdebug_sentry_t *t)
   suffix=ccbytecountreadable(t->event.memory,&memory);
 
 	for(int i=0;i<t->level*1;++i) printf(" ");
-  ccprintf("<!%i#%i in %s[%i] %s(): %i <!6'%s'!> event(s), took %f(s) <!9(%%%f)!> with [%lli-%lli,%lli] allocations %s %f%s in %lli block(s), %lli collision(s)!>\n",
+  ccprintf("<!%i#%i in %s[%i] %s(): %i <!6'%s'!> event(s), took %f(s) <!9(%%%f)!> with [%lli-%lli,%lli] allocations <!%i%s %f%s!> in %lli block(s), %lli collision(s)!>\n",
    	h==t?4:h?5:7,
     t->caller.guid,ccfilename(t->caller.file),t->caller.line,t->caller.func,
       t->event_count,t->label,seconds_used,percent_used,
         t->event.allocations,t->event.deallocations,t->event.reallocations,
-        	leak_string,memory,suffix,heap_blocks,t->event.collisions);
+        	t->event.memory>0?14:7,leak_string,memory,suffix,heap_blocks,t->event.collisions);
   if(h==t && t!=&ccdebugroot) cctextreset();
 
 
@@ -196,23 +212,28 @@ ccdebugdump()
 	cctracelog("freed %i block(s) for you", freed_count);
 }
 
-
-
 ccfunc void
 ccenter_callme(const char *label)
 { cccaller_t caller=ccpullcaller();
   if(ccdebugnone) return;
  	ccassert(!ccnopushrob);
 	ccnopushrob=cctrue;
-	ccdebug_sentry_t *super=ccdebug();
+
 	ccu64_t tick=ccclocktick();
+
+	ccdebug_sentry_t *super=ccdebug();
+
 	ccallocator_t *a=ccallocator;
 	int d=ccdebugnone;
+
 	ccdebugnone=cctrue;
 	ccallocator=ccinternalallocator_;
+
   ccdebugthis=cctblsetP(super->child,cccast(cci64_t,1+caller.guid));
+
   ccdebugnone=d;
   ccallocator=a;
+
   if(ccdebugthis->event_count==0)
   { ccdebugthis->caller=caller;
     ccdebugthis->super=super;

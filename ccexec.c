@@ -8,15 +8,14 @@
 ccfunc ccu32_t
 ccexec_sizeof(ccexec_frame_t *, cctype_t *);
 
-// Note: associates a value with an edict, as you can see, I have peculiar choice of words ...
+// Note: Returns a coupled value, to retrieve the value again you can use the proper yield functions, do not long-term-cache,
+// value could be invalidated ...
 ccfunc ccexec_value_t *
 ccstack_mingle(ccexec_frame_t *stack, ccemit_value_t *value)
 {
-  ccassert(value!=0);
-
+ccenter("stack-mingle");
   ccexec_value_t *result=cctblsetP(stack->values,value);
-  // ccassert(ccerrnon());
-
+ccleave("stack-mingle");
   return result;
 }
 
@@ -24,9 +23,9 @@ ccstack_mingle(ccexec_frame_t *stack, ccemit_value_t *value)
 ccfunc ccexec_value_t
 ccstack_yield(ccexec_frame_t *stack, ccemit_value_t *value)
 {
-  ccassert(value!=0);
-
+ccenter("stack-yield");
   ccexec_value_t *result=cctblgetP(stack->values,value);
+
   ccassert(ccerrnon());
 
   if((result->kind==ccev_kINVALID))
@@ -34,6 +33,7 @@ ccstack_yield(ccexec_frame_t *stack, ccemit_value_t *value)
 
   ccassert(result->kind!=ccev_kINVALID);
 
+ccleave("stack-yield");
   return *result;
 }
 
@@ -94,16 +94,25 @@ ccfunc ccinle ccexec_value_t *
 ccstack_push(
   ccexec_t *exec, int length)
 {
+	if(exec->stack_idx+length>exec->stack_sze)
+	{
+		cctraceerr("stack_overflow");
+		ccassert(!"stack_overflow");
+	}
   ccexec_value_t *memory=cccast(ccexec_value_t*,cccast(char*,exec->stack)+exec->stack_idx);
   exec->stack_idx+=sizeof(ccexec_value_t)*length;
   return memory;
 }
 
-// Note: allocates an execution time addressable l-value on the stack and associates it with the given value...
+// Note: Allocates memory on the stack appropiate for the value's type and returns
+// a addressable l-value coupled to the given emit-value, to retrieve the l-value again
+// simple use the values-hashtable ...
 ccfunc ccinle ccexec_value_t *
 ccstack_local_alloc(
   ccexec_t *exec, ccexec_frame_t *stack, ccemit_value_t *value)
 {
+ccenter("stack-local-alloc");
+
   ccnotnil((value));
   ccassert((value->kind==ccvalue_kEDICT),
     "cannot allocate local, expected a value of type EDICT and of subtype LOCAL or PARAM");
@@ -121,11 +130,10 @@ ccstack_local_alloc(
   memset(memory,ccnil,size);
   exec->stack_idx+=size;
 
-  // Todo: stack alloc dude!
   ccexec_value_t *result=ccstack_mingle(stack,value);
   *result=ccexec_lvalue(memory,"local_alloc");
 
-  // cctracelog("'%s': %p",value->label,result->value);
+ccleave("stack-local-alloc");
   return result;
 }
 
@@ -170,33 +178,35 @@ ccfunc int
 ccexec_edict(
   ccexec_t *exec, ccexec_frame_t *stack, ccemit_value_t *value)
 {
-  // Todo:
+ccenter("exec-edict");
+
+	// Todo
   ccglobal ccexec_value_t zro=ccexec_rvalue(cccast(void*,0),"zro");
-
-  ccnotnil(stack);
-
-  ccnotnil(value);
-  ccassert(value->kind==ccvalue_kEDICT);
 
   ccedict_t *edict=value->edict;
 
+  int result=cctrue;
   switch(edict->kind)
   {
     // Note: this is simply to ensure we've set the parameters ...
     case ccedict_kPARAM:
-    { ccstack_yield(stack,value);
+    {
+ccenter("exec-edict-param");
+    	ccstack_yield(stack,value);
+ccleave("exec-edict-param");
     } break;
-
     case ccedict_kLOCAL:
-    { ccstack_local_alloc(exec,stack,value);
+    {
+ccenter("exec-edict-local");
+    	ccstack_local_alloc(exec,stack,value);
+ccleave("exec-edict-local");
     } break;
     case ccedict_kADDRESS:
-    { ccemit_value_t *lvalue,*rvalue;
+    {
+ccenter("exec-edict-address");
+    	ccemit_value_t *lvalue,*rvalue;
       lvalue=edict->addr.lval;
       rvalue=edict->addr.rval;
-
-      ccassert(lvalue!=ccnil);
-      ccassert(rvalue!=ccnil);
 
       ccexec_value_t lval,rval;
       lval=ccstack_yield_lvalue(stack,lvalue);
@@ -207,9 +217,12 @@ ccexec_edict(
 
       ccexec_value_t *saved=ccstack_mingle(stack,value);
       *saved=ccexec_lvalue(memory,"address");
+
+ccleave("exec-edict-address");
     } break;
     case ccedict_kFETCH:
     {
+ccenter("exec-edict-fetch");
       ccemit_value_t *lvalue,*rvalue;
       lvalue=edict->fetch.lval;
       rvalue=edict->fetch.rval;
@@ -227,9 +240,12 @@ ccexec_edict(
 
       ccexec_value_t *saved=ccstack_mingle(stack,value);
       *saved=ccexec_rvalue(cccast(void*,ccdref(memory)),"fetch");
+ccleave("exec-edict-fetch");
     } break;
     case ccedict_kSTORE:
     {
+ccenter("exec-edict-store");
+
       ccexec_value_t lval,rval;
       lval=ccstack_yield_lvalue(stack,ccnotnil(edict->store.lval));
       rval=ccstack_yield_rvalue(stack,ccnotnil(edict->store.rval));
@@ -241,68 +257,58 @@ ccexec_edict(
       saved->kind=ccev_kRVALUE;
       saved->value=rval.value;
       saved->label=rval.label;
-    } break;
-    case ccedict_kJUMP:
-    {
-#ifdef _HARD_DEBUG
-      ccnotnil(edict->jump.blc);
-      ccnotnil(edict->jump.tar);
-      ccnotnil(edict->jump.tar);
-#endif
-      stack->current=edict->jump.blc;
-      stack->irindex=edict->jump.tar;
-    } break;
-    case ccedict_kJUMPF:
-    {
-#ifdef _HARD_DEBUG
-      ccnotnil(edict->jump.blc);
-      ccnotnil(edict->jump.tar);
-      ccnotnil(edict->jump.cnd);
-#endif
-      ccexec_value_t
-      rval=ccstack_yield_rvalue(stack,ccnotnil(edict->jump.cnd));
-      if(!rval.asi32)
-      { stack->current=edict->jump.blc;
-        stack->irindex=edict->jump.tar;
-      }
-    } break;
-    case ccedict_kJUMPT:
-    {
-#ifdef _HARD_DEBUG
-      ccnotnil(edict->jump.blc);
-      ccnotnil(edict->jump.tar);
-      ccnotnil(edict->jump.cnd);
-#endif
-      ccexec_value_t
-      rval=ccstack_yield_rvalue(stack,ccnotnil(edict->jump.cnd));
-      if(rval.asi32)
-      { stack->current=edict->jump.blc;
-        stack->irindex=edict->jump.tar;
-      }
+
+ccleave("exec-edict-store");
     } break;
     case ccedict_kARITH:
     {
-#ifdef _HARD_DEBUG
-      ccnotnil(edict->arith.opr);
-      ccnotnil(edict->arith.lhs);
-      ccnotnil(edict->arith.rhs);
-#endif
+ccenter("exec-edict-arith");
       ccexec_value_t lval,rval;
       lval=ccstack_yield_rvalue(stack,edict->arith.lhs);
       rval=ccstack_yield_rvalue(stack,edict->arith.rhs);
 
       ccexec_value_t *saved=ccstack_mingle(stack,value);
       *saved=ccexec_edict_arith(edict->arith.opr,lval,rval);
+ccleave("exec-edict-arith");
     } break;
+    case ccedict_kJUMP:
+    { stack->current=edict->jump.blc;
+      stack->irindex=edict->jump.tar;
+    } break;
+    case ccedict_kJUMPF:
+    {
+ccenter("exec-edict-jumpf");
+    	ccexec_value_t
+      rval=ccstack_yield_rvalue(stack,edict->jump.cnd);
+      if(!rval.asi32)
+      { stack->current=edict->jump.blc;
+        stack->irindex=edict->jump.tar;
+      }
+ccleave("exec-edict-jumpf");
+    } break;
+    case ccedict_kJUMPT:
+    {
+ccenter("exec-edict-jumpt");
+    	ccexec_value_t
+      rval=ccstack_yield_rvalue(stack,ccnotnil(edict->jump.cnd));
+      if(rval.asi32)
+      { stack->current=edict->jump.blc;
+        stack->irindex=edict->jump.tar;
+      }
+ccleave("exec-edict-jumpt");
+    } break;
+  	// Note: save the return value under the return instruction value ...
     case ccedict_kRETURN:
     {
-      // Note: save the return value under the return instruction value ...
+ccenter("exec-edict-return");
       ccexec_value_t *saved=ccstack_mingle(stack,value);
       *saved=ccstack_yield_rvalue(stack,edict->ret.rval);
-    } return ccfalse;
-
+      result=ccfalse;
+ccleave("exec-edict-return");
+    } break;
     case ccedict_kINVOKE:
     {
+ccenter("exec-edict-invoke");
 #ifdef _HARD_DEBUG
       ccnotnil(edict->invoke.call);
 #endif
@@ -326,25 +332,17 @@ ccexec_edict(
       {
         ccassert(!"no-return value, error");
       }
-
       ccstack_pull(exec,rlen);
+ccleave("exec-edict-invoke");
     } break;
 
     // Todo: to be removed ...
     case ccedict_kENTER:
-    {
-#ifdef _HARD_DEBUG
-      ccnotnil(edict->enter.blc);
-#endif
-      ccexec_enter(stack,edict->enter.blc);
+    { ccexec_enter(stack,edict->enter.blc);
     } break;
     case ccedict_kTERNARY:
-    { ccassert(!"deprecated");
-
-      ccexec_value_t rval;
+    { ccexec_value_t rval;
       rval=ccstack_yield_rvalue(stack,ccnotnil(edict->ternary.cnd));
-
-      // Todo: is this flawed?
       if(rval.asi32)
       { if(edict->ternary.lhs) ccexec_enter(stack,edict->ternary.lhs);
       }
@@ -352,9 +350,12 @@ ccexec_edict(
       { if(edict->ternary.rhs) ccexec_enter(stack,edict->ternary.rhs);
       }
     } break;
+
     default: ccassert(!"error");
   }
-  return cctrue;
+
+ccleave("exec-edict");
+  return result;
 }
 
 ccfunc ccu32_t
@@ -381,6 +382,9 @@ ccfunc int
 ccexec_invoke(
   ccexec_t *exec, ccemit_procd_t *procd, ccexec_value_t *r, int l, ccexec_value_t *i)
 {
+ccenter("invoke");
+	int result=ccfalse;
+
   // Todo: let's not use our actual stack ...
   ccexec_frame_t stack={};
 
@@ -388,21 +392,19 @@ ccexec_invoke(
 
   ccassert((int)ccarrlen(type->list)==l);
 
-ccenter("setargs");
-  cctree_t **lval;
-  ccarrfor(type->list,lval)
-  {
-    ccemit_value_t *local=ccprocd_local(procd,*lval);
-    ccexec_value_t *rval=ccstack_local_alloc(exec,&stack,local);
+  cctree_t **ltree;
+  ccarrfor(type->list,ltree)
+  { ccemit_value_t *lparam=ccprocd_local(procd,*ltree);
+    ccexec_value_t *lvalue=ccstack_local_alloc(exec,&stack,lparam);
 
     cci32_t int_value=i->asi32;
-    ccdref(cccast(cci32_t*,rval->value))=int_value;
+    ccdref(cccast(cci32_t*,lvalue->value))=int_value;
     i++;
   }
-ccleave("setargs");
 
   ccexec_enter(&stack,procd->decls);
 
+ccenter("procd-exec");
   while(stack.irindex<ccarrleni(stack.current->edict))
   {
     ccemit_value_t **it=stack.current->edict+stack.irindex;
@@ -413,15 +415,20 @@ ccleave("setargs");
       // Note: is this flawed?
       ccedict_t *edict=(*it)->edict;
 
-      if(edict->kind==ccedict_kRETURN)
+      result=edict->kind==ccedict_kRETURN;
+
+      if(result)
         *r=ccstack_yield(&stack,*it);
-      return cctrue;
+
+      break;
     }
   }
+ccleave("procd-exec");
 
   ccarrdel(stack.values);
 
-  return ccfalse;
+ccleave("invoke");
+  return result;
 }
 
 ccfunc ccexec_value_t
@@ -442,10 +449,19 @@ ccfunc int
 ccexec_init(ccexec_t *exec)
 { memset(exec,ccnil,sizeof(*exec));
 
-  exec->stack=ccmalloc(0x40000000);
-  exec->stack_sze=0x40000000;
+	size_t stack_size=10 * 1024*1024;
+
+  exec->stack=ccmalloc(stack_size);
+  exec->stack_sze=stack_size;
   exec->stack_idx=0;
+
   return cctrue;
+}
+
+ccfunc void
+ccexec_uninit(ccexec_t *exec)
+{
+  ccfree(exec->stack);
 }
 
 #endif
