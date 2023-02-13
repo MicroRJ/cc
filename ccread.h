@@ -253,14 +253,6 @@ typedef struct ccloc_t
   int row, col;
 } ccloc_t;
 
-typedef struct ccentry_t ccentry_t;
-typedef struct ccentry_t
-{ ccentry_t * nex;
-  char      * key;
-  int         len;
-  int         bit;
-} ccentry_t;
-
 typedef struct cctoken_t
 {
 	cctoken_k bit;

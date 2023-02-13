@@ -83,6 +83,22 @@ ccstack_yield_lvalue(ccexec_frame_t *stack, ccemit_value_t *couple)
   return result;
 }
 
+ccfunc void
+ccstack_pull(
+  ccexec_t *exec, int length)
+{
+  exec->stack_idx-=sizeof(ccexec_value_t)*length;
+}
+
+ccfunc ccinle ccexec_value_t *
+ccstack_push(
+  ccexec_t *exec, int length)
+{
+  ccexec_value_t *memory=cccast(ccexec_value_t*,cccast(char*,exec->stack)+exec->stack_idx);
+  exec->stack_idx+=sizeof(ccexec_value_t)*length;
+  return memory;
+}
+
 // Note: allocates an execution time addressable l-value on the stack and associates it with the given value...
 ccfunc ccinle ccexec_value_t *
 ccstack_local_alloc(
@@ -148,13 +164,14 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
 
 ccfunc int
 ccexec_invoke(
-  ccexec_t *e, ccemit_procd_t *p, ccexec_value_t *r, ccexec_value_t *i);
+  ccexec_t *e, ccemit_procd_t *p, ccexec_value_t *r, int l, ccexec_value_t *i);
 
 ccfunc int
 ccexec_edict(
   ccexec_t *exec, ccexec_frame_t *stack, ccemit_value_t *value)
 {
-  static ccexec_value_t zro=ccexec_rvalue(cccast(void*,0),"zro");
+  // Todo:
+  ccglobal ccexec_value_t zro=ccexec_rvalue(cccast(void*,0),"zro");
 
   ccnotnil(stack);
 
@@ -290,19 +307,27 @@ ccexec_edict(
       ccnotnil(edict->invoke.call);
 #endif
 
+#if 0
       ccexec_value_t  *rval=ccnil;
       ccemit_value_t **list=ccnil;
       ccarrfor(edict->invoke.rval,list)
         *ccarrone(rval)=ccstack_yield_rvalue(stack,*list);
+#endif
+      int rlen=ccarrlen(edict->invoke.rval);
+      ccexec_value_t *rval=ccstack_push(exec,rlen);
+      ccexec_value_t *setr=rval;
+      ccemit_value_t **list=ccnil;
+      ccarrfor(edict->invoke.rval,list)
+        *setr++=ccstack_yield_rvalue(stack,*list);
 
       // Note: save the return value ...
       ccexec_value_t *ret=ccstack_mingle(stack,value);
-      if(!ccexec_invoke(exec,edict->invoke.call,ret,rval))
+      if(!ccexec_invoke(exec,edict->invoke.call,ret,rlen,rval))
       {
         ccassert(!"no-return value, error");
       }
 
-      ccarrdel(rval);
+      ccstack_pull(exec,rlen);
     } break;
 
     // Todo: to be removed ...
@@ -354,14 +379,14 @@ ccexec_sizeof(ccexec_frame_t *_s, cctype_t *_t)
 
 ccfunc int
 ccexec_invoke(
-  ccexec_t *exec, ccemit_procd_t *procd, ccexec_value_t *r, ccexec_value_t *i)
+  ccexec_t *exec, ccemit_procd_t *procd, ccexec_value_t *r, int l, ccexec_value_t *i)
 {
   // Todo: let's not use our actual stack ...
   ccexec_frame_t stack={};
 
   cctree_t *type=procd->tree->type;
 
-  ccassert(ccarrlen(type->list)==ccarrlen(i));
+  ccassert((int)ccarrlen(type->list)==l);
 
 ccenter("setargs");
   cctree_t **lval;
@@ -408,7 +433,7 @@ ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
   *ccarrone(args)=ccexec_rvalue(cccast(void*,ARG),"arg-0");
 
   ccexec_value_t ret;
-  ccexec_invoke(exec,emit->entry,&ret,args);
+  ccexec_invoke(exec,emit->entry,&ret,ccarrlen(args),args);
 
   return ret;
 }

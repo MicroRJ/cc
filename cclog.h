@@ -13,18 +13,20 @@
 #if defined(_CCLOG) && defined(_CCLOG_IMPL)
 
 #ifdef _HARD_DEBUG
-
 ccfunc ccinle cccaller_t
 cccaller(int guid, const char *file, int line, const char *func)
-{
-  cccaller_t t;
+{ cccaller_t t;
   t.guid=guid;
   t.file=file;
   t.line=line;
   t.func=func;
-
   return t;
 }
+#endif
+
+#ifdef _HARD_DEBUG
+
+
 
 ccfunc void
 ccpushcaller(cccaller_t caller)
@@ -56,14 +58,14 @@ ccpullcaller()
   return cccallstack[--cccallindex];
 }
 
-
-ccfunc ccinle ccdebug_t *
+ccfunc ccdebug_sentry_t *
 ccdebug_()
 {
 	cccaller_t caller=ccpullcaller();
 
-  ccglobal ccdebug_t dummy={"dummy"};
-	if(ccdebug_disabled) return &dummy;
+  ccglobal ccdebug_sentry_t dummy={"dummy"};
+	if(ccdebugnone) return &dummy;
+
 	if(ccdebugthis) return ccdebugthis;
 
 	if(!ccdebugroot.label)
@@ -84,13 +86,13 @@ ccevent_()
 }
 
 ccfunc ccinle void
-cctimed_bubble(ccdebug_t *timed)
+cctimed_bubble(ccdebug_sentry_t *timed)
 { if(!timed->super) return;
 	cci64_t *a,*c,*s;
 	a=timed->event.e;
 	c=timed->last_event.e;
 	s=timed->super->event.e;
-	for(int i=0; i<6; ++i)
+	for(int i=0; i<5; ++i)
 	{ *s+++=*a-*c;
 		*c++=*a++;
 	}
@@ -124,23 +126,16 @@ ccbytecountreadable(cci64_t b, ccf64_t *f)
 	}
 }
 
-// Todo:
-ccfunc void
-cctextcolor()
-{
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_RED);
-}
 
-// Todo:
-ccfunc void
-cctextreset()
-{
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
-}
+
+
+#include "cccolor.c"
 
 ccfunc void
-ccdebugdump_(ccdebug_t *r, ccdebug_t *h, ccdebug_t *t)
+ccdebugdump_(ccdebug_sentry_t *r, ccdebug_sentry_t *h, ccdebug_sentry_t *t)
 {
+	if(t!=h && t->level>4) return;
+
 	ccf64_t seconds_used,percent_used;
   seconds_used=ccclocksecs(t->total_event_ticks);
   percent_used=ccclockperc(r? r->total_event_ticks :t->total_event_ticks,t->total_event_ticks);
@@ -152,9 +147,9 @@ ccdebugdump_(ccdebug_t *r, ccdebug_t *h, ccdebug_t *t)
   const char *suffix;
   suffix=ccbytecountreadable(t->event.memory,&memory);
 
-  if(h==t && t!=&ccdebugroot) cctextcolor();
 	for(int i=0;i<t->level*1;++i) printf(" ");
-  printf("#%i in %s[%i] %s(): %i '%s' event(s), took %f(s)(%%%.2f) with [%lli-%lli,%lli] allocations %s %.2f%s in %lli block(s), %lli collision(s)\n",
+  ccprintf("<!%i#%i in %s[%i] %s(): %i <!6'%s'!> event(s), took %f(s) <!9(%%%f)!> with [%lli-%lli,%lli] allocations %s %f%s in %lli block(s), %lli collision(s)!>\n",
+   	h==t?4:h?5:7,
     t->caller.guid,ccfilename(t->caller.file),t->caller.line,t->caller.func,
       t->event_count,t->label,seconds_used,percent_used,
         t->event.allocations,t->event.deallocations,t->event.reallocations,
@@ -162,9 +157,9 @@ ccdebugdump_(ccdebug_t *r, ccdebug_t *h, ccdebug_t *t)
   if(h==t && t!=&ccdebugroot) cctextreset();
 
 
-  ccdebug_t *c;
+  ccdebug_sentry_t *c;
 
-  ccdebug_t *n=ccnil;
+  ccdebug_sentry_t *n=ccnil;
 
   if(h==t)
   { ccarrfor(t->child,c)
@@ -175,19 +170,22 @@ ccdebugdump_(ccdebug_t *r, ccdebug_t *h, ccdebug_t *t)
     ccdebugdump_(t,n,c);
 }
 
+
+
+
 ccfunc ccinle void
 ccdebugdump()
 {
-	cctracelog("Debug Dump:");
+	cctracelog("Debug Dump: ");
 	ccdebugdump_(ccnil,&ccdebugroot,&ccdebugroot);
 
-	ccdebug_disabled=cctrue;
+	ccdebugnone=cctrue;
 
 
 	int freed_count=0;
 
-	ccdlb_t *f;
-	for(ccdlb_t *i=ccdebugroot.last_heap_block;i;freed_count++)
+	ccheap_block_t *f;
+	for(ccheap_block_t *i=ccdebugroot.last_heap_block;i;freed_count++)
 	{
 		f=i;
 		i=i->prev;
@@ -198,20 +196,23 @@ ccdebugdump()
 	cctracelog("freed %i block(s) for you", freed_count);
 }
 
-ccfunc void
-cctimedhead_(const char *label)
-{ cccaller_t caller=ccpullcaller();
-  if(ccdebug_disabled) return;
-	ccu64_t tick=ccclocktick();
-	ccdebug_t *super=ccdebug();
 
-	ccalloctr_t *was_alloctr=ccalloctr;
-	int was_disabled=ccdebug_disabled;
-	ccdebug_disabled=cctrue;
-	ccalloctr=ccinternalalloctr_;
+
+ccfunc void
+ccenter_callme(const char *label)
+{ cccaller_t caller=ccpullcaller();
+  if(ccdebugnone) return;
+ 	ccassert(!ccnopushrob);
+	ccnopushrob=cctrue;
+	ccdebug_sentry_t *super=ccdebug();
+	ccu64_t tick=ccclocktick();
+	ccallocator_t *a=ccallocator;
+	int d=ccdebugnone;
+	ccdebugnone=cctrue;
+	ccallocator=ccinternalallocator_;
   ccdebugthis=cctblsetP(super->child,cccast(cci64_t,1+caller.guid));
-  ccdebug_disabled=was_disabled;
-  ccalloctr=was_alloctr;
+  ccdebugnone=d;
+  ccallocator=a;
   if(ccdebugthis->event_count==0)
   { ccdebugthis->caller=caller;
     ccdebugthis->super=super;
@@ -220,29 +221,37 @@ cctimedhead_(const char *label)
   }
   ccdebugthis->event_count++;
   ccdebugthis->start_event_ticks=tick;
+  ccnopushrob=ccfalse;
 }
 
 ccfunc void
-cctimedtail_(const char *label)
+ccleave_callme(const char *label)
 { cccaller_t caller=ccpullcaller();
-  if(ccdebug_disabled) return;
-	ccu64_t tick=ccclocktick();
+  if(ccdebugnone) return;
+  ccassert(!ccnopushrob);
+	ccnopushrob=cctrue;
   ccassert(ccdebugthis!=0);
   ccassert(strcmp(ccdebugthis->label,label)==0);
   ccassert(strcmp(ccdebugthis->caller.file,caller.file)==0);
   ccassert(strcmp(ccdebugthis->caller.func,caller.func)==0);
+	ccu64_t tick=ccclocktick();
   ccclocktime_t span=tick-ccdebugthis->start_event_ticks;
   ccdebugthis->total_event_ticks+=span;
   cctimed_bubble(ccdebugthis);
   ccdebugthis=ccdebugthis->super;
-
-  if(ccdebugthis==&ccdebugroot)
-  {
-  	cccallas(ccdebugroot.caller,cctimedtail_("$root"));
-  	ccdebugdump();
-  }
+  ccnopushrob=ccfalse;
 }
 #endif
+
+ccfunc void
+ccdebugend()
+{
+#ifdef _HARD_DEBUG
+	ccassert(ccdebugthis==&ccdebugroot);
+	cccallas(ccdebugroot.caller,ccleave_callme("$root"));
+	ccdebugdump();
+#endif
+}
 
 
 ccfunc void

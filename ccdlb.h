@@ -1,6 +1,8 @@
 #ifndef _CCDLB
 #define _CCDLB
 
+
+
 #ifndef ccdlb_
 # define ccdlb_(ccm) (cccast(ccdlb_t*,ccm)-1)
 #endif
@@ -15,7 +17,7 @@
 # define ccdlbmin(ccm) ((ccm)?(ccdlb_(ccm)->sze_min):(ccnil))
 #endif
 #ifndef ccdlbdel
-# define ccdlbdel(ccm) ccfree(ccdlb(ccm))
+# define ccdlbdel(ccm) ccdlbdel_(cccast(void**,ccaddr(ccm)))
 #endif
 
 // Note: Array
@@ -168,6 +170,22 @@ ccfunc size_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 # define ccstrcatf(ccm,fmt,...) ccstr_catf(&ccm,fmt,__VA_ARGS__)
 #endif
 
+ccfunc void
+ccdlbdel_(void **dlb_)
+{ ccdlb_t *dlb=ccdlb(ccdref(dlb_));
+	ccallocator_t *a;
+	a=dlb->allocator;
+	ccentry_t *i,*f,*e;
+	ccarrfor(dlb->entries,e)
+	{ for(i=e;i;)
+		{ f=i;
+			i=i->nex;
+			cccall(a(0,f));
+		}
+	}
+	cccall(a(0,dlb));
+}
+
 ccfunc size_t
 ccdlb_arradd_(ccdlb_t **dlb_, size_t rsze, size_t csze)
 {
@@ -192,14 +210,14 @@ ccenter("arradd");
     sze_min=ccnil;
   cci32_t
     rem_rze=ccnil;
-  ccalloctr_t
-   *alloctr=ccalloctr;
+  ccallocator_t
+   *allocator=ccallocator;
 
   if(!is_ini)
   { sze_max=dlb->sze_max;
     sze_min=dlb->sze_min;
     rem_rze=dlb->rem_rze;
-    alloctr=dlb->alloctr;
+    allocator=dlb->allocator;
   }
 
   // Note: ensure that we never commit past what we're about to reserve or what
@@ -214,14 +232,14 @@ ccenter("arradd");
     if(sze_max<sze_min+rsze)
     	sze_max=sze_min+rsze;
 
-    dlb=(ccdlb_t*)cccall(alloctr(sizeof(*dlb)+sze_max,dlb));
+    dlb=(ccdlb_t*)cccall(allocator(sizeof(*dlb)+sze_max,dlb));
     *dlb_=dlb;
 
     if(is_ini)
     { dlb->rem_rze=ccfalse;
       dlb->rem_add=ccfalse;
       dlb->entries=ccnil;
-      dlb->alloctr=alloctr;
+      dlb->allocator=allocator;
     }
   }
 
@@ -292,14 +310,14 @@ ccdlb_tblini(ccdlb_t **dlb_, cci32_t isze)
   }
 }
 
-ccfunc ccent_t *
-ccdlb_tblcat(ccdlb_t **tbl, size_t isze, int len, const char *key, ccent_t *ent)
+ccfunc ccentry_t *
+ccdlb_tblcat(ccdlb_t **tbl, size_t isze, int len, const char *key, ccentry_t *ent)
 {
   ccnotnil(tbl);
   ccnotnil(*tbl);
 
   if(ent->key)
-  { ent->nex=ccmalloc_T(ccent_t);
+  { ent->nex=ccmalloc_T(ccentry_t);
     ent=ent->nex;
     memset(ent,ccnil,sizeof(*ent));
     // ccarradd(ccdref(tbl)->entries,1);
@@ -324,7 +342,7 @@ ccdlb_tblcat(ccdlb_t **tbl, size_t isze, int len, const char *key, ccent_t *ent)
   return ent;
 }
 
-ccfunc ccent_t *
+ccfunc ccentry_t *
 ccdbl_query(ccdlb_t *tbl, int len, const char *key)
 {
 	ccassert(key!=0);
@@ -333,7 +351,7 @@ ccdbl_query(ccdlb_t *tbl, int len, const char *key)
   ccu64_t  hsh=cchsh_abc(len,key);
   size_t   idx=hsh%ccarrmax(tbl->entries);
 
-  ccent_t *ent=tbl->entries+idx;
+  ccentry_t *ent=tbl->entries+idx;
 
   ccerrset(ccerr_kNON);
   while(ent->key)
@@ -360,7 +378,7 @@ ccenter("tblget");
   size_t val=ccnil;
 
   if(tbl)
-  { ccent_t *ent=ccdbl_query(tbl,len,key);
+  { ccentry_t *ent=ccdbl_query(tbl,len,key);
 	  if(ccerrnon())
 	  { cckeyset(ent->key);
 			val=ent->val;
@@ -384,7 +402,7 @@ ccenter("tblput");
 	// Todo: probably return an index that the user can still write to, but it won't affect other items...
   size_t val=ccnil;
 
-  ccent_t *ent=ccdbl_query(tbl,len,key);
+  ccentry_t *ent=ccdbl_query(tbl,len,key);
 
   if(ccerrnit())
   { ccerrset(ccerr_kNON);
@@ -415,7 +433,7 @@ ccenter("tblset");
 
 	// Todo: probably return an index that the user can still write to, but it won't affect other items...
   size_t val=ccnil;
-  ccent_t *ent=ccdbl_query(tbl,len,key);
+  ccentry_t *ent=ccdbl_query(tbl,len,key);
 
   if(ccerrnit())
   { ccerrset(ccerr_kNON);

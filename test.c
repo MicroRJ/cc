@@ -17,6 +17,24 @@ ccenter("main");
   ++ argv;
   -- argc;
 
+#ifdef _HARD_DEBUG
+ccenter("test-debug-system");
+
+	ccdebug_event_t *event;
+
+	for(int i=0; i<8; ++i)
+	{
+ccenter("test-debug-track");
+		void *mem=ccmalloc(24);
+		ccfree(mem);
+		event=&ccdebugthis->event;
+ccleave("test-debug-track");
+	}
+
+ccleave("test-debug-system");
+#endif // _HARD_DEBUG
+
+
   ccread_t read;
   ccread_init(&read);
   ccread_include(& read, "test.svm.c");
@@ -101,4 +119,7 @@ ccleave("compare");
   }
 
 ccleave("main");
+
+ccdebugend();
+
 }
