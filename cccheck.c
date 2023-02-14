@@ -98,7 +98,6 @@ cctree_solve_index(cctree_t *tree)
   ccassert(tree->lval);
   ccassert(tree->rval);
 
-  // a[][]
   cctree_t *lval=tree->lval;
   while(lval&&lval->kind!=cctree_kLITIDE)
   	lval=lval->lval;

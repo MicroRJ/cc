@@ -1,41 +1,20 @@
 #ifndef _CCCOLOR
 #define _CCCOLOR
 
-
 #define CCCOLOR_WITHIN(x,l,r) (((x)>=(l))&&((x)<=(r)))
 
-ccfunc void
-ccSetupColorTable()
-{
-  CONSOLE_SCREEN_BUFFER_INFOEX i={sizeof(i)};
-
-  if(GetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE),&i))
-  {
-    (void)i;
-  }
-}
-
-// Todo:
-ccfunc void
-cctextcolor()
-{
-  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_RED);
-}
-
-// Todo:
-ccfunc void
-cctextreset()
-{
-  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
-}
-
-
-// Todo: this is absolute crap ...
+// Todo: actually setup the color table properly ...
+// Todo: this is absolute crap, will need a proper printf parser for this to work properly or modify stb's...
 ccfunc void
 ccprintf(const char *f, ...)
 {
-  ccSetupColorTable();
   HANDLE h=GetStdHandle(STD_OUTPUT_HANDLE);
+
+	// CONSOLE_SCREEN_BUFFER_INFOEX e={sizeof(e)};
+  // if(GetConsoleScreenBufferInfoEx(h,&e))
+  // {
+  // 	SetConsoleScreenBufferInfoEx(h,&e);
+  // }
 
   const char *r=f;
 
@@ -98,6 +77,9 @@ ccprintf(const char *f, ...)
       else
       { if(c=='l'&&r[1]=='l'&&r[2]=='i')
           printf("%lli",lval()),next(3);
+        else
+        if(c=='l'&&r[1]=='l'&&r[2]=='u')
+          printf("%llu",lval()),next(3);
         else
           ccassert(!"error");
       }

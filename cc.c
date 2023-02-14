@@ -1,13 +1,17 @@
 /** Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved. **/
 #ifndef _CC
 #define _CC
-
-// Note: CC stands for 'c-cures' and it was originally meant to be a simple set of structures and functionality that you'd
+// Note: CC stands for 'c-cures' and it meant to be a simple set of structures and functionality that you'd
 // use on almost any c project ...
-// This file more optimized towards ease of use rather than performance although it is taken into account ...
-
+// I don't feel to comfortable yet having everything in single file, so definitions will be here,
+// and implementations their respective files.
+//
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#if defined(_DEBUG) || defined(DEBUG) || defined(DBG)
+# define _CCDEBUG
 #endif
 
 #define _CCGUID __COUNTER__
@@ -17,82 +21,33 @@ extern "C" {
 
 // Note: suppress warnings ...
 #ifdef _MSC_VER
-# pragma warning(push)
+# ifndef _DEVELOPER
+#  pragma warning(push)
+# endif
+#endif
+
+#ifdef _MSC_VER
 # pragma warning(disable:4053)
 # pragma warning(disable:4706)
 #ifdef _DEVELOPER
 # pragma warning(disable:4100)
 # pragma warning(disable:4201)
 # pragma warning(disable:4505)
+# pragma warning(disable:4702)
 #endif
 #endif
 
 // Todo:
-#ifdef _MSC_VER
-#define ccf64_t double
-#define ccf32_t float
+#define ccthread_local __declspec(thread)
+#define ccglobal       static
+#define ccfunc         static
 
-#define cci64_t __int64
-#define ccu64_t unsigned cci64_t
-
-#define cci32_t __int32
-#define ccu32_t unsigned cci32_t
-
-#define cci16_t __int16
-#define ccu16_t unsigned cci16_t
-
-#define cci8_t  __int8
-#define ccu8_t  unsigned cci8_t
+#ifdef __forceinline
+# define ccinle __forceinline
+#else
+# define ccinle inline
 #endif
 
-// Note: this makes easier to regex
-#ifndef ccaddr
-# define ccaddr(mem) (&(mem))
-#endif
-#ifndef ccdref
-# define ccdref(mem) (*(mem))
-#endif
-#ifndef cccast
-# define cccast(type,mem) ((type)(mem))
-#endif
-
-#ifndef cctrue
-# define cctrue cccast(int,1)
-#endif
-#ifndef ccfalse
-# define ccfalse cccast(int,0)
-#endif
-
-#ifndef ccnil
-# define ccnil 0
-#endif
-
-// Note: compile time assert ...
-#ifndef _CCASSERT
-# define _CCASSERT(x) typedef char __STATIC__ASSERT__[((x)?1:-1)]
-#endif
-
-// Note:
-#ifndef ccthread_local
-# define ccthread_local __declspec(thread)
-#endif
-#ifndef ccglobal
-# define ccglobal static
-#endif
-
-// Note:
-#ifndef ccfunc
-# define ccfunc static
-#endif
-#ifndef ccinle
-# ifdef __forceinline
-#  define ccinle __forceinline
-# else
-#  define ccinle inline
-# endif
-#endif
-
-// Note: this makes it easier to spot problems when the fields of a struct are not properly or accessed through the right tag ...
 #ifndef ccunion
 # ifdef _HARD_DEBUG
 #  define ccunion struct
@@ -100,6 +55,57 @@ extern "C" {
 #  define ccunion union
 # endif
 #endif
+
+typedef double ccf64_t;
+typedef float  ccf32_t;
+
+// Todo:
+#if _MSC_VER
+typedef signed   __int64 cci64_t;
+typedef unsigned __int64 ccu64_t;
+typedef signed   __int32 cci32_t;
+typedef unsigned __int32 ccu32_t;
+typedef signed   __int16 cci16_t;
+typedef unsigned __int16 ccu16_t;
+typedef signed   __int8  cci8_t;
+typedef unsigned __int8  ccu8_t;
+#else
+// Todo:
+typedef signed   long long int cci64_t;
+typedef unsigned long long int ccu64_t;
+#ifdef _CCLONG32
+typedef signed   long int cci32_t;
+typedef unsigned long int ccu32_t;
+#else
+typedef signed   int cci32_t;
+typedef unsigned int ccu32_t;
+#endif
+typedef signed   short cci16_t;
+typedef unsigned short ccu16_t;
+typedef signed   char  cci8_t;
+typedef unsigned char  ccu8_t;
+#endif
+
+#define _CCASSERT(x) typedef char __STATIC__ASSERT__[((x)?1:-1)]
+
+_CCASSERT(sizeof(ccu64_t)==sizeof(void*));
+_CCASSERT(sizeof(cci64_t)==sizeof(void*));
+_CCASSERT(sizeof(ccu32_t)==4);
+_CCASSERT(sizeof(cci32_t)==4);
+_CCASSERT(sizeof(ccu16_t)==2);
+_CCASSERT(sizeof(cci16_t)==2);
+
+// Note: this makes easier to regex
+#define cccast(T,mem) ((T)(mem))
+#define ccaddr(mem)   (&(mem))
+#define ccdref(mem)   (*(mem))
+
+#define cctrue  cccast(int,1)
+#define ccfalse cccast(int,0)
+
+// Todo: hmm...
+#define ccnil  0
+#define ccnull 0
 
 #ifndef ccbreak
 # define ccbreak __debugbreak
@@ -122,11 +128,6 @@ extern "C" {
 #  define ccnotnil(val) (val)
 # endif
 #endif
-
-// Todo: ensure proper size ...
-_CCASSERT(sizeof(ccu64_t)==sizeof(size_t));
-_CCASSERT(sizeof(cci64_t)==sizeof(size_t));
-
 
 // Note:
 typedef ccu64_t ccclocktime_t;
@@ -156,18 +157,9 @@ typedef enum ccerr_k
 } ccerr_k;
 
 // Note: simple allocator function, must-have for switching the allocator of debug routines ...
-typedef void *(ccallocator_t)(size_t,void *);
-
-// Note: allocator is just to determine whether we're using the right allocator ...
-typedef struct ccheap_block_t ccheap_block_t;
-typedef struct ccheap_block_t
-{ char head_guard[4];
-  ccallocator_t   * allocator;
-  ccheap_block_t  * prev, * next;
-  cccaller_t        caller;
-  size_t            size;
-  char tail_guard[4];
-} ccheap_block_t;
+// Todo: Do not take cccaller_t on the stack, make it a global or something, much easier to
+// turn off in release-mode...
+typedef void *(ccallocator_t)(cccaller_t, size_t,void *);
 
 // Note: entry status, this also must be a global ...
 typedef enum ccent_k
@@ -186,7 +178,7 @@ typedef struct ccentry_t
 } ccentry_t;
 
 // Note: dynamic length buffer ...
-// Todo: At the moment, not very well integrated with heap blocks ...
+// Todo: At the moment, not very well integrated ...
 typedef struct ccdlb_t ccdlb_t;
 typedef struct ccdlb_t
 { unsigned        rem_add: 1;
@@ -197,118 +189,80 @@ typedef struct ccdlb_t
   size_t          sze_min;
 } ccdlb_t;
 
-// Note: A debug event collect a snapshot of certain metrics in between the enter and leave function calls...
-typedef union ccdebug_event_t ccdebug_event_t;
-typedef union ccdebug_event_t
-{ cci64_t e[6];
-  struct
-  { cci64_t allocations;
-    cci64_t deallocations;
-    cci64_t reallocations;
-    cci64_t heap_block_count;
+typedef struct ccsentry_t ccsentry_t;
 
-    cci64_t memory;
+// Note: allocator is just to determine whether we're using the right allocator ...
+typedef struct ccsentry_block_t ccsentry_block_t;
+typedef struct ccsentry_block_t
+{ char head_guard[4];
 
-    cci64_t collisions;
-  };
-} ccdebug_event_t;
+  // Note: the current sentry that has this block ...
+  ccsentry_t *sentry;
+  // Note: the original sentry that created this block ...
+  ccsentry_t *master;
 
-// Note: A debug sentry watches over specific set of instructions and generates debug events each time it
-// is triggered, the last debug event is kept to differentiate the event's metrics, although not very necessary ...
-// Sentries report to super sentries in a hierarchy ...
-typedef struct ccdebug_sentry_t ccdebug_sentry_t;
-typedef struct ccdebug_sentry_t
-{ const char * label;
+  ccallocator_t    * allocator;
+  ccsentry_block_t * prev, * next;
+  cccaller_t         caller;
+  size_t             size;
+  char tail_guard[4];
+} ccsentry_block_t;
 
-  ccdebug_sentry_t  * super;
-  ccdebug_sentry_t  * child;
+typedef struct ccsentry_t ccsentry_t;
+typedef struct ccsentry_t
+{
+  // Note: some of these names will get me in trouble one day ...
+  const char  * marker;
+  ccsentry_t  * master;
+  ccsentry_t  * slaves;
+
+  cci32_t       level;
 
   cccaller_t   caller;
-  cci32_t      level;
 
-  ccclocktime_t start_event_ticks;
-  ccclocktime_t total_event_ticks;
+  // Note: this is the last block ...
+  ccsentry_block_t * block_list;
 
-  ccdebug_event_t last_event;
+  // Todo: it would be interesting if we'd also record child enter and leave count, this way
+  // we would also detect when a child hasn't properly left...
+  cci32_t enter_count;
+  cci32_t leave_count;
 
-  cci32_t         event_count;
-  ccdebug_event_t event;
+  // Note: this has to be every time we enter ...
+  ccclocktime_t start_time_in_ticks;
+  ccclocktime_t total_time_in_ticks;
 
-  // Note: only the root debug context may have heap blocks ...
-  ccheap_block_t *last_heap_block;
-} ccdebug_sentry_t;
+  struct
+  { cci64_t pma;
+    cci64_t nma;
+    cci64_t pm;
+    cci64_t nm;
+    cci32_t pbc;
+    cci32_t nbc;
+  } last_metrics, metrics;
+} ccsentry_t;
 
 
-ccfunc void *ccuserallocator_(size_t,void*);
-ccfunc void *ccinternalallocator_(size_t,void*);
+ccfunc void *ccuserallocator_(cccaller_t,size_t,void*);
+ccfunc void *ccinternalallocator_(cccaller_t,size_t,void*);
 
 // Note:
 ccglobal ccthread_local ccclocktime_t ccclockfreqc;
 
-// Note: global error code
 ccglobal ccthread_local ccerr_k ccerr;
-
-// Note: global key
 ccglobal ccthread_local ccstr_t cckey;
 
-// Note: you have to stack this manually if you wish to change it
+// Todo: allocator stack or remove ...
 ccglobal ccthread_local ccallocator_t *ccallocator=ccuserallocator_;
 
 #ifdef _HARD_DEBUG
-// Note: do not access these directly ...
-ccglobal ccthread_local cccaller_t  cccallstack[4];
-ccglobal ccthread_local cci32_t     cccallindex;
-ccglobal ccthread_local cci32_t     cchascaller;
-
-// Note: do not access these directly ...
-ccglobal ccthread_local ccdebug_sentry_t   ccdebugroot;
-ccglobal ccthread_local ccdebug_sentry_t  *ccdebugthis;
-ccglobal ccthread_local cci32_t            ccdebugnone;
-ccglobal ccthread_local cci32_t            ccnopushrob;
-// #ccnopushrob
-// Set this when you want to ensure the next function you call won't rob your push
-// #ccdebugnone
-// Dynamically choose an execution path to solve infinite recursion and the inclusion of
-// misleading debug metrics and push steal so long as the function exits immediately and accordingly.
-//
-// This happens when a 'push' function calls some other 'push' function before actually doing the 'pushing' part.
-// For instance:
-//
-// Context c; =0
-// Boolean d; =0
-//
-// ccpush():
-//   ccenter()
-//   actually_push()
-//   ccleave();
-// ccenter():
-//   ccpush();
-// ccleave():
-//   ccassert(c);
-// ccmain():
-//   ccenter()
-//   ccleave();
-//
-// To solve:
-//
-// ccpush():
-//   ccenter()
-//   actually_push()
-//   ccleave();
-// ccenter():
-//   d ?^        // If 'd' or 'disabled' don't collect anything
-//   p=d,d=true  // Store what 'd' was previously, set 'd' or 'disabled' to true
-//   c=ccpush();
-//   d=p         // Restore 'd'
-// ccleave():
-//   d ?^
-//   ccassert(c);
-// ccmain():
-//   ccenter()
-//   ccleave();
-
-
+ccglobal ccthread_local ccsentry_t   ccdebugroot;
+ccglobal ccthread_local ccsentry_t  *ccdebugthis;
+ccglobal ccthread_local cci32_t      ccdebugnone;
 #endif
+
+#define ccstrlenS(cstr) cccast(ccu32_t,strlen(cstr)-0)
+#define ccstrlenL(lstr) cccast(ccu32_t,sizeof(lstr)-1)
 
 // Note: global error
 #define ccerrset(err) ((ccerr=err),0)
@@ -321,97 +275,114 @@ ccglobal ccthread_local cci32_t            ccnopushrob;
 #define cckeyset(key) (cckey=key)
 #define cckeyget()    (cckey)
 
+// Note: l-value address
+#define cclva(lv) cccast(void**,ccaddr(lv))
+
+// Note: default allocator
+
+#define ccmalloc(size)       ccuserallocator_(cccall(),size,ccnil)
+#define ccrealloc(data,size) ccuserallocator_(cccall(),size, data)
+#define ccfree(data)         ccuserallocator_(cccall(),ccnil,data)
+
+#define ccmalloc_T(T) cccast(T*,ccmalloc(sizeof(T)))
+
+// Note: dynamic length buffer
+#define ccdlb_(ccm) (cccast(ccdlb_t*,ccm)-1)
+#define ccdlb(ccm) ((ccm)?ccdlb_(ccm):(ccnil))
+#define ccdlbmax_(ccm) (ccdlb_(ccm)->sze_max)
+#define ccdlbmin_(ccm) (ccdlb_(ccm)->sze_min)
+#define ccdlbmax(ccm) ((ccm)?ccdlbmax_(ccm):(ccnil))
+#define ccdlbmin(ccm) ((ccm)?ccdlbmin_(ccm):(ccnil))
+#define ccdlbdel(ccm) ccdlbdel_(cclva(ccm))
+// Note: array
+#define ccarrdel ccdlbdel
+
+#define ccarrmax(arr) ((arr)?(ccdlbmax_(arr)/sizeof(*(arr))):(ccnil))
+#define ccarrmin(arr) ((arr)?(ccdlbmin_(arr)/sizeof(*(arr))):(ccnil))
+
+#define ccarrend_max(arr) ((arr)+ccarrmax(arr))
+#define ccarrend_min(arr) ((arr)+ccarrmin(arr))
+
+#define ccarrend ccarrend_min
+#define ccarrlen(arr) cccast(ccu32_t,ccarrmin(arr))
+
+#define ccarrresi(ccm,num) ccdlb_arradd(cclva(ccm),sizeof(*(ccm)),num,0)
+#define ccarrres(ccm,num) ((ccm)+ccarrresi(ccm,num))
+
+#define ccarraddi(ccm,num) ccdlb_arradd(cclva(ccm),sizeof(*(ccm)),num,num)
+#define ccarradd(ccm,num) ((ccm)+ccarraddi(ccm,num))
+
+#define ccarrone(ccm) ccarradd(ccm,1)
+#define ccarrzro(ccm) memset(ccm,ccnil,ccdlbmax(ccm))
+
+#define ccarrfor(arr,itr) for(itr=arr;itr<ccarrend(arr);++itr)
+
+// Todo:
+#define ccarrfix(ccm) ((ccm)?ccdlb_(ccm)->rem_rze=cctrue:(ccnil))
+
+// Note: table
+#define cclithsh(lit) ccstrlenL(lit),lit
+#define ccntshsh(nts) ccstrlenS(nts),nts
+#define ccptrhsh(ptr) -cccast(cci32_t,sizeof(ptr)),cccast(char*,ptr)
+
+// Note: these use the global error code _ccerr_
+ccfunc cci64_t ccdlb_tblget(void **, cci32_t, cci32_t, const char *);
+ccfunc cci64_t ccdlb_tblput(void **, cci32_t, cci32_t, const char *);
+ccfunc cci64_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
+
+// Todo: this is to be reworked ...
+#define cctblgetL(ccm,lit) ((ccm)+ccdlb_tblget(cclva(ccm),sizeof(*(ccm)),cclithsh(lit)))
+#define cctblgetS(ccm,nts) ((ccm)+ccdlb_tblget(cclva(ccm),sizeof(*(ccm)),ccntshsh(nts)))
+#define cctblgetP(ccm,ptr) ((ccm)+ccdlb_tblget(cclva(ccm),sizeof(*(ccm)),ccptrhsh(ptr)))
+
+#define cctblset(ccm,len,key) ((ccm)+ccdlb_tblset(cclva(ccm),sizeof(*ccm),len,key))
+
+#define cctblsetL(ccm,lit) ((ccm)+ccdlb_tblset(cclva(ccm),sizeof(*ccm),cclithsh(lit)))
+#define cctblsetS(ccm,nts) ((ccm)+ccdlb_tblset(cclva(ccm),sizeof(*ccm),ccntshsh(nts)))
+#define cctblsetP(ccm,ptr) ((ccm)+ccdlb_tblset(cclva(ccm),sizeof(*ccm),ccptrhsh(ptr)))
+
+#define cctblputL(ccm,lit) ((ccm)+ccdlb_tblput(cclva(ccm),sizeof(*ccm),cclithsh(lit)))
+#define cctblputS(ccm,nts) ((ccm)+ccdlb_tblput(cclva(ccm),sizeof(*ccm),ccntshsh(nts)))
+#define cctblputP(ccm,ptr) ((ccm)+ccdlb_tblput(cclva(ccm),sizeof(*ccm),ccptrhsh(ptr)))
+
+// Note: string builder
+#define ccstrdel ccarrdel
+#define ccstrmax ccarrmax
+#define ccstrmin ccarrmin
+#define ccstrlen ccarrlen
+#define ccstradd(ccm,res,com)  ((ccm)+ccdlb_arradd(cclva(ccm),sizeof(*(ccm)),res,com))
+#define ccstrcatN(ccm,len,str) ((ccm)+ccdlb_stradd(&(ccm),len+1,len+0,str))
+#define ccstrputN(ccm,len,str) ((ccm)+ccdlb_stradd(&(ccm),len+1,len+1,str))
+#define ccstrcatL(ccm,str) ccstrcatN(ccm,ccstrlenL(str),str)
+#define ccstrputL(ccm,str) ccstrputN(ccm,ccstrlenL(str),str)
+#define ccstrcatS(ccm,str) ccstrcatN(ccm,ccstrlenS(str),str)
+#define ccstrputS(ccm,str) ccstrputN(ccm,ccstrlenS(str),str)
+#define ccstrcatF(ccm,fmt,...) ccstr_catf(&ccm,fmt,__VA_ARGS__)
+
 // Todo: to be removed !
-ccfunc ccinle ccdebug_event_t   *ccevent_();
-ccfunc ccinle ccdebug_sentry_t  *ccdebug_();
-#ifdef _HARD_DEBUG
+ccfunc ccinle ccsentry_t *ccdebug_();
 ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
-ccfunc void ccpushcaller(cccaller_t);
-ccfunc ccinle cccaller_t ccpullcaller();
-ccfunc void ccenter_callme(const char *label);
-ccfunc void ccleave_callme(const char *label);
-// Todo: this is deprecated ... how are you going to expand this to zero later on?
-# ifndef ccdebug
-#  define ccdebug() cccall(ccdebug_())
-# endif
-# ifndef ccevent
-#  define ccevent() cccall(ccevent_())
-# endif
-# ifndef cccallas
-#  define cccallas(caller,callee) (ccpushcaller(caller),(callee))
-# endif
-# ifndef cccall
-#  define cccall(callee) cccallas(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),callee)
-# endif
-#else
-# define ccenter_callme(x) 0
-# define ccleave_callme(x) 0
-# define ccpullcaller() {}
-ccglobal ccdebug_sentry_t dummy;
-# ifndef ccdebug
-#  define ccdebug() (&dummy)
-# endif
-# ifndef ccevent
-#  define ccevent() (&dummy.event)
-# endif
-# ifndef cccallas
-#  define cccallas(caller,callee) (callee)
-# endif
-# ifndef cccall
-#  define cccall(callee) (callee)
-# endif
-#endif
 
-// Note: C string ...
-#ifndef cclit
-# define cclit(lit) cccast(unsigned int,sizeof(lit)-1),(lit)
-#endif
-#ifndef ccstrlenS
-# define ccstrlenS(cstr) cccast(ccu32_t,strlen(cstr))
-#endif
-#ifndef ccstrlenL
-# define ccstrlenL(lstr) cccast(ccu32_t,sizeof(lstr)-1)
-#endif
+#define cccall()  cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC)
+#define ccdebug() ccdebug_()
 
-
-// Note: simple trace logging ...
-ccfunc void cctrace_(const char *label, const char *format, ...);
-
-#ifndef cctracelog
-# define cctracelog(fmt,...) (cccall(0),cctrace_("log",fmt,__VA_ARGS__))
-#endif
-#ifndef cctracewar
-# define cctracewar(fmt,...) (cccall(0),cctrace_("war",fmt,__VA_ARGS__))
-#endif
-#ifndef cctraceerr
-# define cctraceerr(fmt,...) (cccall(0),cctrace_("err",fmt,__VA_ARGS__))
-#endif
-
-#ifndef ccmalloc
-# define ccmalloc(size) cccall(ccuserallocator_(size,ccnil))
-#endif
-#ifndef ccrealloc
-# define ccrealloc(data,size) cccall(ccuserallocator_(size,data))
-#endif
-#ifndef ccfree
-# define ccfree(data) cccall(ccuserallocator_(ccnil,data))
-#endif
-
-
+ccfunc ccsentry_t *
+ccsentry_enter(cccaller_t caller, ccsentry_t *master, const char *marker);
+ccfunc ccsentry_t *
+ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker);
 
 #ifndef ccenter
-# define ccenter(label) cccall(ccenter_callme(label))
+# define ccenter(marker) (ccdebugthis=ccsentry_enter(cccall(),ccdebugthis,marker))
 #endif
 #ifndef ccleave
-# define ccleave(label) cccall(ccleave_callme(label))
+# define ccleave(marker) (ccdebugthis=ccsentry_leave(cccall(),ccdebugthis,marker))
 #endif
 
-ccfunc const char *ccfilename(const char *name);
-
-// Todo: cache clock frequency
-// Note: some platform functions...
+#include <stdarg.h>
 ccfunc ccinle ccclocktime_t ccclocktick();
 ccfunc ccinle ccf64_t ccclocksecs(ccu64_t);
+
+ccfunc const char *ccfilename(const char *name);
 
 ccfunc int ccrealfile(void *);
 ccfunc void ccclosefile(void *);
@@ -419,6 +390,16 @@ ccfunc void *ccopenfile(const char *);
 ccfunc void *ccpullfile(void *,unsigned long int,unsigned long int *);
 ccfunc unsigned long int ccpushfile(void *,unsigned long int,unsigned long int,void*);
 ccfunc unsigned long int ccfilesize(void *);
+
+ccfunc ccinle int ccformatvex(char *,int,const char *,va_list);
+ccfunc ccinle char *ccformatv(const char *,va_list);
+ccfunc int ccformatex(char *, int, const char *, ...);
+ccfunc char *ccformat(const char *, ...);
+
+ccfunc void cctrace_(cccaller_t caller, const char *label, const char *format, ...);
+#define cctracelog(fmt,...) cctrace_(cccall(),"log",fmt,__VA_ARGS__)
+#define cctracewar(fmt,...) cctrace_(cccall(),"war",fmt,__VA_ARGS__)
+#define cctraceerr(fmt,...) cctrace_(cccall(),"err",fmt,__VA_ARGS__)
 
 #ifdef _WIN32
 #ifndef CINTERFACE
@@ -441,13 +422,6 @@ ccfunc unsigned long int ccfilesize(void *);
 #include <malloc.h>
 #include <memory.h>
 #include <string.h>
-
-#ifndef ccmalloc_T
-# define ccmalloc_T(type) cccast(type*,ccmalloc(sizeof(type)))
-#endif
-#ifndef ccrealloc_T
-# define ccrealloc_T(mem,type) cccast(type*,ccrealloc(mem,sizeof(type)))
-#endif
 
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb_sprintf.h"
@@ -507,14 +481,16 @@ typedef struct cctree_t cctree_t;
 
 #include "ccfio.c"
 
+ccfunc void
+ccdebug_checkblock(ccallocator_t *allocator, ccsentry_block_t *block);
+
 #include "cclog.h"
 #include "ccdlb.h"
 #define _CCLOG_IMPL
 #include "cclog.h"
 
-ccfunc void *ccinternalallocator_(size_t size,void *data)
-{ ccpullcaller();
-  if(size)
+ccfunc void *ccinternalallocator_(cccaller_t caller, size_t size,void *data)
+{ if(size)
   { if(data)
       return realloc(data,size);
     else
@@ -527,39 +503,51 @@ ccfunc void *ccinternalallocator_(size_t size,void *data)
 #ifdef _HARD_DEBUG
 
 ccfunc void
-ccdebug_checkblock(ccallocator_t *allocator, ccheap_block_t *block)
+ccdebug_checkblock(ccallocator_t *allocator, ccsentry_block_t *block)
 { for(int i=0; i<4; ++i)
     ccassert(block->head_guard[i]==ccnil);
   for(int i=0; i<4; ++i)
     ccassert(block->tail_guard[i]==ccnil);
+
+  ccassert(block->master!=ccnil);
+  ccassert(block->sentry!=ccnil);
+
   ccassert(block->allocator==allocator);
+
+  ccassert(!block->prev||block->prev->sentry==block->sentry);
+  ccassert(!block->next||block->next->sentry==block->sentry);
+
   ccassert(!block->prev||block->prev->next==block);
   ccassert(!block->next||block->next->prev==block);
+
   ccassert(!block->next||block->next!=block);
   ccassert(!block->prev||block->prev!=block);
 }
 
-ccfunc void *ccuserallocator_(size_t size,void *data)
+ccfunc void *ccuserallocator_(cccaller_t caller, size_t size,void *data)
 {
-	cccaller_t caller=ccpullcaller();
-
 ccenter("user-allocator");
-  ccheap_block_t *block;
+  ccsentry_block_t *block;
   if(!size)
   {
 ccenter("free");
-  	ccdebug_sentry_t *debug=ccdebug();
-  	block=(ccheap_block_t*)data-1;
+    ccsentry_t *debug=ccdebug();
+    block=(ccsentry_block_t*)data-1;
     ccdebug_checkblock(ccuserallocator_,block);
+
     if(block->prev) block->prev->next=block->next;
     if(block->next) block->next->prev=block->prev;
-    else ccdebugroot.last_heap_block=block->prev;
+    else block->sentry->block_list=block->prev;
+
+    debug->metrics.nbc++;
+
+    debug->metrics.nma++;
+    debug->metrics.nm+=block->size;
+
+    // Note: just in case?
     block->next=ccnil;
     block->prev=ccnil;
-    block->caller=caller;
-    debug->event.heap_block_count--;
-    debug->event.deallocations++;
-    debug->event.memory-=block->size;
+
     free(block);
     block=ccnil;
 ccleave("free");
@@ -567,45 +555,43 @@ ccleave("free");
   { if(data)
     {
 ccenter("ccrealloc");
-  		ccdebug_sentry_t *debug=ccdebug();
-    	block=(ccheap_block_t*)data-1;
+      ccsentry_t *debug=ccdebug();
+      block=(ccsentry_block_t*)data-1;
       ccdebug_checkblock(ccuserallocator_,block);
 
-      debug->event.memory+=size-block->size;
-      debug->event.reallocations++;
+      debug->metrics.nm+=block->size;
 
-      ccassert(ccdebugroot.last_heap_block!=0);
-      int is_last=block==ccdebugroot.last_heap_block;
-      block=(ccheap_block_t*)realloc(block,sizeof(*block)+size);
+      block=(ccsentry_block_t*)realloc(block,sizeof(*block)+size);
       block->caller=caller;
       block->size=size;
+
       if(block->prev) block->prev->next=block;
       if(block->next) block->next->prev=block;
-      if(is_last) ccdebugroot.last_heap_block=block;
+      else block->sentry->block_list=block;
+
+      debug->metrics.pma++;
+      debug->metrics.nma++;
+      debug->metrics.pm+=size;
+
 ccleave("ccrealloc");
     } else
     {
 ccenter("malloc");
-  		ccdebug_sentry_t *debug=ccdebug();
-    	block=(ccheap_block_t*)malloc(sizeof(*block)+size);
+      ccsentry_t *debug=ccdebug();
+      block=(ccsentry_block_t*)malloc(sizeof(*block)+size);
       memset(block,ccnil,sizeof(*block));
       block->allocator=ccuserallocator_;
       block->caller=caller;
+      block->master=debug;
+      block->sentry=debug;
       block->size=size;
-
-      if(!ccdebugroot.last_heap_block)
-      { ccdebugroot.last_heap_block=block;
-      } else
-      { block->prev=ccdebugroot.last_heap_block;
-        ccdebugroot.last_heap_block->next=block;
-        ccdebugroot.last_heap_block=block;
-      }
+      ccsentry_addblock(debug,block);
 
       ccdebug_checkblock(ccuserallocator_,block);
 
-      debug->event.heap_block_count++;
-      debug->event.allocations++;
-      debug->event.memory+=size;
+      debug->metrics.pbc++;
+      debug->metrics.pma++;
+      debug->metrics.pm+=size;
 ccleave("malloc");
     }
   }
@@ -641,7 +627,9 @@ ccfunc void *ccuserallocator_(size_t size,void *data)
 #include "ccemit-c.c"
 
 #ifdef _MSC_VER
-#pragma warning(pop)
+# ifndef _DEVELOPER
+#  pragma warning(pop)
+# endif
 #endif
 
 #ifdef __cplusplus

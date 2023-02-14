@@ -405,7 +405,7 @@ ccenter("invoke");
   ccexec_enter(&stack,procd->decls);
 
 ccenter("procd-exec");
-  while(stack.irindex<ccarrleni(stack.current->edict))
+  while(cccast(ccu32_t,stack.irindex)<ccarrlen(stack.current->edict))
   {
     ccemit_value_t **it=stack.current->edict+stack.irindex;
     stack.irindex++;
