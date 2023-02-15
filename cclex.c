@@ -110,7 +110,7 @@ cclex_move(cclex_t *l, size_t len, const char *bed)
 ccfunc void
 cclex_init(cclex_t *l)
 {
-  l->tok = {};
+  memset(&l->tok,sizeof(l->tok),ccnil);
   cclex_hash_init(l);
 }
 
@@ -134,7 +134,7 @@ cclex_idenlen(const char *s)
 ccfunc void
 cclex_token(cclex_t *l, cctoken_t *token)
 { *token = l->tok;
-  l->tok = {};
+  memset(&l->tok,sizeof(l->tok),ccnil);
 }
 
 ccfunc void cclex_next_token_internal(cclex_t *l);
@@ -344,7 +344,7 @@ ccenter("next_token_internal");
     { ++ l->max, l->tok.bit = cctoken_Kcolon;
     } break;
     case ',':
-    { ++ l->max, l->tok.bit = cctoken_Kcomma;
+    { ++ l->max, l->tok.bit = cctoken_kCMA;
     } break;
     // case '#':
     // { ++ l->max, l->tok.bit = cctoken_Kpound;
@@ -482,7 +482,7 @@ ccenter("next_token_internal");
     case '=':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kequals;
+      { l->max += 2, l->tok.bit = cctoken_kTEQ;
       } else
       { l->max += 1, l->tok.bit = cctoken_kASSIGN;
       }
@@ -492,7 +492,7 @@ ccenter("next_token_internal");
     case '!':
     {
       if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Knot_equals;
+      { l->max += 2, l->tok.bit = cctoken_kFEQ;
       } else
       { l->max += 2, l->tok.bit = cctoken_Knegate;
       }

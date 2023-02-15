@@ -6,22 +6,6 @@ int fib(int x)
 	}
 	return x;
 }
-
-int retsame(int c)
-{
-	return c;
-}
-
 int main(int a)
-{
-	int some[256];
-
-	int i=0;
-	while(i<256)
-	{ some[i]=i;
-		i=i+1;
-	}
-
-	some[24]=retsame(fib(a));
-	return some[24];
+{ return fib(a);
 }

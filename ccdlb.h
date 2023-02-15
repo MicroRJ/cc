@@ -17,6 +17,8 @@ ccdlbdel_(void **dlb_)
 		ccarrdel(dlb->entries);
 	}
 	a(cccall(),0,dlb);
+
+	*dlb_=ccnil;
 }
 
 ccfunc cci64_t

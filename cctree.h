@@ -73,12 +73,13 @@ ccglobal const char *cctree_s[]=
 
 typedef struct cctree_t cctree_t;
 
-ccfunc void cctree_del(cctree_t *);
-ccfunc cctree_t *cctree_new(cctree_k, cctree_t *, cci32_t);
-
 // Note: slowly but surely compact this ...
 typedef struct cctree_t
-{ cctree_k    kind;
+{
+	cctree_k    kind;
+
+	const char *loca;
+
   cctree_t   *root;
   cci32_t     mark;
 
@@ -130,7 +131,8 @@ cctree_del(cctree_t *tree)
 
 ccfunc cctree_t *
 cctree_new(cctree_k kind, cctree_t *root, cci32_t mark)
-{ cctree_t *tree=ccmalloc_T(cctree_t);
+{ // Todo: proper tree allocator ...
+	cctree_t *tree=ccmalloc_T(cctree_t);
   memset(tree,ccnil,sizeof(*tree));
   tree->kind=kind;
   tree->root=root;
@@ -140,7 +142,7 @@ cctree_new(cctree_k kind, cctree_t *root, cci32_t mark)
 
 ccfunc cctree_t *
 cctree_clone(cctree_t *tree)
-{ cctree_t *result=cctree_new(tree->kind,tree->root,tree->mark);
+{ cctree_t *result=ccmalloc_T(cctree_t);
   *result=*tree;
   return result;
 }
@@ -152,14 +154,14 @@ cctree_name(cctree_t *name)
 }
 
 ccfunc cctree_t *
-cctreee_pointer_modifier(cctree_t *type)
+cctree_pointer_modifier(cctree_t *type)
 { cctree_t *tree=cctree_new(cctree_kPOINTER,0,0);
   tree->type=type;
   return tree;
 }
 
 ccfunc cctree_t *
-cctreee_array_modifier(cctree_t *type, cctree_t *rval)
+cctree_array_modifier(cctree_t *type, cctree_t *rval)
 { cctree_t *tree=cctree_new(cctree_kARRAY,0,0);
   tree->type=type;
   tree->rval=rval;
@@ -167,7 +169,7 @@ cctreee_array_modifier(cctree_t *type, cctree_t *rval)
 }
 
 ccfunc cctree_t *
-cctreee_function_modifier(cctree_t *type, cctree_t **list)
+cctree_function_modifier(cctree_t *type, cctree_t **list)
 { cctree_t *tree=cctree_new(cctree_kFUNC,0,0);
   tree->type=type;
   tree->list=list;
@@ -175,7 +177,7 @@ cctreee_function_modifier(cctree_t *type, cctree_t **list)
 }
 
 ccfunc cctree_t *
-cctreee_struct_specifier(cctree_t **list, cctree_t *name)
+cctree_struct_specifier(cctree_t **list, cctree_t *name)
 { ccassert(list!=0);
   cctree_t *tree=cctree_new(cctree_kSTRUCT,0,0);
   tree->list=list;
@@ -271,9 +273,11 @@ cctree_decl(cctree_t *root, cci32_t mark, cctree_t *type, cctree_t **list)
 }
 
 ccfunc cctree_t *
-cctree_litide(cctree_t *root, cci32_t mark, ccstr_t name)
+cctree_litide(cctree_t *root, cci32_t mark, const char *loca, ccstr_t name)
 { cctree_t *tree=cctree_new(cctree_kLITIDE,root,mark);
   tree->name=name;
+
+  tree->loca=loca;
   return tree;
 }
 

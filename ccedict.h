@@ -17,10 +17,13 @@ typedef enum ccedict_k
   ccedict_kENTER,
   ccedict_kINVOKE,
   ccedict_kRETURN,
+
+  ccedict_kDBGBREAK,
+  ccedict_kDBGERROR,
 } ccedict_k;
 
 ccglobal const char *ccedict_s[]=
-{ "LOCAL","PARAM","ADDRESS","STORE","FETCH","ARITH","JUMP","JUMPT","JUMPF","JUMPC","TERNARY","ENTER","INVOKE","RETURN",
+{ "LOCAL","PARAM","ADDRESS","STORE","FETCH","ARITH","JUMP","JUMPT","JUMPF","JUMPC","TERNARY","ENTER","INVOKE","RETURN","DBGBREAK",
 };
 
 
@@ -227,6 +230,20 @@ ccedict_return(ccemit_value_t *rval)
 {
 	ccedict_t *e=ccedict(ccedict_kRETURN,"return");
   e->ret.rval=rval;
+  return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_dbgbreak()
+{
+	ccedict_t *e=ccedict(ccedict_kDBGBREAK,"dbg_break");
+  return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_dbgerror()
+{
+	ccedict_t *e=ccedict(ccedict_kDBGERROR,"dbg_error");
   return e;
 }
 

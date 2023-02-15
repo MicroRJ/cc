@@ -173,6 +173,15 @@ ccfunc ccsentry_t *
 ccsentry_enter(cccaller_t caller, ccsentry_t *master, const char *marker)
 { if(ccdebugnone) return master;
 
+	// Note: this is a recursive function ...
+	if(caller.guid==master->caller.guid)
+	{
+		ccassert(ccdebugthis==master);
+
+		master->enter_count++;
+		return master;
+	}
+
   ccallocator_t *a=ccallocator;
   int d=ccdebugnone;
 
@@ -210,9 +219,19 @@ ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker)
   if(ccdebugnone) return sentry;
 
   ccassert(sentry!=0);
+
   ccassert(strcmp(sentry->marker,marker)==0);
   ccassert(strcmp(sentry->caller.file,caller.file)==0);
   ccassert(strcmp(sentry->caller.func,caller.func)==0);
+  ccassert(sentry->enter_count>sentry->leave_count);
+
+  sentry->leave_count++;
+
+  // Note: this could be a recursive function and we've entered a bunch of times but we haven't left yet ...
+  if(sentry->leave_count!=sentry->enter_count)
+  {
+  	return sentry;
+  }
 
   ccu64_t tick=ccclocktick();
   sentry->total_time_in_ticks+=tick-sentry->start_time_in_ticks;

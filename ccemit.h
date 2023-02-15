@@ -36,7 +36,7 @@ typedef struct ccemit_value_t
 { ccvalue_k        kind;
 
   ccstr_t label;
-  ccloc_t creator;
+  ccloca_t creator;
 
 ccunion
 { ccedict_t      * edict;
@@ -277,6 +277,18 @@ ccfunc ccinle ccemit_value_t *
 ccblock_tjump(ccemit_block_t *block, ccjump_point_t point, ccemit_value_t *cnd)
 {
   return ccblock_add_edict(block,ccedict_tjump(point,cnd));
+}
+
+ccfunc ccinle ccemit_value_t *
+ccblock_dbgbreak(ccemit_block_t *block)
+{
+  return ccblock_add_edict(block,ccedict_dbgbreak());
+}
+
+ccfunc ccinle ccemit_value_t *
+ccblock_dbgerror(ccemit_block_t *block)
+{
+  return ccblock_add_edict(block,ccedict_dbgerror());
 }
 
 #endif

@@ -27,7 +27,7 @@ typedef enum cctoken_k
   cctoken_kLSQUARE, // '['
   cctoken_kRSQUARE, // ']'
 
-  cctoken_Kcomma, // ','
+  cctoken_kCMA, // ','
   cctoken_Kcolon, // ':'
   cctoken_Kspace, // ' '
 
@@ -190,8 +190,8 @@ typedef enum cctoken_k
   cctoken_kLTN,
 
   // Group: equality
-  cctoken_Kequals,
-  cctoken_Knot_equals,
+  cctoken_kTEQ,
+  cctoken_kFEQ,
 
   // Group: bit-wise and
   cctoken_Kbitwise_and,
@@ -245,13 +245,11 @@ typedef struct ccclassic_t
   };
 } ccclassic_t;
 
-typedef struct ccloc_t ccloc_t;
-typedef struct ccloc_t
-{ const char *file;
-  const char *func;
-  const char *clss;
+typedef struct ccloca_t ccloca_t;
+typedef struct ccloca_t
+{ int idx;
   int row, col;
-} ccloc_t;
+} ccloca_t;
 
 typedef struct cctoken_t
 {

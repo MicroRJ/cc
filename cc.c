@@ -1,16 +1,17 @@
 /** Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved. **/
 #ifndef _CC
 #define _CC
-// Note: CC stands for 'c-cures' and it meant to be a simple set of structures and functionality that you'd
+// Note: CC stands for 'c-cures' and it is meant to be a simple set of utilities that you'd
 // use on almost any c project ...
-// I don't feel to comfortable yet having everything in single file, so definitions will be here,
-// and implementations their respective files.
+// I don't feel too comfortable yet having everything in a single file, so definitions will be here,
+// and implementations in their respective files.
 //
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#if defined(_DEBUG) || defined(DEBUG) || defined(DBG)
+#if defined(_DEBUG)||defined(DEBUG)||defined(DBG)
 # define _CCDEBUG
 #endif
 
@@ -19,13 +20,16 @@ extern "C" {
 #define _CCLINE __LINE__
 #define _CCFUNC __func__
 
-// Note: suppress warnings ...
+
+// Note: if we are in development mode keep the disabled warnings for faster prototyping,
+// and when we build in release mode, enable warnings to neatify code ...
 #ifdef _MSC_VER
 # ifndef _DEVELOPER
 #  pragma warning(push)
 # endif
 #endif
 
+// Note: suppress warnings ...
 #ifdef _MSC_VER
 # pragma warning(disable:4053)
 # pragma warning(disable:4706)
@@ -397,9 +401,13 @@ ccfunc int ccformatex(char *, int, const char *, ...);
 ccfunc char *ccformat(const char *, ...);
 
 ccfunc void cctrace_(cccaller_t caller, const char *label, const char *format, ...);
-#define cctracelog(fmt,...) cctrace_(cccall(),"log",fmt,__VA_ARGS__)
-#define cctracewar(fmt,...) cctrace_(cccall(),"war",fmt,__VA_ARGS__)
-#define cctraceerr(fmt,...) cctrace_(cccall(),"err",fmt,__VA_ARGS__)
+#define cctracelog(fmt,...) 0
+#define cctracewar(fmt,...) 0
+#define cctraceerr(fmt,...) 0
+
+// cctrace_(cccall(),"log",fmt,__VA_ARGS__)
+// cctrace_(cccall(),"war",fmt,__VA_ARGS__)
+// cctrace_(cccall(),"err",fmt,__VA_ARGS__)
 
 #ifdef _WIN32
 #ifndef CINTERFACE
@@ -612,11 +620,15 @@ ccfunc void *ccuserallocator_(size_t size,void *data)
   return ccinternalallocator_(size,data);
 }
 #endif
+
 // Note:
 #include "ccread.h"
 #include "cctree.h"
-#include "cccheck.c"
+#include "ccseek.h"
+
 #include "ccedict.h"
+
+#include "ccseek.c"
 #include "ccemit.h"
 #include "ccexec.h"
 
@@ -624,7 +636,7 @@ ccfunc void *ccuserallocator_(size_t size,void *data)
 #include "ccread.c"
 #include "ccemit.c"
 #include "ccexec.c"
-#include "ccemit-c.c"
+// #include "ccemit-c.c"
 
 #ifdef _MSC_VER
 # ifndef _DEVELOPER

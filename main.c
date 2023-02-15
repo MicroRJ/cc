@@ -11,20 +11,46 @@ int fib(int x)
   return x;
 }
 
-ccfunc void testdbgsys()
+ccfunc ccexec_value_t buildrunfile(const char *filename)
 {
-	ccenter("test-debug-system");
-		for(int i=0; i<8; ++i)
-		{
-	ccenter("test-debug-track-master");
-	ccenter("test-debug-track");
-			void *mem=ccmalloc(24);
-			mem=ccrealloc(mem,48);
-			ccfree(mem);
-	ccleave("test-debug-track");
-	ccleave("test-debug-track-master");
-		}
-	ccleave("test-debug-system");
+
+
+ccenter("build-run-file");
+
+	ccexec_value_t result;
+
+  ccread_t read;
+  ccemit_t emit;
+  ccexec_t exec;
+
+  ccread_init(&read);
+	ccemit_init(&emit);
+  ccexec_init(&exec);
+
+ccenter("read");
+  ccread_include(&read,filename);
+  cctree_t *tree;
+  tree=ccread_translation_unit(&read);
+ccleave("read");
+
+	// Todo: this is global for now!
+	ccseek_translation_unit(tree);
+
+ccenter("emit");
+	ccemit_translation_unit(&emit,tree);
+ccleave("emit");
+
+ccenter("exec");
+  result=ccexec_translation_unit(&exec,&emit);
+ccleave("exec");
+
+  ccexec_uninit(&exec);
+  ccread_uninit(&read);
+
+  cctracelog("file %s: %i",filename,result.asi32);
+
+ccleave("build-run-file");
+  return result;
 }
 
 int main(int argc, char **argv)
@@ -35,43 +61,24 @@ ccenter("main");
   ++ argv;
   -- argc;
 
-ccenter("read");
-  ccread_t read;
-  ccread_init(&read);
-  ccread_include(& read, "code\\fib.cc");
-  cctree_t *tree;
-  tree=ccread_translation_unit(&read);
-ccleave("read");
+#if 0
+  testdbgsys();
+#else
 
-ccenter("emit");
-  ccemit_t emit;
-	ccemit_init(&emit);
-	ccemit_translation_unit(&emit,tree);
-ccleave("emit");
+  buildrunfile("code\\decl.cc");
+  buildrunfile("code\\lval.cc");
 
-ccenter("exec");
 
-#ifndef _HARD_DEBUG
-	ccclocktime_t tick=ccclocktick();
-#endif
-  ccexec_value_t retr;
-  ccexec_t exec;
-  ccexec_init(&exec);
-  retr=ccexec_translation_unit(&exec,&emit);
-  ccexec_uninit(&exec);
-
-#ifndef _HARD_DEBUG
-  printf("done in %f\n", ccclocksecs(ccclocktick()-tick));
-#endif
-
-ccleave("exec");
-
-  ccread_uninit(&read);
-
+#if 0
+  ccexec_value_t retr=buildrunfile("code\\fib.cc");
 ccenter("compare");
 	int c=fib(ARG);
-  cctracelog("c:%i - cc:%i",c,retr.asi32);
 ccleave("compare");
+  cctracelog("c:%i - cc:%i",c,retr.asi32);
+#endif
+
+#endif
+
 
 #if 0
 ccenter("emit-c");
