@@ -37,7 +37,7 @@ int main(int a)
 ### State of the major files:
 - lexer/parser 'ccread.c' is straightforward and simple so you can't mess that up too much,
   unless you're me, so there's some work to be done ...
-- checker 'ccseek.c' aka the thing that's supposed to tell you what type or declaration an expression is referring to and
+- checker 'ccseer.c' aka the thing that's supposed to tell you what type or declaration an expression is referring to and
   some other things, a) it doesn't know what it's doing and b) it's missing a bunch of requirements to be an actual checker ...
   This is mostly due to the endless amount of time spent lollygagging in the endless process of
   finding a "substantial" word with the same number of letters as other words so they line up perfectly and

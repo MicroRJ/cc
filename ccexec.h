@@ -27,12 +27,10 @@ typedef struct ccexec_value_t
 
 typedef struct ccexec_frame_t ccexec_frame_t;
 typedef struct ccexec_frame_t
-{ ccprocd_t *function;
-
-	ccblock_t *current;
-	cci32_t         irindex;
-
-	ccexec_value_t *values;
+{ ccprocd_t      * procedure;
+	ccblock_t      * current;
+	cci32_t          irindex;
+	ccexec_value_t * values;
 } ccexec_frame_t;
 
 typedef struct ccexec_t ccexec_t;

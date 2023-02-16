@@ -2,18 +2,21 @@
 #ifndef _CCEMIT_VALUE
 #define _CCEMIT_VALUE
 
+typedef struct ccblock_t ccblock_t;
 typedef struct ccvalue_t ccvalue_t;
 typedef struct ccblock_t ccblock_t;
 typedef struct ccprocd_t ccprocd_t;
+typedef struct ccprocu_t ccprocu_t;
 typedef struct ccemit_t ccemit_t;
 typedef struct cctype_t cctype_t;
 
 typedef enum ccvalue_k
-{ ccvalue_Kinvalid=0,
+{ ccvalue_kINVALID=0,
   ccvalue_kTARGET,
   ccvalue_kCONST,
   ccvalue_kGLOBAL,
   ccvalue_kPROCD,
+  ccvalue_kPROCU,
   ccvalue_kEDICT,
 } ccvalue_k;
 
@@ -25,9 +28,9 @@ typedef enum
 } cctype_k;
 
 typedef struct cctype_t
-{ ccstr_t     label;
+{ const char * label;
 
-	cctree_t  * tree;
+  cctree_t   * tree;
 
   cctype_k    kind;
   cctype_t  * type;
@@ -38,12 +41,12 @@ typedef struct cctype_t
 } cctype_t;
 
 typedef struct ccvalue_t
-{ ccvalue_k    kind;
-  ccstr_t      label;
-  ccloca_t     creator;
+{ ccvalue_k       kind;
+  const char    * label;
 ccunion
-{ ccedict_t * edict;
-  ccprocd_t * procd;
+{ ccedict_t     * edict;
+  ccprocd_t     * procd;
+  ccprocu_t     * procu;
   struct
   { cctype_t     * type;
     ccclassic_t    clsc;
@@ -53,17 +56,24 @@ ccunion
 
 //
 typedef struct ccblock_t
-{ ccstr_t      label;
-  ccvalue_t * *edict;
+{ const char   *label; // Note: for debugging
+  ccvalue_t  * *edict;
 } ccblock_t;
 
+typedef struct ccprocu_t ccprocu_t;
+typedef struct ccprocu_t
+{ const char * label; // Note: for debugging
+  cctype_t   * type;
+  ccexec_value_t (*proc)(ccexec_t *,ccvalue_t *, cci32_t, ccexec_value_t *);
+} ccprocu_t;
+
 typedef struct ccprocd_t
-{ ccstr_t     label; // Note: for debugging
+{ const char *label; // Note: for debugging
 
-  cctype_t   *type;
+  cctype_t *type;
 
-  // Todo: we need this because this is how we key into the local hash-table ...
-  cctree_t   *tree;
+  // Todo: we need this because this is how we key into the local's hash-table, which is rather absurd ...
+  cctree_t *tree;
 
   // Note: here we store all of our values, locals and parameters, this is a list of non-edicts,
   // edicts will reference values stored here ...
@@ -79,14 +89,35 @@ typedef struct ccprocd_t
 } ccprocd_t;
 
 typedef struct ccemit_t
-{ ccvalue_t ** globals;
+{ ccseer_t  *  seer;
+
+  // Note: only functions for now!
+  ccvalue_t ** globals;
+
   ccblock_t *  current;
-  ccprocd_t *  entry;
+  ccvalue_t *  entry;
 } ccemit_t;
+
+ccfunc ccinle ccvalue_t * ccvalue(const char *label);
+ccfunc ccinle ccblock_t * ccblock(const char *label);
+ccfunc ccinle ccprocd_t * ccprocd(const char *label);
+ccfunc ccinle cctype_t  * cctype(cctype_k kind, const char *label);
+
+#define ccblock_store(block,lval,rval)    ccblock_add_edict(block,ccedict_store(lval,rval))
+#define ccblock_fetch(block,lval,rval)    ccblock_add_edict(block,ccedict_fetch(lval,rval))
+#define ccblock_address(block,lval,rval)  ccblock_add_edict(block,ccedict_address(lval,rval))
+#define ccblock_arith(block,opr,lhs,rhs)  ccblock_add_edict(block,ccedict_arith(opr,lhs,rhs))
+#define ccblock_return(block,rval)        ccblock_add_edict(block,ccedict_return(rval))
+#define ccblock_invoke(block,lval,rval)   ccblock_add_edict(block,ccedict_call(lval,rval))
+#define ccblock_jump(block,tar)           ccblock_add_edict(block,ccedict_jump(tar))
+#define ccblock_fjump(block,tar,con)      ccblock_add_edict(block,ccedict_fjump(tar,con))
+#define ccblock_tjump(block,tar,con)      ccblock_add_edict(block,ccedict_tjump(tar,cnd))
+#define ccblock_dbgbreak(block)           ccblock_add_edict(block,ccedict_dbgbreak())
+#define ccblock_dbgerror(block)           ccblock_add_edict(block,ccedict_dbgerror())
 
 // Todo:
 ccfunc ccinle ccvalue_t *
-ccvalue(ccstr_t label)
+ccvalue(const char *label)
 {
   ccvalue_t *t=ccmalloc_T(ccvalue_t);
   memset(t,ccnil,sizeof(*t));
@@ -97,7 +128,7 @@ ccvalue(ccstr_t label)
 
 // Todo:
 ccfunc ccinle cctype_t *
-cctype(cctype_k kind, ccstr_t label)
+cctype(cctype_k kind, const char *label)
 {
   cctype_t *t=ccmalloc_T(cctype_t);
   memset(t,ccnil,sizeof(*t));
@@ -108,7 +139,7 @@ cctype(cctype_k kind, ccstr_t label)
 
 // Todo:
 ccfunc ccinle ccblock_t *
-ccblock(ccstr_t label)
+ccblock(const char *label)
 {
   ccblock_t *t=ccmalloc_T(ccblock_t);
   memset(t,ccnil,sizeof(*t));
@@ -119,9 +150,19 @@ ccblock(ccstr_t label)
 
 // Todo:
 ccfunc ccinle ccprocd_t *
-ccprocd(ccstr_t label)
+ccprocd(const char *label)
 {
   ccprocd_t *t=ccmalloc_T(ccprocd_t);
+  memset(t,ccnil,sizeof(*t));
+
+  t->label=label;
+  return t;
+}
+
+ccfunc ccinle ccprocu_t *
+ccprocu(const char *label)
+{
+  ccprocu_t *t=ccmalloc_T(ccprocu_t);
   memset(t,ccnil,sizeof(*t));
 
   t->label=label;
@@ -132,9 +173,9 @@ ccprocd(ccstr_t label)
 // especially for the user level api... I don't expect to user to have to create actual trees to use this, so let's gradually
 // stop using trees for hashing ...
 ccfunc ccvalue_t *
-ccemit_global(ccemit_t *emit, cctree_t *tree)
+ccemit_global(ccemit_t *emit, const char *label)
 {
-  ccvalue_t **v=cctblgetP(emit->globals,tree);
+  ccvalue_t **v=cctblgetS(emit->globals,label);
   ccassert(ccerrnon());
 
   ccvalue_t *value=*v;
@@ -142,9 +183,9 @@ ccemit_global(ccemit_t *emit, cctree_t *tree)
 }
 
 ccfunc ccvalue_t *
-ccemit_include_global(ccemit_t *emit, cctree_t *tree, ccstr_t label)
+ccemit_include_global(ccemit_t *emit, const char *label)
 {
-  ccvalue_t **v=cctblputP(emit->globals,tree);
+  ccvalue_t **v=cctblputS(emit->globals,label);
   ccassert(ccerrnon());
 
   ccvalue_t *value=ccvalue(label);
@@ -153,12 +194,12 @@ ccemit_include_global(ccemit_t *emit, cctree_t *tree, ccstr_t label)
   return value;
 }
 
-ccfunc ccprocd_t *
-ccemit_global_procd(ccemit_t *emit, cctree_t *tree, ccstr_t label)
+ccfunc ccvalue_t *
+ccemit_global_procd(ccemit_t *emit, cctree_t *tree, const char *label)
 {
   ccprocd_t *p=ccprocd(label);
 
-  ccvalue_t *v=ccemit_include_global(emit,tree,label);
+  ccvalue_t *v=ccemit_include_global(emit,label);
   v->kind=ccvalue_kPROCD;
   v->procd=p;
 
@@ -170,8 +211,7 @@ ccemit_global_procd(ccemit_t *emit, cctree_t *tree, ccstr_t label)
   *ccarradd(p->block,1)=p->decls=ccblock("$decls");
   *ccarradd(p->block,1)=p->enter=ccblock("$enter");
   *ccarradd(p->block,1)=p->leave=ccblock("$leave");
-
-  return p;
+  return v;
 }
 
 ccfunc ccinle void
@@ -214,6 +254,8 @@ ccblock_add_edict(ccblock_t *block, ccedict_t *edict)
   return value;
 }
 
+
+
 ccfunc ccvalue_t *
 ccprocd_local(ccprocd_t *func, cctree_t *tree)
 {
@@ -222,72 +264,6 @@ ccprocd_local(ccprocd_t *func, cctree_t *tree)
   ccvalue_t **v=cctblgetP(func->local,tree);
   if(ccerrnon()) return *v;
   return ccnil;
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_store(ccblock_t *block, ccvalue_t *lval, ccvalue_t *rval)
-{
-  return ccblock_add_edict(block,ccedict_store(lval,rval));
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_fetch(ccblock_t *block, ccvalue_t *lval, ccvalue_t *rval)
-{
-  return ccblock_add_edict(block,ccedict_fetch(lval,rval));
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_address(ccblock_t *block, ccvalue_t *lval, ccvalue_t *rval)
-{
-  return ccblock_add_edict(block,ccedict_address(lval,rval));
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_arith(ccblock_t *block, cctoken_k opr, ccvalue_t *lhs, ccvalue_t *rhs)
-{
-  return ccblock_add_edict(block,ccedict_arith(opr,lhs,rhs));
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_return(ccblock_t *block, ccvalue_t *value)
-{
-  return ccblock_add_edict(block,ccedict_return(value));
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_invoke(ccblock_t *block, ccprocd_t *p, ccvalue_t **i)
-{
-  return ccblock_add_edict(block,ccedict_call(p,i));
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_jump(ccblock_t *block, ccjump_point_t point)
-{
-  return ccblock_add_edict(block,ccedict_jump(point));
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_fjump(ccblock_t *block, ccjump_point_t point, ccvalue_t *cnd)
-{
-  return ccblock_add_edict(block,ccedict_fjump(point,cnd));
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_tjump(ccblock_t *block, ccjump_point_t point, ccvalue_t *cnd)
-{
-  return ccblock_add_edict(block,ccedict_tjump(point,cnd));
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_dbgbreak(ccblock_t *block)
-{
-  return ccblock_add_edict(block,ccedict_dbgbreak());
-}
-
-ccfunc ccinle ccvalue_t *
-ccblock_dbgerror(ccblock_t *block)
-{
-  return ccblock_add_edict(block,ccedict_dbgerror());
 }
 
 #endif

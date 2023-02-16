@@ -53,7 +53,7 @@ cctree_to_type(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tre
 ccfunc ccvalue_t *
 ccemit_include_local(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *tree, int is_param)
 {
-  ccnotnil(tree);
+  ccassert(tree!=0);
   ccassert(tree->kind==cctree_kDECLNAME);
 
   cctype_t *type=cctree_to_type(emit,func,block,tree->type);
@@ -93,16 +93,16 @@ ccemit_const_i32(ccemit_t *emit, cci64_t value)
 
 ccfunc ccvalue_t *
 ccemit_resolve(ccemit_t *emit, ccprocd_t *func, cctree_t *tree)
-{ ccnotnil(tree);
+{ ccassert(tree!=0);
   ccassert((tree->kind==cctree_kLITIDE)||
            (tree->kind==cctree_kINDEX));
 
-  cctree_t *couple=ccseek_symbol(tree);
-  ccnotnil(couple);
+  cctree_t *couple=ccseer_allusion(emit->seer,tree);
+  ccassert(couple!=0);
 
   // Note: this will happen until we implement scopes ...
   ccvalue_t *result=ccprocd_local(func,couple);
-  ccnotnil(result);
+  ccassert(result!=0);
   return result;
 }
 
@@ -118,8 +118,7 @@ ccemit_invoke_easy(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *
   // Todo:
   (void)ltree;
 
-
-  // Todo:
+  // Todo: this is the dumbest thing ever ...
   if(!strcmp(tree->name,"ccbreak"))
   { return ccblock_dbgbreak(block);
   } else
@@ -127,17 +126,22 @@ ccemit_invoke_easy(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *
   { return ccblock_dbgerror(block);
   }
 
-  cctree_t *allude=ccseek_symbol(tree);
+#if 0
+  cctree_t *allude=ccseer_allusion(emit->seer,tree);
   ccassert(allude!=0);
 
-  ccvalue_t  *cvalue=ccemit_global(emit,allude);
-  ccvalue_t **rvalue=ccnil;
+  ccvalue_t  *lval=ccemit_global(emit,allude->name);
+  ccvalue_t **rval=ccnil;
+#endif
+  ccvalue_t  *lval=ccemit_global(emit,tree->name);
+  ccvalue_t **rval=ccnil;
+
 
   cctree_t *list;
   ccarrfor(rtree,list)
-    *ccarrone(rvalue)=ccemit_rvalue(emit,func,block,list);
+    *ccarrone(rval)=ccemit_rvalue(emit,func,block,list);
 
-  return ccblock_invoke(block,cvalue->procd,rvalue);
+  return ccblock_invoke(block,lval,rval);
 }
 
 ccfunc ccvalue_t *
@@ -323,12 +327,12 @@ ccemit_tree(
 ccfunc void
 ccemit_function(ccemit_t *emit, ccprocd_t *procd, cctree_t *tree)
 {
-  ccnotnil(tree);
+  ccassert(tree!=0);
 
-  ccnotnil(tree->type);
+  ccassert(tree->type!=0);
   ccassert(tree->type->kind==cctree_kFUNC);
 
-  ccnotnil(tree->blob);
+  ccassert(tree->blob!=0);
   ccassert(tree->blob->kind==cctree_kBLOCK);
 
   // Todo: is this flawed?
@@ -358,12 +362,11 @@ ccemit_external_decl(ccemit_t *emit, cctree_t *tree)
 
     if(decl->type->kind==cctree_kFUNC)
     {
-      // Todo: NOW
-      ccprocd_t *p=ccemit_global_procd(emit,decl,decl->name);
-      ccemit_function(emit,p,decl);
+      ccvalue_t *v=ccemit_global_procd(emit,decl,decl->name);
+      ccemit_function(emit,v->procd,decl);
 
       if(!strcmp(decl->name,"main"))
-        emit->entry=p;
+        emit->entry=v;
 
     } else
     {
@@ -374,15 +377,19 @@ ccemit_external_decl(ccemit_t *emit, cctree_t *tree)
 }
 
 ccfunc void
-ccemit_translation_unit(ccemit_t *emit, cctree_t *tree)
+ccemit_translation_unit(ccemit_t *emit, ccseer_t *seer, cctree_t *tree)
 {
+	emit->seer=seer;
+
   cctree_t **decl;
-  ccarrfor(tree->list,decl) ccemit_external_decl(emit,*decl);
+  ccarrfor(tree->list,decl)
+  	ccemit_external_decl(emit,*decl);
 }
 
 ccfunc void
 ccemit_init(ccemit_t *emit)
-{ memset(emit,ccnil,sizeof(*emit));
+{
+	memset(emit,ccnil,sizeof(*emit));
 }
 
 #endif

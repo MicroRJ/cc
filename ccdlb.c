@@ -1,6 +1,8 @@
 // Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
-#ifndef _CCDLB
-#define _CCDLB
+#ifndef _CCDLB_C
+#define _CCDLB_C
+
+// Todo:
 ccfunc void
 ccdlbdel_(void **dlb_)
 { ccdlb_t *dlb=ccdlb(ccdref(dlb_));
@@ -136,8 +138,8 @@ ccdlb_tblini(ccdlb_t **dlb_, cci32_t isze)
 ccfunc ccentry_t *
 ccdlb_tblcat(ccdlb_t **tbl, cci64_t isze, int len, const char *key, ccentry_t *ent)
 {
-  ccnotnil(tbl);
-  ccnotnil(*tbl);
+  ccassert(tbl!=0);
+  ccassert((*tbl)!=0);
 
   if(ent->key)
   { ent->nex=ccmalloc_T(ccentry_t);
@@ -187,7 +189,7 @@ ccdbl_query(ccdlb_t *tbl, int len, const char *key)
 }
 
 ccfunc cci64_t
-ccdlb_tblget(void **ccm, cci32_t isze, int len, const char *key)
+ccdlb_tblget(void **ccm, cci32_t isze, cci32_t len, const char *key)
 {
 ccenter("tblget");
 
@@ -203,14 +205,14 @@ ccenter("tblget");
 	  { cckeyset(ent->key);
 			val=ent->val;
 	  }
-  }
+  } else ccerrset(ccerr_kNIT);
 
 ccleave("tblget");
   return val/isze;
 }
 
 ccfunc cci64_t
-ccdlb_tblput(void **ccm, cci32_t isze, int len, const char *key)
+ccdlb_tblput(void **ccm, cci32_t isze, cci32_t len, const char *key)
 {
 ccenter("tblput");
 
@@ -241,7 +243,7 @@ ccleave("tblput");
 }
 
 ccfunc cci64_t
-ccdlb_tblset(void **ccm, cci32_t isze, int len, const char *key)
+ccdlb_tblset(void **ccm, cci32_t isze, cci32_t len, const char *key)
 {
 ccenter("tblset");
 

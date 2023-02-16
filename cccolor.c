@@ -41,7 +41,9 @@ ccprintf(const char *f, ...)
   move(7);
 
   for(;c=*r;c)
-  { SetConsoleTextAttribute(h,v);
+  {
+  	SetConsoleTextAttribute(h,v);
+
     for(; (c!='\0')&&(c!='%') &&
          !(c=='<'&&r[1]=='!') &&
          !(c=='!'&&r[1]=='>'); next(1)) printf("%c",c);

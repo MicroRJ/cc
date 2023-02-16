@@ -24,7 +24,6 @@ ccglobal const char *ccedict_s[]=
 	"JUMP","JUMPT","JUMPF","INVOKE","RETURN","DBGBREAK","DBGERROR","DBGASSERT"
 };
 
-
 // Note: perhaps each edict should have a flag that indicates whether to produce a value or not.
 typedef struct ccedict_t ccedict_t;
 typedef struct ccedict_t
@@ -59,7 +58,7 @@ ccunion
 	} fetch;
 	// Note: Produces a non-addressable rvalue
 	struct
-	{ ccprocd_t  * call;
+	{ ccvalue_t  * call;
 		ccvalue_t ** rval;
 	} invoke;
 	struct
@@ -67,7 +66,7 @@ ccunion
 	} ret;
 	struct
 	{ ccblock_t  * blc;
-		ccu32_t           tar;
+		ccu32_t      tar;
 		ccvalue_t  * cnd;
 	} jump;
 	struct
@@ -89,7 +88,7 @@ ccunion
 typedef struct ccjump_point_t ccjump_point_t;
 typedef struct ccjump_point_t
 { ccstr_t         label; // Note: for debugging
-  ccblock_t *block;
+  ccblock_t 		 *block;
   ccu32_t         index;
 } ccjump_point_t;
 
@@ -105,11 +104,10 @@ ccedict(ccedict_k kind, ccstr_t label)
 	return e;
 }
 
-
 ccfunc ccinle ccedict_t *
 ccedict_local(cctype_t *type, ccstr_t label)
 {
-	ccnotnil(type);
+	ccassert(type!=0);
 
 	// Todo: check the tree
 	ccedict_t *e=ccedict(ccedict_kLOCAL,label);
@@ -121,7 +119,7 @@ ccedict_local(cctype_t *type, ccstr_t label)
 ccfunc ccinle ccedict_t *
 ccedict_param(cctype_t *type, ccstr_t label)
 {
-	ccnotnil(type);
+	ccassert(type!=0);
 
 	// Todo: check the tree
 	ccedict_t *e=ccedict(ccedict_kPARAM,label);
@@ -195,7 +193,7 @@ ccedict_fjump(ccjump_point_t point, ccvalue_t *cnd)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_call(ccprocd_t *lval, ccvalue_t **rval)
+ccedict_call(ccvalue_t *lval, ccvalue_t **rval)
 {
 	ccassert(lval!=0);
 

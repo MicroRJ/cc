@@ -24,7 +24,7 @@ int main(int a)
 
 				int p=c[x][y][z];
 
-				if(p!=i) ccerror();
+				ccassert(p==i);
 
 				i=i+1;
 

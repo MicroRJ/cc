@@ -219,7 +219,7 @@ ccenter("primary");
       case cctoken_kLPAREN:
         cctree_t *group=ccread_expression(reader,root,mark);
         if(!cceat(reader,cctoken_kRPAREN))
-          cctraceerr("expected ')'");
+          ccsynerr(reader,0,"expected ')'");
         result=cctree_group(root,mark,group);
       break;
     }
@@ -815,7 +815,7 @@ ccread_decl_name_modifier_maybe(ccread_t *reader, cctree_t *root, cci32_t mark, 
 
 ccfunc ccinle cctree_t *
 ccread_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
-{ ccnotnil(type);
+{ ccassert(type!=0);
   cctree_t *tree;
   tree=ccread_direct_decl_name(reader,root,mark,
     ccread_decl_name_modifier_maybe(reader,root,mark,type));
@@ -852,7 +852,7 @@ ccread_struct_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t
 
 ccfunc cctree_t **
 ccread_init_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
-{ ccnotnil(root);
+{ ccassert(root!=0);
   cctree_t *next,**list=ccnil;
   do
   { next=ccread_init_decl_name(reader,root,mark,type);
@@ -1297,13 +1297,13 @@ ccread_external_declaration(ccread_t *reader, cctree_t *root, cci32_t mark)
   if(!decl) return ccnil;
 
   ccassert(decl->kind==cctree_kDECL);
-  ccnotnil(decl->list);
+  ccassert(decl->list!=0);
 
   cctree_t *name=*decl->list;
 
   ccassert(name->kind==cctree_kDECLNAME);
-  ccnotnil(name->type);
-  ccnotnil(name->name);
+  ccassert(name->type!=0);
+  ccassert(name->name!=0);
 
   if(name->type->kind==cctree_kFUNC)
   {

@@ -14,39 +14,63 @@ int fib(int x)
   return x;
 }
 
+ccfunc ccexec_value_t
+ccassert__(ccexec_t *exec, ccvalue_t *value, cci32_t argc, ccexec_value_t *args)
+{
+  ccexec_value_t r;
+  r.asi32=1;
+
+  ccassert(args->asi32);
+
+  return r;
+}
+
 ccfunc ccexec_value_t buildrunfile(const char *filename)
 {
 ccenter("build-run-file");
 
-	ccexec_value_t result;
+  ccexec_value_t result;
 
   ccread_t read;
+  ccseer_t seer;
   ccemit_t emit;
   ccexec_t exec;
 
+  cctree_t *tree;
+
   ccread_init(&read);
-	ccemit_init(&emit);
+  ccseer_init(&seer);
+  ccemit_init(&emit);
   ccexec_init(&exec);
+
+  ccvalue_t *v=ccemit_include_global(&emit,"ccassert");
+  v->kind=ccvalue_kPROCU;
+  ccprocu_t *p=ccprocu("ccassert");
+  v->procu=p;
+  p->proc=ccassert__;
+
+  // ccemit_include_procu(ccnil,"ccassert",ccassert);
 
 ccenter("read");
   ccread_include(&read,filename);
-  cctree_t *tree;
   tree=ccread_translation_unit(&read);
 ccleave("read");
 
-	// Todo: this is global for now!
-	ccseek_translation_unit(tree);
+ccenter("seer");
+  ccseer_translation_unit(&seer,tree);
+ccleave("seer");
 
 ccenter("emit");
-	ccemit_translation_unit(&emit,tree);
+  ccemit_translation_unit(&emit,&seer,tree);
 ccleave("emit");
 
 ccenter("exec");
   result=ccexec_translation_unit(&exec,&emit);
 ccleave("exec");
 
-  ccexec_uninit(&exec);
   ccread_uninit(&read);
+  ccexec_uninit(&exec);
+  ccseer_uninit(&seer);
 
 ccleave("build-run-file");
   return result;
@@ -54,93 +78,38 @@ ccleave("build-run-file");
 
 int main(int argc, char **argv)
 {
+// Todo:
 ccdebugnone=cctrue;
-	ccini();
+ccini();
 
 ccenter("main");
   ++ argv;
   -- argc;
 
-#if 0
-  testdbgsys();
-#else
-
   const char *f[]=
-  { "code\\decl.cc",
-		"code\\retr.cc",
-		"code\\lval.cc",
-		"code\\fib.cc",
+  {
+    "code\\builtin.cc",
+    "code\\decl.cc",
+    "code\\retr.cc",
+    "code\\lval.cc",
+    "code\\fib.cc",
   };
 
-  int l=sizeof(f)/sizeof(f[0]);
+  enum { l=sizeof(f)/sizeof(f[0]) };
+
+  ccexec_value_t e[l];
 
   for(int i=0; i<l; ++i)
   {
-  	ccexec_value_t e=buildrunfile(f[i]);
-		ccprintf("<!6'%s'!>: <!3%lli!>\n",f[i],e.asi64);
+    e[i]=buildrunfile(f[i]);
   }
 
-
-
-#if 0
-  ccexec_value_t retr=buildrunfile("code\\fib.cc");
-ccenter("compare");
-	int c=fib(ARG);
-ccleave("compare");
-  cctracelog("c:%i - cc:%i",c,retr.asi32);
-#endif
-
-#endif
-
-
-#if 0
-ccenter("emit-c");
-  // Todo:
-  { char *out = ccnil;
-
-    ccstrcatS(out,
-      "#define f64 double\r\n"
-      "#define f32 float\r\n"
-      "#ifdef _MSC_VER\r\n"
-      "# define i64 signed   __int64\r\n"
-      "# define u64 unsigned __int64\r\n"
-      "# define i32 signed   __int32\r\n"
-      "# define u32 unsigned __int32\r\n"
-      "# define i16 signed   __int16\r\n"
-      "# define u16 unsigned __int16\r\n"
-      "# define i8  signed   __int8\r\n"
-      "# define u8  unsigned __int8\r\n"
-      "#else\r\n"
-      "# define i64 signed   long long\r\n"
-      "# define u64 unsigned long long\r\n"
-      "# define i32 signed   int\r\n"
-      "# define u32 unsigned int\r\n"
-      "# define i16 signed   short\r\n"
-      "# define u16 unsigned short\r\n"
-      "# define i8  signed   char\r\n"
-      "# define u8  unsigned char\r\n"
-      "#endif\r\n"
-      "#define c8  char\r\n"
-      "#define c16 wchar_t\r\n");
-
-    static const kttcc_type ts[] =
-    { {kttcc_typekind_var, kttcc_declspec_float,    64, 32 },
-      {kttcc_typekind_var, kttcc_declspec_signed,   64, 8  },
-      {kttcc_typekind_var, kttcc_declspec_unsigned, 64, 8  },
-      {kttcc_typekind_var, kttcc_declspec_host,      8, 8  },
-    };
-
-
-    for(int i=0;i<ARRAYSIZE(ts);++i)
-    { emit_type(&out,&ts[i]);
-    }
-
-    void *file=ccopenfile("gen.ktt.c");
-    ccpushfile(file,0,ccstrlen(out),out);
-    ccclosefile(file);
+  for(int i=0; i<l; ++i)
+  {
+    ccprintf("<!6'%s'!>: <!3%lli!>\n",f[i],e[i].asi64);
   }
-ccleave("emit-c");
-#endif
+
 ccleave("main");
+
 ccdebugend();
 }

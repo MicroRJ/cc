@@ -1,6 +1,6 @@
 // Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
-#ifndef _CCFIO
-#define _CCFIO
+#ifndef _CCSYS_C
+#define _CCSYS_C
 
 // Note: this is all so ...
 
@@ -31,6 +31,7 @@ ccclocksecs(ccclocktime_t t)
  	return (((ccf64_t)t)/l.QuadPart);
 }
 
+// Note: also check for the file attributes
 ccfunc int
 ccrealfile(void *file)
 { return (HANDLE)file!=INVALID_HANDLE_VALUE;

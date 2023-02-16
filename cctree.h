@@ -2,11 +2,6 @@
 #ifndef _CCTREE
 #define _CCTREE
 
-//
-// Todo: make the parser simply be the parser and then add another stage that actually checks everything and
-// creates the types, checks the scopes and so on ...
-//
-
 typedef enum cctree_k
 { cctree_kTYPENAME,
   cctree_kSTRUCT,
@@ -77,21 +72,21 @@ typedef struct cctree_t cctree_t;
 // Note: slowly but surely compact this ...
 typedef struct cctree_t
 {
-	cctree_k    kind;
+  cctree_k    kind;
 
-	const char *loca;
+  const char *loca;
 
   cctree_t   *root;
   cci32_t     mark;
 
   ccstr_t     name;
-  cctree_t  **list;
+  cctree_t  **list; // Todo: demote this to just *
   cctoken_k   oper;
   cctree_t  * type;
   cctree_t  * size; // Note: the size constant expression `unsigned a: 1`
-  cctree_t  * init; // Note: conditional
-  cctree_t  * lval; // Note: then
-  cctree_t  * rval; // Note: else
+  cctree_t  * init;
+  cctree_t  * lval;
+  cctree_t  * rval;
 
   // Note: remove this ...
   cctree_t  * blob;
@@ -133,7 +128,7 @@ cctree_del(cctree_t *tree)
 ccfunc cctree_t *
 cctree_new(cctree_k kind, cctree_t *root, cci32_t mark)
 { // Todo: proper tree allocator ...
-	cctree_t *tree=ccmalloc_T(cctree_t);
+  cctree_t *tree=ccmalloc_T(cctree_t);
   memset(tree,ccnil,sizeof(*tree));
   tree->kind=kind;
   tree->root=root;
@@ -226,7 +221,7 @@ cctree_block(cctree_t *root, cci32_t mark, cctree_t **list)
 
 ccfunc cctree_t *
 cctree_while(cctree_t *root, cci32_t mark, cctree_t *cond_tree, cctree_t *then_tree)
-{ ccnotnil(cond_tree);
+{ ccassert(cond_tree!=0);
   cctree_t *tree=cctree_new(cctree_kWHILE,root,mark);
   tree->init=cond_tree;
   tree->lval=then_tree;

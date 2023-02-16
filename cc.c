@@ -6,6 +6,17 @@
 extern "C" {
 #endif
 
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <malloc.h>
+#include <memory.h>
+#include <string.h>
+
+#define STB_SPRINTF_IMPLEMENTATION
+#include "stb_sprintf.h"
+
+
 #if defined(_DEBUG)||defined(DEBUG)||defined(DBG)
 # define _CCDEBUG
 #endif
@@ -15,9 +26,6 @@ extern "C" {
 #define _CCLINE __LINE__
 #define _CCFUNC __func__
 
-
-// Note: if we are in development mode keep the disabled warnings for faster prototyping,
-// and when we build in release mode, enable warnings to neatify code ...
 #ifdef _MSC_VER
 # ifndef _DEVELOPER
 #  pragma warning(push)
@@ -41,6 +49,7 @@ extern "C" {
 #define ccglobal       static
 #define ccfunc         static
 
+// Todo:
 #ifdef __forceinline
 # define ccinle __forceinline
 #else
@@ -58,12 +67,19 @@ extern "C" {
 typedef double ccf64_t;
 typedef float  ccf32_t;
 
+#ifdef _WIN32
+typedef signed   long int cci32_t;
+typedef unsigned long int ccu32_t;
+#else
+typedef signed   int cci32_t;
+typedef unsigned int ccu32_t;
+#endif
+
 // Todo:
 #if _MSC_VER
 typedef signed   __int64 cci64_t;
 typedef unsigned __int64 ccu64_t;
-typedef signed   __int32 cci32_t;
-typedef unsigned __int32 ccu32_t;
+
 typedef signed   __int16 cci16_t;
 typedef unsigned __int16 ccu16_t;
 typedef signed   __int8  cci8_t;
@@ -72,20 +88,16 @@ typedef unsigned __int8  ccu8_t;
 // Todo:
 typedef signed   long long int cci64_t;
 typedef unsigned long long int ccu64_t;
-#ifdef _CCLONG32
-typedef signed   long int cci32_t;
-typedef unsigned long int ccu32_t;
-#else
-typedef signed   int cci32_t;
-typedef unsigned int ccu32_t;
-#endif
+
 typedef signed   short cci16_t;
 typedef unsigned short ccu16_t;
 typedef signed   char  cci8_t;
 typedef unsigned char  ccu8_t;
 #endif
 
-#define _CCASSERT(x) typedef char __STATIC__ASSERT__[((x)?1:-1)]
+#ifndef _CCASSERT
+# define _CCASSERT(x) typedef char __CCASSERT__[((x)?1:-1)]
+#endif
 
 _CCASSERT(sizeof(ccu64_t)==sizeof(void*));
 _CCASSERT(sizeof(cci64_t)==sizeof(void*));
@@ -94,13 +106,12 @@ _CCASSERT(sizeof(cci32_t)==4);
 _CCASSERT(sizeof(ccu16_t)==2);
 _CCASSERT(sizeof(cci16_t)==2);
 
-// Note: this makes easier to regex
 #define cccast(T,mem) ((T)(mem))
 #define ccaddr(mem)   (&(mem))
 #define ccdref(mem)   (*(mem))
 
-#define cctrue  cccast(int,1)
-#define ccfalse cccast(int,0)
+#define cctrue  cccast(cci32_t,1)
+#define ccfalse cccast(cci32_t,0)
 
 // Todo: hmm...
 #define ccnil  0
@@ -110,10 +121,11 @@ _CCASSERT(sizeof(cci16_t)==2);
 # define ccbreak __debugbreak
 #endif
 
+
 // Todo: enhance these assertions ...
 #ifndef ccassert
 # ifdef _DEBUG
-#  define ccassert(is_true,...) (!(is_true)?ccbreak():ccnil)
+#  define ccassert(is_true,...) do{ if(!(is_true)) { cctraceerr("assertion triggered",0); ccbreak(); } } while(0)
 # else
 #  define ccassert(is_true,...) ccnil
 # endif
@@ -144,8 +156,7 @@ typedef struct cccaller_t
   const char   *func;
 } cccaller_t;
 
-// Note: common error codes ... let's try to keep this conservative, I don't want to keep promoting
-// the use of global status codes ... these are the ones absolutely necessary as of now ...
+// Note: some necessary error codes ...
 typedef enum ccerr_k
 {
   ccerr_kNON=0,
@@ -156,8 +167,7 @@ typedef enum ccerr_k
 } ccerr_k;
 
 // Note: simple allocator function, must-have for switching the allocator of debug routines ...
-// Todo: Do not take cccaller_t on the stack, make it a global or something, much easier to
-// turn off in release-mode...
+// Todo: remove caller
 typedef void *(ccallocator_t)(cccaller_t, size_t,void *);
 
 // Note: entry status, this also must be a global ...
@@ -274,11 +284,9 @@ ccglobal ccthread_local cci32_t      ccdebugnone;
 #define cckeyset(key) (cckey=key)
 #define cckeyget()    (cckey)
 
-// Note: l-value address
 #define cclva(lv) cccast(void**,ccaddr(lv))
 
 // Note: default allocator
-
 #define ccmalloc(size)       ccuserallocator_(cccall(),size,ccnil)
 #define ccrealloc(data,size) ccuserallocator_(cccall(),size, data)
 #define ccfree(data)         ccuserallocator_(cccall(),ccnil,data)
@@ -370,40 +378,36 @@ ccsentry_enter(cccaller_t caller, ccsentry_t *master, const char *marker);
 ccfunc ccsentry_t *
 ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker);
 
-#ifndef ccenter
-# define ccenter(marker) (ccdebugthis=ccsentry_enter(cccall(),ccdebugthis,marker))
-#endif
-#ifndef ccleave
-# define ccleave(marker) (ccdebugthis=ccsentry_leave(cccall(),ccdebugthis,marker))
-#endif
+#define ccenter(marker) (ccdebugthis=ccsentry_enter(cccall(),ccdebugthis,marker))
+#define ccleave(marker) (ccdebugthis=ccsentry_leave(cccall(),ccdebugthis,marker))
 
-#include <stdarg.h>
-ccfunc ccinle ccclocktime_t ccclocktick();
-ccfunc ccinle ccf64_t ccclocksecs(ccu64_t);
 
 ccfunc const char *ccfilename(const char *name);
 
-ccfunc int ccrealfile(void *);
-ccfunc void ccclosefile(void *);
-ccfunc void *ccopenfile(const char *);
-ccfunc void *ccpullfile(void *,unsigned long int,unsigned long int *);
-ccfunc unsigned long int ccpushfile(void *,unsigned long int,unsigned long int,void*);
-ccfunc unsigned long int ccfilesize(void *);
+// Note: 'ccsys.c'
+ccfunc ccinle ccclocktime_t ccclocktick();
+ccfunc ccinle ccf64_t       ccclocksecs(ccu64_t);
 
-ccfunc ccinle int ccformatvex(char *,int,const char *,va_list);
-ccfunc ccinle char *ccformatv(const char *,va_list);
-ccfunc int ccformatex(char *, int, const char *, ...);
-ccfunc char *ccformat(const char *, ...);
+ccfunc void *   ccopenfile (const char *);
+ccfunc int      ccrealfile ( void * );
+ccfunc void     ccclosefile( void * );
+ccfunc void   * ccpullfile ( void *, ccu32_t, ccu32_t *     );
+ccfunc ccu32_t  ccpushfile ( void *, ccu32_t, ccu32_t,void *);
+ccfunc ccu32_t  ccfilesize ( void * );
+
+// Note: 'ccdbg.c'
+ccfunc ccinle int   ccformatvex (char *,int,const char *,va_list);
+ccfunc ccinle char *ccformatv   (const char *, va_list);
+ccfunc        int   ccformatex  (char *, int, const char *, ...);
+ccfunc        char *ccformat    (const char *, ...);
 
 ccfunc void cctrace_(cccaller_t caller, const char *label, const char *format, ...);
-#define cctracelog(fmt,...) 0
-#define cctracewar(fmt,...) 0
-#define cctraceerr(fmt,...) 0
 
-// cctrace_(cccall(),"log",fmt,__VA_ARGS__)
-// cctrace_(cccall(),"war",fmt,__VA_ARGS__)
-// cctrace_(cccall(),"err",fmt,__VA_ARGS__)
+#define cctracelog(fmt,...) cctrace_(cccall(),"log",fmt,__VA_ARGS__)
+#define cctracewar(fmt,...) cctrace_(cccall(),"war",fmt,__VA_ARGS__)
+#define cctraceerr(fmt,...) cctrace_(cccall(),"err",fmt,__VA_ARGS__)
 
+// Todo: remove this from here!
 #ifdef _WIN32
 #ifndef CINTERFACE
 # define CINTERFACE
@@ -420,15 +424,8 @@ ccfunc void cctrace_(cccaller_t caller, const char *label, const char *format, .
 #include <windows.h>
 #endif
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <malloc.h>
-#include <memory.h>
-#include <string.h>
 
-#define STB_SPRINTF_IMPLEMENTATION
-#include "stb_sprintf.h"
-
+// Todo: remove this from here!
 ccfunc ccinle int
 ccformatvex(char *buf, int len, const char * fmt, va_list vli)
 {
@@ -467,6 +464,23 @@ ccformat(const char * fmt, ...)
   return res;
 }
 
+
+
+// Note:
+#include "ccsys.c"
+#include "ccdlb.c"
+#include "ccdbg.c"
+
+#ifdef _DEVELOPER
+#undef malloc
+#define malloc DO_NOT_USE_MALLOC
+#undef realloc
+#define realloc DO_NOT_USE_REALLOC
+#undef free
+#define free DO_NOT_USE_FREE
+#endif
+
+// Note:
 typedef struct ccedict_t ccedict_t;
 typedef struct ccread_t  ccread_t;
 typedef struct ccemit_t  ccemit_t;
@@ -482,148 +496,13 @@ typedef struct ccjump_point_t ccjump_point_t;
 typedef struct cctype_t cctype_t;
 typedef struct cctree_t cctree_t;
 
-#include "ccfio.c"
-
-ccfunc void
-ccdebug_checkblock(ccallocator_t *allocator, ccsentry_block_t *block);
-
-#include "cclog.h"
-#include "ccdlb.h"
-#define _CCLOG_IMPL
-#include "cclog.h"
-
-ccfunc void *ccinternalallocator_(cccaller_t caller, size_t size,void *data)
-{ if(size)
-  { if(data)
-      return realloc(data,size);
-    else
-      return malloc(size);
-  }
-  free(data);
-  return ccnil;
-}
-
-#ifdef _HARD_DEBUG
-
-ccfunc void
-ccdebug_checkblock(ccallocator_t *allocator, ccsentry_block_t *block)
-{ for(int i=0; i<4; ++i)
-    ccassert(block->head_guard[i]==ccnil);
-  for(int i=0; i<4; ++i)
-    ccassert(block->tail_guard[i]==ccnil);
-
-  ccassert(block->master!=ccnil);
-  ccassert(block->sentry!=ccnil);
-
-  ccassert(block->allocator==allocator);
-
-  ccassert(!block->prev||block->prev->sentry==block->sentry);
-  ccassert(!block->next||block->next->sentry==block->sentry);
-
-  ccassert(!block->prev||block->prev->next==block);
-  ccassert(!block->next||block->next->prev==block);
-
-  ccassert(!block->next||block->next!=block);
-  ccassert(!block->prev||block->prev!=block);
-}
-
-ccfunc void *ccuserallocator_(cccaller_t caller, size_t size,void *data)
-{
-ccenter("user-allocator");
-  ccsentry_block_t *block;
-  if(!size)
-  {
-ccenter("free");
-    ccsentry_t *debug=ccdebug();
-    block=(ccsentry_block_t*)data-1;
-    ccdebug_checkblock(ccuserallocator_,block);
-
-    if(block->prev) block->prev->next=block->next;
-    if(block->next) block->next->prev=block->prev;
-    else block->sentry->block_list=block->prev;
-
-    debug->metrics.nbc++;
-
-    debug->metrics.nma++;
-    debug->metrics.nm+=block->size;
-
-    // Note: just in case?
-    block->next=ccnil;
-    block->prev=ccnil;
-
-    free(block);
-    block=ccnil;
-ccleave("free");
-  } else
-  { if(data)
-    {
-ccenter("ccrealloc");
-      ccsentry_t *debug=ccdebug();
-      block=(ccsentry_block_t*)data-1;
-      ccdebug_checkblock(ccuserallocator_,block);
-
-      debug->metrics.nm+=block->size;
-
-      block=(ccsentry_block_t*)realloc(block,sizeof(*block)+size);
-      block->caller=caller;
-      block->size=size;
-
-      if(block->prev) block->prev->next=block;
-      if(block->next) block->next->prev=block;
-      else block->sentry->block_list=block;
-
-      debug->metrics.pma++;
-      debug->metrics.nma++;
-      debug->metrics.pm+=size;
-
-ccleave("ccrealloc");
-    } else
-    {
-ccenter("malloc");
-      ccsentry_t *debug=ccdebug();
-      block=(ccsentry_block_t*)malloc(sizeof(*block)+size);
-      memset(block,ccnil,sizeof(*block));
-      block->allocator=ccuserallocator_;
-      block->caller=caller;
-      block->master=debug;
-      block->sentry=debug;
-      block->size=size;
-      ccsentry_addblock(debug,block);
-
-      ccdebug_checkblock(ccuserallocator_,block);
-
-      debug->metrics.pbc++;
-      debug->metrics.pma++;
-      debug->metrics.pm+=size;
-ccleave("malloc");
-    }
-  }
-ccleave("user-allocator");
-  return block+1;
-}
-#ifdef _DEVELOPER
-#undef malloc
-# define malloc DO_NOT_USE_MALLOC
-#undef realloc
-# define realloc DO_NOT_USE_REALLOC
-#undef free
-# define free DO_NOT_USE_FREE
-#endif
-#else
-ccfunc void *ccuserallocator_(size_t size,void *data)
-{
-  return ccinternalallocator_(size,data);
-}
-#endif
-
-// Note:
 #include "ccread.h"
 #include "cctree.h"
-#include "ccseek.h"
+#include "ccseer.h"
 
 #include "ccedict.h"
 
-#include "ccseek.c"
+#include "ccseer.c"
 #include "ccemit.h"
 #include "ccexec.h"
 

@@ -1,11 +1,6 @@
 // Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
-#ifndef _CCLOG
-#define _CCLOG
-#endif
-
-// Note: this is all garbage, do not pay attention to this file!
-
-#if defined(_CCLOG) && defined(_CCLOG_IMPL)
+#ifndef _CCDBG_C
+#define _CCDBG_C
 
 ccfunc ccinle cccaller_t
 cccaller(int guid, const char *file, int line, const char *func)
@@ -59,6 +54,21 @@ ccbytecountreadable(cci64_t b, ccf64_t *f)
 #include "cccolor.c"
 
 ccfunc void
+ccdebug_checkblock(ccallocator_t *allocator, ccsentry_block_t *block);
+
+
+ccfunc void *ccinternalallocator_(cccaller_t caller, size_t size,void *data)
+{ if(size)
+  { if(data)
+      return realloc(data,size);
+    else
+      return malloc(size);
+  }
+  free(data);
+  return ccnil;
+}
+
+ccfunc void
 ccsentry_report(
   ccsentry_t  * r,
   ccsentry_t  * h,
@@ -108,7 +118,7 @@ ccsentry_report(
 ccfunc ccinle void
 ccdebugdump()
 {
-  cctracelog("Debug Dump: ");
+  cctracelog("Debug Dump: ",0);
 
   // Note: this is dumb!
   ccclocktime_t t=0;
@@ -162,6 +172,103 @@ ccsentry_addblock(ccsentry_t *sentry, ccsentry_block_t *block)
   sentry->block_list=block;
   block->sentry=sentry;
   return block;
+}
+
+ccfunc void
+ccdebug_checkblock(ccallocator_t *allocator, ccsentry_block_t *block)
+{ for(int i=0; i<4; ++i)
+    ccassert(block->head_guard[i]==ccnil);
+  for(int i=0; i<4; ++i)
+    ccassert(block->tail_guard[i]==ccnil);
+
+  ccassert(block->master!=ccnil);
+  ccassert(block->sentry!=ccnil);
+
+  ccassert(block->allocator==allocator);
+
+  ccassert(!block->prev||block->prev->sentry==block->sentry);
+  ccassert(!block->next||block->next->sentry==block->sentry);
+
+  ccassert(!block->prev||block->prev->next==block);
+  ccassert(!block->next||block->next->prev==block);
+
+  ccassert(!block->next||block->next!=block);
+  ccassert(!block->prev||block->prev!=block);
+}
+
+ccfunc void *ccuserallocator_(cccaller_t caller, size_t size,void *data)
+{
+ccenter("user-allocator");
+  ccsentry_block_t *block;
+  if(!size)
+  {
+ccenter("free");
+    ccsentry_t *debug=ccdebug();
+    block=(ccsentry_block_t*)data-1;
+    ccdebug_checkblock(ccuserallocator_,block);
+
+    if(block->prev) block->prev->next=block->next;
+    if(block->next) block->next->prev=block->prev;
+    else block->sentry->block_list=block->prev;
+
+    debug->metrics.nbc++;
+
+    debug->metrics.nma++;
+    debug->metrics.nm+=block->size;
+
+    // Note: just in case?
+    block->next=ccnil;
+    block->prev=ccnil;
+
+    free(block);
+    block=ccnil;
+ccleave("free");
+  } else
+  { if(data)
+    {
+ccenter("ccrealloc");
+      ccsentry_t *debug=ccdebug();
+      block=(ccsentry_block_t*)data-1;
+      ccdebug_checkblock(ccuserallocator_,block);
+
+      debug->metrics.nm+=block->size;
+
+      block=(ccsentry_block_t*)realloc(block,sizeof(*block)+size);
+      block->caller=caller;
+      block->size=size;
+
+      if(block->prev) block->prev->next=block;
+      if(block->next) block->next->prev=block;
+      else block->sentry->block_list=block;
+
+      debug->metrics.pma++;
+      debug->metrics.nma++;
+      debug->metrics.pm+=size;
+
+ccleave("ccrealloc");
+    } else
+    {
+ccenter("malloc");
+      ccsentry_t *debug=ccdebug();
+      block=(ccsentry_block_t*)malloc(sizeof(*block)+size);
+      memset(block,ccnil,sizeof(*block));
+      block->allocator=ccuserallocator_;
+      block->caller=caller;
+      block->master=debug;
+      block->sentry=debug;
+      block->size=size;
+      ccsentry_addblock(debug,block);
+
+      ccdebug_checkblock(ccuserallocator_,block);
+
+      debug->metrics.pbc++;
+      debug->metrics.pma++;
+      debug->metrics.pm+=size;
+ccleave("malloc");
+    }
+  }
+ccleave("user-allocator");
+  return block+1;
 }
 
 ccfunc void

@@ -26,7 +26,7 @@ ccenter("stack-yield");
   ccassert(ccerrnon());
 
   if((result->kind==ccev_kINVALID))
-    cctraceerr("value kind is invalid, did you register this value and not set its contents?");
+    cctraceerr("value kind is invalid, did you register this value and not set its contents?",0);
 
   ccassert(result->kind!=ccev_kINVALID);
 
@@ -103,7 +103,7 @@ ccstack_push_size(
     memory=cccast(char*,exec->stack)+exec->stack_idx;
     exec->stack_idx+=length;
 
-  } else cctraceerr("stack_overflow");
+  } else cctraceerr("stack_overflow",0);
 
   return memory;
 }
@@ -114,7 +114,7 @@ ccstack_push(
 {
   if(exec->stack_idx+length>exec->stack_sze)
   {
-    cctraceerr("stack_overflow");
+    cctraceerr("stack_overflow",0);
     ccassert(!"stack_overflow");
   }
   ccexec_value_t *memory=cccast(ccexec_value_t*,cccast(char*,exec->stack)+exec->stack_idx);
@@ -131,13 +131,13 @@ ccstack_local_alloc(
 {
 ccenter("stack-local-alloc");
 
-  ccnotnil((value));
+  ccassert((value!=0));
   ccassert((value->kind==ccvalue_kEDICT),
     "cannot allocate local, expected a value of type EDICT and of subtype LOCAL or PARAM");
 
   ccedict_t *edict=value->edict;
 
-  ccnotnil((edict));
+  ccassert((edict!=0));
   ccassert((edict->kind==ccedict_kLOCAL)||(edict->kind==ccedict_kPARAM),
     "cannot allocate local, expected an edict of type LOCAL or PARAM");
 
@@ -185,7 +185,7 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
 
 ccfunc int
 ccexec_invoke(
-  ccexec_t *e, ccprocd_t *p, ccexec_value_t *r, int l, ccexec_value_t *i);
+  ccexec_t *, ccvalue_t *, ccexec_value_t *, cci32_t, ccexec_value_t *);
 
 ccfunc int
 ccexec_edict(
@@ -258,10 +258,9 @@ ccleave("exec-edict-fetch");
     case ccedict_kSTORE:
     {
 ccenter("exec-edict-store");
-
       ccexec_value_t lval,rval;
-      lval=ccstack_yield_lvalue(stack,ccnotnil(edict->store.lval));
-      rval=ccstack_yield_rvalue(stack,ccnotnil(edict->store.rval));
+      lval=ccstack_yield_lvalue(stack,edict->store.lval);
+      rval=ccstack_yield_rvalue(stack,edict->store.rval);
 
       // Todo:
       *cccast(cci64_t*,lval.value)=rval.asi64;
@@ -303,7 +302,7 @@ ccleave("exec-edict-jumpf");
     {
 ccenter("exec-edict-jumpt");
       ccexec_value_t
-      rval=ccstack_yield_rvalue(stack,ccnotnil(edict->jump.cnd));
+      rval=ccstack_yield_rvalue(stack,edict->jump.cnd);
       if(rval.asi32)
       { stack->current=edict->jump.blc;
         stack->irindex=edict->jump.tar;
@@ -322,12 +321,7 @@ ccleave("exec-edict-return");
     case ccedict_kINVOKE:
     {
 ccenter("exec-edict-invoke");
-#if 0
-      ccexec_value_t  *rval=ccnil;
-      ccvalue_t **list=ccnil;
-      ccarrfor(edict->invoke.rval,list)
-        *ccarrone(rval)=ccstack_yield_rvalue(stack,*list);
-#endif
+
       int rlen=ccarrlen(edict->invoke.rval);
       ccexec_value_t *rval=ccstack_push(exec,rlen);
       ccexec_value_t *setr=rval;
@@ -337,20 +331,28 @@ ccenter("exec-edict-invoke");
 
       // Note: save the return value ...
       ccexec_value_t *ret=ccstack_mingle(stack,value);
-      if(!ccexec_invoke(exec,edict->invoke.call,ret,rlen,rval))
+
+      if(edict->invoke.call->kind==ccvalue_kPROCD)
       {
-        ccassert(!"no-return value, error");
+	      if(!ccexec_invoke(exec,edict->invoke.call,ret,rlen,rval))
+	      	ccassert(!"no-return value, error");
+      } else
+      if(edict->invoke.call->kind==ccvalue_kPROCU)
+      {
+      	*ret=edict->invoke.call->procu->proc(exec,value,rlen,rval);
       }
+
       ccstack_pull(exec,rlen);
+
 ccleave("exec-edict-invoke");
     } break;
     case ccedict_kDBGBREAK:
-    { cctracelog("break");
-      ccbreak();
+    { cctracelog("called: break",0);
+      // ccbreak();
     } break;
   	case ccedict_kDBGERROR:
-    { cctraceerr("error");
-      ccbreak();
+    { cctraceerr("called: error",0);
+      // ccbreak();
     } break;
 
     default: ccassert(!"error");
@@ -382,10 +384,12 @@ ccexec_sizeof(ccexec_frame_t *_s, cctype_t *_t)
 
 ccfunc int
 ccexec_invoke(
-  ccexec_t *exec, ccprocd_t *procd, ccexec_value_t *r, int l, ccexec_value_t *i)
+  ccexec_t *exec, ccvalue_t *value, ccexec_value_t *r, cci32_t l, ccexec_value_t *i)
 {
 ccenter("invoke");
   int result=ccfalse;
+
+  ccprocd_t *procd=value->procd;
 
   // Todo: let's not use our actual stack ...
   ccexec_frame_t stack;

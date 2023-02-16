@@ -291,15 +291,7 @@ typedef struct ccread_t
 } ccread_t;
 
 // TODO(RJ): make this legit!
-#ifndef ccsynerr
-#ifdef _DEBUG
-# define ccsynerr(tok,cod,fmt, ...) cctraceerr(fmt, __VA_ARGS__), ccbreak()
-#else
-# define ccsynerr(tok,cod,fmt, ...) cctraceerr(fmt, __VA_ARGS__)
-#endif
-#endif
-#ifndef ccsynwar
-# define ccsynwar(tok,cod,fmt, ...) cctracewar(fmt, __VA_ARGS__)
-#endif
+#define ccsynerr(tok,cod,fmt, ...) 0
+#define ccsynwar(tok,cod,fmt, ...) 0
 
 #endif
