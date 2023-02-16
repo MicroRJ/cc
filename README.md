@@ -8,7 +8,7 @@ The code that you can run is under 'code/'
 
 #### Todo list:
  - Hello?? did you forget comments?
- - Better logging and error reporting ...
+ - Better logging and error reporting, this includes a proper ccprintf ...
  - Real tree checker system
  - Real type system, not just integers and array modifiers
  - Faster parser, remove the enormous amount of calls for each expression
