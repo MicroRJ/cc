@@ -9,6 +9,31 @@ in a few key areas, but due to its current state and the fact that it doesn't ev
 ### What works:
 Some things? Very few things have been implemented, and not even proper scoping has been added yet, so you can only use a name for a declarator once in the entire file, the code that I've managed to run is under 'code/'.
 
+``` C
+int assert(int is_true)
+{
+	if(is_true==0)
+		ccerror();
+
+  return 0;
+}
+int fib(int x)
+{ if(x>=2)
+	{ int l=fib(x-2);
+		int r=fib(x-1);
+		return l+r;
+	}
+	return x;
+}
+int main(int a)
+{
+	int f=fib(a);
+	assert(f==17711);
+	return f;
+}
+```
+
+
 ### State of the major files:
 - lexer/parser 'ccread.c' is straightforward and simple so you can't mess that up too much,
   unless you're me, so there's some work to be done ...
