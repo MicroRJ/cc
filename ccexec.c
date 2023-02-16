@@ -451,6 +451,7 @@ ccfunc int
 ccexec_init(ccexec_t *exec)
 { memset(exec,ccnil,sizeof(*exec));
 
+	// Todo:
   size_t stack_size=256 * 1024*1024;
 
   exec->stack=ccmalloc(stack_size);

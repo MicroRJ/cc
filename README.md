@@ -27,7 +27,7 @@ int fib(int x)
 }
 int main(int a)
 {
-  int f=fib(a);
+  int f=fib(22);
   assert(f==17711);
   return f;
 }
