@@ -1,8 +1,0 @@
-// WHEN COME BACK:
-// Todo: static_assert for tests
-// Todo: strings
-// Todo: varargs
-// Todo: ccprintf
-// Todo: printf
-// Todo: comments
-// Todo: better tree locations!

@@ -1,11 +1,6 @@
-/** Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved. **/
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #ifndef _CC
 #define _CC
-// Note: CC stands for 'c-cures' and it is meant to be a simple set of utilities that you'd
-// use on almost any c project ...
-// I don't feel too comfortable yet having everything in a single file, so definitions will be here,
-// and implementations in their respective files.
-//
 
 #ifdef __cplusplus
 extern "C" {
@@ -477,9 +472,9 @@ typedef struct ccread_t  ccread_t;
 typedef struct ccemit_t  ccemit_t;
 typedef struct ccexec_t  ccexec_t;
 
-typedef struct ccemit_value_t ccemit_value_t;
-typedef struct ccemit_block_t ccemit_block_t;
-typedef struct ccemit_procd_t ccemit_procd_t;
+typedef struct ccvalue_t ccvalue_t;
+typedef struct ccblock_t ccblock_t;
+typedef struct ccprocd_t ccprocd_t;
 typedef struct ccexec_value_t ccexec_value_t;
 
 typedef struct ccjump_point_t ccjump_point_t;

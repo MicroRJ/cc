@@ -1,3 +1,4 @@
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #ifndef _CCEDICT
 #define _CCEDICT
 
@@ -12,18 +13,15 @@ typedef enum ccedict_k
   ccedict_kJUMP,
   ccedict_kJUMPT,
   ccedict_kJUMPF,
-  ccedict_kJUMPC,
-  ccedict_kTERNARY,
-  ccedict_kENTER,
   ccedict_kINVOKE,
   ccedict_kRETURN,
-
   ccedict_kDBGBREAK,
   ccedict_kDBGERROR,
 } ccedict_k;
 
 ccglobal const char *ccedict_s[]=
-{ "LOCAL","PARAM","ADDRESS","STORE","FETCH","ARITH","JUMP","JUMPT","JUMPF","JUMPC","TERNARY","ENTER","INVOKE","RETURN","DBGBREAK",
+{ "LOCAL","PARAM","ADDRESS","STORE","FETCH","ARITH",
+	"JUMP","JUMPT","JUMPF","INVOKE","RETURN","DBGBREAK","DBGERROR","DBGASSERT"
 };
 
 
@@ -43,47 +41,47 @@ ccunion
 	} local,param;
 	// Note: Produces an addressable lvalue at an offset specified by rval ...
 	struct
-	{ ccemit_value_t * lval;
-		ccemit_value_t * rval;
+	{ ccvalue_t * lval;
+		ccvalue_t * rval;
 	} addr;
 	// Note: Produces a non-addressable rvalue ...
 	// Note: #lval is the lvalue to store to.
 	// Note: #rval is the rvalue to store.
 	struct
-	{ ccemit_value_t *  lval;
-		ccemit_value_t *  rval;
+	{ ccvalue_t *  lval;
+		ccvalue_t *  rval;
 	} store;
 	// Note: Produces an non-addressable rvalue ...
 	// Note: #lval is the lvalue to load.
 	struct
-	{ ccemit_value_t  * lval;
-		ccemit_value_t  * rval;
+	{ ccvalue_t  * lval;
+		ccvalue_t  * rval;
 	} fetch;
 	// Note: Produces a non-addressable rvalue
 	struct
-	{ ccemit_procd_t  * call;
-		ccemit_value_t ** rval;
+	{ ccprocd_t  * call;
+		ccvalue_t ** rval;
 	} invoke;
 	struct
-	{ ccemit_value_t  * rval;
+	{ ccvalue_t  * rval;
 	} ret;
 	struct
-	{ ccemit_block_t  * blc;
+	{ ccblock_t  * blc;
 		ccu32_t           tar;
-		ccemit_value_t  * cnd;
+		ccvalue_t  * cnd;
 	} jump;
 	struct
-	{ ccemit_block_t  * blc;
+	{ ccblock_t  * blc;
 	} enter;
 	struct
-	{ ccemit_value_t  * cnd;
-  	ccemit_block_t  * lhs;
-  	ccemit_block_t  * rhs;
+	{ ccvalue_t  * cnd;
+  	ccblock_t  * lhs;
+  	ccblock_t  * rhs;
 	} ternary;
 	struct
 	{ cctoken_k         opr;
-	  ccemit_value_t  * lhs;
-	  ccemit_value_t  * rhs;
+	  ccvalue_t  * lhs;
+	  ccvalue_t  * rhs;
 	} arith;
 };
 } ccedict_t;
@@ -91,7 +89,7 @@ ccunion
 typedef struct ccjump_point_t ccjump_point_t;
 typedef struct ccjump_point_t
 { ccstr_t         label; // Note: for debugging
-  ccemit_block_t *block;
+  ccblock_t *block;
   ccu32_t         index;
 } ccjump_point_t;
 
@@ -140,7 +138,7 @@ ccedict_retarget(ccedict_t *e, ccjump_point_t p)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_store(ccemit_value_t *lval, ccemit_value_t *rval)
+ccedict_store(ccvalue_t *lval, ccvalue_t *rval)
 {
 	ccedict_t *e=ccedict(ccedict_kSTORE,"store");
 	e->store.lval=lval;
@@ -149,7 +147,7 @@ ccedict_store(ccemit_value_t *lval, ccemit_value_t *rval)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_fetch(ccemit_value_t *lval, ccemit_value_t  *rval)
+ccedict_fetch(ccvalue_t *lval, ccvalue_t  *rval)
 {
 	ccedict_t *e=ccedict(ccedict_kFETCH,"fetch");
 	e->fetch.lval=lval;
@@ -158,20 +156,12 @@ ccedict_fetch(ccemit_value_t *lval, ccemit_value_t  *rval)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_arith(cctoken_k opr, ccemit_value_t *lhs, ccemit_value_t *rhs)
+ccedict_arith(cctoken_k opr, ccvalue_t *lhs, ccvalue_t *rhs)
 {
 	ccedict_t *e=ccedict(ccedict_kARITH,"arith");
 	e->arith.opr=opr;
 	e->arith.lhs=lhs;
 	e->arith.rhs=rhs;
-	return e;
-}
-
-ccfunc ccinle ccedict_t *
-ccedict_enter(ccemit_block_t *blc)
-{
-	ccedict_t *e=ccedict(ccedict_kENTER,"enter");
-	e->enter.blc=blc;
 	return e;
 }
 
@@ -185,7 +175,7 @@ ccedict_jump(ccjump_point_t point)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_tjump(ccjump_point_t point, ccemit_value_t *cnd)
+ccedict_tjump(ccjump_point_t point, ccvalue_t *cnd)
 {
 	ccedict_t *e=ccedict(ccedict_kJUMPT,point.label);
   e->jump.blc=point.block;
@@ -195,7 +185,7 @@ ccedict_tjump(ccjump_point_t point, ccemit_value_t *cnd)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_fjump(ccjump_point_t point, ccemit_value_t *cnd)
+ccedict_fjump(ccjump_point_t point, ccvalue_t *cnd)
 {
 	ccedict_t *e=ccedict(ccedict_kJUMPF,point.label);
   e->jump.blc=point.block;
@@ -205,17 +195,7 @@ ccedict_fjump(ccjump_point_t point, ccemit_value_t *cnd)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_cjump(ccjump_point_t point, ccemit_value_t *cnd)
-{
-	ccedict_t *e=ccedict(ccedict_kJUMPC,"jump-c");
-  e->jump.blc=point.block;
-  e->jump.tar=point.index;
-  e->jump.cnd=cnd;
-  return e;
-}
-
-ccfunc ccinle ccedict_t *
-ccedict_call(ccemit_procd_t *lval, ccemit_value_t **rval)
+ccedict_call(ccprocd_t *lval, ccvalue_t **rval)
 {
 	ccassert(lval!=0);
 
@@ -226,7 +206,7 @@ ccedict_call(ccemit_procd_t *lval, ccemit_value_t **rval)
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_return(ccemit_value_t *rval)
+ccedict_return(ccvalue_t *rval)
 {
 	ccedict_t *e=ccedict(ccedict_kRETURN,"return");
   e->ret.rval=rval;
@@ -248,22 +228,11 @@ ccedict_dbgerror()
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_address(ccemit_value_t *lval, ccemit_value_t *rval)
+ccedict_address(ccvalue_t *lval, ccvalue_t *rval)
 {
 	ccedict_t *e=ccedict(ccedict_kADDRESS,"address");
   e->addr.lval=lval;
   e->addr.rval=rval;
-  return e;
-}
-
-// Note: if anything, these should be values, that way you can execute a block, or an instruction ...
-ccfunc ccinle ccedict_t *
-ccedict_ternary(ccemit_value_t *cnd, ccemit_block_t *lhs, ccemit_block_t *rhs)
-{
-	ccedict_t *e=ccedict(ccedict_kTERNARY,"ternary");
-  e->ternary.cnd=cnd;
-  e->ternary.lhs=lhs;
-  e->ternary.rhs=rhs;
   return e;
 }
 

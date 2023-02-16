@@ -1,5 +1,8 @@
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #ifndef _CCEMIT_C
 #define _CCEMIT_C
+
+// Note: do not pay attention to this file
 
 typedef enum
 { kttcc_declspec_signed,

@@ -1,4 +1,3 @@
-
 int assert(int is_true)
 {
   if(is_true == 0)
@@ -20,7 +19,6 @@ int main(int aa)
   assert(c==2);
   assert(d==3);
   assert(e==4);
-
 
   return 1;
 }

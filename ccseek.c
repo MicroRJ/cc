@@ -1,10 +1,12 @@
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #ifndef _CCSEEK
 #define _CCSEEK
 
+// Todo: weird
+
+
 // Note: the purpose of this file is create a map of dependencies, symbols, expressions and types and
 // to check the validity of the tree ...
-
-
 ccfunc ccinle void
 ccseek_decl(cctree_t *);
 
@@ -13,7 +15,7 @@ ccseek_tree(cctree_t *);
 
 // Note: this should not bind to a tree, it should bind to a type ...
 ccfunc int
-cctree_include_invokable(cctree_t *tree, const char *name)
+ccseek_include_invokable(cctree_t *tree, const char *name)
 {
   ccnotnil(tree);
   ccnotnil(name);
@@ -24,8 +26,9 @@ cctree_include_invokable(cctree_t *tree, const char *name)
   return ccerrnon();
 }
 
+// Note: find the symbol associated with the given tree and return it ...
 ccfunc cctree_t *
-cctree_resolve_symbol(cctree_t *tree)
+ccseek_symbol(cctree_t *tree)
 {
   ccnotnil(tree);
 
@@ -35,8 +38,9 @@ cctree_resolve_symbol(cctree_t *tree)
   return ccerrnon()? *symbol :ccnil;
 }
 
+// I keep coming up with these weird names ...
 ccfunc int
-cctree_mingle(cctree_t *tree, const char *name)
+ccseek_shackle(cctree_t *tree, const char *name)
 {
   cctree_t **solved=ccnil;
 
@@ -81,7 +85,7 @@ ccseek_call(cctree_t *tree)
   ccassert(tree->lval);
   // ccassert(tree->rval); Could be that it has no arguments ...
 
-  if(!cctree_mingle(tree,tree->name))
+  if(!ccseek_shackle(tree,tree->name))
       cctraceerr("%s: identifier not found",tree->name);
 
   cctree_t *rval;
@@ -97,7 +101,7 @@ ccseek_index(cctree_t *tree)
 
   if(tree->lval->kind==cctree_kLITIDE)
   {
-    if(!cctree_mingle(tree->lval,tree->lval->name))
+    if(!ccseek_shackle(tree->lval,tree->lval->name))
         cctraceerr("%s: identifier not found",tree->lval->name);
   } else
   if(tree->lval->kind==cctree_kINDEX)
@@ -118,7 +122,7 @@ ccseek_lvalue(cctree_t *tree)
   {
     case cctree_kLITIDE:
     {
-      if(!cctree_mingle(tree,tree->name))
+      if(!ccseek_shackle(tree,tree->name))
         cctraceerr("'%s': undeclared lvalue identifier",tree->name);
     } break;
     case cctree_kINDEX:
@@ -137,7 +141,7 @@ ccseek_rvalue(cctree_t *tree)
     break;
     case cctree_kLITIDE:
     {
-      if(!cctree_mingle(tree,tree->name))
+      if(!ccseek_shackle(tree,tree->name))
         cctraceerr("'%s': undeclared rvalue identifier",tree->name);
 
     } break;
@@ -168,18 +172,15 @@ ccseek_binary(cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue)
   ccseek_rvalue(rvalue);
 }
 
-
 ccfunc void
 ccseek_decl_name(cctree_t *tree)
 {
   // Note: is this a good way to do things?
-
-
   if(tree->type->kind==cctree_kFUNC)
   {
     if(tree->mark&cctree_mEXTERNAL)
     {
-      if(cctree_include_invokable(tree,tree->name))
+      if(ccseek_include_invokable(tree,tree->name))
       {
         cctree_t **list;
         ccarrfor(tree->type->list,list)
@@ -231,15 +232,15 @@ ccseek_tree(cctree_t *tree)
   } else
   if(tree->kind==cctree_kDECL)
   {
-  	if(tree->root->kind==cctree_kTUNIT)
-  		ccassert(tree->mark&cctree_mEXTERNAL);
+    if(tree->root->kind==cctree_kTUNIT)
+      ccassert(tree->mark&cctree_mEXTERNAL);
 
-	  if(tree->mark&cctree_mEXTERNAL)
-	  	ccassert(tree->root->kind==cctree_kTUNIT);
+    if(tree->mark&cctree_mEXTERNAL)
+      ccassert(tree->root->kind==cctree_kTUNIT);
 
-  	cctree_t **list;
-	  ccarrfor(tree->list,list)
-	  	ccseek_decl_name(*list);
+    cctree_t **list;
+    ccarrfor(tree->list,list)
+      ccseek_decl_name(*list);
   } else
   if(tree->kind==cctree_kCALL)
   {
@@ -271,24 +272,23 @@ ccseek_tree(cctree_t *tree)
   }
 }
 
-
 ccfunc void
 ccseek_translation_unit(cctree_t *tree)
 { ccassert(tree!=0);
-	ccassert(tree->kind==cctree_kTUNIT);
+  ccassert(tree->kind==cctree_kTUNIT);
 
-	if(type_decls) ccdlbdel(type_decls);
-	if(func_decls) ccdlbdel(func_decls);
-	if(vari_decls) ccdlbdel(vari_decls);
-	if(symbols) ccdlbdel(symbols);
+  if(type_decls) ccdlbdel(type_decls);
+  if(func_decls) ccdlbdel(func_decls);
+  if(vari_decls) ccdlbdel(vari_decls);
+  if(symbols) ccdlbdel(symbols);
 
 
-	// Note: this is temporary
-	cctree_t *tree_ccbreak=cctree_new(cctree_kFUNC,tree,cctree_mEXTERNAL);
-	cctree_t *tree_ccerror=cctree_new(cctree_kFUNC,tree,cctree_mEXTERNAL);
+  // Note: this is temporary
+  cctree_t *tree_ccbreak=cctree_new(cctree_kFUNC,tree,cctree_mEXTERNAL);
+  cctree_t *tree_ccerror=cctree_new(cctree_kFUNC,tree,cctree_mEXTERNAL);
 
-	cctree_include_invokable(tree_ccbreak,"ccbreak");
-	cctree_include_invokable(tree_ccerror,"ccerror");
+  ccseek_include_invokable(tree_ccbreak,"ccbreak");
+  ccseek_include_invokable(tree_ccerror,"ccerror");
 
   cctree_t **decl;
   ccarrfor(tree->list,decl) ccseek_tree(*decl);

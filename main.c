@@ -1,3 +1,6 @@
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
+
+// Todo: why are you like this? remove this!
 #define ARG 22
 
 #include "cc.c"
@@ -13,8 +16,6 @@ int fib(int x)
 
 ccfunc ccexec_value_t buildrunfile(const char *filename)
 {
-
-
 ccenter("build-run-file");
 
 	ccexec_value_t result;
@@ -47,14 +48,13 @@ ccleave("exec");
   ccexec_uninit(&exec);
   ccread_uninit(&read);
 
-  cctracelog("file %s: %i",filename,result.asi32);
-
 ccleave("build-run-file");
   return result;
 }
 
 int main(int argc, char **argv)
 {
+ccdebugnone=cctrue;
 	ccini();
 
 ccenter("main");
@@ -65,8 +65,21 @@ ccenter("main");
   testdbgsys();
 #else
 
-  buildrunfile("code\\decl.cc");
-  buildrunfile("code\\lval.cc");
+  const char *f[]=
+  { "code\\decl.cc",
+		"code\\retr.cc",
+		"code\\lval.cc",
+		"code\\fib.cc",
+  };
+
+  int l=sizeof(f)/sizeof(f[0]);
+
+  for(int i=0; i<l; ++i)
+  {
+  	ccexec_value_t e=buildrunfile(f[i]);
+		ccprintf("<!6'%s'!>: <!3%lli!>\n",f[i],e.asi64);
+  }
+
 
 
 #if 0

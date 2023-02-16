@@ -1,9 +1,9 @@
-/*****************************************************************/
-/** Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved. **/
-/*****************************************************************/
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #ifndef _CCLOG
 #define _CCLOG
 #endif
+
+// Note: this is all garbage, do not pay attention to this file!
 
 #if defined(_CCLOG) && defined(_CCLOG_IMPL)
 
@@ -267,10 +267,10 @@ ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker)
 ccfunc void
 ccdebugend()
 {
-#ifdef _HARD_DEBUG
+	if(ccdebugnone) return;
+
   ccassert(ccdebugthis==&ccdebugroot);
   ccdebugdump();
-#endif
 }
 
 

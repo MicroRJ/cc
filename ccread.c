@@ -1,11 +1,6 @@
-/*****************************************************************/
-/** Copyright(C) J. Dayan Rodriguez, 2022, All rights reserved. **/
-/*****************************************************************/
-//
-// Note: No static language specific analysis done here, this file is meant to be modular in this manner...
-
-
-
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
+#ifndef _CCREAD_C
+#define _CCREAD_C
 
 ccfunc void
 ccread_init(ccread_t *_r)
@@ -1329,3 +1324,4 @@ ccread_external_declaration(ccread_t *reader, cctree_t *root, cci32_t mark)
 }
 
 
+#endif

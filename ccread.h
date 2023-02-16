@@ -1,12 +1,9 @@
-/*****************************************************************/
-/** Copyright(C) J. Dayan Rodriguez, 2022, All rights reserved. **/
-/*****************************************************************/
-#ifndef _CCREAD
-#define _CCREAD
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
+#ifndef _CCREAD_H
+#define _CCREAD_H
 
-// Implementation based on the:
+// Implementation based on the specs at:
 // https://learn.microsoft.com/en-us/cpp/c-language/c-language-reference
-//
 
 typedef enum cctoken_k
 {
@@ -16,7 +13,6 @@ typedef enum cctoken_k
    **/
   cctoken_kEND,
 
-  // ** this is up to the lexer to determine and the parser to interpret **
   cctoken_Kendimpl, // '\r\n'
   cctoken_Kendexpl, // ';'
 

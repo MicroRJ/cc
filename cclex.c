@@ -1,19 +1,15 @@
-#ifndef KTTC_SOURCE_FILE_READ_TOKEN
-#define KTTC_SOURCE_FILE_READ_TOKEN
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
+#ifndef _CCLEX
+#define _CCLEX
 
 // ** Hashing **
 
 #define CCLEX_WITHIN(x,l,r) (((x)>=(l))&&((x)<=(r)))
 
-// Note: this could be done at compile time? and should probably make global or something ...
+// Todo: this is not good ...
 ccfunc void
 cclex_hash_init(cclex_t *lexer)
 {
-  /**
-   * Group: msvc attributes.
-   *
-   *  ** these are reserved keywords **
-   **/
   *cctblputL(lexer->tbl,"__asm")=cctoken_Kmsvc_attr_asm; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"__based")=cctoken_Kmsvc_attr_based; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"__cdecl")=cctoken_Kmsvc_attr_cdecl; ccassert(ccerrnon());
@@ -23,33 +19,17 @@ cclex_hash_init(cclex_t *lexer)
   *cctblputL(lexer->tbl,"__stdcall")=cctoken_Kmsvc_attr_stdcall; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"__thiscall")=cctoken_Kmsvc_attr_thiscall; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"__vectorcal")=cctoken_Kmsvc_attr_vectorcal; ccassert(ccerrnon());
-  /**
-   * Group: alignment specifiers
-   *
-   * ** these are reserved keywords **
-   **/
+
   *cctblputL(lexer->tbl,"_Alignof")=cctoken_Kalign_of; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"_Alignas")=cctoken_Kalign_as; ccassert(ccerrnon());
-   /**
-   * Group: type qualifiers
-   *
-   * ** these are reserved keywords **
-   **/
+
   *cctblputL(lexer->tbl,"const")=cctoken_Kconst; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"restrict")=cctoken_Krestrict; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"volatile")=cctoken_Kvolatile; ccassert(ccerrnon());
-  /**
-   * Group: function specifiers.
-   *
-   * ** these are reseverd keywords **
-   **/
+
   *cctblputL(lexer->tbl,"inline")=cctoken_Kinline; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"_Noreturn")=cctoken_Kno_return; ccassert(ccerrnon());
-  /**
-   * Group: type specifiers.
-   *
-   * ** these are reseverd keywords **
-   **/
+
   *cctblputL(lexer->tbl,"signed")=cctoken_Ksigned; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"unsigned")=cctoken_Kunsigned; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"__int8")=cctoken_Kmsvc_int8; ccassert(ccerrnon());
@@ -68,24 +48,16 @@ cclex_hash_init(cclex_t *lexer)
   *cctblputL(lexer->tbl,"_Atomic")=cctoken_Katomic; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"enum")=cctoken_Kenum; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"struct")=cctoken_kSTRUCT; ccassert(ccerrnon());
-  /**
-   * Group: type specifier & storage class.
-   **/
+
   *cctblputL(lexer->tbl,"typedef")=cctoken_Ktypedef; ccassert(ccerrnon());
-  /*
-   * Group: storage class.
-   * ** these are reseverd keywords **
-   **/
+
   *cctblputL(lexer->tbl,"auto")=cctoken_Kauto; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"extern")=cctoken_Kextern; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"register")=cctoken_Kregister; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"static")=cctoken_Kstatic; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"_Thread_local")=cctoken_Kthread_local; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"__declspec")=cctoken_Kmsvc_declspec; ccassert(ccerrnon());
-  /**
-   * Group: control statements.
-   * ** these are reseverd keywords **
-   **/
+
   *cctblputL(lexer->tbl,"if")=cctoken_Kif; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"switch")=cctoken_Kswitch; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"else")=cctoken_Kelse; ccassert(ccerrnon());

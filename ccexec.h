@@ -1,3 +1,4 @@
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #ifndef _CCEXEC_VALUE
 #define _CCEXEC_VALUE
 
@@ -26,9 +27,9 @@ typedef struct ccexec_value_t
 
 typedef struct ccexec_frame_t ccexec_frame_t;
 typedef struct ccexec_frame_t
-{ ccemit_procd_t *function;
+{ ccprocd_t *function;
 
-	ccemit_block_t *current;
+	ccblock_t *current;
 	cci32_t         irindex;
 
 	ccexec_value_t *values;

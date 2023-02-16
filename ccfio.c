@@ -1,5 +1,9 @@
+// Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #ifndef _CCFIO
 #define _CCFIO
+
+// Note: this is all so ...
+
 
 ccfunc const char *
 ccfilename(const char *name)
