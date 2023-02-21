@@ -4,50 +4,64 @@
 
 // Todo:
 ccfunc void
-ccdlbdel_(void **dlb_)
-{ ccdlb_t *dlb=ccdlb(ccdref(dlb_));
-	ccallocator_t *a;
-	a=dlb->allocator;
-	if(dlb->entries)
-	{ ccentry_t *i,*f,*e;
-		ccarrfor(dlb->entries,e)
-		{ for(i=e->nex;i;)
-			{ f=i;
-				i=i->nex;
-				a(cccall(),0,f);
-			}
-		}
-		ccarrdel(dlb->entries);
-	}
-	a(cccall(),0,dlb);
+ccdlbdel_(void **ccm)
+{
+  ccassert(ccm!=0);
 
-	*dlb_=ccnil;
+  ccdlb_t *dlb=ccdlb(ccdref(ccm));
+  if(dlb)
+  {
+    ccassert(dlb->allocator!=0);
+
+    if(dlb->entries)
+    {
+      ccentry_t *i,*f,*e;
+      ccarrfor(dlb->entries,e)
+      { for(i=e->nex;i;)
+        { f=i;
+          i=i->nex;
+
+          cccall();
+          dlb->allocator(0,f);
+        }
+      }
+
+      ccarrdel(dlb->entries);
+    }
+
+    cccall();
+    dlb->allocator(0,dlb);
+  }
+
+  *ccm=0;
 }
 
 ccfunc cci64_t
-ccdlb_arradd_(ccdlb_t **dlb_, cci64_t rsze, cci64_t csze)
+ccdlb_arradd_(ccdlb_t **ccm, cci64_t rsze, cci64_t csze)
 {
-ccenter("arradd");
-  ccdlb_t *dlb=*dlb_;
+ccdbenter("arradd");
+  ccdlb_t *dlb=*ccm;
 
-  int
-  	is_ini=!dlb,
-    rem_rze=ccnil;
-  cci64_t
-    sze_max=ccnil,
-    sze_min=ccnil;
-  ccallocator_t
-   *allocator=ccallocator;
+  int rem_rze,rem_add;
+  ccallocator_t *allocator;
+  cci64_t sze_max, sze_min;
 
-  if(!is_ini)
+  if(dlb)
   { sze_max=dlb->sze_max;
     sze_min=dlb->sze_min;
     rem_rze=dlb->rem_rze;
+    rem_add=dlb->rem_add;
     allocator=dlb->allocator;
+
+    ccassert(!rem_add);
+  } else
+  { allocator=ccallocator;
+    sze_max=0;
+    sze_min=0;
+    rem_rze=0;
+    rem_add=0;
   }
 
-  // Note: ensure that we never commit past what we're about to reserve or what
-  // we've reserved already ...
   ccassert(csze<=rsze+sze_max-sze_min);
 
   if(sze_max<sze_min+rsze)
@@ -56,30 +70,33 @@ ccenter("arradd");
 
     sze_max<<=1;
     if(sze_max<sze_min+rsze)
-    	sze_max=sze_min+rsze;
+      sze_max=sze_min+rsze;
 
-    dlb=(ccdlb_t*)allocator(cccall(),sizeof(*dlb)+sze_max,dlb);
-    *dlb_=dlb;
+    cccall();
+    *ccm=allocator(sizeof(*dlb)+sze_max,dlb);
 
-    if(is_ini)
-    { dlb->rem_rze=ccfalse;
-      dlb->rem_add=ccfalse;
-      dlb->entries=ccnil;
+    if(!dlb)
+    { dlb=cccast(ccdlb_t*,*ccm);
+
+      dlb->rem_rze=rem_rze;
+      dlb->rem_add=rem_add;
       dlb->allocator=allocator;
-    }
+      dlb->entries=0;
+    } else
+        dlb=cccast(ccdlb_t*,*ccm);
+
+    dlb->sze_max=sze_max;
   }
 
-  dlb->sze_max=sze_max;
   dlb->sze_min=sze_min+csze;
-ccleave("arradd");
+
+ccdbleave("arradd");
   return sze_min;
 }
 
 ccfunc ccinle cci64_t
 ccdlb_arradd(void **ccm, cci64_t isze, cci64_t cres, cci64_t ccom)
 {
-// Note: ccdlb_arradd
-// This could be made into a macro, but it would look rather funky, like me and ain't no-one likes me ...
   ccdlb_t *dlb=ccdlb(*ccm);
   cci64_t res=ccdlb_arradd_(&dlb,isze*cres,isze*ccom);
   *ccm=dlb+1;
@@ -89,17 +106,18 @@ ccdlb_arradd(void **ccm, cci64_t isze, cci64_t cres, cci64_t ccom)
 ccfunc cci64_t
 ccdlb_stradd(char **ccm, cci64_t cres, cci64_t ccom, const char *cpy)
 {
-ccenter("stradd");
-	// Note: use char type instead of void for preemptive type-checking ...
+ccdbenter("stradd");
+  // Note: use char type instead of void for preemptive type-checking ...
   // Note: assuming that you'll reserve at-least one more byte for the null terminator ...
   ccassert(cres!=0);
   ccassert(ccom!=0);
+
   cci64_t res=ccdlb_arradd(cccast(void**,ccm),1,cres,ccom);
   char *cur=(char*)*ccm+res;
   memcpy(cur,cpy,cres-1);
   cur[cres-1]=0;
 
-ccleave("stradd");
+ccdbleave("stradd");
   return res;
 }
 
@@ -119,20 +137,17 @@ ccdlb_tblini(ccdlb_t **dlb_, cci32_t isze)
 {
   ccdlb_t *dlb=*dlb_;
 
-  if(!dlb)
-  {
-    // Note: reserve some items, this will initialize the memory ...
-    ccdlb_arradd_(&dlb,isze*0xff,0x00);
-    ccarrzro(dlb+1);
+  // Note: reserve one item, this will initialize the memory ...
+  ccdlb_arradd_(&dlb,isze,0);
+  ccarrzro(dlb+1);
 
-    // Note: create some entries
-    ccarradd(dlb->entries,0xff);
-    ccarrzro(dlb->entries);
-    ccarrfix(dlb->entries);
+  // Note: create some entries
+  ccarradd(dlb->entries,0xff);
+  ccarrzro(dlb->entries);
+  ccarrfix(dlb->entries);
 
-    // Note:
-    *dlb_=dlb;
-  }
+  // Note:
+  *dlb_=dlb;
 }
 
 ccfunc ccentry_t *
@@ -168,8 +183,8 @@ ccdlb_tblcat(ccdlb_t **tbl, cci64_t isze, int len, const char *key, ccentry_t *e
 ccfunc ccentry_t *
 ccdbl_query(ccdlb_t *tbl, int len, const char *key)
 {
-	ccassert(key!=0);
-	ccassert(len!=0);
+  ccassert(key!=0);
+  ccassert(len!=0);
 
   ccu64_t  hsh=cchsh_abc(len,key);
   cci64_t  idx=hsh%ccarrmax(tbl->entries);
@@ -191,37 +206,39 @@ ccdbl_query(ccdlb_t *tbl, int len, const char *key)
 ccfunc cci64_t
 ccdlb_tblget(void **ccm, cci32_t isze, cci32_t len, const char *key)
 {
-ccenter("tblget");
+ccdbenter("tblget");
 
-	ccdlb_t *tbl=ccdlb(ccdref(ccm));
+  ccdlb_t *tbl=ccdlb(ccdref(ccm));
   cckeyset(ccnil);
 
-	// Todo: probably return an index that the user can still write to, but it won't affect other items...
+  // Todo: probably return an index that the user can still write to, but it won't affect other items...
   cci64_t val=ccnil;
 
   if(tbl)
   { ccentry_t *ent=ccdbl_query(tbl,len,key);
-	  if(ccerrnon())
-	  { cckeyset(ent->key);
-			val=ent->val;
-	  }
+    if(ccerrnon())
+    { cckeyset(ent->key);
+      val=ent->val;
+    }
   } else ccerrset(ccerr_kNIT);
 
-ccleave("tblget");
+ccdbleave("tblget");
   return val/isze;
 }
 
 ccfunc cci64_t
 ccdlb_tblput(void **ccm, cci32_t isze, cci32_t len, const char *key)
 {
-ccenter("tblput");
+ccdbenter("tblput");
 
   ccdlb_t *tbl=ccdlb(ccdref(ccm));
+
   if(!tbl)
     ccdlb_tblini(&tbl,isze);
+
   cckeyset(ccnil);
 
-	// Todo: probably return an index that the user can still write to, but it won't affect other items...
+  // Todo: probably return an index that the user can still write to, but it won't affect other items...
   cci64_t val=ccnil;
 
   ccentry_t *ent=ccdbl_query(tbl,len,key);
@@ -238,22 +255,22 @@ ccenter("tblput");
   } else
     ccerrset(ccerr_kAIT);
 
-ccleave("tblput");
+ccdbleave("tblput");
   return val/isze;
 }
 
 ccfunc cci64_t
 ccdlb_tblset(void **ccm, cci32_t isze, cci32_t len, const char *key)
 {
-ccenter("tblset");
+ccdbenter("tblset");
 
   ccdlb_t *tbl=ccdlb(ccdref(ccm));
-  if(!tbl)
-    ccdlb_tblini(&tbl,isze);
+
+  if(!tbl) ccdlb_tblini(&tbl,isze);
 
   cckeyset(ccnil);
 
-	// Todo: probably return an index that the user can still write to, but it won't affect other items...
+  // Todo: probably return an index that the user can still write to, but it won't affect other items...
   cci64_t val=ccnil;
   ccentry_t *ent=ccdbl_query(tbl,len,key);
 
@@ -267,7 +284,7 @@ ccenter("tblset");
 
   cckeyset(ent->key);
 
-ccleave("tblset");
+ccdbleave("tblset");
   return val/isze;
 }
 
@@ -291,7 +308,7 @@ ccstr_catf(char **ccm, const char *fmt, ...)
 ccfunc void
 ccdlb_test()
 {
-#ifdef _DLB_TESTS
+#ifdef _DEBUG
 #if 0
   void *mem=ccnil;
   mem=ccrealloc(mem,24);

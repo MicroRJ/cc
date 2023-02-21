@@ -35,7 +35,7 @@ ccfunc void
 ccread_include(ccread_t *_r, const char *name)
 {
   unsigned long int size=0;
-  void *file=ccopenfile(name);
+  void *file=ccopenfile(name,ccfile_kREAD);
   void *data=ccpullfile(file,0,&size);
   ccclosefile(file);
 
@@ -199,13 +199,14 @@ ccread_litide(ccread_t *reader, cctree_t *root, cci32_t mark)
 ccfunc cctree_t *
 ccread_primary(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-ccenter("primary");
+ccdbenter("primary");
   cctree_t *result=ccnil;
   cctoken_t *token=ccpeep(reader);
   if(token)
   { switch(token->bit)
     { case cctoken_kLITIDENT:
-        result=ccread_litide(reader,root,mark);
+        result=cctree_litide(root,mark,token->loc,token->str);
+        ccgobble(reader);
       break;
       case cctoken_kLITINT:
         result=cctree_litint(root,mark,ccgobble(reader));
@@ -214,7 +215,7 @@ ccenter("primary");
         result=cctree_litflo(root,mark,ccgobble(reader));
       break;
       case cctoken_kLITSTR:
-        ccassert(!"error");
+        result=cctree_litstr(root,mark,ccgobble(reader));
       break;
       case cctoken_kLPAREN:
         cctree_t *group=ccread_expression(reader,root,mark);
@@ -225,7 +226,7 @@ ccenter("primary");
     }
   }
 
-ccleave("primary");
+ccdbleave("primary");
   return result;
 }
 //
@@ -265,8 +266,7 @@ ccread_postfix_suffix_maybe(ccread_t *reader, cctree_t *lhs, cctree_t *root, cci
     result=ccread_postfix_suffix_maybe(reader,result,root,mark);
   } else
   if(ccsee(reader,cctoken_kDOT))
-  {
-    result=cctree_unary(root,mark,ccgobble(reader),lhs);
+  { result=cctree_unary(root,mark,cctoken_kDOT,lhs);
     result=ccread_postfix_suffix_maybe(reader,result,root,mark);
   }
 
@@ -277,57 +277,46 @@ ccread_postfix_suffix_maybe(ccread_t *reader, cctree_t *lhs, cctree_t *root, cci
 ccfunc cctree_t *
 ccread_postfix(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-ccenter("postfix");
+ccdbenter("postfix");
   cctree_t *identifier=ccread_primary(reader,root,mark);
   cctree_t *result=ccread_postfix_suffix_maybe(reader,identifier,root,mark);
-ccleave("postfix");
+ccdbleave("postfix");
   return result;
 }
 
 ccfunc cctree_t *
 ccread_unary(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-ccenter("unary");
+ccdbenter("unary");
   cctree_t *result=ccnil;
 
-  if(ccsee(reader,cctoken_kADD))
-  { cctoken_t *tok=ccgobble(reader);
-    if(cceat(reader,cctoken_kADD))
-    { // TODO(RJ): this is dumb, remove...
-      cctoken_t clo=*tok;
-      clo.asi64=cctoken_Kpre_increment;
-      result=cctree_unary(root,mark, & clo, ccread_cast(reader,root,mark));
-    } else
-    { result=cctree_unary(root,mark, tok, ccread_cast(reader,root,mark));
-    }
-  } else
-  if(ccsee(reader,cctoken_kSUB))
-  { cctoken_t *tok=ccgobble(reader);
-    if(cceat(reader,cctoken_kSUB))
-    { // TODO(RJ): this is dumb, remove...
-      cctoken_t clo=*tok;
-      clo.asi64=cctoken_Kpre_decrement;
-      result=cctree_unary(root,mark, & clo, ccread_cast(reader,root,mark));
-    } else
-    { result=cctree_unary(root,mark, tok, ccread_cast(reader,root,mark));
-    }
-  } else
-  if(ccsee(reader, cctoken_kMUL))
+  // Todo: this is flawed!
+  if(cceat(reader,cctoken_Kbitwise_and))
   {
-    // TODO(RJ): this is dumb, remove...
-    cctoken_t *tok = ccgobble(reader);
-    cctoken_t clo=*tok;
-    clo.asi64=cctoken_Kptr_dereference;
-
-    result = cctree_unary(root,mark, & clo, ccread_cast(reader,root,mark));
+    result=cctree_unary(root,mark,cctoken_kADR,ccread_cast(reader,root,mark));
   } else
-  if(ccsee(reader, cctoken_Kbitwise_invert) ||
-     ccsee(reader, cctoken_Knegate))
-  { result=cctree_unary(root,mark, ccgobble(reader), ccread_cast(reader,root,mark));
+  if(cceat(reader,cctoken_kADD))
+  {
+    if(cceat(reader,cctoken_kADD))
+      result=cctree_unary(root,mark,cctoken_kPIN,ccread_cast(reader,root,mark));
+    else
+      result=cctree_unary(root,mark,cctoken_kADD,ccread_cast(reader,root,mark));
   } else
-  { result=ccread_postfix(reader,root,mark);
+  if(cceat(reader,cctoken_kSUB))
+  {
+    if(cceat(reader,cctoken_kSUB))
+      result=cctree_unary(root,mark,cctoken_kPDE,ccread_cast(reader,root,mark));
+    else
+      result=cctree_unary(root,mark,cctoken_kSUB,ccread_cast(reader,root,mark));
+  } else
+  if(cceat(reader, cctoken_kMUL))
+  {
+    result=cctree_unary(root,mark,cctoken_kDRF,ccread_cast(reader,root,mark));
+  } else
+  {
+    result=ccread_postfix(reader,root,mark);
   }
-ccleave("unary");
+ccdbleave("unary");
   return result;
 }
 /**
@@ -338,7 +327,7 @@ ccleave("unary");
 ccfunc cctree_t *
 ccread_cast(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-ccenter("cast");
+ccdbenter("cast");
   cctree_t *result;
 
   if(cceat(reader,cctoken_kLPAREN))
@@ -350,7 +339,7 @@ ccenter("cast");
   } else
     result=ccread_unary(reader,root,mark);
 
-ccleave("cast");
+ccdbleave("cast");
   return result;
 }
 /**
@@ -363,7 +352,7 @@ ccleave("cast");
 ccfunc cctree_t *
 ccread_multiplicative(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("multiplicative_expr");
+ccdbenter("multiplicative_expr");
   cctree_t *lhs = ccread_unary(parser,root,mark);
   while(  ccsee(parser, cctoken_kMUL) ||
           ccsee(parser, cctoken_kDIV) ||
@@ -373,7 +362,7 @@ ccenter("multiplicative_expr");
     cctree_t  *rhs = ccread_unary(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
   }
-ccleave("multiplicative_expr");
+ccdbleave("multiplicative_expr");
   return lhs;
 }
 /**
@@ -385,7 +374,7 @@ ccleave("multiplicative_expr");
 ccfunc cctree_t *
 ccread_additive(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("additive_expr");
+ccdbenter("additive_expr");
   cctree_t *lhs = ccread_multiplicative(parser,root,mark);
   while (ccsee(parser, cctoken_kADD) ||
          ccsee(parser, cctoken_kSUB))
@@ -394,7 +383,7 @@ ccenter("additive_expr");
     cctree_t  *rhs = ccread_multiplicative(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
   }
-ccleave("additive_expr");
+ccdbleave("additive_expr");
   return lhs;
 }
 /**
@@ -406,7 +395,7 @@ ccleave("additive_expr");
 ccfunc cctree_t *
 ccread_shift(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("shift_expr");
+ccdbenter("shift_expr");
   cctree_t *lhs = ccread_additive(parser,root,mark);
   while(ccsee(parser, cctoken_Kbitwise_shl) ||
         ccsee(parser, cctoken_Kbitwise_shr))
@@ -414,7 +403,7 @@ ccenter("shift_expr");
     cctree_t  *rhs = ccread_additive(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
   }
-ccleave("shift_expr");
+ccdbleave("shift_expr");
   return lhs;
 }
 /**
@@ -429,7 +418,7 @@ ccleave("shift_expr");
 ccfunc cctree_t *
 ccread_relational(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("relational_expr");
+ccdbenter("relational_expr");
   cctree_t *lhs = ccread_shift(parser,root,mark);
   while ( ccsee(parser, cctoken_kLTN)      ||
           ccsee(parser, cctoken_kLTE)  ||
@@ -439,7 +428,7 @@ ccenter("relational_expr");
     cctree_t  *rhs = ccread_shift(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
   }
-ccleave("relational_expr");
+ccdbleave("relational_expr");
   return lhs;
 }
 /**
@@ -451,7 +440,7 @@ ccleave("relational_expr");
 ccfunc cctree_t *
 ccread_equality(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("equality_expr");
+ccdbenter("equality_expr");
   cctree_t *lhs = ccread_relational(parser,root,mark);
   if(ccsee(parser, cctoken_kTEQ)     ||
      ccsee(parser, cctoken_kFEQ))
@@ -459,7 +448,7 @@ ccenter("equality_expr");
     cctree_t  *rhs = ccread_equality(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
   }
-ccleave("equality_expr");
+ccdbleave("equality_expr");
   return lhs;
 }
 
@@ -471,14 +460,14 @@ ccleave("equality_expr");
 ccfunc cctree_t *
 ccread_bitwise_and(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("bitwise_and_expr");
+ccdbenter("bitwise_and_expr");
   cctree_t *lhs = ccread_equality(parser,root,mark);
   while(ccsee(parser, cctoken_Kbitwise_and))
   { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_equality(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
   }
-ccleave("bitwise_and_expr");
+ccdbleave("bitwise_and_expr");
   return lhs;
 }
 /**
@@ -489,14 +478,14 @@ ccleave("bitwise_and_expr");
 ccfunc cctree_t *
 ccread_bitwise_xor(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("bitwise_xor_expr");
+ccdbenter("bitwise_xor_expr");
   cctree_t *lhs = ccread_bitwise_and(parser,root,mark);
   while(ccsee(parser, cctoken_Kbitwise_and))
   { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_bitwise_and(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
   }
-ccleave("bitwise_xor_expr");
+ccdbleave("bitwise_xor_expr");
   return lhs;
 }
 /**
@@ -507,14 +496,14 @@ ccleave("bitwise_xor_expr");
 ccfunc cctree_t *
 ccread_bitwise_or(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("bitwise_or_expr");
+ccdbenter("bitwise_or_expr");
   cctree_t *lhs = ccread_bitwise_xor(parser,root,mark);
   while(ccsee(parser, cctoken_Kbitwise_or))
   { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_bitwise_xor(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
   }
-ccleave("bitwise_or_expr");
+ccdbleave("bitwise_or_expr");
   return lhs;
 }
 /**
@@ -525,14 +514,14 @@ ccleave("bitwise_or_expr");
 ccfunc cctree_t *
 ccread_logical_and(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("logical_and_expr");
+ccdbenter("logical_and_expr");
   cctree_t *lhs = ccread_bitwise_or(parser,root,mark);
   while(ccsee(parser, cctoken_Klogical_and))
   { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_bitwise_or(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
   }
-ccleave("logical_and_expr");
+ccdbleave("logical_and_expr");
   return lhs;
 }
 /**
@@ -543,14 +532,14 @@ ccleave("logical_and_expr");
 ccfunc cctree_t *
 ccread_logical_or(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("logical_or_expr");
+ccdbenter("logical_or_expr");
   cctree_t *lhs = ccread_logical_and(parser,root,mark);
   while(ccsee(parser, cctoken_Klogical_or))
   { cctoken_t *tok = ccgobble(parser);
     cctree_t  *rhs = ccread_logical_and(parser,root,mark);
     lhs = cctree_binary(root,mark,tok, lhs, rhs);
   }
-ccleave("logical_or_expr");
+ccdbleave("logical_or_expr");
   return lhs;
 }
 /**
@@ -561,7 +550,7 @@ ccleave("logical_or_expr");
 ccfunc cctree_t *
 ccread_conditional(ccread_t *parser, cctree_t *root, cci32_t mark)
 {
-ccenter("conditional");
+ccdbenter("conditional");
   cctree_t *result=ccread_logical_or(parser,root,mark);
 
   if(cceat(parser, cctoken_Kconditional))
@@ -573,7 +562,7 @@ ccenter("conditional");
       ccsynerr(parser,0,"expected ':' invalid conditional expression");
     result=cctree_ternary(root,mark,result,lhs,rhs);
   }
-ccleave("conditional");
+ccdbleave("conditional");
   return result;
 }
 /**
@@ -587,7 +576,7 @@ ccleave("conditional");
 ccfunc cctree_t *
 ccread_assignment(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-ccenter("assignment");
+ccdbenter("assignment");
   cctree_t *ltree,*rtree;
 
   ltree=ccread_conditional(reader,root,mark);
@@ -599,7 +588,7 @@ ccenter("assignment");
     ltree=cctree_binary(root,mark,token,ltree,rtree);
   }
 
-ccleave("assignment");
+ccdbleave("assignment");
   return ltree;
 }
 /**
@@ -609,9 +598,9 @@ ccleave("assignment");
 ccfunc ccinle cctree_t *
 ccread_constant_expression(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-ccenter("constant_expression");
+ccdbenter("constant_expression");
   cctree_t *result=ccread_conditional(reader,root,mark);
-ccleave("constant_expression");
+ccdbleave("constant_expression");
   return result;
 }
 
@@ -623,7 +612,7 @@ ccleave("constant_expression");
 ccfunc cctree_t *
 ccread_expression(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-ccenter("expression");
+ccdbenter("expression");
 
   cctree_t *result=ccread_assignment(reader,root,mark);
 
@@ -632,7 +621,7 @@ ccenter("expression");
   if(token)
     result=cctree_binary(root,mark,token,result,ccread_expression(reader,root,mark));
 
-ccleave("expression");
+ccdbleave("expression");
   return result;
 }
 

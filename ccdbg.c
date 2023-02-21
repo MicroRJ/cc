@@ -2,6 +2,50 @@
 #ifndef _CCDBG_C
 #define _CCDBG_C
 
+// Note: this is just a mess of stuff that I have to organize ...
+
+
+
+// Todo: remove this from here!
+ccfunc ccinle int
+ccformatvex(char *buf, int len, const char * fmt, va_list vli)
+{
+  return stbsp_vsnprintf(buf,len,fmt,vli);
+}
+
+ccfunc ccinle char *
+ccformatv(const char * fmt, va_list vli)
+{
+  ccglobal ccthread_local char buf[0xff];
+
+  ccformatvex(buf,0xff,fmt,vli);
+
+  return buf;
+}
+
+ccfunc int
+ccformatex(char *buf, int len, const char * fmt, ...)
+{
+  va_list vli;
+  va_start(vli,fmt);
+  int res=ccformatvex(buf,len,fmt,vli);
+  va_end(vli);
+
+  return res;
+}
+
+ccfunc char *
+ccformat(const char * fmt, ...)
+{
+  va_list vli;
+  va_start(vli,fmt);
+  char *res=ccformatv(fmt,vli);
+  va_end(vli);
+
+  return res;
+}
+
+
 ccfunc ccinle cccaller_t
 cccaller(int guid, const char *file, int line, const char *func)
 { cccaller_t t;
@@ -16,7 +60,8 @@ cccaller(int guid, const char *file, int line, const char *func)
 
 ccfunc ccsentry_t *
 ccdebug_()
-{ ccglobal ccsentry_t dummy={"dummy"};
+{ ccglobal ccsentry_t dummy;
+	dummy.marker="dummy";
   if(ccdebugnone) return &dummy;
 
   ccassert(ccdebugthis!=ccnil);
@@ -57,7 +102,7 @@ ccfunc void
 ccdebug_checkblock(ccallocator_t *allocator, ccsentry_block_t *block);
 
 
-ccfunc void *ccinternalallocator_(cccaller_t caller, size_t size,void *data)
+ccfunc void *ccinternalallocator_(size_t size,void *data)
 { if(size)
   { if(data)
       return realloc(data,size);
@@ -196,13 +241,15 @@ ccdebug_checkblock(ccallocator_t *allocator, ccsentry_block_t *block)
   ccassert(!block->prev||block->prev!=block);
 }
 
-ccfunc void *ccuserallocator_(cccaller_t caller, size_t size,void *data)
+ccfunc void *ccuserallocator_(size_t size,void *data)
 {
-ccenter("user-allocator");
+  cccaller_t caller=cclastcaller;
+
+ccdbenter("user-allocator");
   ccsentry_block_t *block;
   if(!size)
   {
-ccenter("free");
+ccdbenter("free");
     ccsentry_t *debug=ccdebug();
     block=(ccsentry_block_t*)data-1;
     ccdebug_checkblock(ccuserallocator_,block);
@@ -222,11 +269,11 @@ ccenter("free");
 
     free(block);
     block=ccnil;
-ccleave("free");
+ccdbleave("free");
   } else
   { if(data)
     {
-ccenter("ccrealloc");
+ccdbenter("ccrealloc");
       ccsentry_t *debug=ccdebug();
       block=(ccsentry_block_t*)data-1;
       ccdebug_checkblock(ccuserallocator_,block);
@@ -245,10 +292,10 @@ ccenter("ccrealloc");
       debug->metrics.nma++;
       debug->metrics.pm+=size;
 
-ccleave("ccrealloc");
+ccdbleave("ccrealloc");
     } else
     {
-ccenter("malloc");
+ccdbenter("malloc");
       ccsentry_t *debug=ccdebug();
       block=(ccsentry_block_t*)malloc(sizeof(*block)+size);
       memset(block,ccnil,sizeof(*block));
@@ -264,30 +311,34 @@ ccenter("malloc");
       debug->metrics.pbc++;
       debug->metrics.pma++;
       debug->metrics.pm+=size;
-ccleave("malloc");
+ccdbleave("malloc");
     }
   }
-ccleave("user-allocator");
+ccdbleave("user-allocator");
   return block+1;
 }
 
+// Todo:
 ccfunc void
 ccini()
-{ ccdebugthis=&ccdebugroot;
+{
+  ccdebugthis=&ccdebugroot;
+
+  cccolormove(7);
 }
 
 ccfunc ccsentry_t *
 ccsentry_enter(cccaller_t caller, ccsentry_t *master, const char *marker)
 { if(ccdebugnone) return master;
 
-	// Note: this is a recursive function ...
-	if(caller.guid==master->caller.guid)
-	{
-		ccassert(ccdebugthis==master);
+  // Note: this is a recursive function ...
+  if(caller.guid==master->caller.guid)
+  {
+    ccassert(ccdebugthis==master);
 
-		master->enter_count++;
-		return master;
-	}
+    master->enter_count++;
+    return master;
+  }
 
   ccallocator_t *a=ccallocator;
   int d=ccdebugnone;
@@ -312,8 +363,8 @@ ccsentry_enter(cccaller_t caller, ccsentry_t *master, const char *marker)
 
     sentry->level=master->level+1;
 
-  	sentry->start_time_in_ticks=0;
-  	sentry->total_time_in_ticks=0;
+    sentry->start_time_in_ticks=0;
+    sentry->total_time_in_ticks=0;
   }
 
   sentry->start_time_in_ticks=ccclocktick();
@@ -337,7 +388,7 @@ ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker)
   // Note: this could be a recursive function and we've entered a bunch of times but we haven't left yet ...
   if(sentry->leave_count!=sentry->enter_count)
   {
-  	return sentry;
+    return sentry;
   }
 
   ccu64_t tick=ccclocktick();
@@ -374,7 +425,7 @@ ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker)
 ccfunc void
 ccdebugend()
 {
-	if(ccdebugnone) return;
+  if(ccdebugnone) return;
 
   ccassert(ccdebugthis==&ccdebugroot);
   ccdebugdump();
@@ -398,8 +449,10 @@ ccoutnl(const char *string)
 }
 
 ccfunc void
-cctrace_(cccaller_t caller, const char *label, const char *format, ...)
+cctrace_(const char *label, const char *format, ...)
 {
+  cccaller_t caller=cclastcaller;
+
   va_list vli;
   va_start(vli,format);
 

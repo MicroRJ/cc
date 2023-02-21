@@ -1,39 +1,65 @@
-int main(int a)
+int fib(int e)
+{ if(e>=2)
+  { int l=fib(e-2);
+    int r=fib(e-1);
+    return l+r;
+  }
+  return e;
+}
+
+int same(int t)
 {
-	int c[24][24][24];
-	c[0][1][1]=2;
+  return t;
+}
 
+int main(int _)
+{
+  ccbreak();
+  ccerror();
+  ccassert(1);
 
-	int x;
-	int y;
-	int z;
-	int i;
-	i=0;
-	x=0;
-	y=0;
-	z=0;
+  int i,x,y,z,*p,q;
+  i=0,x=0,y=0,z=0;
+  int a[24];
 
-	while(x<256)
-	{
-		while(y<256)
-		{
-			while(z<256)
-			{
+  p=&x; ccassert(p==&x);
+  p=&y; ccassert(p==&y);
 
-				c[x][y][z]=i;
+  ccassert(i==0);
+  ccassert(x==0);
+  ccassert(y==0);
+  ccassert(z==0);
 
-				int p=c[x][y][z];
+  a[0]=1;
+  ccassert(a[0]==1);
 
-				ccassert(p==i);
+  int c[24][24][24];
+  c[0][1][1]=2;
 
-				i=i+1;
+  while(x<256)
+  {
+    while(y<256)
+    {
+      while(z<256)
+      {
 
-				z=z+1;
-			}
-			y=y+1;
-		}
-		x=x+1;
-	}
+        c[x][y][z]=i;
 
-	return c[0][0][1];
+        q=c[x][y][z];
+
+        ccassert(q==i);
+
+        i=i+1;
+
+        z=z+1;
+      }
+      y=y+1;
+    }
+    x=x+1;
+  }
+
+  i=fib(22);
+  ccassert(i==17711);
+
+  return i;
 }

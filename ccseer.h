@@ -9,6 +9,7 @@ typedef struct ccseer_t
 	cctree_t  **fdecl;
 	cctree_t  **vdecl;
 
+	// Note: this is deprecated now ...
 	cctree_t  **symbols;
 } ccseer_t;
 

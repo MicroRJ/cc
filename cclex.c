@@ -114,7 +114,7 @@ ccfunc void cclex_next_token_internal(cclex_t *l);
 ccfunc cci32_t
 cclex_next_token(cclex_t *l)
 {
-ccenter("next_token");
+ccdbenter("next_token");
   do
   { cclex_next_token_internal(l);
   } while(l->tok.bit == cctoken_Kliteral_comment ||
@@ -122,7 +122,7 @@ ccenter("next_token");
           l->tok.bit == cctoken_Kendimpl ||
           l->tok.bit == cctoken_Kendexpl );
 
-ccleave("next_token");
+ccdbleave("next_token");
   return l->tok.bit != cctoken_kEND;
 }
 
@@ -130,7 +130,7 @@ ccleave("next_token");
 ccfunc const char *
 cclex_identifier(cclex_t *l, const char *str)
 {
-ccenter("identifier");
+ccdbenter("identifier");
 	int len=cclex_idenlen(str);
 
 	l->tok.bit=cctoken_kLITIDENT;
@@ -144,14 +144,14 @@ ccenter("identifier");
 
   l->tok.str=cckeyget();
 
-ccleave("identifier");
+ccdbleave("identifier");
   return str+len;
 }
 
 ccfunc const char *
 cclex_readstr(cclex_t *l, const char *str)
 {
-ccenter("string_token");
+ccdbenter("string_token");
 
 	// Todo: re-use this buffer ...
 	// Todo: replace this with a legit string arena ... nothing too fancy ...
@@ -203,7 +203,7 @@ ccenter("string_token");
     }
   }
 leave:
-ccleave("string_token");
+ccdbleave("string_token");
   return str;
 }
 
@@ -211,7 +211,7 @@ ccleave("string_token");
 ccfunc void
 cclex_next_token_internal(cclex_t *l)
 {
-ccenter("next_token_internal");
+ccdbenter("next_token_internal");
   l->min = l->max;
 
   l->tok.loc=l->min;
@@ -318,9 +318,6 @@ ccenter("next_token_internal");
     case ',':
     { ++ l->max, l->tok.bit = cctoken_kCMA;
     } break;
-    // case '#':
-    // { ++ l->max, l->tok.bit = cctoken_Kpound;
-    // } break;
     case '(':
     { ++ l->max, l->tok.bit = cctoken_kLPAREN;
     } break;
@@ -535,7 +532,7 @@ ccenter("next_token_internal");
   l->tok.term_expl = 0;
   l->tok.term_expl = 0;
 
-ccenter("token-trailing");
+ccdbenter("token-trailing");
   while(l->max<l->doc_max)
   { switch(*l->max)
     { case ' ': case '\t': case '\f': case '\v': case '\b':
@@ -562,10 +559,10 @@ ccenter("token-trailing");
   }
 
 leave_token_trailing:
-ccleave("token-trailing");
+ccdbleave("token-trailing");
 
 leave:
-ccleave("next_token_internal");
+ccdbleave("next_token_internal");
 }
 
 #endif

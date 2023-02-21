@@ -2,18 +2,29 @@
 #ifndef _CCSYS_C
 #define _CCSYS_C
 
-// Note: this is all so ...
-
+#ifdef _WIN32
+#ifndef CINTERFACE
+# define CINTERFACE
+#endif
+#ifndef NOMINMAX
+# define NOMINMAX
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
+#endif
+// #ifndef _NO_CRT_STDIO_INLINE
+// # define _NO_CRT_STDIO_INLINE
+// #endif
+#include <windows.h>
+#endif
 
 ccfunc const char *
 ccfilename(const char *name)
 { const char *result=name;
-	for(result=name;*name;++name)
-	{ if((*name=='\\')||(*name=='/'))
-		{ result=name+1;
-		}
-	}
-	return result;
+  for(result=name;*name;++name)
+    if((*name=='\\')||(*name=='/'))
+      result=name+1;
+  return result;
 }
 
 #ifdef _WIN32
@@ -21,14 +32,14 @@ ccfilename(const char *name)
 ccfunc ccinle ccclocktime_t
 ccclocktick()
 { LARGE_INTEGER l;
-	QueryPerformanceCounter(&l);
- 	return l.QuadPart;
+  QueryPerformanceCounter(&l);
+  return l.QuadPart;
 }
 ccfunc ccinle ccf64_t
 ccclocksecs(ccclocktime_t t)
 { LARGE_INTEGER l;
-	QueryPerformanceFrequency(&l);
- 	return (((ccf64_t)t)/l.QuadPart);
+  QueryPerformanceFrequency(&l);
+  return (((ccf64_t)t)/l.QuadPart);
 }
 
 // Note: also check for the file attributes
@@ -47,9 +58,15 @@ ccclosefile(void *file)
 { CloseHandle((HANDLE)file);
 }
 
+// Todo: proper file disposition
 ccfunc void *
-ccopenfile(const char *name)
-{ void *file=(void*)CreateFileA(name,GENERIC_WRITE|GENERIC_READ,FILE_SHARE_WRITE|FILE_SHARE_READ,0x00,OPEN_ALWAYS,0x00,0x00);
+ccopenfile(const char *name, ccfile_k access)
+{
+  DWORD waccess=0;
+  if(access&ccfile_kREAD) waccess|=GENERIC_READ;
+  if(access&ccfile_kWRITE) waccess|=GENERIC_WRITE;
+
+  void *file=(void*)CreateFileA(name,waccess,FILE_SHARE_WRITE|FILE_SHARE_READ,0x00,OPEN_ALWAYS,0x00,0x00);
   return ccrealfile(file)?file:0;
 }
 

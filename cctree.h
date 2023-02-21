@@ -94,6 +94,9 @@ typedef struct cctree_t
   // Todo:
   union
   { ccstr_t as_str;
+
+    ccf64_t as_f64;
+
     cci64_t as_i64;
     cci32_t as_i32;
     cci16_t as_i16;
@@ -287,14 +290,21 @@ cctree_litint(cctree_t *root, cci32_t mark, cctoken_t *token)
 ccfunc cctree_t *
 cctree_litflo(cctree_t *root, cci32_t mark, cctoken_t *token)
 { cctree_t *result = cctree_new(cctree_kLITFLO,root,mark);
-  result->as_i64=token->asi64;
+  result->as_f64=token->asf64;
   return result;
 }
 
 ccfunc cctree_t *
-cctree_unary(cctree_t *root, cci32_t mark, cctoken_t *token, cctree_t *rval)
+cctree_litstr(cctree_t *root, cci32_t mark, cctoken_t *token)
+{ cctree_t *result = cctree_new(cctree_kLITSTR,root,mark);
+  result->as_str=token->str;
+  return result;
+}
+
+ccfunc cctree_t *
+cctree_unary(cctree_t *root, cci32_t mark, cctoken_k kind, cctree_t *rval)
 { cctree_t *result=cctree_new(cctree_kUNARY,root,mark);
-  result->oper= token->bit;
+  result->oper=kind;
   result->rval=rval;
   return result;
 }

@@ -117,7 +117,7 @@ ccseer_index(ccseer_t *seer, cctree_t *tree)
   {
     ccseer_index(seer,tree->lval);
   } else
-  	ccassert(!"error");
+    ccassert(!"error");
 
   ccseer_rvalue(seer,tree->rval);
 }
@@ -144,7 +144,9 @@ ccfunc void
 ccseer_rvalue(ccseer_t *seer, cctree_t *tree)
 {
   switch(tree->kind)
-  { case cctree_kLITINT:
+  {
+    case cctree_kLITINT:
+    case cctree_kLITSTR:
     break;
     case cctree_kLITIDE:
     {
@@ -163,6 +165,16 @@ ccseer_rvalue(ccseer_t *seer, cctree_t *tree)
     case cctree_kINDEX:
     {
       ccseer_index(seer,tree);
+    } break;
+    case cctree_kUNARY:
+    {
+      if((tree->oper==cctoken_kADR) ||
+         (tree->oper==cctoken_kDRF))
+      {
+
+        ccseer_rvalue(seer,tree->rval);
+      } else
+        ccassert(!"internal");
     } break;
     default: ccassert(!"internal");
   }
@@ -222,6 +234,9 @@ ccseer_decl_name(ccseer_t *seer, cctree_t *tree)
       ccassert(i->kind==cctree_kTYPENAME);
 
     } else
+    if(tree->type->kind==cctree_kPOINTER)
+    {
+    } else
     if(tree->type->kind==cctree_kTYPENAME)
     {
     } else
@@ -262,7 +277,7 @@ ccseer_tree(ccseer_t *seer, cctree_t *tree)
   {
     if(tree->rval)
     {
-    	ccseer_rvalue(seer,tree->rval);
+      ccseer_rvalue(seer,tree->rval);
     }
   } else
   if(tree->kind==cctree_kBINARY)
@@ -289,16 +304,16 @@ ccseer_tree(ccseer_t *seer, cctree_t *tree)
 ccfunc void
 ccseer_uninit(ccseer_t *seer)
 {
-	if(seer->tdecl) ccdlbdel(seer->tdecl);
-	if(seer->fdecl) ccdlbdel(seer->fdecl);
-	if(seer->vdecl) ccdlbdel(seer->vdecl);
-	if(seer->symbols) ccdlbdel(seer->symbols);
+  if(seer->tdecl) ccdlbdel(seer->tdecl);
+  if(seer->fdecl) ccdlbdel(seer->fdecl);
+  if(seer->vdecl) ccdlbdel(seer->vdecl);
+  if(seer->symbols) ccdlbdel(seer->symbols);
 }
 
 ccfunc void
 ccseer_init(ccseer_t *seer)
 {
-	memset(seer,ccnil,sizeof(*seer));
+  memset(seer,ccnil,sizeof(*seer));
 }
 
 

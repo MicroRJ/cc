@@ -18,16 +18,16 @@ ccfunc ccexec_value_t
 ccassert__(ccexec_t *exec, ccvalue_t *value, cci32_t argc, ccexec_value_t *args)
 {
   ccexec_value_t r;
-  r.asi32=1;
+  r.constI=1;
 
-  ccassert(args->asi32);
+  ccassert(args->constI);
 
   return r;
 }
 
 ccfunc ccexec_value_t buildrunfile(const char *filename)
 {
-ccenter("build-run-file");
+ccdbenter("build-run-file");
 
   ccexec_value_t result;
 
@@ -43,36 +43,35 @@ ccenter("build-run-file");
   ccemit_init(&emit);
   ccexec_init(&exec);
 
+  // Todo:
   ccvalue_t *v=ccemit_include_global(&emit,"ccassert");
   v->kind=ccvalue_kPROCU;
   ccprocu_t *p=ccprocu("ccassert");
   v->procu=p;
   p->proc=ccassert__;
 
-  // ccemit_include_procu(ccnil,"ccassert",ccassert);
-
-ccenter("read");
+ccdbenter("read");
   ccread_include(&read,filename);
   tree=ccread_translation_unit(&read);
-ccleave("read");
+ccdbleave("read");
 
-ccenter("seer");
+ccdbenter("seer");
   ccseer_translation_unit(&seer,tree);
-ccleave("seer");
+ccdbleave("seer");
 
-ccenter("emit");
+ccdbenter("emit");
   ccemit_translation_unit(&emit,&seer,tree);
-ccleave("emit");
+ccdbleave("emit");
 
-ccenter("exec");
+ccdbenter("exec");
   result=ccexec_translation_unit(&exec,&emit);
-ccleave("exec");
+ccdbleave("exec");
 
   ccread_uninit(&read);
   ccexec_uninit(&exec);
   ccseer_uninit(&seer);
 
-ccleave("build-run-file");
+ccdbleave("build-run-file");
   return result;
 }
 
@@ -81,18 +80,21 @@ int main(int argc, char **argv)
 // Todo:
 ccdebugnone=cctrue;
 ccini();
+ccdbenter("main");
 
-ccenter("main");
+  ccdlb_test();
+
   ++ argv;
   -- argc;
 
   const char *f[]=
   {
-    "code\\builtin.cc",
-    "code\\decl.cc",
-    "code\\retr.cc",
+    // "code\\str.cc",
+    // "code\\builtin.cc",
+    // "code\\decl.cc",
+    // "code\\retr.cc",
     "code\\lval.cc",
-    "code\\fib.cc",
+    // "code\\fib.cc",
   };
 
   enum { l=sizeof(f)/sizeof(f[0]) };
@@ -106,10 +108,10 @@ ccenter("main");
 
   for(int i=0; i<l; ++i)
   {
-    ccprintf("<!6'%s'!>: <!3%lli!>\n",f[i],e[i].asi64);
+    ccprintf("<!6'%s'!>: <!3%lli!>\n",f[i],e[i].constI);
   }
 
-ccleave("main");
+ccdbleave("main");
 
 ccdebugend();
 }

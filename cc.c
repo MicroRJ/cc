@@ -2,10 +2,6 @@
 #ifndef _CC
 #define _CC
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -13,13 +9,12 @@ extern "C" {
 #include <memory.h>
 #include <string.h>
 
-#define STB_SPRINTF_IMPLEMENTATION
-#include "stb_sprintf.h"
-
-
-#if defined(_DEBUG)||defined(DEBUG)||defined(DBG)
+#if defined(_DEBUG) || defined(DEBUG) || defined(DBG)
 # define _CCDEBUG
 #endif
+
+#define STB_SPRINTF_IMPLEMENTATION
+#include "stb_sprintf.h"
 
 #define _CCGUID __COUNTER__
 #define _CCFILE __FILE__
@@ -99,6 +94,8 @@ typedef unsigned char  ccu8_t;
 # define _CCASSERT(x) typedef char __CCASSERT__[((x)?1:-1)]
 #endif
 
+#define CCWITHIN(x,l,r) (((x)>=(l))&&((x)<=(r)))
+
 _CCASSERT(sizeof(ccu64_t)==sizeof(void*));
 _CCASSERT(sizeof(cci64_t)==sizeof(void*));
 _CCASSERT(sizeof(ccu32_t)==4);
@@ -140,11 +137,29 @@ _CCASSERT(sizeof(cci16_t)==2);
 # endif
 #endif
 
+// Note: some necessary error codes ... this is only used for the dlb api because I couldn't find another way ...
+typedef enum ccerr_k
+{
+  ccerr_kNON=0,
+  ccerr_kNIT,
+  ccerr_kAIT,
+  ccerr_kOOM,
+  ccerr_kIUA,
+  ccerr_kNAS,
+  ccerr_kIOB,
+  ccerr_kCHB,
+} ccerr_k;
+
+typedef enum ccfile_k
+{
+  ccfile_kREAD  = 1,
+  ccfile_kWRITE = 2,
+} ccfile_k;
+
 // Note:
 typedef ccu64_t ccclocktime_t;
 
-// Note: This is a tag type for when you want to make it abundantly clear
-// that there's metadata associated with the string ..
+// Note: This is a tag type for when you want to make it abundantly clear that there's metadata associated with the string ..
 typedef char *ccstr_t;
 
 // Note: used for enhancing debug data ...
@@ -156,26 +171,29 @@ typedef struct cccaller_t
   const char   *func;
 } cccaller_t;
 
-// Note: some necessary error codes ...
-typedef enum ccerr_k
+
+ccglobal const char *ccerr_s[]=
 {
-  ccerr_kNON=0,
-  ccerr_kNIT=1,
-  ccerr_kAIT=2,
-  ccerr_kOOM=3,
-  ccerr_kIUA=4,
-} ccerr_k;
+  "NON: None."
+  "NIT: Not in table."
+  "AIT: Already in table."
+  "OOM: Out of memory."
+  "IUA: Invalid user argument."
+  "NAS: No allocator in stack."
+  "CHB: Corrupted heap block."
+};
 
 // Note: simple allocator function, must-have for switching the allocator of debug routines ...
 // Todo: remove caller
-typedef void *(ccallocator_t)(cccaller_t, size_t,void *);
+typedef void *(ccallocator_t)(size_t,void *);
 
 // Note: entry status, this also must be a global ...
-typedef enum ccent_k
+typedef enum ccentry_k ccentry_k;
+typedef enum ccentry_k
 {
   ccent_kNIT=1,
   ccent_kAIT=2,
-} ccent_k;
+} ccentry_k;
 
 // Note: general table entry, ideally allocated with no overhead ... but that is not the case yet ...
 typedef struct ccentry_t ccentry_t;
@@ -219,15 +237,15 @@ typedef struct ccsentry_block_t
 
 typedef struct ccsentry_t ccsentry_t;
 typedef struct ccsentry_t
-{
-  // Note: some of these names will get me in trouble one day ...
+{ char head_guard[4];
+
   const char  * marker;
   ccsentry_t  * master;
+
   ccsentry_t  * slaves;
 
   cci32_t       level;
-
-  cccaller_t   caller;
+  cccaller_t    caller;
 
   // Note: this is the last block ...
   ccsentry_block_t * block_list;
@@ -249,47 +267,66 @@ typedef struct ccsentry_t
     cci32_t pbc;
     cci32_t nbc;
   } last_metrics, metrics;
+
+  char tail_guard[4];
 } ccsentry_t;
 
+typedef struct cccolorstate_t
+{ cci16_t  s[0x10];
+  cci16_t  i;
+  cci16_t  v;
+} cccolorstate_t;
 
-ccfunc void *ccuserallocator_(cccaller_t,size_t,void*);
-ccfunc void *ccinternalallocator_(cccaller_t,size_t,void*);
+ccfunc void *ccuserallocator_(size_t,void*);
+ccfunc void *ccinternalallocator_(size_t,void*);
 
-// Note:
-ccglobal ccthread_local ccclocktime_t ccclockfreqc;
-
+// Note: global error and key
 ccglobal ccthread_local ccerr_k ccerr;
 ccglobal ccthread_local ccstr_t cckey;
-
-// Todo: allocator stack or remove ...
-ccglobal ccthread_local ccallocator_t *ccallocator=ccuserallocator_;
-
-#ifdef _HARD_DEBUG
-ccglobal ccthread_local ccsentry_t   ccdebugroot;
-ccglobal ccthread_local ccsentry_t  *ccdebugthis;
-ccglobal ccthread_local cci32_t      ccdebugnone;
-#endif
-
-#define ccstrlenS(cstr) cccast(ccu32_t,strlen(cstr)-0)
-#define ccstrlenL(lstr) cccast(ccu32_t,sizeof(lstr)-1)
-
-// Note: global error
 #define ccerrset(err) ((ccerr=err),0)
 #define ccerrnon()    ((ccerr)==ccerr_kNON)
 #define ccerrsom()    ((ccerr)!=ccerr_kNON)
 #define ccerrnit()    ((ccerr)==ccerr_kNIT)
 #define ccerrait()    ((ccerr)==ccerr_kAIT)
-
-// Note: global key
 #define cckeyset(key) (cckey=key)
 #define cckeyget()    (cckey)
+
+// Note:
+ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
+
+ccglobal ccthread_local cccaller_t cclastcaller;
+#define cccall() (cclastcaller=cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC))
+
+// Note:
+ccglobal ccthread_local ccclocktime_t ccclockfreqc;
+
+
+ccglobal ccthread_local cccolorstate_t cccolorstate;
+#define cccolormove( x )  cccolorstate.v=x
+#define cccolorpush(   )  cccolorstate.s[cccolorstate.i++]=cccolorstate.v
+#define cccolorload(   )  cccolorstate.v=cccolorstate.s[--cccolorstate.i]
+
+// Todo: allocator stack or remove ...
+ccglobal ccthread_local ccallocator_t *ccallocator=ccuserallocator_;
+
+// Todo:
+ccglobal ccthread_local ccsentry_t   ccdebugroot;
+ccglobal ccthread_local ccsentry_t  *ccdebugthis;
+ccglobal ccthread_local cci32_t      ccdebugnone;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define ccstrlenS(cstr) cccast(ccu32_t,strlen(cstr)-0)
+#define ccstrlenL(lstr) cccast(ccu32_t,sizeof(lstr)-1)
 
 #define cclva(lv) cccast(void**,ccaddr(lv))
 
 // Note: default allocator
-#define ccmalloc(size)       ccuserallocator_(cccall(),size,ccnil)
-#define ccrealloc(data,size) ccuserallocator_(cccall(),size, data)
-#define ccfree(data)         ccuserallocator_(cccall(),ccnil,data)
+#define ccmalloc(size)       (cccall(),ccuserallocator_(size,ccnil))
+#define ccrealloc(data,size) (cccall(),ccuserallocator_(size, data))
+#define ccfree(data)         (cccall(),ccuserallocator_(ccnil,data))
 
 #define ccmalloc_T(T) cccast(T*,ccmalloc(sizeof(T)))
 
@@ -301,6 +338,7 @@ ccglobal ccthread_local cci32_t      ccdebugnone;
 #define ccdlbmax(ccm) ((ccm)?ccdlbmax_(ccm):(ccnil))
 #define ccdlbmin(ccm) ((ccm)?ccdlbmin_(ccm):(ccnil))
 #define ccdlbdel(ccm) ccdlbdel_(cclva(ccm))
+
 // Note: array
 #define ccarrdel ccdlbdel
 
@@ -368,9 +406,9 @@ ccfunc cci64_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 
 // Todo: to be removed !
 ccfunc ccinle ccsentry_t *ccdebug_();
-ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
 
-#define cccall()  cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC)
+
+// Todo: remove!
 #define ccdebug() ccdebug_()
 
 ccfunc ccsentry_t *
@@ -378,9 +416,8 @@ ccsentry_enter(cccaller_t caller, ccsentry_t *master, const char *marker);
 ccfunc ccsentry_t *
 ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker);
 
-#define ccenter(marker) (ccdebugthis=ccsentry_enter(cccall(),ccdebugthis,marker))
-#define ccleave(marker) (ccdebugthis=ccsentry_leave(cccall(),ccdebugthis,marker))
-
+#define ccdbenter(marker) (ccdebugthis=ccsentry_enter(cccall(),ccdebugthis,marker))
+#define ccdbleave(marker) (ccdebugthis=ccsentry_leave(cccall(),ccdebugthis,marker))
 
 ccfunc const char *ccfilename(const char *name);
 
@@ -388,7 +425,7 @@ ccfunc const char *ccfilename(const char *name);
 ccfunc ccinle ccclocktime_t ccclocktick();
 ccfunc ccinle ccf64_t       ccclocksecs(ccu64_t);
 
-ccfunc void *   ccopenfile (const char *);
+ccfunc void *   ccopenfile (const char *, ccfile_k);
 ccfunc int      ccrealfile ( void * );
 ccfunc void     ccclosefile( void * );
 ccfunc void   * ccpullfile ( void *, ccu32_t, ccu32_t *     );
@@ -401,70 +438,10 @@ ccfunc ccinle char *ccformatv   (const char *, va_list);
 ccfunc        int   ccformatex  (char *, int, const char *, ...);
 ccfunc        char *ccformat    (const char *, ...);
 
-ccfunc void cctrace_(cccaller_t caller, const char *label, const char *format, ...);
-
-#define cctracelog(fmt,...) cctrace_(cccall(),"log",fmt,__VA_ARGS__)
-#define cctracewar(fmt,...) cctrace_(cccall(),"war",fmt,__VA_ARGS__)
-#define cctraceerr(fmt,...) cctrace_(cccall(),"err",fmt,__VA_ARGS__)
-
-// Todo: remove this from here!
-#ifdef _WIN32
-#ifndef CINTERFACE
-# define CINTERFACE
-#endif
-#ifndef NOMINMAX
-# define NOMINMAX
-#endif
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
-// #ifndef _NO_CRT_STDIO_INLINE
-// # define _NO_CRT_STDIO_INLINE
-// #endif
-#include <windows.h>
-#endif
-
-
-// Todo: remove this from here!
-ccfunc ccinle int
-ccformatvex(char *buf, int len, const char * fmt, va_list vli)
-{
-  return stbsp_vsnprintf(buf,len,fmt,vli);
-}
-
-ccfunc ccinle char *
-ccformatv(const char * fmt, va_list vli)
-{
-  ccglobal ccthread_local char buf[0xff];
-
-  ccformatvex(buf,0xff,fmt,vli);
-
-  return buf;
-}
-
-ccfunc int
-ccformatex(char *buf, int len, const char * fmt, ...)
-{
-  va_list vli;
-  va_start(vli,fmt);
-  int res=ccformatvex(buf,len,fmt,vli);
-  va_end(vli);
-
-  return res;
-}
-
-ccfunc char *
-ccformat(const char * fmt, ...)
-{
-  va_list vli;
-  va_start(vli,fmt);
-  char *res=ccformatv(fmt,vli);
-  va_end(vli);
-
-  return res;
-}
-
-
+ccfunc void cctrace_(const char *label, const char *format, ...);
+#define cctracelog(fmt,...) (cccall(),cctrace_("log",fmt,__VA_ARGS__))
+#define cctracewar(fmt,...) (cccall(),cctrace_("war",fmt,__VA_ARGS__))
+#define cctraceerr(fmt,...) (cccall(),cctrace_("err",fmt,__VA_ARGS__))
 
 // Note:
 #include "ccsys.c"
@@ -512,6 +489,7 @@ typedef struct cctree_t cctree_t;
 #include "ccexec.c"
 // #include "ccemit-c.c"
 
+
 #ifdef _MSC_VER
 # ifndef _DEVELOPER
 #  pragma warning(pop)
@@ -521,4 +499,5 @@ typedef struct cctree_t cctree_t;
 #ifdef __cplusplus
 }
 #endif
+
 #endif

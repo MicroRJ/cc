@@ -24,8 +24,10 @@ typedef enum
 {
   cctype_kINTEGER,
   cctype_kARRAY,
+  cctype_kPOINTER,
   cctype_kPROCD,
 } cctype_k;
+
 
 typedef struct cctype_t
 { const char * label;
@@ -40,17 +42,22 @@ typedef struct cctype_t
   cctype_t  * list;
 } cctype_t;
 
+typedef struct ccconstant_t ccconstant_t;
+typedef struct ccconstant_t
+{ cctype_t    * type;
+  ccclassic_t   clsc;
+} ccconstant_t;
+
 typedef struct ccvalue_t
 { ccvalue_k       kind;
   const char    * label;
+
 ccunion
-{ ccedict_t     * edict;
+{ cctype_t      * type;
+  ccedict_t     * edict;
   ccprocd_t     * procd;
   ccprocu_t     * procu;
-  struct
-  { cctype_t     * type;
-    ccclassic_t    clsc;
-  } constant;
+  ccconstant_t    constant;
 };
 } ccvalue_t;
 
@@ -64,7 +71,7 @@ typedef struct ccprocu_t ccprocu_t;
 typedef struct ccprocu_t
 { const char * label; // Note: for debugging
   cctype_t   * type;
-  ccexec_value_t (*proc)(ccexec_t *,ccvalue_t *, cci32_t, ccexec_value_t *);
+  ccexec_value_t (*proc)(ccexec_t *,ccvalue_t *,cci32_t, ccexec_value_t *);
 } ccprocu_t;
 
 typedef struct ccprocd_t
@@ -104,8 +111,9 @@ ccfunc ccinle ccprocd_t * ccprocd(const char *label);
 ccfunc ccinle cctype_t  * cctype(cctype_k kind, const char *label);
 
 #define ccblock_store(block,lval,rval)    ccblock_add_edict(block,ccedict_store(lval,rval))
-#define ccblock_fetch(block,lval,rval)    ccblock_add_edict(block,ccedict_fetch(lval,rval))
-#define ccblock_address(block,lval,rval)  ccblock_add_edict(block,ccedict_address(lval,rval))
+#define ccblock_fetch(block,lval,type)    ccblock_add_edict(block,ccedict_fetch(lval,type))
+#define ccblock_laddr(block,lval,rval)    ccblock_add_edict(block,ccedict_laddr(lval))
+#define ccblock_aaddr(block,lval,rval)    ccblock_add_edict(block,ccedict_aaddr(lval,rval))
 #define ccblock_arith(block,opr,lhs,rhs)  ccblock_add_edict(block,ccedict_arith(opr,lhs,rhs))
 #define ccblock_return(block,rval)        ccblock_add_edict(block,ccedict_return(rval))
 #define ccblock_invoke(block,lval,rval)   ccblock_add_edict(block,ccedict_call(lval,rval))
