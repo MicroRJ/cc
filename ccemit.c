@@ -161,7 +161,7 @@ ccemit_lvalue(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree
     {
       // TODO: WHEN COMEBACK IMPLEMENT THIS
       ccassert(tree->rval!=ccnil);
-      if(tree->oper==cctoken_kDEREFERENCE)
+      if(tree->sort==cctoken_kDEREFERENCE)
       {
         value=ccblock_fetch(block,ccemit_lvalue(emit,procd,block,tree->rval),ccnull);
       } else
@@ -187,18 +187,18 @@ ccemit_rvalue(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree
     { value=ccemit_const_str(emit,tree->as_str);
     } break;
     case cctree_kBINARY:
-    { if(tree->oper==cctoken_kASSIGN)
+    { if(tree->sort==cctoken_kASSIGN)
       { ccvalue_t *lval=ccemit_lvalue(emit,procd,block,tree->lval);
         ccvalue_t *rval=ccemit_rvalue(emit,procd,block,tree->rval);
         value=ccblock_store(block,lval,rval);
       } else
-      if(tree->oper==cctoken_kCMA)
+      if(tree->sort==cctoken_kCMA)
       { ccemit_rvalue(emit,procd,block,tree->lval);
         ccemit_rvalue(emit,procd,block,tree->rval);
       } else
       { ccvalue_t *lhs=ccemit_rvalue(emit,procd,block,tree->lval);
         ccvalue_t *rhs=ccemit_rvalue(emit,procd,block,tree->rval);
-        value=ccblock_arith(block,tree->oper,lhs,rhs);
+        value=ccblock_arith(block,tree->sort,lhs,rhs);
       }
     } break;
     case cctree_kCALL:
@@ -209,7 +209,7 @@ ccemit_rvalue(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree
     } break;
     case cctree_kUNARY:
     { ccassert(tree->rval!=ccnil);
-      if(tree->oper==cctoken_kADDRESSOF)
+      if(tree->sort==cctoken_kADDRESSOF)
       { value=ccblock_laddr(block,ccemit_lvalue(emit,procd,block,tree->rval));
       } else
         ccassert(!"internal");

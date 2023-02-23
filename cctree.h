@@ -80,7 +80,9 @@ typedef struct cctree_t
 
   ccstr_t     name;
   cctree_t  **list; // Todo: demote this to just *
-  cctoken_k   oper;
+
+  cctoken_k   sort;
+
   cctree_t  * type;
   cctree_t  * size; // Note: the size constant expression `unsigned a: 1`
   cctree_t  * init;
@@ -145,6 +147,10 @@ cctree_clone(cctree_t *tree)
   return result;
 }
 
+
+
+
+
 ccfunc ccstr_t
 cctree_name(cctree_t *name)
 {
@@ -171,15 +177,6 @@ cctree_function_modifier(cctree_t *type, cctree_t **list)
 { cctree_t *tree=cctree_new(cctree_kFUNCTION,0,0);
   tree->type=type;
   tree->list=list;
-  return tree;
-}
-
-ccfunc cctree_t *
-cctree_struct_specifier(cctree_t **list, cctree_t *name)
-{ ccassert(list!=0);
-  cctree_t *tree=cctree_new(cctree_kSTRUCT,0,0);
-  tree->list=list;
-  tree->name=cctree_name(name);
   return tree;
 }
 
@@ -303,7 +300,7 @@ cctree_litstr(cctree_t *root, cci32_t mark, cctoken_t *token)
 ccfunc cctree_t *
 cctree_unary(cctree_t *root, cci32_t mark, cctoken_k kind, cctree_t *rval)
 { cctree_t *result=cctree_new(cctree_kUNARY,root,mark);
-  result->oper=kind;
+  result->sort=kind;
   result->rval=rval;
   return result;
 }
@@ -311,7 +308,7 @@ cctree_unary(cctree_t *root, cci32_t mark, cctoken_k kind, cctree_t *rval)
 ccfunc cctree_t *
 cctree_binary(cctree_t *root, cci32_t mark, cctoken_t *token, cctree_t *lhs, cctree_t *rhs)
 { cctree_t *result=cctree_new(cctree_kBINARY,root,mark);
-  result->oper=token->bit;
+  result->sort=token->bit;
   result->lval=lhs;
   result->rval=rhs;
   return result;

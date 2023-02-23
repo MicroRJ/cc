@@ -30,23 +30,25 @@ cclex_hash_init(cclex_t *lexer)
   *cctblputL(lexer->tbl,"inline")=cctoken_Kinline; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"_Noreturn")=cctoken_Kno_return; ccassert(ccerrnon());
 
-  *cctblputL(lexer->tbl,"signed")=cctoken_Ksigned; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"unsigned")=cctoken_Kunsigned; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__int8")=cctoken_Kmsvc_int8; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__int16")=cctoken_Kmsvc_int16; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__int32")=cctoken_Kmsvc_int32; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__int64")=cctoken_Kmsvc_int64; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"double")=cctoken_Kdouble; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"float")=cctoken_Kfloat; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"long")=cctoken_Klong; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"int")=cctoken_Kint; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"short")=cctoken_Kshort; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"char")=cctoken_Kchar; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"void")=cctoken_Kvoid; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"_Bool")=cctoken_Kbool; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"_Complex")=cctoken_Kcomplex; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"_Atomic")=cctoken_Katomic; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"enum")=cctoken_Kenum; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"signed")=cctoken_kSTDC_SIGNED; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"unsigned")=cctoken_kSTDC_UNSIGNED; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__int8")=cctoken_kMSVC_INT8; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__int16")=cctoken_kMSVC_INT16; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__int32")=cctoken_kMSVC_INT32; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"__int64")=cctoken_kMSVC_INT64; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"double")=cctoken_kSTDC_DOUBLE; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"float")=cctoken_kSTDC_FLOAT; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"long")=cctoken_kSTDC_LONG; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"int")=cctoken_kSTDC_INT; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"short")=cctoken_kSTDC_SHORT; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"char")=cctoken_kSTDC_CHAR; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"void")=cctoken_kVOID; ccassert(ccerrnon());
+  *cctblputL(lexer->tbl,"_Bool")=cctoken_kSTDC_BOOL; ccassert(ccerrnon());
+
+  // *cctblputL(lexer->tbl,"_Complex")=cctoken_Kcomplex; ccassert(ccerrnon());
+  // *cctblputL(lexer->tbl,"_Atomic")=cctoken_Katomic; ccassert(ccerrnon());
+
+  *cctblputL(lexer->tbl,"enum")=cctoken_kENUM; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"struct")=cctoken_kSTRUCT; ccassert(ccerrnon());
 
   *cctblputL(lexer->tbl,"typedef")=cctoken_Ktypedef; ccassert(ccerrnon());

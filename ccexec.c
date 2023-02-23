@@ -4,7 +4,7 @@
 #define _CCEXEC
 
 ccfunc cci64_t
-ccsizeof(ccexec_frame_t *, cctype_t *);
+ccsizeof(cctype_t *);
 
 // Note: allocates the register associated with this value ...
 ccfunc ccinle ccexec_value_t *
@@ -158,7 +158,7 @@ ccdbenter("stack-local-alloc");
   ccassert((edict->kind==ccedict_kLOCAL)||(edict->kind==ccedict_kPARAM),
     "cannot allocate local, expected an edict of type LOCAL or PARAM");
 
-  cci64_t size=ccsizeof(stack,edict->local.type);
+  cci64_t size=ccsizeof(edict->local.type);
   ccassert(size>=8);
 
   char *memory=(char*)ccstack_push_size(exec,(cci32_t)size); // Todo: cast
@@ -379,7 +379,7 @@ ccdbleave("exec-edict");
 }
 
 ccfunc cci64_t
-ccsizeof(ccexec_frame_t *frame, cctype_t *type)
+ccsizeof(cctype_t *type)
 {
   if(type->kind==cctype_kPOINTER)
   {
@@ -387,11 +387,11 @@ ccsizeof(ccexec_frame_t *frame, cctype_t *type)
   } else
   if(type->kind==cctype_kARRAY)
   {
-    cci64_t size=ccsizeof(frame,type->type);
+    cci64_t size=ccsizeof(type->type);
     size*=type->size;
     return size;
   } else
-  if(type->kind==cctype_kINTEGER)
+  if(type->kind==cctype_kTYPENAME)
   { return sizeof(cci64_t);
   }
   ccassert(!"error");

@@ -2,6 +2,9 @@
 #ifndef _CCSEER_C
 #define _CCSEER_C
 
+// Todo:
+ccglobal cctype_t *t_stdc_int;
+
 ccfunc void ccseer_tree(ccseer_t *seer, cctree_t *);
 
 ccfunc ccinle ccesse_t *
@@ -74,7 +77,7 @@ ccesse_builtin(ccbuitin_k builtin)
 
   // Todo:
   e->type=ccmalloc_T(cctype_t);
-  e->type->kind=cctype_kINTEGER;
+  e->type->kind=cctype_kTYPENAME;
   return e;
 }
 
@@ -166,7 +169,7 @@ ccseer_lvalue(ccseer_t *seer, cctree_t *tree)
     { type=ccseer_index(seer,tree);
     } break;
     case cctree_kUNARY:
-    { if((tree->oper==cctoken_kDEREFERENCE))
+    { if((tree->sort==cctoken_kDEREFERENCE))
       { type=ccseer_lvalue(seer,tree->rval);
 
         // Todo
@@ -187,12 +190,11 @@ ccseer_lvalue(ccseer_t *seer, cctree_t *tree)
 
 ccfunc cctype_t *
 ccseer_rvalue(ccseer_t *seer, cctree_t *tree)
-{ cctype_t *type=ccnull;
+{ cctype_t *result=ccnull;
 
   switch(tree->kind)
   { case cctree_kLITINT:
-      type=ccmalloc_T(cctype_t);
-      type->kind=cctype_kINTEGER;
+      result=t_stdc_int;
     break;
     case cctree_kLITSTR:
     break;
@@ -200,44 +202,44 @@ ccseer_rvalue(ccseer_t *seer, cctree_t *tree)
     { ccesse_t *esse=ccseer_allude(seer,tree,tree->name);
       if(!esse)
         cctraceerr("'%s': undeclared identifier",tree->name);
-      type=esse->type;
+      result=esse->type;
     } break;
     case cctree_kBINARY:
     {
-      type=ccseer_binary(seer,tree->oper,tree->lval,tree->rval);
+      result=ccseer_binary(seer,tree->sort,tree->lval,tree->rval);
     } break;
     case cctree_kCALL:
     {
-      type=ccseer_call(seer,tree);
+      result=ccseer_call(seer,tree);
     } break;
     case cctree_kINDEX:
     {
-      type=ccseer_index(seer,tree);
+      result=ccseer_index(seer,tree);
     } break;
     // Todo:
     case cctree_kUNARY:
-    { if((tree->oper==cctoken_kADDRESSOF))
+    { if((tree->sort==cctoken_kADDRESSOF))
       {
-        type=ccseer_lvalue(seer,tree->rval);
+        result=ccseer_lvalue(seer,tree->rval);
 
         cctype_t *pointer=ccmalloc_T(cctype_t);
         pointer->kind=cctype_kPOINTER;
-        pointer->type=type;
+        pointer->sort=cctoken_kINVALID;
+        pointer->type=result;
 
-        type=pointer;
+        result=pointer;
       } else
-      if((tree->oper==cctoken_kDEREFERENCE))
+      if((tree->sort==cctoken_kDEREFERENCE))
       {
-        type=ccseer_rvalue(seer,tree->rval);
-
-        type=type->type;
+        result=ccseer_rvalue(seer,tree->rval);
+        result=result->type;
       } else
         ccassert(!"internal");
     } break;
     default: ccassert(!"internal");
   }
 
-  return type;
+  return result;
 }
 
 ccfunc cctype_t *
@@ -269,7 +271,8 @@ ccseer_binary(ccseer_t *seer, cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue
 
         cctraceerr("'=': '%s' differs in levels of indirection from '%s'",lbuf,rbuf);
       } else
-      if(ltype->kind!=rtype->kind)
+      if((ltype->kind!=rtype->kind) ||
+         (ltype->sort!=rtype->sort))
       {
         cctype_to_string(ltype,lbuf);
         cctype_to_string(rtype,rbuf);
@@ -306,6 +309,7 @@ ccseer_tree_to_type(ccseer_t *seer, cctree_t *tree)
   cctype_t *type=ccmalloc_T(cctype_t);
   type->kind=cctype_kINVALID;
   type->name=tree->name;
+  type->sort=cctoken_kINVALID;
   type->type=ccnull;
   type->list=ccnull;
   type->size=ccnull;
@@ -351,7 +355,8 @@ ccseer_tree_to_type(ccseer_t *seer, cctree_t *tree)
   } else
   if(tree->kind==cctree_kTYPENAME)
   {
-    type->kind=cctype_kINTEGER;
+    type->kind=cctype_kTYPENAME;
+    type->sort=tree->sort;
   } else
     ccassert(!"error");
   return type;
@@ -446,7 +451,7 @@ ccseer_tree(ccseer_t *seer, cctree_t *tree)
         ccseer_rvalue(seer,tree->rval);
     break;
     case cctree_kBINARY:
-      ccseer_binary(seer,tree->oper,tree->lval,tree->rval);
+      ccseer_binary(seer,tree->sort,tree->lval,tree->rval);
     break;
     case cctree_kWHILE:
       ccseer_rvalue(seer,tree->init);
@@ -477,6 +482,11 @@ ccseer_init(ccseer_t *seer)
   ccseer_include_entity(seer,ccesse_builtin(ccbuiltin_kCCASSERT),"ccassert");
   ccseer_include_entity(seer,ccesse_builtin(ccbuiltin_kCCBREAK),"ccbreak");
   ccseer_include_entity(seer,ccesse_builtin(ccbuiltin_kCCERROR),"ccerror");
+
+  t_stdc_int=ccmalloc_T(cctype_t);
+  t_stdc_int->kind=cctype_kTYPENAME;
+  t_stdc_int->sort=cctoken_kSTDC_INT;
+
 }
 
 ccfunc void

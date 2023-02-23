@@ -7,7 +7,7 @@
 
 typedef enum cctoken_k
 {
-  cctoken_kINVALID = 0, // <-- for the hash table this means that it wasn't there before.
+  cctoken_kINVALID=0,
   /**
    * Group: syntactic operators.
    **/
@@ -26,7 +26,6 @@ typedef enum cctoken_k
   cctoken_kCMA,   // ','
   cctoken_Kcolon, // ':'
   cctoken_Kspace, // ' '
-
   /**
    * Group: literals.
    **/
@@ -81,53 +80,37 @@ typedef enum cctoken_k
   cctoken_Kinline,
   cctoken_Kno_return,
   kttc__func_spec_1,
-  /**
-   * Group: type specifiers.
-   *
-   * ** these are reserved keywords **
-   **/
-  cctype_spec_0,
-  cctoken_Ksigned, // group start
-  cctoken_Kunsigned,
-  cctoken_Kmsvc_int8,  // __int8
-  cctoken_Kmsvc_int16, // __int16
-  cctoken_Kmsvc_int32, // __int32
-  cctoken_Kmsvc_int64, // __int64
-  cctoken_Kdouble,
-  cctoken_Kfloat,
-  cctoken_Klong,
-  cctoken_Kint,
-  cctoken_Kshort,
-  cctoken_Kchar,
-  cctoken_Kvoid,
-  cctoken_Kbool,     // _Bool
-  cctoken_Kcomplex,  // _Complex
-  cctoken_Katomic,   // _Atomic
-  cctoken_Kenum,
+
+  // Note: type specifiers ...
+  cctoken_kVOID,
+  cctoken_kSTDC_INT,
+  cctoken_kSTDC_LONG,
+  cctoken_kSTDC_SHORT,
+  cctoken_kSTDC_DOUBLE,
+  cctoken_kSTDC_FLOAT,
+  cctoken_kSTDC_CHAR,
+  cctoken_kSTDC_BOOL,     // _Bool
+  cctoken_kSTDC_SIGNED,   // group start
+  cctoken_kSTDC_UNSIGNED,
+  cctoken_kMSVC_INT8,     // __int8
+  cctoken_kMSVC_INT16,    // __int16
+  cctoken_kMSVC_INT32,    // __int32
+  cctoken_kMSVC_INT64,    // __int64
+  cctoken_kENUM,
   cctoken_kSTRUCT,
-  /**
-   * Group: type specifier & storage class.
 
-   * This is a bit wanly but it makes so that I don't have edge cases.
-   **/
-  kttc__scls_spec_0,
+  // Todo:
+  // cctoken_Kcomplex,       // _Complex
+  // cctoken_Katomic,        // _Atomic
 
+  // Note: storage classes
   cctoken_Ktypedef,
-
-  cctype_spec_1,
-  /*
-   * Group: storage class.
-
-   * ** these are reseverd keywords **
-   **/
   cctoken_Kauto,
   cctoken_Kextern,
   cctoken_Kregister,
   cctoken_Kstatic,
   cctoken_Kthread_local, // _Thread_local
   cctoken_Kmsvc_declspec, // __declspec
-
-  kttc__scls_spec_1,
 
   /**
    * Group: control statements.
@@ -229,7 +212,7 @@ typedef enum cctoken_k
   cctoken_Kpos_increment,
 
 
-  // Note: CC tokens ...
+  // Todo: CC tokens ...
   // cctoken_kCCASSERT,
   // cctoken_kCCBREAK,
   // cctoken_kCCERROR,
@@ -300,5 +283,35 @@ typedef struct ccread_t
 // TODO(RJ): make this legit!
 #define ccsynerr(tok,cod,fmt, ...) 0
 #define ccsynwar(tok,cod,fmt, ...) 0
+
+
+// Todo: temporary
+ccfunc const char *
+cctoken_to_string(cctoken_k kind)
+{ switch(kind)
+  {
+    case cctoken_kINVALID:       return "invalid";
+
+    case cctoken_kVOID:          return "void";
+    case cctoken_kSTDC_INT:      return "int";
+    case cctoken_kSTDC_LONG:     return "long";
+    case cctoken_kSTDC_SHORT:    return "short";
+    case cctoken_kSTDC_DOUBLE:   return "double";
+    case cctoken_kSTDC_FLOAT:    return "float";
+    case cctoken_kSTDC_CHAR:     return "char";
+    case cctoken_kSTDC_BOOL:     return "_Bool";
+    case cctoken_kSTDC_SIGNED:   return "signed";
+    case cctoken_kSTDC_UNSIGNED: return "unsigned";
+    case cctoken_kMSVC_INT8:     return "__int8";
+    case cctoken_kMSVC_INT16:    return "__int16";
+    case cctoken_kMSVC_INT32:    return "__int32";
+    case cctoken_kMSVC_INT64:    return "__int64";
+  }
+
+  ccassert(!"error");
+  return "error";
+}
+
+
 
 #endif

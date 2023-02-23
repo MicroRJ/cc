@@ -16,16 +16,20 @@ typedef enum cctype_k cctype_k;
 typedef enum cctype_k
 {
   cctype_kINVALID=0,
-  cctype_kINTEGER,
+
+  cctype_kTYPENAME,
+
   cctype_kFUNCTION,
-  cctype_kARRAY,
   cctype_kPOINTER,
+  cctype_kARRAY,
 } cctype_k;
 
 typedef struct cctype_t cctype_t;
 typedef struct cctype_t
 {
   cctype_k     kind;
+  cctoken_k    sort;
+
   const char * name;
   cctype_t   * type;
   cctype_t   * list;
@@ -78,10 +82,14 @@ cctype_to_string(cctype_t *t, char *b)
     *b++='[';
     *b++=']';
   } else
-  if(t->kind==cctype_kINTEGER)
-  { *b++='i';
-    *b++='n';
-    *b++='t';
+  if(t->kind==cctype_kTYPENAME)
+  {
+    // Todo:
+    const char *name=cctoken_to_string(t->sort);
+    size_t l=strlen(name);
+    memcpy(b,name,l);
+    b+=l;
+
   } else
     ccassert(!"error");
 

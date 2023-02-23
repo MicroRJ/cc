@@ -16,15 +16,16 @@ int same(int t)
 
 int main(int _)
 {
-
-
   ccbreak();
   ccerror();
   ccassert(1);
 
   int i,x,y,z,*p,q;
 
+	char u;
   char s;
+
+  s=i;
 
 
   int a[24];
