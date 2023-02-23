@@ -32,6 +32,7 @@
 # pragma warning(disable:4053)
 # pragma warning(disable:4706)
 #ifdef _DEVELOPER
+# pragma warning(disable:4189)
 # pragma warning(disable:4100)
 # pragma warning(disable:4201)
 # pragma warning(disable:4505)
@@ -184,7 +185,6 @@ ccglobal const char *ccerr_s[]=
 };
 
 // Note: simple allocator function, must-have for switching the allocator of debug routines ...
-// Todo: remove caller
 typedef void *(ccallocator_t)(size_t,void *);
 
 // Note: entry status, this also must be a global ...
@@ -251,7 +251,7 @@ typedef struct ccsentry_t
   ccsentry_block_t * block_list;
 
   // Todo: it would be interesting if we'd also record child enter and leave count, this way
-  // we would also detect when a child hasn't properly left...
+  // we'd also detect when a child hasn't properly left...
   cci32_t enter_count;
   cci32_t leave_count;
 
@@ -407,7 +407,6 @@ ccfunc cci64_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
 // Todo: to be removed !
 ccfunc ccinle ccsentry_t *ccdebug_();
 
-
 // Todo: remove!
 #define ccdebug() ccdebug_()
 
@@ -425,6 +424,7 @@ ccfunc const char *ccfilename(const char *name);
 ccfunc ccinle ccclocktime_t ccclocktick();
 ccfunc ccinle ccf64_t       ccclocksecs(ccu64_t);
 
+// Note: this file api leaves much to be desired ...
 ccfunc void *   ccopenfile (const char *, ccfile_k);
 ccfunc int      ccrealfile ( void * );
 ccfunc void     ccclosefile( void * );

@@ -60,7 +60,7 @@ ccdbenter("seer");
 ccdbleave("seer");
 
 ccdbenter("emit");
-  ccemit_translation_unit(&emit,&seer,tree);
+  ccemit_translation_unit(&emit,&seer);
 ccdbleave("emit");
 
 ccdbenter("exec");

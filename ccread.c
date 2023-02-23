@@ -293,7 +293,7 @@ ccdbenter("unary");
   // Todo: this is flawed!
   if(cceat(reader,cctoken_Kbitwise_and))
   {
-    result=cctree_unary(root,mark,cctoken_kADR,ccread_cast(reader,root,mark));
+    result=cctree_unary(root,mark,cctoken_kADDRESSOF,ccread_cast(reader,root,mark));
   } else
   if(cceat(reader,cctoken_kADD))
   {
@@ -311,7 +311,7 @@ ccdbenter("unary");
   } else
   if(cceat(reader, cctoken_kMUL))
   {
-    result=cctree_unary(root,mark,cctoken_kDRF,ccread_cast(reader,root,mark));
+    result=cctree_unary(root,mark,cctoken_kDEREFERENCE,ccread_cast(reader,root,mark));
   } else
   {
     result=ccread_postfix(reader,root,mark);
@@ -749,11 +749,16 @@ ccread_initializer(ccread_t *reader, cctree_t *root, cci32_t mark)
 
 ccfunc cctree_t *
 ccread_direct_decl_name_modifier(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
-{ if(cceat(reader, cctoken_kLPAREN))
-  { cctree_t **list=ccread_param_type_list(reader,root,mark);
+{ // Note: document this ...
+
+  if(cceat(reader, cctoken_kLPAREN))
+  {
+    // Note: remove the external flag
+    cctree_t **list=ccread_param_type_list(reader,root,mark&~cctree_mEXTERNAL);
+
     if(!cceat(reader, cctoken_kRPAREN)) ccsynerr(reader, 0, "expected ')'");
     cctree_t *modifier=ccread_direct_decl_name_modifier(reader,root,mark,type);
-    if(modifier->kind==cctree_kFUNC) ccsynwar(reader,0,"function that returns function");
+    if(modifier->kind==cctree_kFUNCTION) ccsynwar(reader,0,"function that returns function");
     if(modifier->kind==cctree_kARRAY) ccsynwar(reader,0,"function that returns array");
     return cctree_function_modifier(modifier,list);
   } else
@@ -1281,7 +1286,7 @@ ccread_translation_unit(ccread_t *reader)
 ccfunc cctree_t *
 ccread_external_declaration(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-  cctree_t *decl=ccread_init_decl(reader,root,mark|cctree_mLVALUE|cctree_mEXTERNAL);
+  cctree_t *decl=ccread_init_decl(reader,root,mark|cctree_mEXTERNAL);
 
   if(!decl) return ccnil;
 
@@ -1294,7 +1299,7 @@ ccread_external_declaration(ccread_t *reader, cctree_t *root, cci32_t mark)
   ccassert(name->type!=0);
   ccassert(name->name!=0);
 
-  if(name->type->kind==cctree_kFUNC)
+  if(name->type->kind==cctree_kFUNCTION)
   {
     // Note: You can't define multiple functions within the same declaration ...
     ccassert(ccarrlen(decl->list)==1);

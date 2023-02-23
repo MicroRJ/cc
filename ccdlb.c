@@ -238,9 +238,6 @@ ccdbenter("tblput");
 
   cckeyset(ccnil);
 
-  // Todo: probably return an index that the user can still write to, but it won't affect other items...
-  cci64_t val=ccnil;
-
   ccentry_t *ent=ccdbl_query(tbl,len,key);
 
   if(ccerrnit())
@@ -249,14 +246,12 @@ ccdbenter("tblput");
     ent=ccdlb_tblcat(&tbl,isze,len,key,ent);
     cckeyset(ent->key);
 
-    val=ent->val;
-
     *ccm=tbl+1;
   } else
     ccerrset(ccerr_kAIT);
 
 ccdbleave("tblput");
-  return val/isze;
+  return ent->val/isze;
 }
 
 ccfunc cci64_t

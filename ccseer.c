@@ -2,330 +2,473 @@
 #ifndef _CCSEER_C
 #define _CCSEER_C
 
-ccfunc ccinle void
-ccseer_tree(ccseer_t *seer, cctree_t *);
+ccfunc void ccseer_tree(ccseer_t *seer, cctree_t *);
 
-// Note: add the tree to the map of variable declarations
-ccfunc int
-ccseer_include_variable(ccseer_t *seer, cctree_t *tree, const char *name)
+ccfunc ccinle ccesse_t *
+ccseer_symbol(ccseer_t *seer, const char *name)
 {
-  ccassert(tree!=0);
-  ccassert(name!=0);
+  ccesse_t **holder=cctblgetS(seer->entity_tale,name);
+  ccesse_t *held=ccerrnon()? *holder: 0;
 
-  cctree_t **value=cctblputS(seer->vdecl,name);
+  return held;
+}
+
+ccfunc int
+ccseer_include_entity(ccseer_t *seer, ccesse_t *esse, const char *name)
+{
+  ccesse_t **holder=cctblputS(seer->entity_tale,name);
+  ccesse_t *held=*holder;
+
   if(ccerrnon())
-    *value=tree;
+    *holder=esse;
   else
-    cctraceerr("'%s': variable redefinition",name);
+  if(ccerrait())
+    cctraceerr("'%s': redefinition, previous definition was '%s'", name,
+      ((held->kind==ccesse_kVARIABLE)?"data variable":
+      ((held->kind==ccesse_kFUNCTION)?"function":"unknown")));
+  else
+   ccassert(!"internal");
 
   return ccerrnon();
 }
 
-// Note: add a tree to the map of function declarations
-ccfunc int
-ccseer_include_invokable(ccseer_t *seer, cctree_t *tree, const char *name)
+// Todo: legit scoping
+ccfunc ccesse_t *
+ccseer_allude(ccseer_t *seer, cctree_t *tree, const char *name)
 {
-  // Todo: check if the's an existing declaration, check if the
-  // signature is the same, check if it already has a body and we
-  // have a body ...
+  ccesse_t **holder=cctblgetS(seer->entity_tale,name);
+  ccesse_t *held=*holder;
 
-  ccassert(tree!=0);
-  ccassert(name!=0);
-
-  cctree_t **value=cctblputS(seer->fdecl,name);
   if(ccerrnon())
-    *value=tree;
-  else
-    cctraceerr("'%s': function redefinition",name);
+  {
+    ccesse_t **symbol=cctblputP(seer->symbol_tale,tree);
+    ccassert(ccerrnon());
 
-  return ccerrnon();
+    *symbol=held;
+  }
+
+  return ccerrnon()? held :0;
 }
 
-// Note: find the 'symbol' that the tree is alluding to ...
-ccfunc cctree_t *
+// Todo: legit scoping
+ccfunc ccesse_t *
 ccseer_allusion(ccseer_t *seer, cctree_t *tree)
 {
   ccassert(tree!=0);
 
-  cctree_t **symbol=cctblgetP(seer->symbols,tree);
+  ccesse_t **symbol=cctblgetP(seer->symbol_tale,tree);
 
   return ccerrnon()? *symbol :ccnil;
 }
 
-// Note: find what the IDENTIFIER or CALL tree is referring to, could be a decl_name or a function, store
-// the reference in the symbol table under the given tree ...
-ccfunc int
-ccseer_allude(ccseer_t *seer, cctree_t *tree, const char *name)
-{
-  cctree_t **solved=ccnil;
+ccfunc cctype_t *ccseer_binary(ccseer_t *seer,cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue);
+ccfunc cctype_t *ccseer_rvalue(ccseer_t *seer, cctree_t *tree);
+ccfunc cctype_t *ccseer_lvalue(ccseer_t *seer, cctree_t *tree);
 
-  ccerrset(ccerr_kNIT);
+// Todo:
+ccfunc ccesse_t *
+ccesse_builtin(ccbuitin_k builtin)
+{ ccesse_t *e=ccmalloc_T(ccesse_t);
+  e->kind=ccesse_kFUNCTION;
+  e->builtin=builtin;
 
-  if((tree->kind==cctree_kLITIDE))
-    solved=cctblgetS(seer->vdecl,name);
-  else
-  if((tree->kind==cctree_kCALL))
-    solved=cctblgetS(seer->fdecl,name);
-  else
-    cctraceerr("'%s[0x%x]': invalid tree, expected CALL or IDENTIFIER",
-      cctree_s[tree->kind],tree);
-
-  if(ccerrnon())
-  {
-    cctree_t **symbol=cctblputP(seer->symbols,tree);
-    ccassert(ccerrnon());
-    *symbol=*solved;
-  }
-
-  return ccerrnon();
+  // Todo:
+  e->type=ccmalloc_T(cctype_t);
+  e->type->kind=cctype_kINTEGER;
+  return e;
 }
 
-ccfunc void
-ccseer_binary(ccseer_t *seer,cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue);
-ccfunc void
-ccseer_rvalue(ccseer_t *seer, cctree_t *tree);
-ccfunc void
-ccseer_lvalue(ccseer_t *seer, cctree_t *tree);
-
-ccfunc void
-ccseer_call(ccseer_t *seer, cctree_t *tree)
+// Todo:
+ccfunc ccinle int
+cctype_indirect(cctype_t *type)
 {
-  ccassert(tree->lval!=0);
+  return (type->kind==cctype_kPOINTER)||(type->kind==cctype_kARRAY);
+}
 
-  // Note: temporarly let this fail ...
-  if(!ccseer_allude(seer,tree,tree->name))
-      cctracewar("%s: identifier not found",tree->name);
+// Todo:
+ccfunc ccinle cctype_t *
+cctype_basetype(cctype_t *type)
+{
+  while(cctype_indirect(type)) type=type->type;
+
+  return type;
+}
+
+// Todo: rework this
+ccfunc cctype_t *
+ccseer_call(ccseer_t *seer, cctree_t *tree)
+{ ccassert(tree->lval!=0);
+
+  cctype_t *result=ccnull;
+
+  if(tree->lval->kind==cctree_kLITIDE)
+  {
+    ccesse_t *esse=ccseer_allude(seer,tree->lval,tree->lval->name);
+    if(!esse)
+      cctracewar("'%s': identifier not found",tree->lval->name);
+    else
+    if(esse->kind!=ccesse_kFUNCTION)
+      cctracewar("'%s': not a function",tree->lval->name);
+
+    // Note: the type is a function, the type of the type is the return type ...
+    result=esse->type->type;
+  } else
+    ccassert(!"error");
 
   cctree_t *rval;
   ccarrfor(tree->rval,rval)
     ccseer_rvalue(seer,rval);
+
+  return result;
 }
 
-ccfunc void
+ccfunc cctype_t *
 ccseer_index(ccseer_t *seer, cctree_t *tree)
-{
-  ccassert(tree->lval);
+{ ccassert(tree->lval);
   ccassert(tree->rval);
 
-  if(tree->lval->kind==cctree_kLITIDE)
-  {
-    if(!ccseer_allude(seer,tree->lval,tree->lval->name))
-        cctraceerr("%s: identifier not found",tree->lval->name);
+  cctype_t *result=ccnull;
 
+  if(tree->lval->kind==cctree_kLITIDE)
+  { ccesse_t *esse=ccseer_allude(seer,tree->lval,tree->lval->name);
+    if(!esse)
+      cctraceerr("%s: identifier not found",tree->lval->name);
+    result=esse->type;
   } else
   if(tree->lval->kind==cctree_kINDEX)
-  {
-    ccseer_index(seer,tree->lval);
+  { result=ccseer_index(seer,tree->lval);
   } else
     ccassert(!"error");
 
+  if(!cctype_indirect(result))
+    cctraceerr("%s: subscript requires array or pointer type",tree->lval->name);
+
   ccseer_rvalue(seer,tree->rval);
+
+  return result->type;
 }
 
-ccfunc void
+ccfunc cctype_t *
 ccseer_lvalue(ccseer_t *seer, cctree_t *tree)
-{
+{ cctype_t *type=ccnull;
   switch(tree->kind)
-  {
-    case cctree_kLITIDE:
-    {
-      if(!ccseer_allude(seer,tree,tree->name))
-        cctraceerr("'%s': undeclared lvalue identifier",tree->name);
+  { case cctree_kLITIDE:
+    { ccesse_t *esse=ccseer_allude(seer,tree,tree->name);
+      if(!esse)
+        cctraceerr("'%s': undeclared identifier",tree->name);
+      else
+      if(!esse->kind==ccesse_kVARIABLE)
+        ccbreak();
+      type=esse->type;
     } break;
     case cctree_kINDEX:
-    {
-      ccseer_index(seer,tree);
+    { type=ccseer_index(seer,tree);
     } break;
     default: ccassert(!"internal");
   }
+  return type;
 }
 
-ccfunc void
+ccfunc cctype_t *
 ccseer_rvalue(ccseer_t *seer, cctree_t *tree)
-{
+{ cctype_t *type=ccnull;
+
   switch(tree->kind)
-  {
-    case cctree_kLITINT:
+  { case cctree_kLITINT:
+      type=ccmalloc_T(cctype_t);
+      type->kind=cctype_kINTEGER;
+    break;
     case cctree_kLITSTR:
     break;
     case cctree_kLITIDE:
-    {
-      if(!ccseer_allude(seer,tree,tree->name))
-        cctraceerr("'%s': undeclared rvalue identifier",tree->name);
-
+    { ccesse_t *esse=ccseer_allude(seer,tree,tree->name);
+      if(!esse)
+        cctraceerr("'%s': undeclared identifier",tree->name);
+      type=esse->type;
     } break;
     case cctree_kBINARY:
     {
-      ccseer_binary(seer,tree->oper,tree->lval,tree->rval);
+      type=ccseer_binary(seer,tree->oper,tree->lval,tree->rval);
     } break;
     case cctree_kCALL:
     {
-      ccseer_call(seer,tree);
+      type=ccseer_call(seer,tree);
     } break;
     case cctree_kINDEX:
     {
-      ccseer_index(seer,tree);
+      type=ccseer_index(seer,tree);
     } break;
+    // Todo:
     case cctree_kUNARY:
-    {
-      if((tree->oper==cctoken_kADR) ||
-         (tree->oper==cctoken_kDRF))
+    { if((tree->oper==cctoken_kADDRESSOF))
       {
+        type=ccseer_lvalue(seer,tree->rval);
 
-        ccseer_rvalue(seer,tree->rval);
+        cctype_t *pointer=ccmalloc_T(cctype_t);
+        pointer->kind=cctype_kPOINTER;
+        pointer->type=type;
+
+        type=pointer;
+      } else
+      if((tree->oper==cctoken_kDEREFERENCE))
+      {
+        type=ccseer_rvalue(seer,tree->rval);
+
+        type=type->type;
       } else
         ccassert(!"internal");
     } break;
     default: ccassert(!"internal");
   }
+
+  return type;
 }
 
-ccfunc void
+ccfunc cctype_t *
 ccseer_binary(ccseer_t *seer, cctoken_k oper, cctree_t *lvalue, cctree_t *rvalue)
 {
-  if(oper==cctoken_kASSIGN)
-    ccseer_lvalue(seer,lvalue);
-  else
-    ccseer_rvalue(seer,lvalue);
+  cctype_t *result=ccnull;
 
-  ccseer_rvalue(seer,rvalue);
+  if(oper==cctoken_kASSIGN)
+  {
+    cctype_t *ltype,*rtype;
+
+    ltype=ccseer_lvalue(seer,lvalue);
+    rtype=ccseer_rvalue(seer,rvalue);
+    ccassert(ltype!=0);
+    ccassert(rtype!=0);
+
+    result=ltype;
+
+    // Todo:
+    char lbuf[256];
+    char rbuf[256];
+
+    for(;;)
+    {
+      if(cctype_indirect(ltype)!=cctype_indirect(rtype))
+      {
+        cctype_to_string(ltype,lbuf);
+        cctype_to_string(rtype,rbuf);
+
+        cctraceerr("'=': '%s' differs in levels of indirection from '%s'",lbuf,rbuf);
+      } else
+      if(ltype->kind!=rtype->kind)
+      {
+        cctype_to_string(ltype,lbuf);
+        cctype_to_string(rtype,rbuf);
+
+        cctraceerr("'=': incompatible types - from '%s' to '%s'",lbuf,rbuf);
+      }
+
+      ccassert(!cctype_indirect(ltype)||ltype->type!=0);
+      ccassert(!cctype_indirect(rtype)||rtype->type!=0);
+
+      ltype=ltype->type;
+      rtype=rtype->type;
+
+      if(!ltype) break;
+      if(!rtype) break;
+    }
+
+  } else
+  { // Todo:
+    result=ccseer_rvalue(seer,lvalue);
+    ccseer_rvalue(seer,rvalue);
+  }
+
+  return result;
+}
+
+ccfunc cctype_t *
+ccseer_tree_to_type(ccseer_t *seer, cctree_t *tree)
+{
+  // Note: we're expecting a modifier tree ...
+
+  ccassert(tree!=0);
+
+  cctype_t *type=ccmalloc_T(cctype_t);
+  type->kind=cctype_kINVALID;
+  type->name=tree->name;
+  type->type=ccnull;
+  type->list=ccnull;
+  type->size=ccnull;
+
+  if(tree->kind==cctree_kARRAY)
+  {
+    type->kind=cctype_kARRAY;
+    type->type=ccseer_tree_to_type(seer,tree->type);
+
+    // Todo:
+    if(tree->rval->kind==cctree_kLITINT)
+      type->size=tree->rval->as_i32;
+    else
+      ccassert(!"error");
+
+    ccassert(type->size!=0);
+
+
+    cctree_t *i;
+    for(i=tree->type; i->kind!=cctree_kTYPENAME; i=i->type)
+    {
+      if(i->kind==cctree_kARRAY)
+        ccseer_rvalue(seer,i->rval);
+      else
+        ccassert(!"error");
+    }
+    ccassert(i->kind==cctree_kTYPENAME);
+
+  } else
+  if(tree->kind==cctree_kPOINTER)
+  { type->kind=cctype_kPOINTER;
+    type->type=ccseer_tree_to_type(seer,tree->type);
+  } else
+  if(tree->kind==cctree_kFUNCTION)
+  { type->kind=cctype_kFUNCTION;
+    type->type=ccseer_tree_to_type(seer,tree->type);
+
+    // Todo: re-work this ...
+    cctree_t **list;
+    ccarrfor(tree->list,list)
+      *ccarradd(type->list,1)=*ccseer_tree_to_type(seer,(*list)->type);
+
+  } else
+  if(tree->kind==cctree_kTYPENAME)
+  {
+    type->kind=cctype_kINTEGER;
+  } else
+    ccassert(!"error");
+  return type;
 }
 
 ccfunc void
 ccseer_decl_name(ccseer_t *seer, cctree_t *tree)
 {
-  // Note: is this a good way to do things?
-  if(tree->type->kind==cctree_kFUNC)
-  {
-    if(tree->mark&cctree_mEXTERNAL)
+  ccassert(tree!=0);
+  ccassert(tree->kind==cctree_kDECLNAME);
+  ccassert(tree->type!=0);
+  ccassert(tree->name!=0);
+
+  if(tree->type->kind==cctree_kFUNCTION)
+  { if(tree->mark&cctree_mEXTERNAL)
     {
-      if(ccseer_include_invokable(seer,tree,tree->name))
-      {
-        cctree_t **list;
-        ccarrfor(tree->type->list,list)
-          ccseer_decl_name(seer,*list);
+      ccesse_t *esse=ccseer_symbol(seer,tree->name);
 
-        ccarrfor(tree->blob->list,list)
-          ccseer_tree(seer,*list);
+      if(!esse)
+      { esse=ccmalloc_T(ccesse_t);
+        esse->kind=ccesse_kFUNCTION;
+        esse->name=tree->name;
+        esse->tree=tree;
+        esse->type=ccseer_tree_to_type(seer,tree->type);
 
+        ccseer_include_entity(seer,esse,tree->name);
       } else
+      {
+        // Todo: better debug info
+        if(esse->tree->blob && tree->blob)
+        {
           cctraceerr("%s: already has a body", tree->name);
+        }
+      }
+
+      // Todo: actually create the type and check that it matches the previous one
+
+      cctree_t **list;
+
+      // Note: check all parameters
+      ccarrfor(tree->type->list,list) ccseer_decl_name(seer,*list);
+
+      // Note: check every statement
+      ccarrfor(tree->blob->list,list) ccseer_tree(seer,*list);
     } else
         cctraceerr("'%s': local function definitions are illegal", tree->name);
   } else
   {
-    ccseer_include_variable(seer,tree,tree->name);
+    // Todo: remove this ...
+    ccassert(!(tree->mark&cctree_mEXTERNAL));
 
-    if(tree->init)
-    {
-      ccseer_rvalue(seer,tree->init);
-    }
+    ccesse_t *esse=ccmalloc_T(ccesse_t);
+    esse->kind=ccesse_kVARIABLE;
+    esse->name=tree->name;
+    esse->tree=tree;
+    esse->type=ccseer_tree_to_type(seer,tree->type);
 
-    if(tree->type->kind==cctree_kARRAY)
+    if(ccseer_include_entity(seer,esse,tree->name))
     {
-      cctree_t *i;
-      for(i=tree->type; i->kind!=cctree_kTYPENAME; i=i->type)
-      {
-        if(i->kind==cctree_kARRAY)
-          ccseer_rvalue(seer,i->rval);
-        else
-          ccassert(!"error");
-      }
-      ccassert(i->kind==cctree_kTYPENAME);
+      ccassert(
+        ccseer_allude(seer,tree,tree->name));
 
-    } else
-    if(tree->type->kind==cctree_kPOINTER)
-    {
-    } else
-    if(tree->type->kind==cctree_kTYPENAME)
-    {
-    } else
-    {
-      ccassert(!"error");
+
+      if(tree->init)
+        ccseer_rvalue(seer,tree->init);
     }
   }
 }
 
 ccfunc void
 ccseer_tree(ccseer_t *seer, cctree_t *tree)
-{
-  if(tree->kind==cctree_kBLOCK)
-  {
-    cctree_t **list;
-    ccarrfor(tree->list,list)
-      ccseer_tree(seer,*list);
-  } else
-  if(tree->kind==cctree_kDECL)
-  {
-    if(tree->root->kind==cctree_kTUNIT)
-      ccassert(tree->mark&cctree_mEXTERNAL);
+{ switch(tree->kind)
+  { cctree_t **list;
 
-    if(tree->mark&cctree_mEXTERNAL)
-      ccassert(tree->root->kind==cctree_kTUNIT);
+    case cctree_kBLOCK:
+      ccarrfor(tree->list,list) ccseer_tree(seer,*list);
+    break;
+    case cctree_kDECL:
+      if(tree->root->kind==cctree_kTUNIT)
+        ccassert(tree->mark&cctree_mEXTERNAL);
+      if(tree->mark&cctree_mEXTERNAL)
+        ccassert(tree->root->kind==cctree_kTUNIT);
 
-    // Todo: solve the base-type
-
-    cctree_t **list;
-    ccarrfor(tree->list,list)
-      ccseer_decl_name(seer,*list);
-  } else
-  if(tree->kind==cctree_kCALL)
-  {
-    ccseer_call(seer,tree);
-  } else
-  if(tree->kind==cctree_kRETURN)
-  {
-    if(tree->rval)
-    {
-      ccseer_rvalue(seer,tree->rval);
-    }
-  } else
-  if(tree->kind==cctree_kBINARY)
-  {
-    ccseer_binary(seer,tree->oper,tree->lval,tree->rval);
-  } else
-  if(tree->kind==cctree_kWHILE)
-  {
-    ccseer_rvalue(seer,tree->init);
-    ccseer_tree(seer,tree->lval);
-  } else
-  if(tree->kind==cctree_kTERNARY)
-  {
-    ccseer_rvalue(seer,tree->init);
-
-    if(tree->lval) ccseer_tree(seer,tree->lval);
-    if(tree->rval) ccseer_tree(seer,tree->rval);
-  } else
-  {
-    ccassert(!"error");
+      // Todo: solve the base-type
+      ccarrfor(tree->list,list) ccseer_decl_name(seer,*list);
+    break;
+    case cctree_kCALL:
+      ccseer_call(seer,tree);
+    break;
+    case cctree_kRETURN:
+      if(tree->rval)
+        ccseer_rvalue(seer,tree->rval);
+    break;
+    case cctree_kBINARY:
+      ccseer_binary(seer,tree->oper,tree->lval,tree->rval);
+    break;
+    case cctree_kWHILE:
+      ccseer_rvalue(seer,tree->init);
+      ccseer_tree(seer,tree->lval);
+    break;
+    case cctree_kTERNARY:
+      ccseer_rvalue(seer,tree->init);
+      if(tree->lval) ccseer_tree(seer,tree->lval);
+      if(tree->rval) ccseer_tree(seer,tree->rval);
+    break;
+    default: ccassert(!"error");
   }
 }
 
 ccfunc void
 ccseer_uninit(ccseer_t *seer)
 {
-  if(seer->tdecl) ccdlbdel(seer->tdecl);
-  if(seer->fdecl) ccdlbdel(seer->fdecl);
-  if(seer->vdecl) ccdlbdel(seer->vdecl);
-  if(seer->symbols) ccdlbdel(seer->symbols);
+  if(seer->entity_tale) ccdlbdel(seer->entity_tale);
+  if(seer->symbol_tale) ccdlbdel(seer->symbol_tale);
 }
 
 ccfunc void
 ccseer_init(ccseer_t *seer)
 {
-  memset(seer,ccnil,sizeof(*seer));
-}
+  memset(seer,0,sizeof(*seer));
 
+  // TODO:
+  ccseer_include_entity(seer,ccesse_builtin(ccbuiltin_kCCASSERT),"ccassert");
+  ccseer_include_entity(seer,ccesse_builtin(ccbuiltin_kCCBREAK),"ccbreak");
+  ccseer_include_entity(seer,ccesse_builtin(ccbuiltin_kCCERROR),"ccerror");
+}
 
 ccfunc void
 ccseer_translation_unit(ccseer_t *seer, cctree_t *tree)
 { ccassert(tree!=0);
   ccassert(tree->kind==cctree_kTUNIT);
 
-  // Note: this is temporary and this should not be the way an user has to include functions ...
   cctree_t **decl;
   ccarrfor(tree->list,decl) ccseer_tree(seer,*decl);
 }
-
-
 #endif

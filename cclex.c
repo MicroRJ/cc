@@ -70,6 +70,12 @@ cclex_hash_init(cclex_t *lexer)
   *cctblputL(lexer->tbl,"return")=cctoken_Kreturn; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"break")=cctoken_Kbreak; ccassert(ccerrnon());
   *cctblputL(lexer->tbl,"continue")=cctoken_Kcontinue; ccassert(ccerrnon());
+
+
+  // *cctblputL(lexer->tbl,"ccassert")=cctoken_kCCASSERT; ccassert(ccerrnon());
+  // *cctblputL(lexer->tbl,"ccbreak") =cctoken_kCCBREAK;  ccassert(ccerrnon());
+  // *cctblputL(lexer->tbl,"ccerror") =cctoken_kCCERROR;  ccassert(ccerrnon());
+
 }
 
 ccfunc void
@@ -89,7 +95,7 @@ cclex_init(cclex_t *l)
 ccfunc void
 cclex_uninit(cclex_t *l)
 {
-	(void)l;
+  (void)l;
   // ccarrdel(l->buf);
 }
 
@@ -131,9 +137,9 @@ ccfunc const char *
 cclex_identifier(cclex_t *l, const char *str)
 {
 ccdbenter("identifier");
-	int len=cclex_idenlen(str);
+  int len=cclex_idenlen(str);
 
-	l->tok.bit=cctoken_kLITIDENT;
+  l->tok.bit=cctoken_kLITIDENT;
 
   cctoken_k *k=cctblset(l->tbl,len,str);
   if(*k!=cctoken_kINVALID)
@@ -153,8 +159,8 @@ cclex_readstr(cclex_t *l, const char *str)
 {
 ccdbenter("string_token");
 
-	// Todo: re-use this buffer ...
-	// Todo: replace this with a legit string arena ... nothing too fancy ...
+  // Todo: re-use this buffer ...
+  // Todo: replace this with a legit string arena ... nothing too fancy ...
   l->tok.bit=cctoken_kLITSTR_INVALID;
   l->tok.str=ccnil;
 

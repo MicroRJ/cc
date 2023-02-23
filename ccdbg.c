@@ -246,10 +246,12 @@ ccfunc void *ccuserallocator_(size_t size,void *data)
   cccaller_t caller=cclastcaller;
 
 ccdbenter("user-allocator");
-  ccsentry_block_t *block;
+  ccsentry_block_t *block=0;
   if(!size)
   {
 ccdbenter("free");
+		if(!data) goto leave;
+
     ccsentry_t *debug=ccdebug();
     block=(ccsentry_block_t*)data-1;
     ccdebug_checkblock(ccuserallocator_,block);
@@ -269,6 +271,8 @@ ccdbenter("free");
 
     free(block);
     block=ccnil;
+
+leave:
 ccdbleave("free");
   } else
   { if(data)

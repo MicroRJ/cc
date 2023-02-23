@@ -62,7 +62,7 @@ ccyield_rvalue(
   ccexec_frame_t *stack, ccvalue_t *couple)
 {
   ccexec_value_t result;
-  memset(&result,ccnil,sizeof(result));
+  memset(&result,ccnull,sizeof(result));
 
   switch(couple->kind)
   { case ccvalue_kEDICT:
@@ -94,7 +94,7 @@ ccfunc ccexec_value_t
 ccyield_lvalue(ccexec_frame_t *stack, ccvalue_t *value)
 {
   ccexec_value_t result;
-  memset(&result,ccnil,sizeof(result));
+  memset(&result,ccnull,sizeof(result));
 
   ccassert(value!=0);
   ccassert(value->kind==ccvalue_kEDICT);
@@ -110,6 +110,7 @@ ccyield_lvalue(ccexec_frame_t *stack, ccvalue_t *value)
   }
 
   ccassert(result.kind!=ccexec_value_kINVALID);
+  ccassert(result.address!=0);
   return result;
 }
 
@@ -141,18 +142,6 @@ ccstack_push(
   ccexec_t *exec, int length)
 {
   return (ccexec_value_t *)ccstack_push_size(exec,length*sizeof(ccexec_value_t));
-}
-
-ccfunc cctype_t *
-cctype_dereference(cctype_t *t)
-{
-  if(t->kind==cctype_kPOINTER)
-  {
-    return t->type;
-  } else
-    ccassert(!"error");
-
-  return 0;
 }
 
 // Todo: remove from here
@@ -220,13 +209,7 @@ ccdbenter("stack-local-alloc");
   ccassert((edict->kind==ccedict_kLOCAL)||(edict->kind==ccedict_kPARAM),
     "cannot allocate local, expected an edict of type LOCAL or PARAM");
 
-  cctype_t *type=edict->local.type;
-
-  ccassert((type!=0));
-  ccassert((type->kind==cctype_kPOINTER),
-    "cannot allocate local, expected a pointer type");
-
-  cci64_t size=ccsizeof(stack,cctype_dereference(type));
+  cci64_t size=ccsizeof(stack,edict->local.type);
   ccassert(size>=8);
 
   char *memory=(char*)ccstack_push_size(exec,(cci32_t)size); // Todo: cast
@@ -240,7 +223,9 @@ ccdbleave("stack-local-alloc");
 
 ccfunc ccinle ccexec_value_t
 ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
-{ cci64_t i;
+{
+  // Todo:
+  cci64_t i;
   const char *n;
 
   switch(opr)
@@ -271,36 +256,6 @@ ccfunc int
 ccexec_invoke(
   ccexec_t *, ccvalue_t *, ccexec_value_t *, cci32_t, ccexec_value_t *);
 
-
-ccfunc cctype_t *
-cctypeof(ccvalue_t *value)
-{
-  ccedict_t *edict=value->edict;
-
-  cctype_t *type=ccnil;
-
-  if(edict->kind==ccedict_kPARAM)
-    type=edict->param.type;
-  else
-  if(edict->kind==ccedict_kLOCAL)
-    type=edict->local.type;
-  else
-  if(edict->kind==ccedict_kFETCH)
-    type=edict->fetch.lval->type;
-  else
-  if(edict->kind==ccedict_kAADDR)
-    type=edict->addr.lval->type;
-  else
-  // &(T*)I
-  // &I
-  // Todo: is this how we want to do things? ...
-  if(edict->kind==ccedict_kLADDR)
-    type=cctypeof(edict->addr.lval);
-  else
-    ccassert(!"error");
-
-  return type;
-}
 ccfunc int
 ccexec_edict(
   ccexec_t *exec, ccexec_frame_t *stack, ccvalue_t *value)
@@ -309,7 +264,7 @@ ccdbenter("exec-edict");
 
   ccedict_t *edict=value->edict;
 
-  ccedict_print(stack,value);
+  // ccedict_print(stack,value);
 
   int result=cctrue;
   switch(edict->kind)
@@ -330,35 +285,32 @@ ccdbleave("exec-edict-local");
     case ccedict_kAADDR:
     {
 ccdbenter("exec-edict-Aaddr");
-      ccvalue_t *lvalue,*rvalue;
-      lvalue=edict->addr.lval;
-      rvalue=edict->addr.rval;
       ccexec_value_t lval,rval;
-      lval=ccyield_lvalue(stack,lvalue);
-      rval=ccyield_rvalue(stack,rvalue);
+      lval=ccyield_lvalue(stack,edict->addr.lval);
+      rval=ccyield_rvalue(stack,edict->addr.rval);
+
+      // Todo:
       cci64_t *memory=cccast(cci64_t*,lval.address);
       memory+=rval.constI;
       ccloadA(stack,value,memory,"address");
+
 ccdbleave("exec-edict-Aaddr");
     } break;
     case ccedict_kLADDR:
     {
 ccdbenter("exec-edict-Laddr");
-      ccvalue_t *lvalue;
-      lvalue=edict->addr.lval;
       ccexec_value_t lval;
-      lval=ccyield_lvalue(stack,lvalue);
+      lval=ccyield_lvalue(stack,edict->addr.lval);
+
+      // Todo:
       ccloadA(stack,value,lval.address,"address");
 ccdbleave("exec-edict-Laddr");
     } break;
     case ccedict_kFETCH:
     {
 ccdbenter("exec-edict-fetch");
-      ccvalue_t *lvalue;
-      lvalue=edict->fetch.lval;
-
       ccexec_value_t lval;
-      lval=ccyield_lvalue(stack,lvalue);
+      lval=ccyield_lvalue(stack,edict->fetch.lval);
 
       // Todo:
       cci64_t *memory=cccast(cci64_t*,lval.address);
@@ -369,17 +321,12 @@ ccdbleave("exec-edict-fetch");
     case ccedict_kSTORE:
     {
 ccdbenter("exec-edict-store");
-      ccvalue_t *lvalue,*rvalue;
-      lvalue=edict->store.lval;
-      rvalue=edict->store.rval;
-
       ccexec_value_t lval,rval;
-      lval=ccyield_lvalue(stack,lvalue);
-      rval=ccyield_rvalue(stack,rvalue);
+      lval=ccyield_lvalue(stack,edict->store.lval);
+      rval=ccyield_rvalue(stack,edict->store.rval);
 
-      // Note: rvalue will always be treated as an rvalue ...
+      // Todo:
       memcpy(lval.address,&rval.value,sizeof(rval.value));
-
       ccloadI(stack,value,rval.constI,"store");
 ccdbleave("exec-edict-store");
     } break;
@@ -457,12 +404,18 @@ ccdbenter("exec-edict-invoke");
 ccdbleave("exec-edict-invoke");
     } break;
     case ccedict_kDBGBREAK:
-    { cctracelog("called: break",0);
-      // ccbreak();
+    {
+      cctracelog("called: break",0);
+#ifndef _DEVELOPER
+      ccbreak();
+#endif
     } break;
     case ccedict_kDBGERROR:
-    { cctraceerr("called: error",0);
-      // ccbreak();
+    {
+      cctraceerr("called: error",0);
+#ifndef _DEVELOPER
+      ccbreak();
+#endif
     } break;
 
     default: ccassert(!"error");
@@ -481,12 +434,8 @@ ccsizeof(ccexec_frame_t *frame, cctype_t *type)
   } else
   if(type->kind==cctype_kARRAY)
   {
-    ccexec_value_t rval;
-    rval=ccyield_rvalue(frame,type->length);
-
     cci64_t size=ccsizeof(frame,type->type);
-    size*=rval.constI;
-
+    size*=type->size;
     return size;
   } else
   if(type->kind==cctype_kINTEGER)
@@ -510,7 +459,7 @@ ccdbenter("invoke");
   memset(&stack,ccnil,sizeof(stack));
   stack.procedure=procd;
 
-  cctree_t *type=procd->tree->type;
+  cctree_t *type=procd->esse->tree->type;
   ccassert((int)ccarrlen(type->list)==l);
 
   cctree_t **ltree;
@@ -537,8 +486,8 @@ ccdbenter("procd-exec");
     // Note: break if we hit some sort of halt intruction ...
     if(!ccexec_edict(exec,&stack,*it))
     {
-    	result=cctrue;
-    	break;
+      result=cctrue;
+      break;
     }
   }
 ccdbleave("procd-exec");
@@ -550,6 +499,11 @@ ccdbleave("procd-exec");
 ccdbleave("invoke");
   return result;
 }
+
+// Todo: REMOVE THIS
+#ifndef ARG
+# define ARG 22
+#endif
 
 ccfunc ccexec_value_t
 ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)

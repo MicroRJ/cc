@@ -10,6 +10,7 @@ typedef struct ccprocu_t ccprocu_t;
 typedef struct ccemit_t ccemit_t;
 typedef struct cctype_t cctype_t;
 
+typedef enum ccvalue_k ccvalue_k;
 typedef enum ccvalue_k
 { ccvalue_kINVALID=0,
   ccvalue_kTARGET,
@@ -20,34 +21,13 @@ typedef enum ccvalue_k
   ccvalue_kEDICT,
 } ccvalue_k;
 
-typedef enum
-{
-  cctype_kINTEGER,
-  cctype_kARRAY,
-  cctype_kPOINTER,
-  cctype_kPROCD,
-} cctype_k;
-
-
-typedef struct cctype_t
-{ const char * label;
-
-  cctree_t   * tree;
-
-  cctype_k    kind;
-  cctype_t  * type;
-  // Note: if it is an array ...
-  ccvalue_t * length;
-  // Note: if this is a procedure ..
-  cctype_t  * list;
-} cctype_t;
-
 typedef struct ccconstant_t ccconstant_t;
 typedef struct ccconstant_t
 { cctype_t    * type;
   ccclassic_t   clsc;
 } ccconstant_t;
 
+typedef struct ccvalue_t ccvalue_t;
 typedef struct ccvalue_t
 { ccvalue_k       kind;
   const char    * label;
@@ -61,7 +41,7 @@ ccunion
 };
 } ccvalue_t;
 
-//
+typedef struct ccblock_t ccblock_t;
 typedef struct ccblock_t
 { const char   *label; // Note: for debugging
   ccvalue_t  * *edict;
@@ -74,27 +54,27 @@ typedef struct ccprocu_t
   ccexec_value_t (*proc)(ccexec_t *,ccvalue_t *,cci32_t, ccexec_value_t *);
 } ccprocu_t;
 
+typedef struct ccprocd_t ccprocd_t;
 typedef struct ccprocd_t
 { const char *label; // Note: for debugging
 
-  cctype_t *type;
+  ccesse_t  * esse;
 
-  // Todo: we need this because this is how we key into the local's hash-table, which is rather absurd ...
-  cctree_t *tree;
-
-  // Note: here we store all of our values, locals and parameters, this is a list of non-edicts,
+  // Note: stores all of our values (locals and parameters),
   // edicts will reference values stored here ...
   ccvalue_t **local;
 
   ccblock_t **block;
 
-  // Todo: here we store all of our LOCAL and PARAM edicts end a single JUMP to the enter routine of the function,
-  // this is to be revised ... there's no need for the jump is there?
+  // Todo: stores all of our LOCAL and PARAM edicts end a JUMP to the enter routine,
+  // to be revised ... there's no need for the jump is there?
   ccblock_t  *decls;
+
   ccblock_t  *enter;
   ccblock_t  *leave;
 } ccprocd_t;
 
+typedef struct ccemit_t ccemit_t;
 typedef struct ccemit_t
 { ccseer_t  *  seer;
 
@@ -107,12 +87,11 @@ typedef struct ccemit_t
 
 ccfunc ccinle ccvalue_t * ccvalue(const char *label);
 ccfunc ccinle ccblock_t * ccblock(const char *label);
-ccfunc ccinle ccprocd_t * ccprocd(const char *label);
-ccfunc ccinle cctype_t  * cctype(cctype_k kind, const char *label);
+
 
 #define ccblock_store(block,lval,rval)    ccblock_add_edict(block,ccedict_store(lval,rval))
 #define ccblock_fetch(block,lval,type)    ccblock_add_edict(block,ccedict_fetch(lval,type))
-#define ccblock_laddr(block,lval,rval)    ccblock_add_edict(block,ccedict_laddr(lval))
+#define ccblock_laddr(block,lval)         ccblock_add_edict(block,ccedict_laddr(lval))
 #define ccblock_aaddr(block,lval,rval)    ccblock_add_edict(block,ccedict_aaddr(lval,rval))
 #define ccblock_arith(block,opr,lhs,rhs)  ccblock_add_edict(block,ccedict_arith(opr,lhs,rhs))
 #define ccblock_return(block,rval)        ccblock_add_edict(block,ccedict_return(rval))
@@ -122,6 +101,16 @@ ccfunc ccinle cctype_t  * cctype(cctype_k kind, const char *label);
 #define ccblock_tjump(block,tar,con)      ccblock_add_edict(block,ccedict_tjump(tar,cnd))
 #define ccblock_dbgbreak(block)           ccblock_add_edict(block,ccedict_dbgbreak())
 #define ccblock_dbgerror(block)           ccblock_add_edict(block,ccedict_dbgerror())
+
+ccfunc ccvalue_t *
+ccprocd_local(ccprocd_t *func, cctree_t *tree)
+{
+  // Todo: check tree ...
+
+  ccvalue_t **v=cctblgetP(func->local,tree);
+  if(ccerrnon()) return *v;
+  return ccnil;
+}
 
 // Todo:
 ccfunc ccinle ccvalue_t *
@@ -134,33 +123,12 @@ ccvalue(const char *label)
   return t;
 }
 
-// Todo:
-ccfunc ccinle cctype_t *
-cctype(cctype_k kind, const char *label)
-{
-  cctype_t *t=ccmalloc_T(cctype_t);
-  memset(t,ccnil,sizeof(*t));
-  t->kind=kind;
-  t->label=label;
-  return t;
-}
 
 // Todo:
 ccfunc ccinle ccblock_t *
 ccblock(const char *label)
 {
   ccblock_t *t=ccmalloc_T(ccblock_t);
-  memset(t,ccnil,sizeof(*t));
-
-  t->label=label;
-  return t;
-}
-
-// Todo:
-ccfunc ccinle ccprocd_t *
-ccprocd(const char *label)
-{
-  ccprocd_t *t=ccmalloc_T(ccprocd_t);
   memset(t,ccnil,sizeof(*t));
 
   t->label=label;
@@ -202,26 +170,6 @@ ccemit_include_global(ccemit_t *emit, const char *label)
   return value;
 }
 
-ccfunc ccvalue_t *
-ccemit_global_procd(ccemit_t *emit, cctree_t *tree, const char *label)
-{
-  ccprocd_t *p=ccprocd(label);
-
-  ccvalue_t *v=ccemit_include_global(emit,label);
-  v->kind=ccvalue_kPROCD;
-  v->procd=p;
-
-  p->tree=tree;
-  p->type=ccnil;
-  p->block=ccnil;
-
-  // Todo:
-  *ccarradd(p->block,1)=p->decls=ccblock("$decls");
-  *ccarradd(p->block,1)=p->enter=ccblock("$enter");
-  *ccarradd(p->block,1)=p->leave=ccblock("$leave");
-  return v;
-}
-
 ccfunc ccinle void
 ccvalue_retarget(ccvalue_t *value, ccjump_point_t p)
 {
@@ -260,18 +208,6 @@ ccblock_add_edict(ccblock_t *block, ccedict_t *edict)
   value->kind  = ccvalue_kEDICT;
   value->edict = edict;
   return value;
-}
-
-
-
-ccfunc ccvalue_t *
-ccprocd_local(ccprocd_t *func, cctree_t *tree)
-{
-  // Todo: check tree ...
-
-  ccvalue_t **v=cctblgetP(func->local,tree);
-  if(ccerrnon()) return *v;
-  return ccnil;
 }
 
 #endif

@@ -6,7 +6,7 @@ typedef enum cctree_k
 { cctree_kTYPENAME,
   cctree_kSTRUCT,
   cctree_kENUM,
-  cctree_kFUNC,
+  cctree_kFUNCTION,
   cctree_kARRAY,
   cctree_kPOINTER,
   cctree_kLITIDE,
@@ -59,7 +59,6 @@ ccglobal const char *cctree_s[]=
   "t_designator",
   "t_designation",
 };
-
 
 #define cctree_mVARIADIC (0x01<<0x00)
 #define cctree_mCONSTANT (0x01<<0x01)
@@ -169,7 +168,7 @@ cctree_array_modifier(cctree_t *type, cctree_t *rval)
 
 ccfunc cctree_t *
 cctree_function_modifier(cctree_t *type, cctree_t **list)
-{ cctree_t *tree=cctree_new(cctree_kFUNC,0,0);
+{ cctree_t *tree=cctree_new(cctree_kFUNCTION,0,0);
   tree->type=type;
   tree->list=list;
   return tree;
