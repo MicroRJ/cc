@@ -150,7 +150,8 @@ ccseer_index(ccseer_t *seer, cctree_t *tree)
 
 ccfunc cctype_t *
 ccseer_lvalue(ccseer_t *seer, cctree_t *tree)
-{ cctype_t *type=ccnull;
+{
+  cctype_t *type=ccnull;
   switch(tree->kind)
   { case cctree_kLITIDE:
     { ccesse_t *esse=ccseer_allude(seer,tree,tree->name);
@@ -163,6 +164,21 @@ ccseer_lvalue(ccseer_t *seer, cctree_t *tree)
     } break;
     case cctree_kINDEX:
     { type=ccseer_index(seer,tree);
+    } break;
+    case cctree_kUNARY:
+    { if((tree->oper==cctoken_kDEREFERENCE))
+      { type=ccseer_lvalue(seer,tree->rval);
+
+        // Todo
+        char buf[256];
+        cctype_to_string(type,buf);
+
+        if(!cctype_indirect(type))
+          cctraceerr("'%s': illegal indirection",buf);
+
+        type=type->type;
+      } else
+        ccassert(!"internal");
     } break;
     default: ccassert(!"internal");
   }

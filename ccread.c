@@ -2,105 +2,95 @@
 #ifndef _CCREAD_C
 #define _CCREAD_C
 
-ccfunc void
-ccread_init(ccread_t *_r)
+ccfunc ccinle void
+ccread_init(ccread_t *reader)
 {
-  memset(_r,ccnil,sizeof(*_r));
-  cclex_init(& _r->lex);
+  memset(reader,ccnil,sizeof(*reader));
+  cclex_init(& reader->lex);
 }
 
-ccfunc void
-ccread_uninit(ccread_t *_r)
+ccfunc ccinle void
+ccread_uninit(ccread_t *reader)
 {
-  cclex_uninit(&_r->lex);
-  ccarrdel(_r->buf);
+  cclex_uninit(&reader->lex);
+  ccarrdel(reader->buf);
 }
 
-ccfunc void
+ccfunc ccinle void
 ccread_all_tokens(ccread_t *_r);
 
-// Todo: reset the token array ...
 ccfunc void
-ccreader_move(ccread_t *_r, size_t _l, const char *_d)
+ccread_include(ccread_t *reader, const char *name)
 {
-  cclex_move(&_r->lex,_l,_d);
-  ccread_all_tokens(_r);
-
-  _r->bed=0;
-  _r->min=_r->buf;
-  _r->max=_r->buf+ccarrlen(_r->buf);
-}
-
-ccfunc void
-ccread_include(ccread_t *_r, const char *name)
-{
-  unsigned long int size=0;
+  ccu32_t size=0;
   void *file=ccopenfile(name,ccfile_kREAD);
   void *data=ccpullfile(file,0,&size);
   ccclosefile(file);
 
-  ccreader_move(_r,size,(char*)data);
+  cclex_move(&reader->lex,size,data);
+  ccread_all_tokens(reader);
+
+  reader->bed=0;
+  reader->min=reader->buf;
+  reader->max=reader->buf+ccarrlen(reader->buf);
 
   // Todo:
-  // ccfree(data);
+  ccfree(data);
 }
 
+// Todo:
 ccfunc void
-ccread_all_tokens(ccread_t *_r)
-{ while(cclex_next_token(& _r->lex))
-  {
-    cctoken_t *token=ccarradd(_r->buf,1);
-    cclex_token(& _r->lex,token);
+ccread_all_tokens(ccread_t *reader)
+{ while(cclex_next_token(& reader->lex))
+  { cctoken_t *token=ccarradd(reader->buf,1);
+    cclex_token(&reader->lex,token);
   }
 }
 
 ccfunc cctoken_t *
-ccpeek(ccread_t *_r, cci32_t _o)
-{
-  if((_r->min+_o<_r->max))
-  {
-    return _r->min+_o;
-  }
+ccpeek(ccread_t *reader, cci32_t offset)
+{ if(reader->min+offset<reader->max)
+    return reader->min+offset;
 
-  // Note: is this flawed?
+  // Todo:
   static cctoken_t end_tok = { cctoken_kEND };
   return & end_tok;
 }
 
 ccfunc ccinle cctoken_t *
-ccpeep(ccread_t *_r)
+ccpeep(ccread_t *reader)
 {
-  return ccpeek(_r,0);
+  return ccpeek(reader,0);
 }
 
 ccfunc ccinle int
-ccsee(ccread_t *_r, cctoken_k kind)
+ccsee(ccread_t *reader, cctoken_k kind)
 {
-  return ccpeep(_r)->bit==kind;
+  return ccpeep(reader)->bit==kind;
 }
 
 ccfunc ccinle int
-ccsee_end(ccread_t *_r)
+ccsee_end(ccread_t *reader)
 {
-  return ccsee(_r,cctoken_kEND);
+  return ccsee(reader,cctoken_kEND);
 }
 
 // Note: I keep coming up with these names ...
 ccfunc ccinle cctoken_t *
-ccgobble(ccread_t *_r)
+ccgobble(ccread_t *reader)
 {
   // Todo: instead of saving the last token, just save its flags, that's was we're really looking for ...
-  if(_r->min<_r->max)
-    return _r->bed=_r->min++;
+  if(reader->min<reader->max)
+    return reader->bed=reader->min++;
 
-  return ccpeep(_r); // <-- use peek here to return special end token.
+  return ccpeep(reader); // <-- use peek here to return special end token.
 }
 
 ccfunc ccinle cctoken_t *
-cceat(ccread_t *_r, cctoken_k _k)
+cceat(ccread_t *reader, cctoken_k _k)
 {
-  if(ccsee(_r,_k))
-    return ccgobble(_r);
+  if(ccsee(reader,_k))
+    return ccgobble(reader);
   return 0;
 }
 

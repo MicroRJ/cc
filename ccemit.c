@@ -152,9 +152,21 @@ ccemit_lvalue(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree
 
   switch(tree->kind)
   { case cctree_kLITIDE:
-      value=ccemit_resolve(emit,procd,tree); break;
+      value=ccemit_resolve(emit,procd,tree);
+    break;
     case cctree_kINDEX:
-      value=ccemit_index(emit,procd,block,tree,ccfalse); break;
+      value=ccemit_index(emit,procd,block,tree,ccfalse);
+    break;
+    case cctree_kUNARY:
+    {
+      // TODO: WHEN COMEBACK IMPLEMENT THIS
+      ccassert(tree->rval!=ccnil);
+      if(tree->oper==cctoken_kDEREFERENCE)
+      {
+        value=ccblock_fetch(block,ccemit_lvalue(emit,procd,block,tree->rval),ccnull);
+      } else
+        ccassert(!"internal");
+    } break;
     default:
       ccassert(!"internal");
   }
@@ -197,8 +209,6 @@ ccemit_rvalue(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree
     } break;
     case cctree_kUNARY:
     { ccassert(tree->rval!=ccnil);
-      // int ?=&b;
-      //       ^^
       if(tree->oper==cctoken_kADDRESSOF)
       { value=ccblock_laddr(block,ccemit_lvalue(emit,procd,block,tree->rval));
       } else

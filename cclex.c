@@ -72,6 +72,8 @@ cclex_hash_init(cclex_t *lexer)
   *cctblputL(lexer->tbl,"continue")=cctoken_Kcontinue; ccassert(ccerrnon());
 
 
+  // Todo:
+
   // *cctblputL(lexer->tbl,"ccassert")=cctoken_kCCASSERT; ccassert(ccerrnon());
   // *cctblputL(lexer->tbl,"ccbreak") =cctoken_kCCBREAK;  ccassert(ccerrnon());
   // *cctblputL(lexer->tbl,"ccerror") =cctoken_kCCERROR;  ccassert(ccerrnon());

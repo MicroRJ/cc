@@ -89,12 +89,7 @@ ccdbenter("main");
 
   const char *f[]=
   {
-    // "code\\str.cc",
-    // "code\\builtin.cc",
-    // "code\\decl.cc",
-    // "code\\retr.cc",
     "code\\lval.cc",
-    // "code\\fib.cc",
   };
 
   enum { l=sizeof(f)/sizeof(f[0]) };

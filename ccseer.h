@@ -70,8 +70,8 @@ ccfunc char *
 cctype_to_string(cctype_t *t, char *b)
 {
   if(t->kind==cctype_kPOINTER)
-  { *b++='*';
-    b=cctype_to_string(t->type,b);
+  { b=cctype_to_string(t->type,b);
+    *b++='*';
   } else
   if(t->kind==cctype_kARRAY)
   { b=cctype_to_string(t->type,b);

@@ -110,7 +110,6 @@ ccyield_lvalue(ccexec_frame_t *stack, ccvalue_t *value)
   }
 
   ccassert(result.kind!=ccexec_value_kINVALID);
-  ccassert(result.address!=0);
   return result;
 }
 
@@ -260,6 +259,9 @@ ccdbenter("exec-edict-fetch");
       ccexec_value_t lval;
       lval=ccyield_lvalue(stack,edict->fetch.lval);
 
+      if(!lval.address)
+        ccassert(!"write access violation, nullptr");
+
       // Todo:
       cci64_t *memory=cccast(cci64_t*,lval.address);
       ccloadI(stack,value,*memory,"fetch");
@@ -272,6 +274,9 @@ ccdbenter("exec-edict-store");
       ccexec_value_t lval,rval;
       lval=ccyield_lvalue(stack,edict->store.lval);
       rval=ccyield_rvalue(stack,edict->store.rval);
+
+      if(!lval.address)
+        ccassert(!"write access violation, nullptr");
 
       // Todo:
       memcpy(lval.address,&rval.value,sizeof(rval.value));
