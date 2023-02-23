@@ -1,5 +1,3 @@
-
-
 int fib(int e)
 {
 
@@ -15,7 +13,6 @@ int same(int t)
 {
   return t;
 }
-
 
 int main(int _)
 {

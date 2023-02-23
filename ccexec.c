@@ -144,56 +144,6 @@ ccstack_push(
   return (ccexec_value_t *)ccstack_push_size(exec,length*sizeof(ccexec_value_t));
 }
 
-// Todo: remove from here
-ccfunc void
-cctype_print(cctype_t *t)
-{
-  ccprintf("<!2");
-  if(t->kind==cctype_kPOINTER)
-  { ccprintf("*");
-    cctype_print(t->type);
-  } else
-  if(t->kind==cctype_kARRAY)
-  { cctype_print(t->type);
-    ccprintf("[]");
-  } else
-  if(t->kind==cctype_kINTEGER)
-  { ccprintf("int");
-  } else
-    ccassert(!"error");
-  ccprintf("!>");
-}
-
-// Todo: remove from here
-ccfunc void
-ccedict_print(ccexec_frame_t *frame, ccvalue_t *value)
-{
-  ccedict_t *edict=value->edict;
-
-  ccprintf("<!6%p '%s'!>: ",value,ccedict_s[edict->kind]);
-
-
-  if(edict->kind==ccedict_kLOCAL)
-  { cctype_print(edict->local.type);
-  } else
-  if(edict->kind==ccedict_kFETCH)
-  {
-    void *loc=ccload_alloc(frame,value);
-    ccprintf("<!3%p!>,<!5%p!>",loc,edict->fetch.lval);
-  } else
-  if(edict->kind==ccedict_kSTORE)
-  {
-    // cctype_print(edict->store.lval);
-    // cctype_print(edict->store.type);
-  }
-
-
-  printf("\n");
-}
-
-// Note: Allocates memory on the stack appropriate for the value's type and returns
-// a addressable l-value coupled to the given emit-value, to retrieve the l-value again
-// use the value's hash-table in the frame...
 ccfunc ccinle ccexec_value_t *
 ccstack_local_alloc(
   ccexec_t *exec, ccexec_frame_t *stack, ccvalue_t *value)
@@ -263,8 +213,6 @@ ccexec_edict(
 ccdbenter("exec-edict");
 
   ccedict_t *edict=value->edict;
-
-  // ccedict_print(stack,value);
 
   int result=cctrue;
   switch(edict->kind)
