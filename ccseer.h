@@ -10,6 +10,7 @@ typedef enum ccbuitin_k
   ccbuiltin_kCCASSERT,
   ccbuiltin_kCCBREAK,
   ccbuiltin_kCCERROR,
+  ccbuiltin_kCCPRINTF,
 } ccbuitin_k;
 
 typedef enum cctype_k cctype_k;
@@ -26,14 +27,11 @@ typedef enum cctype_k
 
 typedef struct cctype_t cctype_t;
 typedef struct cctype_t
-{
-  cctype_k     kind;
+{ cctype_k     kind;
   cctoken_k    sort;
-
-  const char * name;
   cctype_t   * type;
-  cctype_t   * list;
   cci32_t      size;
+  cctype_t   * list;
 } cctype_t;
 
 typedef enum ccesse_k ccesse_k;
@@ -67,8 +65,35 @@ typedef struct ccseer_t
 {
   ccesse_t  ** entity_tale; // Note: by string
   ccesse_t  ** symbol_tale; // Note: by tree
+
+  cctype_t  ** tether_tale; // Note: by tree
 } ccseer_t;
 
+// Todo:
+ccfunc cctype_t *
+ccseer_create_pointer_type(cctype_t *type)
+{
+  cctype_t *result=ccmalloc_T(cctype_t);
+  result->kind=cctype_kPOINTER;
+  result->sort=cctoken_kINVALID;
+  result->type=type;
+  result->size=sizeof(char*)*8;
+  result->list=ccnull;
+  return result;
+}
+
+// Todo:
+ccfunc cctype_t *
+ccseer_create_function_type(cctype_t *type)
+{
+  cctype_t *result=ccmalloc_T(cctype_t);
+  result->kind=cctype_kFUNCTION;
+  result->sort=cctoken_kINVALID;
+  result->type=type;
+  result->size=0;
+  result->list=ccnull;
+  return result;
+}
 
 ccfunc char *
 cctype_to_string(cctype_t *t, char *b)
@@ -97,6 +122,5 @@ cctype_to_string(cctype_t *t, char *b)
 
   return b;
 }
-
 
 #endif

@@ -2,14 +2,22 @@
 #ifndef _CCEDICT
 #define _CCEDICT
 
+// Todo: document this properly ...
 typedef enum ccedict_k
 {
   ccedict_kLOCAL = 0,
   ccedict_kPARAM,
+
+  // Note: expects an addressable l-value, a variable ...
   ccedict_kLADDR,
+  // Note: expects any sort of addressable value, such as another address, a local or parameter and produces an address value...
   ccedict_kAADDR,
+
   ccedict_kSTORE,
+
+  // Note: expects any sort of addressable value, loads its contents based on the type specified and produces a non-addressable r-value...
   ccedict_kFETCH,
+
   ccedict_kARITH,
   ccedict_kJUMP,
   ccedict_kJUMPT,
@@ -37,224 +45,184 @@ ccglobal const char *ccedict_s[]=
   "DBGERROR",
 };
 
+// Note: Produces an addressable lvalue, if param, value must be set before invoking a function ...
+
+typedef struct ccleap_t ccleap_t;
+typedef struct ccleap_t
+{ const char * label;
+  ccblock_t  * block;
+  cci32_t      index;
+} ccleap_t;
+
 // Note: perhaps each edict should have a flag that indicates whether to produce a value or not.
 typedef struct ccedict_t ccedict_t;
 typedef struct ccedict_t
-{
-  ccedict_k   kind;
-  ccstr_t     label; // Note: for debugging ...
+{ ccedict_k    kind;
+  cctype_t  *  type;
+  cctoken_k    sort;
+  ccvalue_t *  lval;
+  ccvalue_t *  rval;
+  ccvalue_t ** blob;
+  ccleap_t     leap;
 
-ccunion
-{
-  // Note: Produces an addressable lvalue, if param, value must be set before invoking a function ...
-  struct
-  {
-    cctype_t *type;
-  } local,param;
-  // Note: Produces an addressable lvalue at an offset specified by rval ...
-  struct
-  { ccvalue_t * lval;
-    ccvalue_t * rval;
-  } addr;
-  // Note: Produces a non-addressable rvalue ...
-  // Note: #lval is the lvalue to store to.
-  // Note: #rval is the rvalue to store.
-  struct
-  { ccvalue_t *  lval;
-    ccvalue_t *  rval;
-  } store;
-  // Note: Produces an non-addressable rvalue ...
-  // Note: #lval is the lvalue to load.
-  struct
-  { cctype_t  *type;
-    ccvalue_t *lval;
-  } fetch;
-  // Note: Produces a non-addressable rvalue
-  struct
-  { ccvalue_t  * call;
-    ccvalue_t ** rval;
-  } invoke;
-  struct
-  { ccvalue_t  * rval;
-  } ret;
-  struct
-  { ccblock_t  * blc;
-    ccu32_t      tar;
-    ccvalue_t  * cnd;
-  } jump;
-  struct
-  { ccblock_t  * blc;
-  } enter;
-  struct
-  { ccvalue_t  * cnd;
-    ccblock_t  * lhs;
-    ccblock_t  * rhs;
-  } ternary;
-  struct
-  { cctoken_k         opr;
-    ccvalue_t  * lhs;
-    ccvalue_t  * rhs;
-  } arith;
-};
+  // Todo: implement!
+  int yield;
+  int is_zero_init;
 } ccedict_t;
 
-typedef struct ccjump_point_t ccjump_point_t;
-typedef struct ccjump_point_t
-{ ccstr_t         label; // Note: for debugging
-  ccblock_t      *block;
-  ccu32_t         index;
-} ccjump_point_t;
 
 // Todo:
 ccfunc ccinle ccedict_t *
-ccedict(ccedict_k kind, ccstr_t label)
+ccedict(ccedict_k kind)
 {
   ccedict_t *e=ccmalloc_T(ccedict_t);
-  memset(e,ccnil,sizeof(*e));
+  memset(e,ccnull,sizeof(*e));
 
   e->kind=kind;
-  e->label=label;
   return e;
 }
 
-// Todo:
-ccfunc ccinle void
-ccedict_retarget(ccedict_t *e, ccjump_point_t p)
-{
-  e->jump.blc=p.block;
-  e->jump.tar=p.index;
-}
-
 ccfunc ccinle ccedict_t *
-ccedict_local(cctype_t *type, ccstr_t label)
+ccedict_local(cctype_t *type)
 {
   ccassert(type!=0);
 
-  // Todo: check the tree
-  ccedict_t *e=ccedict(ccedict_kLOCAL,label);
-
-  e->local.type=type;
+  ccedict_t *e=ccedict(ccedict_kLOCAL);
+  e->type=type;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_param(cctype_t *type, ccstr_t label)
+ccedict_param(cctype_t *type)
 {
   ccassert(type!=0);
 
-  // Todo: check the tree
-  ccedict_t *e=ccedict(ccedict_kPARAM,label);
-
-  e->local.type=type;
+  ccedict_t *e=ccedict(ccedict_kPARAM);
+  e->type=type;
   return e;
 }
 
-
 ccfunc ccinle ccedict_t *
-ccedict_store(ccvalue_t *lval, ccvalue_t *rval)
+ccedict_store(cctype_t *type, ccvalue_t *lval, ccvalue_t *rval)
 {
-  ccedict_t *e=ccedict(ccedict_kSTORE,"store");
-  e->store.lval=lval;
-  e->store.rval=rval;
+  ccassert(type!=0);
+  ccassert(lval!=0);
+  ccassert(rval!=0);
+
+  ccedict_t *e=ccedict(ccedict_kSTORE);
+  e->type=type;
+  e->lval=lval;
+  e->rval=rval;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_fetch(ccvalue_t *lval, cctype_t *type)
+ccedict_fetch(cctype_t *type, ccvalue_t *lval)
 {
-  ccedict_t *e=ccedict(ccedict_kFETCH,"fetch");
-  e->fetch.lval=lval;
-  e->fetch.type=type;
+  ccassert(type!=0);
+  ccassert(lval!=0);
+
+  ccedict_t *e=ccedict(ccedict_kFETCH);
+  e->type=type;
+  e->lval=lval;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_arith(cctoken_k opr, ccvalue_t *lhs, ccvalue_t *rhs)
+ccedict_laddr(cctype_t *type, ccvalue_t *lval)
 {
-  ccedict_t *e=ccedict(ccedict_kARITH,"arith");
-  e->arith.opr=opr;
-  e->arith.lhs=lhs;
-  e->arith.rhs=rhs;
+  ccassert(type!=0);
+  ccassert(lval!=0);
+
+  ccedict_t *e=ccedict(ccedict_kLADDR);
+  e->type=type;
+  e->lval=lval;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_jump(ccjump_point_t point)
+ccedict_aaddr(cctype_t *type, ccvalue_t *lval, ccvalue_t *rval)
 {
-  ccedict_t *e=ccedict(ccedict_kJUMP,point.label);
-  e->jump.blc=point.block;
-  e->jump.tar=point.index;
+  ccassert(type!=0);
+  ccassert(lval!=0);
+  ccassert(rval!=0);
+
+  ccedict_t *e=ccedict(ccedict_kAADDR);
+  e->type=type;
+  e->lval=lval;
+  e->rval=rval;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_tjump(ccjump_point_t point, ccvalue_t *cnd)
+ccedict_arith(cctoken_k sort, ccvalue_t *lval, ccvalue_t *rval)
 {
-  ccedict_t *e=ccedict(ccedict_kJUMPT,point.label);
-  e->jump.blc=point.block;
-  e->jump.tar=point.index;
-  e->jump.cnd=cnd;
+  ccedict_t *e=ccedict(ccedict_kARITH);
+  e->sort=sort;
+  e->lval=lval;
+  e->rval=rval;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_fjump(ccjump_point_t point, ccvalue_t *cnd)
+ccedict_jump(ccleap_t leap)
 {
-  ccedict_t *e=ccedict(ccedict_kJUMPF,point.label);
-  e->jump.blc=point.block;
-  e->jump.tar=point.index;
-  e->jump.cnd=cnd;
+  ccedict_t *e=ccedict(ccedict_kJUMP);
+  e->leap=leap;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
-ccedict_call(ccvalue_t *lval, ccvalue_t **rval)
+ccedict_tjump(ccleap_t leap, ccvalue_t *rval)
+{
+  ccassert(rval!=0);
+
+  ccedict_t *e=ccedict(ccedict_kJUMPT);
+  e->rval=rval;
+  e->leap=leap;
+  return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_fjump(ccleap_t leap, ccvalue_t *rval)
+{
+  ccassert(rval!=0);
+
+  ccedict_t *e=ccedict(ccedict_kJUMPF);
+  e->rval=rval;
+  e->leap=leap;
+  return e;
+}
+
+ccfunc ccinle ccedict_t *
+ccedict_call(ccvalue_t *lval, ccvalue_t **blob)
 {
   ccassert(lval!=0);
 
-  ccedict_t *e=ccedict(ccedict_kINVOKE,"invoke");
-  e->invoke.call=lval;
-  e->invoke.rval=rval;
+  ccedict_t *e=ccedict(ccedict_kINVOKE);
+  e->lval=lval;
+  e->blob=blob;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
 ccedict_return(ccvalue_t *rval)
 {
-  ccedict_t *e=ccedict(ccedict_kRETURN,"return");
-  e->ret.rval=rval;
+  ccedict_t *e=ccedict(ccedict_kRETURN);
+  e->rval=rval;
   return e;
 }
 
 ccfunc ccinle ccedict_t *
 ccedict_dbgbreak()
 {
-  ccedict_t *e=ccedict(ccedict_kDBGBREAK,"dbg_break");
-  return e;
+  return ccedict(ccedict_kDBGBREAK);
 }
 
 ccfunc ccinle ccedict_t *
 ccedict_dbgerror()
 {
-  ccedict_t *e=ccedict(ccedict_kDBGERROR,"dbg_error");
-  return e;
-}
-
-ccfunc ccinle ccedict_t *
-ccedict_laddr(ccvalue_t *lval)
-{
-  ccedict_t *e=ccedict(ccedict_kLADDR,"laddr");
-  e->addr.lval=lval;
-  return e;
-}
-
-ccfunc ccinle ccedict_t *
-ccedict_aaddr(ccvalue_t *lval, ccvalue_t *rval)
-{
-  ccedict_t *e=ccedict(ccedict_kAADDR,"aaddr");
-  e->addr.lval=lval;
-  e->addr.rval=rval;
-  return e;
+  return ccedict(ccedict_kDBGERROR);
 }
 
 #endif

@@ -5,17 +5,17 @@
 typedef enum ccexec_value_k ccexec_value_k;
 typedef enum ccexec_value_k
 {
-  ccexec_value_kINVALID = 0,
-  ccexec_value_kVALUE   = 1,
-  ccexec_value_kADDRESS = 2,
+  ccexec_value_kINVALID  = 0,
+  ccexec_value_kCONSTANT = 1,
+  ccexec_value_kADDRESS  = 2,
 } ccexec_value_k;
 
 typedef void *ccaddress_t;
 
 typedef struct ccexec_value_t ccexec_value_t;
 typedef struct ccexec_value_t
-{ const char *      name; // Note: for debugging
-  ccexec_value_k    kind;
+{ ccexec_value_k    kind;
+  cctype_t         *type;
 
   union
   { ccaddress_t    * address;

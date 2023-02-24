@@ -1,42 +1,16 @@
-
 // Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #ifndef _CCEXEC
 #define _CCEXEC
 
-ccfunc cci64_t
-ccsizeof(cctype_t *);
+ccfunc cci32_t ccsizeof(cctype_t *);
 
 // Note: allocates the register associated with this value ...
 ccfunc ccinle ccexec_value_t *
-ccload_alloc(ccexec_frame_t *frame, ccvalue_t *value)
+ccload_alloc(ccexec_frame_t *frame, ccvalue_t *owner, ccexec_value_k kind, cctype_t *type)
 {
-ccdbenter("ccload-alloc");
-  ccexec_value_t *result=cctblsetP(frame->values,value);
-ccdbleave("ccload-alloc");
-  return result;
-}
-
-ccfunc ccinle ccexec_value_t *
-ccloadI(ccexec_frame_t *frame, ccvalue_t *owner, cci64_t value, const char *name)
-{
-ccdbenter("ccload");
-  ccexec_value_t *result=ccload_alloc(frame,owner);
-  result->kind=ccexec_value_kVALUE;
-  result->name=name;
-  result->constI=value;
-ccdbleave("ccload");
-  return result;
-}
-
-ccfunc ccinle ccexec_value_t *
-ccloadA(ccexec_frame_t *frame, ccvalue_t *owner, ccaddress_t value, const char *name)
-{
-ccdbenter("ccload");
-  ccexec_value_t *result=ccload_alloc(frame,owner);
-  result->kind=ccexec_value_kADDRESS;
-  result->name=name;
-  result->address=value;
-ccdbleave("ccload");
+  ccexec_value_t *result=cctblsetP(frame->values,owner);
+  result->type=type;
+  result->kind=kind;
   return result;
 }
 
@@ -78,9 +52,11 @@ ccyield_rvalue(
       }
     } break;
     case ccvalue_kCONST:
-      result.kind=ccexec_value_kVALUE;
-      result.name="constant";
+      ccassert(couple->constant.type!=0);
+      // Todo:
+      result.kind=ccexec_value_kCONSTANT;
       result.value=couple->constant.clsc.value;
+      result.type=couple->constant.type;
     break;
     default:
       ccassert(!"error");
@@ -158,13 +134,14 @@ ccdbenter("stack-local-alloc");
   ccassert((edict->kind==ccedict_kLOCAL)||(edict->kind==ccedict_kPARAM),
     "cannot allocate local, expected an edict of type LOCAL or PARAM");
 
-  cci64_t size=ccsizeof(edict->local.type);
-  ccassert(size>=8);
+  cctype_t *type=edict->type;
+  cci32_t size=ccsizeof(type);
 
-  char *memory=(char*)ccstack_push_size(exec,(cci32_t)size); // Todo: cast
-  memset(memory,ccnil,size);
+  void *memory=ccstack_push_size(exec,size);
+  memset(memory,ccnull,size); // Todo:
 
-  ccexec_value_t *result=ccloadA(stack,value,memory,"local_alloc");
+  ccexec_value_t *result=ccload_alloc(stack,value,ccexec_value_kADDRESS,type);
+  result->address=memory;
 
 ccdbleave("stack-local-alloc");
   return result;
@@ -195,8 +172,8 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
   }
 
   ccexec_value_t v;
-  v.kind  =ccexec_value_kVALUE;
-  v.name  =n;
+  v.kind  =ccexec_value_kCONSTANT;
+  v.type  =lval.type;
   v.constI=i;
   return v;
 }
@@ -219,137 +196,175 @@ ccdbenter("exec-edict");
     // Note: this is simply to ensure we've set the parameters ...
     case ccedict_kPARAM:
     {
-ccdbenter("exec-edict-param");
       ccyield(stack,value);
-ccdbleave("exec-edict-param");
     } break;
     case ccedict_kLOCAL:
     {
-ccdbenter("exec-edict-local");
       ccstack_local_alloc(exec,stack,value);
-ccdbleave("exec-edict-local");
     } break;
     case ccedict_kAADDR:
-    {
-ccdbenter("exec-edict-Aaddr");
+    { ccassert(edict->type!=0);
+      ccassert(edict->lval!=0);
+      ccassert(edict->rval!=0);
+
+      cctype_t *type;
       ccexec_value_t lval,rval;
-      lval=ccyield_lvalue(stack,edict->addr.lval);
-      rval=ccyield_rvalue(stack,edict->addr.rval);
 
+      type=edict->type;
+      lval=ccyield_lvalue(stack,edict->lval);
+      rval=ccyield_rvalue(stack,edict->rval);
+
+      cci32_t size=ccsizeof(type);
       // Todo:
-      cci64_t *memory=cccast(cci64_t*,lval.address);
-      memory+=rval.constI;
-      ccloadA(stack,value,memory,"address");
+      char *memory=cccast(char*,lval.address);
+      memory+=size*rval.constI;
 
-ccdbleave("exec-edict-Aaddr");
+      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kADDRESS,type);
+      saved->address=(void*)memory;
     } break;
     case ccedict_kLADDR:
-    {
-ccdbenter("exec-edict-Laddr");
-      ccexec_value_t lval;
-      lval=ccyield_lvalue(stack,edict->addr.lval);
+    { ccassert(edict->type!=0);
+      ccassert(edict->lval!=0);
 
-      // Todo:
-      ccloadA(stack,value,lval.address,"address");
-ccdbleave("exec-edict-Laddr");
+      cctype_t *type;
+      ccexec_value_t lval;
+
+      type=edict->type;
+      lval=ccyield_lvalue(stack,edict->lval);
+
+      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kADDRESS,type);
+      saved->address=lval.address;
+
     } break;
     case ccedict_kFETCH:
     {
-ccdbenter("exec-edict-fetch");
+      ccassert(edict->type!=0);
+      ccassert(edict->lval!=0);
+
+      cctype_t *type;
       ccexec_value_t lval;
-      lval=ccyield_lvalue(stack,edict->fetch.lval);
+
+      type=edict->type;
+      lval=ccyield_lvalue(stack,edict->lval);
 
       if(!lval.address)
         ccassert(!"write access violation, nullptr");
 
       // Todo:
-      cci64_t *memory=cccast(cci64_t*,lval.address);
-      ccloadI(stack,value,*memory,"fetch");
-ccdbleave("exec-edict-fetch");
+      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kCONSTANT,type);
+      saved->kind=ccexec_value_kCONSTANT;
+      saved->constI=0;
+
+      // Todo:
+      cci32_t size=ccsizeof(type);
+      memcpy(&saved->constI,lval.address,size);
+
+      int BREAK;
+      BREAK = 0;
     } break;
-    // Todo: produce operand only if necessary and take into account the type
     case ccedict_kSTORE:
     {
-ccdbenter("exec-edict-store");
+      ccassert(edict->type!=0);
+      ccassert(edict->lval!=0);
+      ccassert(edict->rval!=0);
+
+      cctype_t *type;
       ccexec_value_t lval,rval;
-      lval=ccyield_lvalue(stack,edict->store.lval);
-      rval=ccyield_rvalue(stack,edict->store.rval);
+
+      type=edict->type;
+      lval=ccyield_lvalue(stack,edict->lval);
+      rval=ccyield_rvalue(stack,edict->rval);
 
       if(!lval.address)
         ccassert(!"write access violation, nullptr");
 
       // Todo:
-      memcpy(lval.address,&rval.value,sizeof(rval.value));
-      ccloadI(stack,value,rval.constI,"store");
-ccdbleave("exec-edict-store");
+      cci32_t size=ccsizeof(rval.type);
+      memcpy(lval.address,&rval.value,size);
+
+      // Todo: produce operand only if necessary and take into account the type
     } break;
     case ccedict_kARITH:
     {
 ccdbenter("exec-edict-arith");
-      ccexec_value_t lval,rval;
-      lval=ccyield_rvalue(stack,edict->arith.lhs);
-      rval=ccyield_rvalue(stack,edict->arith.rhs);
 
-      ccexec_value_t val=ccexec_edict_arith(edict->arith.opr,lval,rval);
-      ccloadI(stack,value,val.constI,val.name);
+      ccexec_value_t lval,rval;
+      cctoken_k sort;
+
+      sort=edict->sort;
+      lval=ccyield_rvalue(stack,edict->lval);
+      rval=ccyield_rvalue(stack,edict->rval);
+
+      ccexec_value_t val=ccexec_edict_arith(sort,lval,rval);
+
+      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kCONSTANT,ccnull);
+      *saved=val;
 
 ccdbleave("exec-edict-arith");
     } break;
     case ccedict_kJUMP:
-    { stack->current=edict->jump.blc;
-      stack->irindex=edict->jump.tar;
+    { ccassert(edict->leap.block!= 0);
+      ccassert(edict->leap.index!=-1);
+
+      stack->current=edict->leap.block;
+      stack->irindex=edict->leap.index;
     } break;
     case ccedict_kJUMPF:
-    {
-ccdbenter("exec-edict-jumpf");
-      ccexec_value_t
-      rval=ccyield_rvalue(stack,edict->jump.cnd);
+    { ccassert(edict->rval!=0);
+      ccassert(edict->leap.block!= 0);
+      ccassert(edict->leap.index!=-1);
+
+      ccexec_value_t rval=ccyield_rvalue(stack,edict->rval);
       if(!rval.constI)
-      { stack->current=edict->jump.blc;
-        stack->irindex=edict->jump.tar;
+      { stack->current=edict->leap.block;
+        stack->irindex=edict->leap.index;
       }
-ccdbleave("exec-edict-jumpf");
     } break;
     case ccedict_kJUMPT:
-    {
-ccdbenter("exec-edict-jumpt");
-      ccexec_value_t
-      rval=ccyield_rvalue(stack,edict->jump.cnd);
+    { ccassert(edict->rval!=0);
+      ccassert(edict->leap.block!= 0);
+      ccassert(edict->leap.index!=-1);
+
+      ccexec_value_t rval=ccyield_rvalue(stack,edict->rval);
+
       if(rval.constI)
-      { stack->current=edict->jump.blc;
-        stack->irindex=edict->jump.tar;
+      { stack->current=edict->leap.block;
+        stack->irindex=edict->leap.index;
       }
-ccdbleave("exec-edict-jumpt");
     } break;
     case ccedict_kRETURN:
     {
-ccdbenter("exec-edict-return");
-      stack->result=ccyield_rvalue(stack,edict->ret.rval);
+      stack->result=ccyield_rvalue(stack,edict->rval);
       result=ccfalse;
-ccdbleave("exec-edict-return");
     } break;
     case ccedict_kINVOKE:
     {
 ccdbenter("exec-edict-invoke");
 
-      int rlen=ccarrlen(edict->invoke.rval);
+      int rlen=ccarrlen(edict->blob);
+
+      // Todo: proper push
       ccexec_value_t *rval=ccstack_push(exec,rlen);
-      ccexec_value_t *setr=rval;
-      ccvalue_t **list=ccnil;
-      ccarrfor(edict->invoke.rval,list)
-        *setr++=ccyield_rvalue(stack,*list);
+      ccexec_value_t *rset=rval;
+
+      ccvalue_t **list;
+      ccarrfor(edict->blob,list)
+        *rset++=ccyield_rvalue(stack,*list);
 
       // Note: save the return value ...
-      ccexec_value_t *ret=ccload_alloc(stack,value);
+      ccexec_value_t *ret=ccload_alloc(stack,value,ccexec_value_kCONSTANT,ccnull);
 
-      if(edict->invoke.call->kind==ccvalue_kPROCD)
+      if(edict->lval->kind==ccvalue_kPROCD)
       {
-        if(!ccexec_invoke(exec,edict->invoke.call,ret,rlen,rval))
-          ccassert(!"no-return value, error");
+        // Note: should not have to check this, just fail ...
+        if(!ccexec_invoke(exec,edict->lval,ret,rlen,rval))
+          cctraceerr("internal",0);
+
       } else
-      if(edict->invoke.call->kind==ccvalue_kPROCU)
+      if(edict->lval->kind==ccvalue_kPROCU)
       {
-        *ret=edict->invoke.call->procu->proc(exec,value,rlen,rval);
+        // Todo: this is weird ...
+        *ret=edict->lval->procu->proc(exec,value,rlen,rval);
       }
 
       ccstack_pull(exec,rlen);
@@ -378,24 +393,21 @@ ccdbleave("exec-edict");
   return result;
 }
 
-ccfunc cci64_t
+ccfunc cci32_t
 ccsizeof(cctype_t *type)
 {
-  if(type->kind==cctype_kPOINTER)
-  {
-    return sizeof(char*);
-  } else
+  ccassert(type!=0);
+  ccassert(type->size!=0);
+
+  ccassert(type->kind!=cctype_kFUNCTION);
+
   if(type->kind==cctype_kARRAY)
   {
-    cci64_t size=ccsizeof(type->type);
-    size*=type->size;
-    return size;
+    return type->size*ccsizeof(type->type);
   } else
-  if(type->kind==cctype_kTYPENAME)
-  { return sizeof(cci64_t);
+  {
+    return type->size/8;
   }
-  ccassert(!"error");
-  return 0;
 }
 
 ccfunc int
@@ -465,8 +477,7 @@ ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
 
   ccexec_value_t *args=ccnil;
   ccexec_value_t *arg=ccarrone(args);
-  arg->name   ="arg-0";
-  arg->kind   =ccexec_value_kADDRESS;
+  arg->kind   =ccexec_value_kCONSTANT;
   arg->constI =ARG;
 
   ccexec_value_t ret;

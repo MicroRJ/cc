@@ -2,9 +2,6 @@
 #ifndef _CCCOLOR
 #define _CCCOLOR
 
-
-
-
 // Todo: actually setup the color table properly ...
 // CONSOLE_SCREEN_BUFFER_INFOEX e={sizeof(e)};
 // if(GetConsoleScreenBufferInfoEx(h,&e))

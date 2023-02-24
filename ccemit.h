@@ -58,6 +58,7 @@ typedef struct ccprocd_t ccprocd_t;
 typedef struct ccprocd_t
 { const char *label; // Note: for debugging
 
+  // Todo: do we want to store this?
   ccesse_t  * esse;
 
   // Note: stores all of our values (locals and parameters),
@@ -89,18 +90,18 @@ ccfunc ccinle ccvalue_t * ccvalue(const char *label);
 ccfunc ccinle ccblock_t * ccblock(const char *label);
 
 
-#define ccblock_store(block,lval,rval)    ccblock_add_edict(block,ccedict_store(lval,rval))
-#define ccblock_fetch(block,lval,type)    ccblock_add_edict(block,ccedict_fetch(lval,type))
-#define ccblock_laddr(block,lval)         ccblock_add_edict(block,ccedict_laddr(lval))
-#define ccblock_aaddr(block,lval,rval)    ccblock_add_edict(block,ccedict_aaddr(lval,rval))
-#define ccblock_arith(block,opr,lhs,rhs)  ccblock_add_edict(block,ccedict_arith(opr,lhs,rhs))
-#define ccblock_return(block,rval)        ccblock_add_edict(block,ccedict_return(rval))
-#define ccblock_invoke(block,lval,rval)   ccblock_add_edict(block,ccedict_call(lval,rval))
-#define ccblock_jump(block,tar)           ccblock_add_edict(block,ccedict_jump(tar))
-#define ccblock_fjump(block,tar,con)      ccblock_add_edict(block,ccedict_fjump(tar,con))
-#define ccblock_tjump(block,tar,con)      ccblock_add_edict(block,ccedict_tjump(tar,cnd))
-#define ccblock_dbgbreak(block)           ccblock_add_edict(block,ccedict_dbgbreak())
-#define ccblock_dbgerror(block)           ccblock_add_edict(block,ccedict_dbgerror())
+#define ccblock_store(block,...)  ccblock_add_edict(block,ccedict_store(__VA_ARGS__))
+#define ccblock_fetch(block,...)  ccblock_add_edict(block,ccedict_fetch(__VA_ARGS__))
+#define ccblock_laddr(block,...)  ccblock_add_edict(block,ccedict_laddr(__VA_ARGS__))
+#define ccblock_aaddr(block,...)  ccblock_add_edict(block,ccedict_aaddr(__VA_ARGS__))
+#define ccblock_arith(block,...)  ccblock_add_edict(block,ccedict_arith(__VA_ARGS__))
+#define ccblock_return(block,...) ccblock_add_edict(block,ccedict_return(__VA_ARGS__))
+#define ccblock_invoke(block,...) ccblock_add_edict(block,ccedict_call(__VA_ARGS__))
+#define ccblock_jump(block,...)   ccblock_add_edict(block,ccedict_jump(__VA_ARGS__))
+#define ccblock_fjump(block,...)  ccblock_add_edict(block,ccedict_fjump(__VA_ARGS__))
+#define ccblock_tjump(block,...)  ccblock_add_edict(block,ccedict_tjump(__VA_ARGS__))
+#define ccblock_dbgbreak(block)   ccblock_add_edict(block,ccedict_dbgbreak())
+#define ccblock_dbgerror(block)   ccblock_add_edict(block,ccedict_dbgerror())
 
 ccfunc ccvalue_t *
 ccprocd_local(ccprocd_t *func, cctree_t *tree)
@@ -152,6 +153,12 @@ ccfunc ccvalue_t *
 ccemit_global(ccemit_t *emit, const char *label)
 {
   ccvalue_t **v=cctblgetS(emit->globals,label);
+  if(!ccerrnon())
+  {
+  	const char *errstr=ccerrstr();
+
+  	cctraceerr("'%s': failed to emit global, %s",label,errstr);
+  }
   ccassert(ccerrnon());
 
   ccvalue_t *value=*v;
@@ -171,24 +178,30 @@ ccemit_include_global(ccemit_t *emit, const char *label)
 }
 
 ccfunc ccinle void
-ccvalue_retarget(ccvalue_t *value, ccjump_point_t p)
+ccvalue_retarget(ccvalue_t *value, ccleap_t p)
 {
-  ccassert(value!=ccnil);
+  ccassert(value!=0);
   ccassert(value->kind==ccvalue_kEDICT);
 
-  ccedict_retarget(value->edict,p);
+  ccassert(value->edict!=0);
+  ccassert((value->edict->kind==ccedict_kJUMP)||
+           (value->edict->kind==ccedict_kJUMPT)||
+           (value->edict->kind==ccedict_kJUMPF));
+
+
+  value->edict->leap=p;
 }
 
-ccfunc ccjump_point_t
+ccfunc ccleap_t
 ccblock_label_ex(ccblock_t *block, int index, ccstr_t label)
-{ ccjump_point_t t;
+{ ccleap_t t;
   t.label=label;
   t.block=block;
   t.index=index;
   return t;
 }
 
-ccfunc ccjump_point_t
+ccfunc ccleap_t
 ccblock_label(ccblock_t *block, ccstr_t label)
 { return ccblock_label_ex(block,ccarrlen(block->edict),label);
 }

@@ -147,10 +147,6 @@ cctree_clone(cctree_t *tree)
   return result;
 }
 
-
-
-
-
 ccfunc ccstr_t
 cctree_name(cctree_t *name)
 {

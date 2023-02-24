@@ -144,12 +144,13 @@ typedef enum ccerr_k
   ccerr_kNON=0,
   ccerr_kNIT,
   ccerr_kAIT,
-  ccerr_kOOM,
-  ccerr_kIUA,
-  ccerr_kNAS,
-  ccerr_kIOB,
-  ccerr_kCHB,
 } ccerr_k;
+
+ccglobal const char *ccerr_s[]=
+{ "none",
+  "not in table",
+  "already in table",
+};
 
 typedef enum ccfile_k
 {
@@ -171,18 +172,6 @@ typedef struct cccaller_t
   int           line;
   const char   *func;
 } cccaller_t;
-
-
-ccglobal const char *ccerr_s[]=
-{
-  "NON: None."
-  "NIT: Not in table."
-  "AIT: Already in table."
-  "OOM: Out of memory."
-  "IUA: Invalid user argument."
-  "NAS: No allocator in stack."
-  "CHB: Corrupted heap block."
-};
 
 // Note: simple allocator function, must-have for switching the allocator of debug routines ...
 typedef void *(ccallocator_t)(size_t,void *);
@@ -283,6 +272,7 @@ ccfunc void *ccinternalallocator_(size_t,void*);
 // Note: global error and key
 ccglobal ccthread_local ccerr_k ccerr;
 ccglobal ccthread_local ccstr_t cckey;
+#define ccerrstr()    (ccerr_s[ccerr])
 #define ccerrset(err) ((ccerr=err),0)
 #define ccerrnon()    ((ccerr)==ccerr_kNON)
 #define ccerrsom()    ((ccerr)!=ccerr_kNON)
@@ -468,7 +458,7 @@ typedef struct ccblock_t ccblock_t;
 typedef struct ccprocd_t ccprocd_t;
 typedef struct ccexec_value_t ccexec_value_t;
 
-typedef struct ccjump_point_t ccjump_point_t;
+typedef struct ccleap_t ccleap_t;
 
 typedef struct cctype_t cctype_t;
 typedef struct cctree_t cctree_t;

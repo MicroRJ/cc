@@ -14,6 +14,7 @@ int fib(int x)
   return x;
 }
 
+// Todo:
 ccfunc ccexec_value_t
 ccassert__(ccexec_t *exec, ccvalue_t *value, cci32_t argc, ccexec_value_t *args)
 {
@@ -23,6 +24,89 @@ ccassert__(ccexec_t *exec, ccvalue_t *value, cci32_t argc, ccexec_value_t *args)
   ccassert(args->constI);
 
   return r;
+}
+
+// Todo:
+ccfunc ccexec_value_t
+ccprintf__(ccexec_t *exec, ccvalue_t *value, cci32_t n, ccexec_value_t *i)
+{
+  ccassert(n>=1);
+
+  HANDLE h=GetStdHandle(STD_OUTPUT_HANDLE);
+
+  const char *r=(char*)i->address;
+
+  char c;
+  for(;c=*r;c)
+  {
+    for(; (c!='\0')&&(c!='%') &&
+         !(c=='<'&&r[1]=='!') &&
+         !(c=='!'&&r[1]=='>'); r+=1,c=*r) printf("%c",c);
+
+    if(c=='\0')
+      break;
+
+    if(!n)
+      break;
+
+    n--;
+
+    if(c=='<')
+    { r+=2,c=*r;
+      if(CCWITHIN(c,'0','9'))
+        cccolorpush(),cccolormove(0x00+c-'0'),r+=1,c=*r;
+      else
+      if(CCWITHIN(c,'A','F'))
+        cccolorpush(),cccolormove(0x0A+c-'A'),r+=1,c=*r;
+      else
+      if(CCWITHIN(c,'a','f'))
+        cccolorpush(),cccolormove(0x0A+c-'a'),r+=1,c=*r;
+      else
+      if(c=='%'&&r[1]=='i')
+        cccolorpush(),cccolormove((cci16_t)i->constI),r+=2,c=*r;
+      else
+        ccassert(!"error");
+    } else
+    if(c=='!')
+    { cccolorload(),r+=2,c=*r;
+    } else
+    if(c=='%')
+    { r+=1,c=*r;
+      if(c=='%')
+        printf("%%"),r+=1,c=*r;
+      else
+      if(c=='i')
+        printf("%i",(cci32_t)i->constI),r+=1,c=*r;
+      else
+      if(c=='c')
+        printf("%c",(char)i->constI),r+=1,c=*r;
+      else
+      if(c=='s')
+        printf("%s",(char *)i->value),r+=1,c=*r;
+      else
+      if(c=='p')
+        printf("%p",(void *)i->constI),r+=1,c=*r;
+      else
+      if(c=='f')
+        printf("%f",i->constR),r+=1,c=*r;
+      else
+      { if(c=='l'&&r[1]=='l'&&r[2]=='i')
+          printf("%lli",i->constI),r+=3,c=*r;
+        else
+        if(c=='l'&&r[1]=='l'&&r[2]=='u')
+          printf("%llu",i->constU),r+=3,c=*r;
+        else
+          ccassert(!"error");
+      }
+    }
+
+
+    SetConsoleTextAttribute(h,cccolorstate.v);
+  }
+
+  ccexec_value_t z;
+  z.constI=1;
+  return z;
 }
 
 ccfunc ccexec_value_t buildrunfile(const char *filename)
@@ -44,11 +128,21 @@ ccdbenter("build-run-file");
   ccexec_init(&exec);
 
   // Todo:
-  ccvalue_t *v=ccemit_include_global(&emit,"ccassert");
-  v->kind=ccvalue_kPROCU;
-  ccprocu_t *p=ccprocu("ccassert");
-  v->procu=p;
-  p->proc=ccassert__;
+  {
+    ccvalue_t *v=ccemit_include_global(&emit,"ccassert");
+    v->kind=ccvalue_kPROCU;
+    ccprocu_t *p=ccprocu("ccassert");
+    v->procu=p;
+    p->proc=ccassert__;
+  }
+
+  {
+    ccvalue_t *v=ccemit_include_global(&emit,"ccprintf");
+    v->kind=ccvalue_kPROCU;
+    ccprocu_t *p=ccprocu("ccprintf");
+    v->procu=p;
+    p->proc=ccprintf__;
+  }
 
 ccdbenter("read");
   ccread_include(&read,filename);
