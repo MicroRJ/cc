@@ -10,7 +10,7 @@ int fib(int e)
 
 int main(int _)
 {
-	ccprintf("Hello, Sailor!\n");
+	ccprintf("Hello, Sailor! %i\n",22);
 
   int i,x,y,z,*p,q;
   char *o,*u;

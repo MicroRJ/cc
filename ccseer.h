@@ -32,6 +32,8 @@ typedef struct cctype_t
   cctype_t   * type;
   cci32_t      size;
   cctype_t   * list;
+
+  int is_variadic;
 } cctype_t;
 
 typedef enum ccesse_k ccesse_k;
