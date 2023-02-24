@@ -8,16 +8,55 @@ int fib(int e)
   return e;
 }
 
+int set_to_one(int *j)
+{
+  j[0]=1;
+}
+
 int main(int _)
 {
-  ccprintf("Hello, Sailor! %i\n",22);
-
   int i,x,y,z,*p,q;
   char *o,*u;
   int a[24];
   int b[24][24];
   int c[24][24][24];
 
+  z=777;
+
+  p=&z;
+  z=*p;
+  ccassert(z==777);
+
+  *p=1;
+  ccassert(z==1);
+
+
+  p=&x; ccassert(p==&x);
+  p=&y; ccassert(p==&y);
+  p=&z; ccassert(p==&z);
+
+  p[0]=1;
+  ccassert(z==1);
+
+  z=*p;
+  ccassert(z==1);
+
+  set_to_one(&i);
+  ccassert(i==1);
+
+  char *mem;
+  mem=ccmalloc(24);
+
+  mem[0]=97;
+  mem[1]=98;
+  mem[2]=99;
+
+  ccprintf("Hello, %s %i, %i\n","Sailor!",3,mem[0]);
+
+  void *file;
+  file=ccopenfile("code\\hello.txt","w");
+
+  ccpushfile(file,0,3,mem);
 
   ccbreak();
   ccerror();

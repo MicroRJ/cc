@@ -18,6 +18,7 @@ ccglobal cctype_t
   *cctype_msvc_int16,
   *cctype_msvc_int32,
   *cctype_msvc_int64,
+  *cctype_void_ptr,
   *cctype_stdc_char_ptr;
 
 ccfunc void ccseer_tree(ccseer_t *seer, cctree_t *);
@@ -106,11 +107,12 @@ ccseer_allude(ccseer_t *seer, cctree_t *tree, const char *name)
 
 // Todo:
 ccfunc ccesse_t *
-ccesse_builtin(ccbuitin_k builtin)
+ccesse_builtin(ccesse_sort_k sort)
 { ccesse_t *e=ccmalloc_T(ccesse_t);
   e->kind=ccesse_kFUNCTION;
-  e->builtin=builtin;
+  e->sort=sort;
 
+  // Todo: proper modifier
   e->type=cctype_function_modifier(cctype_stdc_int,ccnull,ccfalse);
   return e;
 }
@@ -156,22 +158,18 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
         // Todo:
         char lbuf[256];
         char rbuf[256];
+				cctype_to_string(ltype,lbuf);
+        cctype_to_string(rtype,rbuf);
 
         for(;;)
         {
           if(cctype_indirect(ltype)!=cctype_indirect(rtype))
           {
-            cctype_to_string(ltype,lbuf);
-            cctype_to_string(rtype,rbuf);
-
             cctraceerr("'=': '%s' differs in levels of indirection from '%s'",lbuf,rbuf);
           } else
           if((ltype->kind!=rtype->kind) ||
              (ltype->sort!=rtype->sort))
           {
-            cctype_to_string(ltype,lbuf);
-            cctype_to_string(rtype,rbuf);
-
             cctraceerr("'=': incompatible types - from '%s' to '%s'",lbuf,rbuf);
           }
 
@@ -485,13 +483,12 @@ ccseer_init(ccseer_t *seer)
   cctype_msvc_int32    =cctype_specifier(0x20,cctoken_kMSVC_INT32);
   cctype_msvc_int64    =cctype_specifier(0x40,cctoken_kMSVC_INT64);
 
-  cctype_stdc_char_ptr =cctype_pointer_modifier(cctype_stdc_char);
+  cctype_void_ptr=cctype_pointer_modifier(cctype_void);
+  cctype_stdc_char_ptr=cctype_pointer_modifier(cctype_stdc_char);
 
   // Todo:!
-  ccseer_include_entity(seer,ccesse_builtin(ccbuiltin_kCCASSERT), "ccassert");
   ccseer_include_entity(seer,ccesse_builtin(ccbuiltin_kCCBREAK), "ccbreak");
   ccseer_include_entity(seer,ccesse_builtin(ccbuiltin_kCCERROR), "ccerror");
-  ccseer_include_entity(seer,ccesse_builtin(ccbuiltin_kCCPRINTF), "ccprintf");
 }
 
 ccfunc void

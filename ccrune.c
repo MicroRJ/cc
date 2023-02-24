@@ -24,6 +24,7 @@ ccread_token(ccread_t *l, cctoken_t *token)
 
 ccfunc void ccread_next_token_internal(ccread_t *l);
 
+// Todo: you only ever do this one at the beginning of the file!
 ccfunc cci32_t
 ccread_next_token(ccread_t *l)
 {
@@ -124,8 +125,6 @@ ccdbleave("string_token");
 ccfunc void
 ccread_next_token_internal(ccread_t *l)
 {
-ccdbenter("next_token_internal");
-
   l->tok_min=l->tok_max;
 
   l->tok.loc=l->tok_min;
@@ -251,7 +250,7 @@ ccdbenter("next_token_internal");
     } break;
     case '~':
     {
-      l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_invert;
+      l->tok_max += 1, l->tok.bit = cctoken_kBWINV;
     } break;
     // .
     // ...
@@ -269,7 +268,7 @@ ccdbenter("next_token_internal");
       if(l->tok_max[1]=='=')
       { l->tok_max += 2, l->tok.bit = cctoken_kBWXOR_EQL;
       } else
-      { l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_xor;
+      { l->tok_max += 1, l->tok.bit = cctoken_kBWXOR;
       }
     } break;
     // ||
@@ -278,12 +277,12 @@ ccdbenter("next_token_internal");
     case '|':
     {
       if(l->tok_max[1]=='|')
-      { l->tok_max += 2, l->tok.bit = cctoken_Klogical_or;
+      { l->tok_max += 2, l->tok.bit = cctoken_kLGOR;
       } else
       if(l->tok_max[1]=='=')
       { l->tok_max += 2, l->tok.bit = cctoken_kBWOR_EQL;
       } else
-      { l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_or;
+      { l->tok_max += 1, l->tok.bit = cctoken_kBWOR;
       }
     } break;
     // &&
@@ -292,12 +291,12 @@ ccdbenter("next_token_internal");
     case '&':
     {
       if(l->tok_max[1]=='&')
-      { l->tok_max += 2, l->tok.bit = cctoken_Klogical_and;
+      { l->tok_max += 2, l->tok.bit = cctoken_kLGAND;
       } else
       if(l->tok_max[1]=='=')
       { l->tok_max += 2, l->tok.bit = cctoken_kBWAND_EQL;
       } else
-      { l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_and;
+      { l->tok_max += 1, l->tok.bit = cctoken_kBWAND;
       }
     } break;
     // /=
@@ -350,7 +349,7 @@ ccdbenter("next_token_internal");
     { if(l->tok_max[1]=='=')
       { l->tok_max += 2, l->tok.bit = cctoken_kFEQ;
       } else
-      { l->tok_max += 2, l->tok.bit = cctoken_kNEG;
+      { l->tok_max += 2, l->tok.bit = cctoken_kLGNEG;
       }
     } break;
     // >=
@@ -380,7 +379,7 @@ ccdbenter("next_token_internal");
       if(l->tok_max[1]=='=')
       { l->tok_max += 2, l->tok.bit = cctoken_kMOD_EQL;
       } else
-      { l->tok_max += 1, l->tok.bit = cctoken_Kmod;
+      { l->tok_max += 1, l->tok.bit = cctoken_kMOD;
       }
     } break;
 
@@ -419,7 +418,6 @@ ccdbenter("next_token_internal");
   l->tok.term_expl = 0;
   l->tok.term_expl = 0;
 
-ccdbenter("token-trailing");
   while(l->tok_max<l->doc_max)
   { switch(*l->tok_max)
     { case ' ': case '\t': case '\f': case '\v': case '\b':
@@ -442,14 +440,11 @@ ccdbenter("token-trailing");
         l->tok.term_expl ++;
       } continue;
     }
-    goto leave_token_trailing;
+    goto leave;
   }
 
-leave_token_trailing:
-ccdbleave("token-trailing");
+leave:;
 
-leave:
-ccdbleave("next_token_internal");
 }
 
 #endif

@@ -27,6 +27,14 @@ typedef struct ccconstant_t
   ccclassic_t   clsc;
 } ccconstant_t;
 
+typedef ccexec_value_t (ccbinding_t)(ccexec_t *,ccvalue_t *,cci32_t, ccexec_value_t *);
+
+typedef struct ccprocu_t ccprocu_t;
+typedef struct ccprocu_t
+{ cctype_t    * type;
+  ccbinding_t * proc;
+} ccprocu_t;
+
 typedef struct ccvalue_t ccvalue_t;
 typedef struct ccvalue_t
 { ccvalue_k       kind;
@@ -44,27 +52,12 @@ typedef struct ccblock_t
 { ccvalue_t  * *edict;
 } ccblock_t;
 
-typedef struct ccprocu_t ccprocu_t;
-typedef struct ccprocu_t
-{ cctype_t   * type;
-  ccexec_value_t (*proc)(ccexec_t *,ccvalue_t *,cci32_t, ccexec_value_t *);
-} ccprocu_t;
-
 typedef struct ccprocd_t ccprocd_t;
 typedef struct ccprocd_t
-{ // Todo: do we want to store this?
-  ccesse_t  * esse;
-
-  // Note: stores all of our values (locals and parameters),
-  // edicts will reference values stored here ...
+{ ccesse_t   *esse;
   ccvalue_t **local;
-
   ccblock_t **block;
-
-  // Todo: stores all of our LOCAL and PARAM edicts end a JUMP to the enter routine,
-  // to be revised ... there's no need for the jump is there?
   ccblock_t  *decls;
-
   ccblock_t  *enter;
   ccblock_t  *leave;
 } ccprocd_t;

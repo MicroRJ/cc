@@ -2,24 +2,20 @@
 #ifndef _CCSEER_H
 #define _CCSEER_H
 
-
-typedef enum ccbuitin_k ccbuitin_k;
-typedef enum ccbuitin_k
+// Todo: sizeof
+// Todo: typeof
+typedef enum ccesse_sort_k ccesse_sort_k;
+typedef enum ccesse_sort_k
 {
   ccbuiltin_kINVALID=0,
-  ccbuiltin_kCCASSERT,
   ccbuiltin_kCCBREAK,
   ccbuiltin_kCCERROR,
-  ccbuiltin_kCCPRINTF,
-} ccbuitin_k;
+} ccesse_sort_k;
 
 typedef enum cctype_k cctype_k;
 typedef enum cctype_k
-{
-  cctype_kINVALID=0,
-
+{ cctype_kINVALID=0,
   cctype_kSPECIFIER,
-
   cctype_kFUNCTION,
   cctype_kPOINTER,
   cctype_kARRAY,
@@ -39,23 +35,17 @@ typedef struct cctype_t
 typedef enum ccesse_k ccesse_k;
 typedef enum ccesse_k
 { ccesse_kINVALID=0,
+  ccesse_kCBINDING,
   ccesse_kTYPENAME,
   ccesse_kFUNCTION,
   ccesse_kVARIABLE,
 } ccesse_k;
 
-ccglobal const char *ccesse_s[]=
-{ "INVALID",
-  "TYPENAME",
-  "FUNCTION",
-  "VARIABLE",
-};
-
 // Note: what is an actual entity?
 typedef struct ccesse_t ccesse_t;
 typedef struct ccesse_t
 { ccesse_k       kind;
-  ccbuitin_k     builtin;
+  ccesse_sort_k  sort;
   cctree_t     * tree;
   cctype_t     * type;
   const char   * name;

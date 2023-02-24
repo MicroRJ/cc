@@ -30,6 +30,8 @@
 // Note: suppress warnings ...
 #ifdef _MSC_VER
 # pragma warning(disable:4053)
+# pragma warning(disable:4311) // cast pointer to int
+# pragma warning(disable:4312) // cast int to pointer
 # pragma warning(disable:4706)
 #ifdef _DEVELOPER
 # pragma warning(disable:4189)
@@ -415,7 +417,7 @@ ccfunc ccinle ccclocktime_t ccclocktick();
 ccfunc ccinle ccf64_t       ccclocksecs(ccu64_t);
 
 // Note: this file api leaves much to be desired ...
-ccfunc void *   ccopenfile (const char *, ccfile_k);
+ccfunc void *   ccopenfile (const char *, const char *);
 ccfunc int      ccrealfile ( void * );
 ccfunc void     ccclosefile( void * );
 ccfunc void   * ccpullfile ( void *, ccu32_t, ccu32_t *     );
@@ -448,20 +450,10 @@ ccfunc void cctrace_(const char *label, const char *format, ...);
 #endif
 
 // Note:
-typedef struct ccedict_t ccedict_t;
-typedef struct ccread_t  ccread_t;
-typedef struct ccemit_t  ccemit_t;
-typedef struct ccexec_t  ccexec_t;
-
-typedef struct ccvalue_t ccvalue_t;
-typedef struct ccblock_t ccblock_t;
-typedef struct ccprocd_t ccprocd_t;
+typedef struct ccexec_t       ccexec_t;
+typedef struct ccvalue_t      ccvalue_t;
+typedef struct ccblock_t      ccblock_t;
 typedef struct ccexec_value_t ccexec_value_t;
-
-typedef struct ccleap_t ccleap_t;
-
-typedef struct cctype_t cctype_t;
-typedef struct cctree_t cctree_t;
 
 #include "ccread.h"
 #include "cctree.h"
@@ -473,10 +465,12 @@ typedef struct cctree_t cctree_t;
 #include "ccemit.h"
 #include "ccexec.h"
 
-#include "cclex.c"
+#include "ccrune.c"
 #include "ccread.c"
 #include "ccemit.c"
 #include "ccexec.c"
+#include "cccore.c"
+
 // #include "ccemit-c.c"
 
 

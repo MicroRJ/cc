@@ -75,7 +75,8 @@ ccemit_invoke_easy(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *
   ccassert(ltree->kind==cctree_kLITIDE);
 
   ccesse_t *esse=ccseer_symbol(emit->seer,ltree);
-  switch(esse->builtin)
+
+  switch(esse->sort)
   { case ccbuiltin_kCCBREAK: return ccblock_dbgbreak(block);
     case ccbuiltin_kCCERROR: return ccblock_dbgerror(block);
   }
@@ -175,17 +176,22 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       ccassert(tree->rval!=0);
 
       if(tree->sort==cctoken_kDEREFERENCE)
-      { // Care:
-        cctype_t *type=ccseer_tree_type(emit->seer,tree);
+      {
+        cctype_t *type=ccseer_tree_type(emit->seer,tree->rval);
 
-        result=ccblock_fetch(block,type,ccemit_lvalue(emit,procd,block,tree->rval));
+        result=ccemit_value(emit,procd,block,tree->rval,1);
+
+        if(type->kind==cctype_kPOINTER)
+          result=ccblock_fetch(block,type,result);
+
+        if(!is_lval)
+          result=ccblock_fetch(block,type->type,result);
       } else
       if(tree->sort==cctoken_kADDRESSOF)
       { ccassert(!is_lval);
 
         // Care:
         cctype_t *type=ccseer_tree_type(emit->seer,tree);
-
         result=ccblock_laddr(block,type,ccemit_lvalue(emit,procd,block,tree->rval));
       } else
         ccassert(!"internal");
@@ -234,7 +240,6 @@ ccemit_decl(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *decl)
 { cctree_t **list;
   ccarrfor(decl->list,list) ccemit_decl_name(emit,func,block,*list);
 }
-
 
 ccfunc ccvalue_t *
 ccemit_tree(
@@ -320,54 +325,56 @@ ccemit_external_decl(ccemit_t *emit, ccesse_t *esse)
 {
   ccassert(esse!=0);
 
+  if(esse->kind!=ccesse_kFUNCTION)
+    return;
+
   // Todo:
-  if(esse->builtin!=ccbuiltin_kINVALID)
+  if(esse->sort!=ccbuiltin_kINVALID)
     return;
 
   if(!(esse->tree->mark&cctree_mEXTERNAL))
     return;
 
+  if(!esse->tree->blob)
+    return;
+
+
   ccassert(esse->tree!=0);
   ccassert(esse->type!=0);
   ccassert(esse->name!=0);
 
-  if(esse->kind==ccesse_kFUNCTION)
-  {
-  	if(!esse->tree->blob)
-  		return;
+  ccprocd_t *p=ccmalloc_T(ccprocd_t);
+  memset(p,0,sizeof(*p));
 
-    ccprocd_t *p=ccmalloc_T(ccprocd_t);
-    memset(p,0,sizeof(*p));
+  p->esse=esse;
 
-    p->esse=esse;
+  // Todo:
+  *ccarradd(p->block,1)=p->decls=ccblock();
+  *ccarradd(p->block,1)=p->enter=ccblock();
+  *ccarradd(p->block,1)=p->leave=ccblock();
 
-    // Todo:
-    *ccarradd(p->block,1)=p->decls=ccblock();
-    *ccarradd(p->block,1)=p->enter=ccblock();
-    *ccarradd(p->block,1)=p->leave=ccblock();
+  // Todo:
+  ccvalue_t *v=ccemit_include_global(emit,esse->name);
+  v->kind=ccvalue_kPROCD;
+  v->procd=p;
 
-    // Todo:
-    ccvalue_t *v=ccemit_include_global(emit,esse->name);
-    v->kind=ccvalue_kPROCD;
-    v->procd=p;
+  // Todo:
+  emit->current=p->enter;
 
-    // Todo:
-    emit->current=p->enter;
+  // Note: emit all the parameters first ...
+  cctree_t **list;
+  ccarrfor(esse->tree->type->list,list)
+    ccemit_param(emit,p,emit->current,*list);
 
-    // Note: emit all the parameters first ...
-    cctree_t **list;
-    ccarrfor(esse->tree->type->list,list)
-      ccemit_param(emit,p,emit->current,*list);
+  ccarrfor(esse->tree->blob->list,list)
+    ccemit_tree(emit,p,emit->current,*list);
 
-    ccarrfor(esse->tree->blob->list,list)
-      ccemit_tree(emit,p,emit->current,*list);
+  ccblock_jump(p->decls,ccblock_label_ex(p->enter,0,".E"));
 
-    ccblock_jump(p->decls,ccblock_label_ex(p->enter,0,".E"));
+  if(!strcmp(esse->tree->name,"main"))
+    emit->entry=v;
 
-    if(!strcmp(esse->tree->name,"main")) emit->entry=v;
-
-  } else
-    ccassert(!"error");
+  cctracelog("built: %s",esse->tree->name);
 }
 
 ccfunc void

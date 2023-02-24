@@ -14,71 +14,30 @@ int fib(int x)
   return x;
 }
 
-// Todo:
-ccfunc ccexec_value_t
-ccassert__(ccexec_t *exec, ccvalue_t *value, cci32_t argc, ccexec_value_t *args)
+// Todo: temporary!
+ccfunc void
+ccregister(ccseer_t *seer, ccemit_t *emit, const char *name, cctype_t *retr, ccbinding_t *binding)
 {
-  ccexec_value_t r;
-  r.constI=1;
+  ccesse_t *e=ccmalloc_T(ccesse_t);
+  e->kind=ccesse_kCBINDING;
+  e->sort=ccbuiltin_kINVALID;
+  // Todo: proper modifier
+  e->type=cctype_function_modifier(retr,ccnull,ccfalse);
 
-  ccassert(args->constI);
-
-  return r;
-}
-
-// Todo:
-ccfunc ccexec_value_t
-ccprintf__(ccexec_t *exec, ccvalue_t *value, cci32_t n, ccexec_value_t *i)
-{
-  ccassert(n>=1);
-
-  const char *r=(char*)i->value;
-
-  char c;
-  for(;c=*r;c)
+  if(ccseer_include_entity(seer,e,name))
   {
-    for(;(c!='\0')&&(c!='%'); r+=1,c=*r) printf("%c",c);
+    ccvalue_t *v=ccemit_include_global(emit,name);
+    v->kind=ccvalue_kPROCU;
 
-    if((!n)||(c=='\0')) break;
-
-    n--;
-    i++;
-
-    r+=1,c=*r;
-    if(c=='%')
-        printf("%%"),r+=1,c=*r;
-    else
-    if(c=='i')
-      printf("%i",(cci32_t)i->constI),r+=1,c=*r;
-    else
-    if(c=='c')
-      printf("%c",(char)i->constI),r+=1,c=*r;
-    else
-    if(c=='s')
-      printf("%s",(char *)i->value),r+=1,c=*r;
-    else
-    if(c=='p')
-      printf("%p",(void *)i->constI),r+=1,c=*r;
-    else
-    if(c=='f')
-      printf("%f",i->constR),r+=1,c=*r;
-    else
-    { if(c=='l'&&r[1]=='l'&&r[2]=='i')
-        printf("%lli",i->constI),r+=3,c=*r;
-      else
-      if(c=='l'&&r[1]=='l'&&r[2]=='u')
-        printf("%llu",i->constU),r+=3,c=*r;
-      else
-        ccassert(!"error");
-    }
+    ccprocu_t *p=ccprocu();
+    v->procu=p;
+    p->proc=binding;
   }
-
-  ccexec_value_t z;
-  z.constI=1;
-  return z;
 }
 
-ccfunc ccexec_value_t buildrunfile(const char *filename)
+
+ccfunc ccexec_value_t
+buildrunfile(const char *filename)
 {
 ccdbenter("build-run-file");
 
@@ -96,22 +55,14 @@ ccdbenter("build-run-file");
   ccemit_init(&emit);
   ccexec_init(&exec);
 
-  // Todo:
-  {
-    ccvalue_t *v=ccemit_include_global(&emit,"ccassert");
-    v->kind=ccvalue_kPROCU;
-    ccprocu_t *p=ccprocu("ccassert");
-    v->procu=p;
-    p->proc=ccassert__;
-  }
+  ccregister(&seer,&emit,"ccassert", cctype_void, ccassert__);
+  ccregister(&seer,&emit,"ccprintf", cctype_void, ccprintf__);
+  ccregister(&seer,&emit,"ccmalloc", cctype_void_ptr, ccmalloc__);
+  ccregister(&seer,&emit,"ccrealloc", cctype_void_ptr, ccrealloc__);
+  ccregister(&seer,&emit,"ccfree", cctype_void, ccfree__);
 
-  {
-    ccvalue_t *v=ccemit_include_global(&emit,"ccprintf");
-    v->kind=ccvalue_kPROCU;
-    ccprocu_t *p=ccprocu("ccprintf");
-    v->procu=p;
-    p->proc=ccprintf__;
-  }
+  ccregister(&seer,&emit,"ccopenfile", cctype_void_ptr, ccopenfile__);
+  ccregister(&seer,&emit,"ccpushfile", cctype_stdc_int, ccpushfile__);
 
 ccdbenter("read");
   ccread_include(&read,filename);

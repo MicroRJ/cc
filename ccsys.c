@@ -48,7 +48,7 @@ ccrealfile(void *file)
 { return (HANDLE)file!=INVALID_HANDLE_VALUE;
 }
 
-ccfunc unsigned long int
+ccfunc ccu32_t
 ccfilesize(void *file)
 { return GetFileSize((HANDLE)file,0x00);
 }
@@ -60,22 +60,60 @@ ccclosefile(void *file)
 
 // Todo: proper file disposition
 ccfunc void *
-ccopenfile(const char *name, ccfile_k access)
+ccopenfile(const char *name, const char *flags)
 {
-  DWORD waccess=0;
-  if(access&ccfile_kREAD) waccess|=GENERIC_READ;
-  if(access&ccfile_kWRITE) waccess|=GENERIC_WRITE;
 
-  void *file=(void*)CreateFileA(name,waccess,FILE_SHARE_WRITE|FILE_SHARE_READ,0x00,OPEN_ALWAYS,0x00,0x00);
-  return ccrealfile(file)?file:0;
+  DWORD waccess=0;
+
+  if(flags)
+  {
+		for(;*flags;flags++)
+		{
+			if(*flags=='r')
+				waccess|=GENERIC_READ;
+			else
+			if(*flags=='w')
+				waccess|=GENERIC_WRITE;
+		}
+  }
+
+  ccassert(waccess!=0);
+
+  void *file=CreateFileA(name,waccess,FILE_SHARE_WRITE|FILE_SHARE_READ,0x00,OPEN_ALWAYS,0x00,0x00);
+
+  if(!ccrealfile(file))
+  {
+    cctraceerr("'%s': invalid file",name);
+    return 0;
+  }
+
+  return file;
+}
+
+
+ccfunc const char *
+ccfilename_from_handle(void *file)
+{
+  static char buff[256];
+  memset(buff,0,sizeof(buff));
+
+  GetFinalPathNameByHandle(file,buff,sizeof(buff),FILE_NAME_OPENED);
+
+  return ccfilename(buff);
 }
 
 ccfunc void *
-ccpullfile(void *file, unsigned long int offset, unsigned long int *lplength)
-{ if(!ccrealfile(file)) return 0;
-  unsigned long int file_size;
+ccpullfile(void *file, ccu32_t offset, ccu32_t *lplength)
+{
+  if(!ccrealfile(file))
+  {
+    cctraceerr("invalid file",0);
+    return 0;
+  }
+
+  ccu32_t file_size;
   file_size=ccfilesize(file);
-  unsigned long int length=lplength?*lplength:0;
+  ccu32_t length=lplength?*lplength:0;
   if(file_size<offset+length) return 0;
   if(!length) length=file_size;
   void *file_data=ccmalloc(length);
@@ -84,13 +122,25 @@ ccpullfile(void *file, unsigned long int offset, unsigned long int *lplength)
   return file_data;
 }
 
-ccfunc unsigned long int
-ccpushfile(void *file, unsigned long int offset, unsigned long int length, void *file_data)
-{ if(!ccrealfile(file)) return 0;
-  unsigned long int file_size;
-  file_size=ccfilesize(file);
+ccfunc ccu32_t
+ccpushfile(void *file, ccu32_t offset, ccu32_t length, void *file_data)
+{
+  if(!ccrealfile(file))
+  {
+    cctraceerr("invalid file",0);
+    return 0;
+  }
+
+  ccu32_t file_size=ccfilesize(file);
+
   if(file_size<offset) return 0;
-  if(!WriteFile((HANDLE)file,file_data,length,0x00,0x00)) return 0;
+
+  if(!WriteFile((HANDLE)file,file_data,length,0x00,0x00))
+  {
+    cctraceerr("'%s': write failed", ccfilename_from_handle(file));
+    return 0;
+  }
+
   return length;
 }
 #endif
