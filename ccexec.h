@@ -10,15 +10,11 @@ typedef enum ccexec_value_k
   ccexec_value_kADDRESS  = 2,
 } ccexec_value_k;
 
-typedef void *ccaddress_t;
-
 typedef struct ccexec_value_t ccexec_value_t;
 typedef struct ccexec_value_t
-{ ccexec_value_k    kind;
-
+{ ccexec_value_k kind;
   union
-  { ccaddress_t * address;
-    void        * value;
+  { void        * value;
     cci64_t       constI;
     ccu64_t       constU;
     ccf64_t       constR;

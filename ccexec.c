@@ -110,6 +110,7 @@ ccstack_push_size(
   return memory;
 }
 
+// Todo: wtf is this
 ccfunc ccinle ccexec_value_t *
 ccstack_push(
   ccexec_t *exec, int length)
@@ -139,7 +140,7 @@ ccdbenter("stack-local-alloc");
   memset(memory,ccnull,size); // Todo:
 
   ccexec_value_t *result=ccload_alloc(stack,value,ccexec_value_kADDRESS);
-  result->address=memory;
+  result->value=memory;
 
 ccdbleave("stack-local-alloc");
   return result;
@@ -213,11 +214,11 @@ ccdbenter("exec-edict");
 
       cci32_t size=ccsizeof(type);
       // Todo:
-      char *memory=cccast(char*,lval.address);
+      char *memory=cccast(char*,lval.value);
       memory+=size*rval.constI;
 
       ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kADDRESS);
-      saved->address=(void*)memory;
+      saved->value=(void*)memory;
     } break;
     case ccedict_kLADDR:
     { ccassert(edict->type!=0);
@@ -230,7 +231,7 @@ ccdbenter("exec-edict");
       lval=ccyield_lvalue(stack,edict->lval);
 
       ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kADDRESS);
-      saved->address=lval.address;
+      saved->value=lval.value;
 
     } break;
     case ccedict_kFETCH:
@@ -244,7 +245,7 @@ ccdbenter("exec-edict");
       type=edict->type;
       lval=ccyield_lvalue(stack,edict->lval);
 
-      if(!lval.address)
+      if(!lval.value)
         ccassert(!"write access violation, nullptr");
 
       // Todo:
@@ -254,7 +255,7 @@ ccdbenter("exec-edict");
 
       // Todo:
       cci32_t size=ccsizeof(type);
-      memcpy(&saved->constI,lval.address,size);
+      memcpy(&saved->constI,lval.value,size);
 
       int BREAK;
       BREAK = 0;
@@ -272,12 +273,12 @@ ccdbenter("exec-edict");
       lval=ccyield_lvalue(stack,edict->lval);
       rval=ccyield_rvalue(stack,edict->rval);
 
-      if(!lval.address)
+      if(!lval.value)
         ccassert(!"write access violation, nullptr");
 
       // Todo:
       cci32_t size=ccsizeof(type);
-      memcpy(lval.address,&rval.value,size);
+      memcpy(lval.value,&rval.value,size);
 
       // Todo: produce operand only if necessary and take into account the type
     } break;
@@ -432,7 +433,7 @@ ccdbenter("invoke");
     // Todo: dedicated 'store' ...
 
     cci64_t int_value=i->constI;
-    ccdref(cccast(cci64_t*,lvalue->address))=int_value;
+    ccdref(cccast(cci64_t*,lvalue->value))=int_value;
     i++;
   }
 

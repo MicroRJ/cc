@@ -32,7 +32,7 @@ ccprintf__(ccexec_t *exec, ccvalue_t *value, cci32_t n, ccexec_value_t *i)
 {
   ccassert(n>=1);
 
-  const char *r=(char*)i->address;
+  const char *r=(char*)i->value;
 
   char c;
   for(;c=*r;c)
