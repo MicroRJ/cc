@@ -15,16 +15,14 @@ typedef void *ccaddress_t;
 typedef struct ccexec_value_t ccexec_value_t;
 typedef struct ccexec_value_t
 { ccexec_value_k    kind;
-  cctype_t         *type;
 
   union
-  { ccaddress_t    * address;
-    void           * value;
-    cci64_t          constI;
-    ccu64_t          constU;
-    ccf64_t          constR;
+  { ccaddress_t * address;
+    void        * value;
+    cci64_t       constI;
+    ccu64_t       constU;
+    ccf64_t       constR;
   };
-
 } ccexec_value_t;
 
 typedef struct ccexec_frame_t ccexec_frame_t;

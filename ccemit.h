@@ -30,35 +30,29 @@ typedef struct ccconstant_t
 typedef struct ccvalue_t ccvalue_t;
 typedef struct ccvalue_t
 { ccvalue_k       kind;
-  const char    * label;
 
-ccunion
-{ cctype_t      * type;
-  ccedict_t     * edict;
-  ccprocd_t     * procd;
-  ccprocu_t     * procu;
-  ccconstant_t    constant;
-};
+  ccunion
+  { ccedict_t     * edict;
+    ccprocd_t     * procd;
+    ccprocu_t     * procu;
+    ccconstant_t    constant;
+  };
 } ccvalue_t;
 
 typedef struct ccblock_t ccblock_t;
 typedef struct ccblock_t
-{ const char   *label; // Note: for debugging
-  ccvalue_t  * *edict;
+{ ccvalue_t  * *edict;
 } ccblock_t;
 
 typedef struct ccprocu_t ccprocu_t;
 typedef struct ccprocu_t
-{ const char * label; // Note: for debugging
-  cctype_t   * type;
+{ cctype_t   * type;
   ccexec_value_t (*proc)(ccexec_t *,ccvalue_t *,cci32_t, ccexec_value_t *);
 } ccprocu_t;
 
 typedef struct ccprocd_t ccprocd_t;
 typedef struct ccprocd_t
-{ const char *label; // Note: for debugging
-
-  // Todo: do we want to store this?
+{ // Todo: do we want to store this?
   ccesse_t  * esse;
 
   // Note: stores all of our values (locals and parameters),
@@ -86,10 +80,6 @@ typedef struct ccemit_t
   ccvalue_t *  entry;
 } ccemit_t;
 
-ccfunc ccinle ccvalue_t * ccvalue(const char *label);
-ccfunc ccinle ccblock_t * ccblock(const char *label);
-
-
 #define ccblock_store(block,...)  ccblock_add_edict(block,ccedict_store(__VA_ARGS__))
 #define ccblock_fetch(block,...)  ccblock_add_edict(block,ccedict_fetch(__VA_ARGS__))
 #define ccblock_laddr(block,...)  ccblock_add_edict(block,ccedict_laddr(__VA_ARGS__))
@@ -103,47 +93,37 @@ ccfunc ccinle ccblock_t * ccblock(const char *label);
 #define ccblock_dbgbreak(block)   ccblock_add_edict(block,ccedict_dbgbreak())
 #define ccblock_dbgerror(block)   ccblock_add_edict(block,ccedict_dbgerror())
 
-ccfunc ccvalue_t *
-ccprocd_local(ccprocd_t *func, cctree_t *tree)
-{
-  // Todo: check tree ...
-
-  ccvalue_t **v=cctblgetP(func->local,tree);
-  if(ccerrnon()) return *v;
-  return ccnil;
-}
-
-// Todo:
 ccfunc ccinle ccvalue_t *
-ccvalue(const char *label)
+ccvalue()
 {
   ccvalue_t *t=ccmalloc_T(ccvalue_t);
-  memset(t,ccnil,sizeof(*t));
-
-  t->label=label;
+  memset(t,ccnull,sizeof(*t));
   return t;
 }
 
-
-// Todo:
 ccfunc ccinle ccblock_t *
-ccblock(const char *label)
+ccblock()
 {
   ccblock_t *t=ccmalloc_T(ccblock_t);
-  memset(t,ccnil,sizeof(*t));
-
-  t->label=label;
+  memset(t,ccnull,sizeof(*t));
   return t;
 }
 
 ccfunc ccinle ccprocu_t *
-ccprocu(const char *label)
+ccprocu()
 {
   ccprocu_t *t=ccmalloc_T(ccprocu_t);
   memset(t,ccnil,sizeof(*t));
-
-  t->label=label;
   return t;
+}
+
+// Todo:
+ccfunc ccvalue_t *
+ccprocd_local(ccprocd_t *func, cctree_t *tree)
+{
+  ccvalue_t **v=cctblgetP(func->local,tree);
+  if(ccerrnon()) return *v;
+  return ccnil;
 }
 
 // Note: some of these functions are beginning to rely a lot on actual trees, which is not a good idea,
@@ -155,9 +135,9 @@ ccemit_global(ccemit_t *emit, const char *label)
   ccvalue_t **v=cctblgetS(emit->globals,label);
   if(!ccerrnon())
   {
-  	const char *errstr=ccerrstr();
+    const char *errstr=ccerrstr();
 
-  	cctraceerr("'%s': failed to emit global, %s",label,errstr);
+    cctraceerr("'%s': failed to emit global, %s",label,errstr);
   }
   ccassert(ccerrnon());
 

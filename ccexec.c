@@ -6,10 +6,9 @@ ccfunc cci32_t ccsizeof(cctype_t *);
 
 // Note: allocates the register associated with this value ...
 ccfunc ccinle ccexec_value_t *
-ccload_alloc(ccexec_frame_t *frame, ccvalue_t *owner, ccexec_value_k kind, cctype_t *type)
+ccload_alloc(ccexec_frame_t *frame, ccvalue_t *owner, ccexec_value_k kind)
 {
   ccexec_value_t *result=cctblsetP(frame->values,owner);
-  result->type=type;
   result->kind=kind;
   return result;
 }
@@ -56,7 +55,6 @@ ccyield_rvalue(
       // Todo:
       result.kind=ccexec_value_kCONSTANT;
       result.value=couple->constant.clsc.value;
-      result.type=couple->constant.type;
     break;
     default:
       ccassert(!"error");
@@ -140,7 +138,7 @@ ccdbenter("stack-local-alloc");
   void *memory=ccstack_push_size(exec,size);
   memset(memory,ccnull,size); // Todo:
 
-  ccexec_value_t *result=ccload_alloc(stack,value,ccexec_value_kADDRESS,type);
+  ccexec_value_t *result=ccload_alloc(stack,value,ccexec_value_kADDRESS);
   result->address=memory;
 
 ccdbleave("stack-local-alloc");
@@ -173,7 +171,6 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
 
   ccexec_value_t v;
   v.kind  =ccexec_value_kCONSTANT;
-  v.type  =lval.type;
   v.constI=i;
   return v;
 }
@@ -219,7 +216,7 @@ ccdbenter("exec-edict");
       char *memory=cccast(char*,lval.address);
       memory+=size*rval.constI;
 
-      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kADDRESS,type);
+      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kADDRESS);
       saved->address=(void*)memory;
     } break;
     case ccedict_kLADDR:
@@ -232,7 +229,7 @@ ccdbenter("exec-edict");
       type=edict->type;
       lval=ccyield_lvalue(stack,edict->lval);
 
-      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kADDRESS,type);
+      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kADDRESS);
       saved->address=lval.address;
 
     } break;
@@ -251,7 +248,7 @@ ccdbenter("exec-edict");
         ccassert(!"write access violation, nullptr");
 
       // Todo:
-      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kCONSTANT,type);
+      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kCONSTANT);
       saved->kind=ccexec_value_kCONSTANT;
       saved->constI=0;
 
@@ -279,7 +276,7 @@ ccdbenter("exec-edict");
         ccassert(!"write access violation, nullptr");
 
       // Todo:
-      cci32_t size=ccsizeof(rval.type);
+      cci32_t size=ccsizeof(type);
       memcpy(lval.address,&rval.value,size);
 
       // Todo: produce operand only if necessary and take into account the type
@@ -297,7 +294,7 @@ ccdbenter("exec-edict-arith");
 
       ccexec_value_t val=ccexec_edict_arith(sort,lval,rval);
 
-      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kCONSTANT,ccnull);
+      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kCONSTANT);
       *saved=val;
 
 ccdbleave("exec-edict-arith");
@@ -352,7 +349,7 @@ ccdbenter("exec-edict-invoke");
         *rset++=ccyield_rvalue(stack,*list);
 
       // Note: save the return value ...
-      ccexec_value_t *ret=ccload_alloc(stack,value,ccexec_value_kCONSTANT,ccnull);
+      ccexec_value_t *ret=ccload_alloc(stack,value,ccexec_value_kCONSTANT);
 
       if(edict->lval->kind==ccvalue_kPROCD)
       {

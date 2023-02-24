@@ -28,25 +28,6 @@ typedef enum ccedict_k
   ccedict_kDBGERROR,
 } ccedict_k;
 
-ccglobal const char *ccedict_s[]=
-{ "LOCAL   ",
-  "PARAM   ",
-  "LADDR   ",
-  "AADDR   ",
-  "STORE   ",
-  "FETCH   ",
-  "ARITH   ",
-  "JUMP    ",
-  "JUMPT   ",
-  "JUMPF   ",
-  "INVOKE  ",
-  "RETURN  ",
-  "DBGBREAK",
-  "DBGERROR",
-};
-
-// Note: Produces an addressable lvalue, if param, value must be set before invoking a function ...
-
 typedef struct ccleap_t ccleap_t;
 typedef struct ccleap_t
 { const char * label;
@@ -54,7 +35,6 @@ typedef struct ccleap_t
   cci32_t      index;
 } ccleap_t;
 
-// Note: perhaps each edict should have a flag that indicates whether to produce a value or not.
 typedef struct ccedict_t ccedict_t;
 typedef struct ccedict_t
 { ccedict_k    kind;
@@ -65,9 +45,11 @@ typedef struct ccedict_t
   ccvalue_t ** blob;
   ccleap_t     leap;
 
-  // Todo: implement!
-  int yield;
+  // Todo:
   int is_zero_init;
+
+  // Todo: should each edict have a flag that indicates whether to produce a value or not? implement!
+  int yield;
 } ccedict_t;
 
 
@@ -157,6 +139,10 @@ ccedict_aaddr(cctype_t *type, ccvalue_t *lval, ccvalue_t *rval)
 ccfunc ccinle ccedict_t *
 ccedict_arith(cctoken_k sort, ccvalue_t *lval, ccvalue_t *rval)
 {
+  ccassert(sort!=cctoken_kINVALID);
+  ccassert(lval!=0);
+  ccassert(rval!=0);
+
   ccedict_t *e=ccedict(ccedict_kARITH);
   e->sort=sort;
   e->lval=lval;
@@ -167,6 +153,9 @@ ccedict_arith(cctoken_k sort, ccvalue_t *lval, ccvalue_t *rval)
 ccfunc ccinle ccedict_t *
 ccedict_jump(ccleap_t leap)
 {
+  ccassert(leap.block!= 0);
+  ccassert(leap.index!=-1);
+
   ccedict_t *e=ccedict(ccedict_kJUMP);
   e->leap=leap;
   return e;
@@ -176,6 +165,8 @@ ccfunc ccinle ccedict_t *
 ccedict_tjump(ccleap_t leap, ccvalue_t *rval)
 {
   ccassert(rval!=0);
+  ccassert(leap.block!= 0);
+  ccassert(leap.index!=-1);
 
   ccedict_t *e=ccedict(ccedict_kJUMPT);
   e->rval=rval;
@@ -187,6 +178,8 @@ ccfunc ccinle ccedict_t *
 ccedict_fjump(ccleap_t leap, ccvalue_t *rval)
 {
   ccassert(rval!=0);
+  ccassert(leap.block!= 0);
+  ccassert(leap.index!=-1);
 
   ccedict_t *e=ccedict(ccedict_kJUMPF);
   e->rval=rval;

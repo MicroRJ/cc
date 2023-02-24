@@ -33,7 +33,7 @@ ccemit_include_local(
   return i;
 }
 
-// Todo:
+// Todo: wrong, get the entity....
 ccfunc ccvalue_t *
 ccemit_constant(ccemit_t *emit, cctype_t *type, ccclassic_t clsc)
 {
@@ -48,7 +48,7 @@ ccemit_constant(ccemit_t *emit, cctype_t *type, ccclassic_t clsc)
   return value;
 }
 
-// Todo: this is so wrong, get the entity....
+// Todo: wrong, get the entity....
 ccfunc ccvalue_t *
 ccemit_const_int(ccemit_t *emit, cci64_t value)
 { ccclassic_t classic;
@@ -56,7 +56,7 @@ ccemit_const_int(ccemit_t *emit, cci64_t value)
   return ccemit_constant(emit,t_stdc_int,classic);
 }
 
-// Todo: this is so wrong, get the entity....
+// Todo: wrong, get the entity....
 ccfunc ccvalue_t *
 ccemit_const_str(ccemit_t *emit, ccstr_t value)
 {
@@ -172,13 +172,10 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       ccassert(tree->rval!=0);
 
       if(tree->sort==cctoken_kASSIGN)
-      {
-        ccvalue_t *lval=ccemit_value(emit,procd,block,tree->lval,1);
+      { ccvalue_t *lval=ccemit_value(emit,procd,block,tree->lval,1);
         ccvalue_t *rval=ccemit_value(emit,procd,block,tree->rval,0);
         cctype_t  *type=ccseer_tree_type(emit->seer,tree);
-
         result=ccblock_store(block,type,lval,rval);
-
       } else
       if(tree->sort==cctoken_kCMA)
       { ccemit_rvalue(emit,procd,block,tree->lval);
@@ -342,6 +339,7 @@ ccemit_external_decl(ccemit_t *emit, ccesse_t *esse)
   // Todo:
   if(esse->builtin!=ccbuiltin_kINVALID)
     return;
+
   if(!(esse->tree->mark&cctree_mEXTERNAL))
     return;
 
@@ -355,19 +353,18 @@ ccemit_external_decl(ccemit_t *emit, ccesse_t *esse)
     memset(p,0,sizeof(*p));
 
     p->esse=esse;
-    p->label=esse->name;
 
     // Todo:
-    *ccarradd(p->block,1)=p->decls=ccblock("$decls");
-    *ccarradd(p->block,1)=p->enter=ccblock("$enter");
-    *ccarradd(p->block,1)=p->leave=ccblock("$leave");
+    *ccarradd(p->block,1)=p->decls=ccblock();
+    *ccarradd(p->block,1)=p->enter=ccblock();
+    *ccarradd(p->block,1)=p->leave=ccblock();
 
     // Todo:
     ccvalue_t *v=ccemit_include_global(emit,esse->name);
     v->kind=ccvalue_kPROCD;
     v->procd=p;
 
-    // Todo: is this flawed?
+    // Todo:
     emit->current=p->enter;
 
     // Note: emit all the parameters first ...
@@ -395,7 +392,6 @@ ccemit_translation_unit(ccemit_t *emit, ccseer_t *seer)
   ccarrfor(seer->entity_tale,tale)
     ccemit_external_decl(emit,*tale);
 
-
   ccassert(emit->entry!=0);
 }
 
@@ -404,5 +400,4 @@ ccemit_init(ccemit_t *emit)
 {
   memset(emit,ccnil,sizeof(*emit));
 }
-
 #endif
