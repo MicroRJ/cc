@@ -6,106 +6,9 @@
 
 #define CCLEX_WITHIN(x,l,r) (((x)>=(l))&&((x)<=(r)))
 
-// Todo: this is not good ...
-ccfunc void
-cclex_hash_init(cclex_t *lexer)
-{
-  *cctblputL(lexer->tbl,"__asm")=cctoken_Kmsvc_attr_asm; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__based")=cctoken_Kmsvc_attr_based; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__cdecl")=cctoken_Kmsvc_attr_cdecl; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__clrcall")=cctoken_Kmsvc_attr_clrcall; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__fastcall")=cctoken_Kmsvc_attr_fastcall; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__inline")=cctoken_Kmsvc_attr_inline; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__stdcall")=cctoken_Kmsvc_attr_stdcall; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__thiscall")=cctoken_Kmsvc_attr_thiscall; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__vectorcal")=cctoken_Kmsvc_attr_vectorcal; ccassert(ccerrnon());
-
-  *cctblputL(lexer->tbl,"_Alignof")=cctoken_Kalign_of; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"_Alignas")=cctoken_Kalign_as; ccassert(ccerrnon());
-
-  *cctblputL(lexer->tbl,"const")=cctoken_Kconst; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"restrict")=cctoken_Krestrict; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"volatile")=cctoken_Kvolatile; ccassert(ccerrnon());
-
-  *cctblputL(lexer->tbl,"inline")=cctoken_Kinline; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"_Noreturn")=cctoken_Kno_return; ccassert(ccerrnon());
-
-  *cctblputL(lexer->tbl,"signed")=cctoken_kSTDC_SIGNED; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"unsigned")=cctoken_kSTDC_UNSIGNED; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__int8")=cctoken_kMSVC_INT8; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__int16")=cctoken_kMSVC_INT16; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__int32")=cctoken_kMSVC_INT32; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__int64")=cctoken_kMSVC_INT64; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"double")=cctoken_kSTDC_DOUBLE; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"float")=cctoken_kSTDC_FLOAT; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"long")=cctoken_kSTDC_LONG; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"int")=cctoken_kSTDC_INT; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"short")=cctoken_kSTDC_SHORT; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"char")=cctoken_kSTDC_CHAR; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"void")=cctoken_kVOID; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"_Bool")=cctoken_kSTDC_BOOL; ccassert(ccerrnon());
-
-  // *cctblputL(lexer->tbl,"_Complex")=cctoken_Kcomplex; ccassert(ccerrnon());
-  // *cctblputL(lexer->tbl,"_Atomic")=cctoken_Katomic; ccassert(ccerrnon());
-
-  *cctblputL(lexer->tbl,"enum")=cctoken_kENUM; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"struct")=cctoken_kSTRUCT; ccassert(ccerrnon());
-
-  *cctblputL(lexer->tbl,"typedef")=cctoken_Ktypedef; ccassert(ccerrnon());
-
-  *cctblputL(lexer->tbl,"auto")=cctoken_Kauto; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"extern")=cctoken_Kextern; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"register")=cctoken_Kregister; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"static")=cctoken_Kstatic; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"_Thread_local")=cctoken_Kthread_local; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"__declspec")=cctoken_Kmsvc_declspec; ccassert(ccerrnon());
-
-  *cctblputL(lexer->tbl,"if")=cctoken_Kif; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"switch")=cctoken_Kswitch; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"else")=cctoken_Kelse; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"case")=cctoken_Kcase; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"default")=cctoken_Kdefault; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"for")=cctoken_Kfor; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"while")=cctoken_Kwhile; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"do")=cctoken_Kdo; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"goto")=cctoken_Kgoto; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"return")=cctoken_Kreturn; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"break")=cctoken_Kbreak; ccassert(ccerrnon());
-  *cctblputL(lexer->tbl,"continue")=cctoken_Kcontinue; ccassert(ccerrnon());
-
-
-  // Todo:
-
-  // *cctblputL(lexer->tbl,"ccassert")=cctoken_kCCASSERT; ccassert(ccerrnon());
-  // *cctblputL(lexer->tbl,"ccbreak") =cctoken_kCCBREAK;  ccassert(ccerrnon());
-  // *cctblputL(lexer->tbl,"ccerror") =cctoken_kCCERROR;  ccassert(ccerrnon());
-
-}
-
-ccfunc void
-cclex_move(cclex_t *l, size_t len, const char *bed)
-{
-  l->doc_max = bed + len;
-  l->doc_min = l->min = l->max = bed;
-}
-
-ccfunc void
-cclex_init(cclex_t *l)
-{
-  memset(&l->tok,sizeof(l->tok),ccnil);
-  cclex_hash_init(l);
-}
-
-ccfunc void
-cclex_uninit(cclex_t *l)
-{
-  (void)l;
-  // ccarrdel(l->buf);
-}
-
 // Todo: return the hash, check if the identifier is already in the table ...
 static ccinle int
-cclex_idenlen(const char *s)
+ccread_idenlen(const char *s)
 { int l;
   for(l=0; CCLEX_WITHIN(s[l],'a','z') ||
            CCLEX_WITHIN(s[l],'A','Z') ||
@@ -114,19 +17,19 @@ cclex_idenlen(const char *s)
 }
 
 ccfunc void
-cclex_token(cclex_t *l, cctoken_t *token)
+ccread_token(ccread_t *l, cctoken_t *token)
 { *token = l->tok;
   memset(&l->tok,sizeof(l->tok),ccnil);
 }
 
-ccfunc void cclex_next_token_internal(cclex_t *l);
+ccfunc void ccread_next_token_internal(ccread_t *l);
 
 ccfunc cci32_t
-cclex_next_token(cclex_t *l)
+ccread_next_token(ccread_t *l)
 {
 ccdbenter("next_token");
   do
-  { cclex_next_token_internal(l);
+  { ccread_next_token_internal(l);
   } while(l->tok.bit == cctoken_Kliteral_comment ||
           l->tok.bit == cctoken_Kspace   ||
           l->tok.bit == cctoken_Kendimpl ||
@@ -138,14 +41,14 @@ ccdbleave("next_token");
 
 // Note:
 ccfunc const char *
-cclex_identifier(cclex_t *l, const char *str)
+ccread_identifier(ccread_t *l, const char *str)
 {
 ccdbenter("identifier");
-  int len=cclex_idenlen(str);
+  int len=ccread_idenlen(str);
 
   l->tok.bit=cctoken_kLITIDENT;
 
-  cctoken_k *k=cctblset(l->tbl,len,str);
+  cctoken_k *k=cctblset(l->tok_tbl,len,str);
   if(*k!=cctoken_kINVALID)
   { l->tok.bit=*k;
   } else
@@ -159,7 +62,7 @@ ccdbleave("identifier");
 }
 
 ccfunc const char *
-cclex_readstr(cclex_t *l, const char *str)
+ccread_readstr(ccread_t *l, const char *str)
 {
 ccdbenter("string_token");
 
@@ -219,43 +122,44 @@ ccdbleave("string_token");
 
 
 ccfunc void
-cclex_next_token_internal(cclex_t *l)
+ccread_next_token_internal(ccread_t *l)
 {
 ccdbenter("next_token_internal");
-  l->min = l->max;
 
-  l->tok.loc=l->min;
+  l->tok_min=l->tok_max;
 
-  if(l->max >= l->doc_max)
+  l->tok.loc=l->tok_min;
+
+  if(l->tok_max >= l->doc_max)
   { l->tok.bit = cctoken_kEND;
     goto leave;
   }
-  switch(* l->max)
+  switch(* l->tok_max)
   { default:
-    { ++ l->max, l->tok.bit = cctoken_kINVALID;
+    { ++ l->tok_max, l->tok.bit = cctoken_kINVALID;
     } break;
     case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
     {
       cci32_t b;
-      if(l->max[0] == '0')
-      { switch (l->max[1])
+      if(l->tok_max[0] == '0')
+      { switch (l->tok_max[1])
         { case 'h':
           case 'x':
           { b = 0x10;
-            l->max += 2;
+            l->tok_max += 2;
           } break;
           case 'd':
           { b = 0x0A;
-            l->max += 2;
+            l->tok_max += 2;
           } break;
           case 'o':
           { b = 0x08;
-            l->max += 2;
+            l->tok_max += 2;
           } break;
           case 'b':
           { b = 0x02;
-            l->max += 2;
+            l->tok_max += 2;
           } break;
           default:
           { b = 0x0A;
@@ -265,35 +169,34 @@ ccdbenter("next_token_internal");
       { b = 0x0A;
       }
       ccu64_t u = 0;
-      while(l->max < l->doc_max)
-      { if((*l->max >= '0' && *l->max <= '9'))
-        { u = u * b + 0x00 + *l->max++ - '0';
+      while(l->tok_max < l->doc_max)
+      { if((*l->tok_max >= '0' && *l->tok_max <= '9'))
+        { u = u * b + 0x00 + *l->tok_max++ - '0';
         } else
-        if((*l->max >= 'a' && *l->max <= 'f'))
-        { u = u * b + 0x0A + *l->max++ - 'a';
+        if((*l->tok_max >= 'a' && *l->tok_max <= 'f'))
+        { u = u * b + 0x0A + *l->tok_max++ - 'a';
         } else
-        if((*l->max >= 'A' && *l->max <= 'F'))
-        { u = u * b + 0x0A + *l->max++ - 'A';
+        if((*l->tok_max >= 'A' && *l->tok_max <= 'F'))
+        { u = u * b + 0x0A + *l->tok_max++ - 'A';
         } else
         { break;
         }
       }
-      if(*l->max == '.')
-      { ++l->max;
-        // NOTE(RJ):
-        // ; Keep this in a fpu register!
+      if(*l->tok_max == '.')
+      { ++l->tok_max;
+
         ccf64_t p = 1;
         ccu64_t d = 0;
 
-        for(; l->max < l->doc_max; p *= b)
-        { if((*l->max >= '0' && *l->max <= '9'))
-          { d = d * b + 0x00 + *l->max++ - '0';
+        for(; l->tok_max < l->doc_max; p *= b)
+        { if((*l->tok_max >= '0' && *l->tok_max <= '9'))
+          { d = d * b + 0x00 + *l->tok_max++ - '0';
           } else
-          if((*l->max >= 'a' && *l->max <= 'f'))
-          { d = d * b + 0x0A + *l->max++ - 'a';
+          if((*l->tok_max >= 'a' && *l->tok_max <= 'f'))
+          { d = d * b + 0x0A + *l->tok_max++ - 'a';
           } else
-          if((*l->max >= 'A' && *l->max <= 'F'))
-          { d = d * b + 0x0A + *l->max++ - 'A';
+          if((*l->tok_max >= 'A' && *l->tok_max <= 'F'))
+          { d = d * b + 0x0A + *l->tok_max++ - 'A';
           } else
           { break;
           }
@@ -317,56 +220,56 @@ ccdbenter("next_token_internal");
     case('s'): case('t'): case('u'): case('v'): case('w'): case('x'):
     case('y'): case('z'):
     case('_'):
-    { l->max = cclex_identifier(l, l->max);
+    { l->tok_max = ccread_identifier(l, l->tok_max);
     } break;
     case '"':
-    { l->max = cclex_readstr(l, l->max);
+    { l->tok_max = ccread_readstr(l, l->tok_max);
     } break;
     case ':':
-    { ++ l->max, l->tok.bit = cctoken_Kcolon;
+    { ++ l->tok_max, l->tok.bit = cctoken_Kcolon;
     } break;
     case ',':
-    { ++ l->max, l->tok.bit = cctoken_kCMA;
+    { ++ l->tok_max, l->tok.bit = cctoken_kCMA;
     } break;
     case '(':
-    { ++ l->max, l->tok.bit = cctoken_kLPAREN;
+    { ++ l->tok_max, l->tok.bit = cctoken_kLPAREN;
     } break;
     case ')':
-    { ++ l->max, l->tok.bit = cctoken_kRPAREN;
+    { ++ l->tok_max, l->tok.bit = cctoken_kRPAREN;
     } break;
     case '[':
-    { ++ l->max, l->tok.bit = cctoken_kLSQUARE;
+    { ++ l->tok_max, l->tok.bit = cctoken_kLSQUARE;
     } break;
     case ']':
-    { ++ l->max, l->tok.bit = cctoken_kRSQUARE;
+    { ++ l->tok_max, l->tok.bit = cctoken_kRSQUARE;
     } break;
     case '{':
-    { ++ l->max, l->tok.bit = cctoken_Klcurly;
+    { ++ l->tok_max, l->tok.bit = cctoken_Klcurly;
     } break;
     case '}':
-    { ++ l->max, l->tok.bit = cctoken_Krcurly;
+    { ++ l->tok_max, l->tok.bit = cctoken_Krcurly;
     } break;
     case '~':
     {
-      l->max += 1, l->tok.bit = cctoken_Kbitwise_invert;
+      l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_invert;
     } break;
     // .
     // ...
     case '.':
-    { if(l->max[1] == '.' && l->max[2] == '.')
-      { l->max += 3, l->tok.bit = cctoken_Kliteral_ellipsis;
+    { if(l->tok_max[1] == '.' && l->tok_max[2] == '.')
+      { l->tok_max += 3, l->tok.bit = cctoken_Kliteral_ellipsis;
       } else
-      { l->max += 1, l->tok.bit = cctoken_kDOT;
+      { l->tok_max += 1, l->tok.bit = cctoken_kDOT;
       }
     } break;
     // ^
     // ^=
     case '^':
     {
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kbitwise_xor_eql;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_Kbitwise_xor_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kbitwise_xor;
+      { l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_xor;
       }
     } break;
     // ||
@@ -374,13 +277,13 @@ ccdbenter("next_token_internal");
     // |
     case '|':
     {
-      if(l->max[1]=='|')
-      { l->max += 2, l->tok.bit = cctoken_Klogical_or;
+      if(l->tok_max[1]=='|')
+      { l->tok_max += 2, l->tok.bit = cctoken_Klogical_or;
       } else
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kbitwise_or_eql;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_Kbitwise_or_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kbitwise_or;
+      { l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_or;
       }
     } break;
     // &&
@@ -388,33 +291,33 @@ ccdbenter("next_token_internal");
     // &=
     case '&':
     {
-      if(l->max[1]=='&')
-      { l->max += 2, l->tok.bit = cctoken_Klogical_and;
+      if(l->tok_max[1]=='&')
+      { l->tok_max += 2, l->tok.bit = cctoken_Klogical_and;
       } else
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kbitwise_and_eql;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_Kbitwise_and_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kbitwise_and;
+      { l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_and;
       }
     } break;
     // /=
     // /
     case '/':
     {
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kdiv_eql;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_Kdiv_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_kDIV;
+      { l->tok_max += 1, l->tok.bit = cctoken_kDIV;
       }
     } break;
     // *=
     // *
     case '*':
     {
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kmul_eql;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_Kmul_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_kMUL;
+      { l->tok_max += 1, l->tok.bit = cctoken_kMUL;
       }
     } break;
     // ++
@@ -426,13 +329,13 @@ ccdbenter("next_token_internal");
       // 1++1 means, or what 1++ +1 means, otherwise the parser would have to decompose
       // these tokens, I'd rather it compose them.
 
-      // if(l->max[1]=='+')
-      // { l->max += 2, l->tok.bit = cctoken_Kincrement;
+      // if(l->tok_max[1]=='+')
+      // { l->tok_max += 2, l->tok.bit = cctoken_Kincrement;
       // } else
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kadd_eql;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_Kadd_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_kADD;
+      { l->tok_max += 1, l->tok.bit = cctoken_kADD;
       }
     } break;
     // --
@@ -444,98 +347,98 @@ ccdbenter("next_token_internal");
       // 1--1 means, or what 1-- -1 means, otherwise the parser would have to decompose
       // these tokens, I'd rather it compose them.
 
-      // if(l->max[1]=='-')
-      // { l->max += 2, l->tok.bit = cctoken_Kdecrement;
+      // if(l->tok_max[1]=='-')
+      // { l->tok_max += 2, l->tok.bit = cctoken_Kdecrement;
       // } else
-      if(l->max[1]=='>')
-      { l->max += 2, l->tok.bit = cctoken_kARROW;
+      if(l->tok_max[1]=='>')
+      { l->tok_max += 2, l->tok.bit = cctoken_kARROW;
       } else
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Ksub_eql;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_Ksub_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_kSUB;
+      { l->tok_max += 1, l->tok.bit = cctoken_kSUB;
       }
     } break;
     // ==
     // =
     case '=':
     {
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_kTEQ;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_kTEQ;
       } else
-      { l->max += 1, l->tok.bit = cctoken_kASSIGN;
+      { l->tok_max += 1, l->tok.bit = cctoken_kASSIGN;
       }
     } break;
     // !=
     // !
     case '!':
     {
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_kFEQ;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_kFEQ;
       } else
-      { l->max += 2, l->tok.bit = cctoken_Knegate;
+      { l->tok_max += 2, l->tok.bit = cctoken_Knegate;
       }
     } break;
     // >=
     // >
     case '>':
     {
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_kGTE;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_kGTE;
       } else
-      { l->max += 1, l->tok.bit = cctoken_kGTN;
+      { l->tok_max += 1, l->tok.bit = cctoken_kGTN;
       }
     } break;
     // <=
     // <
     case '<':
     {
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_kLTE;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_kLTE;
       } else
-      { l->max += 1, l->tok.bit = cctoken_kLTN;
+      { l->tok_max += 1, l->tok.bit = cctoken_kLTN;
       }
     } break;
     // %=
     // %
     case '%':
     {
-      if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_Kmod_eql;
+      if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_Kmod_eql;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kmod;
+      { l->tok_max += 1, l->tok.bit = cctoken_Kmod;
       }
     } break;
 
     case '?':
-    { if(l->max[1]=='=')
-      { l->max += 2, l->tok.bit = cctoken_kINVALID;
+    { if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_kINVALID;
       } else
-      { l->max += 2, l->tok.bit = cctoken_kINVALID;
+      { l->tok_max += 2, l->tok.bit = cctoken_kINVALID;
       }
     } break;
 
     case '\0':
-    { l->max += 1, l->tok.bit = cctoken_kEND;
+    { l->tok_max += 1, l->tok.bit = cctoken_kEND;
     } break;
 
     // NOTE(RJ):
     // ; Handle trailing tokens!
     case  ' ': case '\t': case '\f': case '\v': case '\b':
-    { l->max += 1, l->tok.bit = cctoken_Kspace;
+    { l->tok_max += 1, l->tok.bit = cctoken_Kspace;
     } break;
     case '\r':
-    { if(l->max[1] == '\n')
-      { l->max += 2, l->tok.bit = cctoken_Kendimpl;
+    { if(l->tok_max[1] == '\n')
+      { l->tok_max += 2, l->tok.bit = cctoken_Kendimpl;
       } else
-      { l->max += 1, l->tok.bit = cctoken_Kendimpl;
+      { l->tok_max += 1, l->tok.bit = cctoken_Kendimpl;
       }
     } break;
     case '\n':
-    { l->max += 1, l->tok.bit = cctoken_Kendimpl;
+    { l->tok_max += 1, l->tok.bit = cctoken_Kendimpl;
     } break;
     case ';':
-    { l->max += 1, l->tok.bit = cctoken_Kendexpl;
+    { l->tok_max += 1, l->tok.bit = cctoken_Kendexpl;
     } break;
   }
 
@@ -543,25 +446,25 @@ ccdbenter("next_token_internal");
   l->tok.term_expl = 0;
 
 ccdbenter("token-trailing");
-  while(l->max<l->doc_max)
-  { switch(*l->max)
+  while(l->tok_max<l->doc_max)
+  { switch(*l->tok_max)
     { case ' ': case '\t': case '\f': case '\v': case '\b':
-      { ++ l->max;
+      { ++ l->tok_max;
       } continue;
       case '\r':
-      { if(l->max[1] == '\n')
-        { l->max += 2;
+      { if(l->tok_max[1] == '\n')
+        { l->tok_max += 2;
         } else
-        { l->max += 1;
+        { l->tok_max += 1;
         }
         l->tok.term_impl ++;
       } continue;
       case '\n':
-      { l->max += 1;
+      { l->tok_max += 1;
         l->tok.term_impl ++;
       } continue;
       case ';':
-      { l->max += 1;
+      { l->tok_max += 1;
         l->tok.term_expl ++;
       } continue;
     }

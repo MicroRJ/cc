@@ -218,8 +218,6 @@ typedef enum cctoken_k
   // cctoken_kCCERROR,
 } cctoken_k;
 
-#define ccclassic(T) (ccclassic_t){cccast(cci64_t,T)}
-
 typedef struct ccclassic_t
 { union
   { cci64_t   asi64; ccu64_t   asu64;
@@ -238,8 +236,7 @@ typedef struct ccloca_t
 } ccloca_t;
 
 typedef struct cctoken_t
-{
-  cctoken_k bit;
+{ cctoken_k bit;
 
   const char *loc;
 
@@ -253,32 +250,26 @@ typedef struct cctoken_t
   };
 } cctoken_t;
 
-// Note: merge the lexer and reader and make the symbol table global?
-typedef struct cclex_t
-{
-  const char *doc_max, *doc_min;
-  const char *max, *min;
 
-  cctoken_k *tbl;
 
-#if 0
-  ccu32_t    tbl_max;
-  ccu32_t    tbl_min;
-  ccentry_t *tbl;
-  ccu32_t    tbl_dbg;
-#endif
-
-  cctoken_t  tok;
-} cclex_t;
-
+typedef struct ccread_t ccread_t;
 typedef struct ccread_t
 {
-  cclex_t    lex;
-  cctoken_t *buf;
-  cctoken_t *max;
-  cctoken_t *min;
-  cctoken_t *bed;
+	unsigned  term_impl: 1;
+  unsigned  term_expl: 1;
+
+  const char *doc_max, *doc_min;
+  const char *tok_max, *tok_min;
+  cctoken_k  *tok_tbl;
+  cctoken_t   tok;
+
+  cctoken_t  *buf;
+  cctoken_t  *min;
+  cctoken_t  *max;
+
 } ccread_t;
+
+typedef struct ccread_t ccread_t;
 
 // TODO(RJ): make this legit!
 #define ccsynerr(tok,cod,fmt, ...) 0

@@ -267,7 +267,6 @@ ccfunc cctree_t *
 cctree_litide(cctree_t *root, cci32_t mark, const char *loca, ccstr_t name)
 { cctree_t *tree=cctree_new(cctree_kLITIDE,root,mark);
   tree->name=name;
-
   tree->loca=loca;
   return tree;
 }

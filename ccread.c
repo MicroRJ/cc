@@ -2,19 +2,21 @@
 #ifndef _CCREAD_C
 #define _CCREAD_C
 
+ccfunc void ccread_hash_init(ccread_t *reader);
+
 ccfunc ccinle void
 ccread_init(ccread_t *reader)
 {
   memset(reader,ccnull,sizeof(*reader));
 
-  cclex_init(&reader->lex);
+  ccread_hash_init(reader);
 }
 
 ccfunc ccinle void
 ccread_uninit(ccread_t *reader)
 {
-  cclex_uninit(&reader->lex);
   ccarrdel(reader->buf);
+  ccarrdel(reader->tok_tbl);
 }
 
 ccfunc ccinle void
@@ -25,13 +27,14 @@ ccread_include(ccread_t *reader, const char *name)
 {
   ccu32_t size=0;
   void *file=ccopenfile(name,ccfile_kREAD);
-  void *data=ccpullfile(file,0,&size);
+  char *data=ccpullfile(file,0,&size);
   ccclosefile(file);
 
-  cclex_move(&reader->lex,size,data);
+  reader->doc_max=data+size;
+  reader->doc_min=reader->tok_min=reader->tok_max=data;
+
   ccread_all_tokens(reader);
 
-  reader->bed=0;
   reader->min=reader->buf;
   reader->max=reader->buf+ccarrlen(reader->buf);
 
@@ -42,10 +45,8 @@ ccread_include(ccread_t *reader, const char *name)
 // Todo:
 ccfunc void
 ccread_all_tokens(ccread_t *reader)
-{ while(cclex_next_token(& reader->lex))
-  { cctoken_t *token=ccarradd(reader->buf,1);
-    cclex_token(&reader->lex,token);
-  }
+{ while(ccread_next_token(reader))
+		ccread_token(reader,ccarradd(reader->buf,1));
 }
 
 ccfunc cctoken_t *
@@ -76,23 +77,27 @@ ccsee_end(ccread_t *reader)
   return ccsee(reader,cctoken_kEND);
 }
 
-// Note: I keep coming up with these names ...
 ccfunc ccinle cctoken_t *
 ccgobble(ccread_t *reader)
 {
-  // Todo: instead of saving the last token, just save its flags, that's was we're really looking for ...
   if(reader->min<reader->max)
-    return reader->bed=reader->min++;
+  {
+  	reader->term_expl=reader->min->term_expl;
+  	reader->term_impl=reader->min->term_impl;
 
-  return ccpeep(reader); // <-- use peek here to return special end token.
+    return reader->min++;
+  }
+
+  return ccpeep(reader);
 }
 
 ccfunc ccinle cctoken_t *
-cceat(ccread_t *reader, cctoken_k _k)
+cceat(ccread_t *reader, cctoken_k kind)
 {
-  if(ccsee(reader,_k))
+  if(ccsee(reader,kind))
     return ccgobble(reader);
-  return 0;
+
+  return ccnull;
 }
 
 // Todo: most of the time there's a switch statement do then handle each specifier,
@@ -879,7 +884,7 @@ ccread_struct_or_union_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
     cctree_t *next,**list=ccnil;
     while(next=ccread_struct_decl(reader,root,mark))
     { *ccarradd(list,1)=next;
-      if(!reader->bed->term_expl) ccsynerr(reader,0,"expected ';'");
+      if(!reader->term_expl) ccsynerr(reader,0,"expected ';'");
     }
 
     if(!cceat(reader, cctoken_Krcurly))
@@ -1123,7 +1128,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
     return child;
   } else
   if(child=ccread_init_decl(reader,root,mark))
-  { if(!reader->bed->term_expl) ccsynerr(reader, 0, "expected ';'");
+  { if(!reader->term_expl) ccsynerr(reader, 0, "expected ';'");
     return child;
   } else
   if(cceat(reader,cctoken_Kreturn))
@@ -1133,7 +1138,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
 
     if(!expr_tree) ccsynerr(reader,0,"expected expression");
 
-    if(!reader->bed->term_expl) ccsynerr(reader, 0, "expected ';'");
+    if(!reader->term_expl) ccsynerr(reader, 0, "expected ';'");
   } else
   if(cceat(reader,cctoken_Kwhile))
   {
@@ -1145,7 +1150,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
 
     if(!cond_tree) ccsynerr(reader,0,"expected expression");
 
-    if(!reader->bed->term_expl)
+    if(!reader->term_expl)
     {
       then_tree=ccread_block_or_single_stmt(reader,root,mark);
       if(!then_tree) ccsynerr(reader,0,"expected statement");
@@ -1159,7 +1164,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
 
     child=cctree_goto(root,mark,ident);
 
-    if(!reader->bed->term_expl) ccsynerr(reader, 0, "expected ';'");
+    if(!reader->term_expl) ccsynerr(reader, 0, "expected ';'");
   } else
   if(ccsee(reader,cctoken_Kelse))
   {
@@ -1177,11 +1182,11 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
 
     if(!cond_tree) ccsynerr(reader,0,"expected expression");
 
-    if(!reader->bed->term_expl)
+    if(!reader->term_expl)
     { then_tree=ccread_block_or_single_stmt(reader,root,mark);
       if(!then_tree) ccsynerr(reader,0,"expected statement");
     }
-    if(cceat(reader,cctoken_Kelse)&&!reader->bed->term_expl)
+    if(cceat(reader,cctoken_Kelse)&&!reader->term_expl)
     { else_tree=ccread_block_or_single_stmt(reader,root,mark);
       if(!else_tree) ccsynerr(reader,0,"expected statement");
     }
@@ -1193,7 +1198,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
   if(child=ccread_expression(reader,root,mark))
   {
     // Todo: better way of doing this?
-    if(!reader->bed->term_expl)
+    if(!reader->term_expl)
     {
       if(child->kind==cctree_kLITIDE)
       {
@@ -1201,7 +1206,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
         {
 
           cctree_t **list=ccnil;
-          if(!reader->bed->term_expl)
+          if(!reader->term_expl)
           { list=ccread_statement_list(reader,root,mark);
           }
           child=cctree_label(root,mark,child,list);
@@ -1281,16 +1286,97 @@ ccread_external_declaration(ccread_t *reader, cctree_t *root, cci32_t mark)
 
     name->blob=ccread_block(reader,name,mark);
 
-    if(!name->blob&&!reader->bed->term_expl) ccsynerr(reader,0,"expected ';'");
+    if(!name->blob&&!reader->term_expl) ccsynerr(reader,0,"expected ';'");
   } else
   {
     // Note: applies to every declaration other than a function declaration with its definition ...
-    if(!reader->bed->term_expl) ccsynerr(reader,0,"expected ';'");
+    if(!reader->term_expl) ccsynerr(reader,0,"expected ';'");
   }
 
   if(!decl&&!ccsee_end(reader)) ccsynerr(reader,0,"invalid external declaration");
   return decl;
 }
+
+
+
+
+
+// Todo: this is not good ...
+ccfunc void
+ccread_hash_init(ccread_t *reader)
+{
+  *cctblputL(reader->tok_tbl,"__asm")=cctoken_Kmsvc_attr_asm; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__based")=cctoken_Kmsvc_attr_based; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__cdecl")=cctoken_Kmsvc_attr_cdecl; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__clrcall")=cctoken_Kmsvc_attr_clrcall; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__fastcall")=cctoken_Kmsvc_attr_fastcall; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__inline")=cctoken_Kmsvc_attr_inline; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__stdcall")=cctoken_Kmsvc_attr_stdcall; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__thiscall")=cctoken_Kmsvc_attr_thiscall; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__vectorcal")=cctoken_Kmsvc_attr_vectorcal; ccassert(ccerrnon());
+
+  *cctblputL(reader->tok_tbl,"_Alignof")=cctoken_Kalign_of; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"_Alignas")=cctoken_Kalign_as; ccassert(ccerrnon());
+
+  *cctblputL(reader->tok_tbl,"const")=cctoken_Kconst; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"restrict")=cctoken_Krestrict; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"volatile")=cctoken_Kvolatile; ccassert(ccerrnon());
+
+  *cctblputL(reader->tok_tbl,"inline")=cctoken_Kinline; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"_Noreturn")=cctoken_Kno_return; ccassert(ccerrnon());
+
+  *cctblputL(reader->tok_tbl,"signed")=cctoken_kSTDC_SIGNED; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"unsigned")=cctoken_kSTDC_UNSIGNED; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__int8")=cctoken_kMSVC_INT8; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__int16")=cctoken_kMSVC_INT16; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__int32")=cctoken_kMSVC_INT32; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__int64")=cctoken_kMSVC_INT64; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"double")=cctoken_kSTDC_DOUBLE; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"float")=cctoken_kSTDC_FLOAT; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"long")=cctoken_kSTDC_LONG; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"int")=cctoken_kSTDC_INT; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"short")=cctoken_kSTDC_SHORT; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"char")=cctoken_kSTDC_CHAR; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"void")=cctoken_kVOID; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"_Bool")=cctoken_kSTDC_BOOL; ccassert(ccerrnon());
+
+  // *cctblputL(reader->tok_tbl,"_Complex")=cctoken_Kcomplex; ccassert(ccerrnon());
+  // *cctblputL(reader->tok_tbl,"_Atomic")=cctoken_Katomic; ccassert(ccerrnon());
+
+  *cctblputL(reader->tok_tbl,"enum")=cctoken_kENUM; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"struct")=cctoken_kSTRUCT; ccassert(ccerrnon());
+
+  *cctblputL(reader->tok_tbl,"typedef")=cctoken_Ktypedef; ccassert(ccerrnon());
+
+  *cctblputL(reader->tok_tbl,"auto")=cctoken_Kauto; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"extern")=cctoken_Kextern; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"register")=cctoken_Kregister; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"static")=cctoken_Kstatic; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"_Thread_local")=cctoken_Kthread_local; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"__declspec")=cctoken_Kmsvc_declspec; ccassert(ccerrnon());
+
+  *cctblputL(reader->tok_tbl,"if")=cctoken_Kif; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"switch")=cctoken_Kswitch; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"else")=cctoken_Kelse; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"case")=cctoken_Kcase; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"default")=cctoken_Kdefault; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"for")=cctoken_Kfor; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"while")=cctoken_Kwhile; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"do")=cctoken_Kdo; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"goto")=cctoken_Kgoto; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"return")=cctoken_Kreturn; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"break")=cctoken_Kbreak; ccassert(ccerrnon());
+  *cctblputL(reader->tok_tbl,"continue")=cctoken_Kcontinue; ccassert(ccerrnon());
+
+
+  // Todo:
+
+  // *cctblputL(reader->tok_tbl,"ccassert")=cctoken_kCCASSERT; ccassert(ccerrnon());
+  // *cctblputL(reader->tok_tbl,"ccbreak") =cctoken_kCCBREAK;  ccassert(ccerrnon());
+  // *cctblputL(reader->tok_tbl,"ccerror") =cctoken_kCCERROR;  ccassert(ccerrnon());
+
+}
+
 
 
 #endif
