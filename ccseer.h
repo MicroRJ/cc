@@ -18,7 +18,7 @@ typedef enum cctype_k
 {
   cctype_kINVALID=0,
 
-  cctype_kTYPENAME,
+  cctype_kSPECIFIER,
 
   cctype_kFUNCTION,
   cctype_kPOINTER,
@@ -65,15 +65,17 @@ typedef struct ccesse_t
 typedef struct ccseer_t ccseer_t;
 typedef struct ccseer_t
 {
-  ccesse_t  ** entity_tale; // Note: by string
-  ccesse_t  ** symbol_tale; // Note: by tree
-
-  cctype_t  ** tether_tale; // Note: by tree
+  // Note: Maps a name to an entity
+  ccesse_t  ** entity_table;
+  // Note: Maps a symbolic tree to an entity
+  ccesse_t  ** symbol_table;
+  // Note: Maps a tree to a type
+  cctype_t  ** tether_table;
 } ccseer_t;
 
 // Todo:
 ccfunc cctype_t *
-ccseer_create_pointer_type(cctype_t *type)
+cctype_pointer_modifier(cctype_t *type)
 {
   cctype_t *result=ccmalloc_T(cctype_t);
   result->kind=cctype_kPOINTER;
@@ -86,13 +88,40 @@ ccseer_create_pointer_type(cctype_t *type)
 
 // Todo:
 ccfunc cctype_t *
-ccseer_create_function_type(cctype_t *type)
+cctype_function_modifier(cctype_t *type, cctype_t *list, int is_variadic)
 {
   cctype_t *result=ccmalloc_T(cctype_t);
   result->kind=cctype_kFUNCTION;
   result->sort=cctoken_kINVALID;
   result->type=type;
   result->size=0;
+  result->list=list;
+  result->is_variadic=is_variadic;
+  return result;
+}
+
+// Todo:
+ccfunc cctype_t *
+cctype_array_modifier(cctype_t *type, cci32_t size)
+{
+  cctype_t *result=ccmalloc_T(cctype_t);
+  result->kind=cctype_kARRAY;
+  result->sort=cctoken_kINVALID;
+  result->type=type;
+  result->size=size;
+  result->list=ccnull;
+  return result;
+}
+
+// Todo:
+ccfunc cctype_t *
+cctype_specifier(cci32_t size, cctoken_k sort)
+{
+  cctype_t *result=ccmalloc_T(cctype_t);
+  result->kind=cctype_kSPECIFIER;
+  result->sort=sort;
+  result->size=size;
+  result->type=ccnull;
   result->list=ccnull;
   return result;
 }
@@ -109,7 +138,7 @@ cctype_to_string(cctype_t *t, char *b)
     *b++='[';
     *b++=']';
   } else
-  if(t->kind==cctype_kTYPENAME)
+  if(t->kind==cctype_kSPECIFIER)
   {
     // Todo:
     const char *name=cctoken_to_string(t->sort);

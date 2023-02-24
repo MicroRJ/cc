@@ -267,7 +267,7 @@ ccdbenter("next_token_internal");
     case '^':
     {
       if(l->tok_max[1]=='=')
-      { l->tok_max += 2, l->tok.bit = cctoken_Kbitwise_xor_eql;
+      { l->tok_max += 2, l->tok.bit = cctoken_kBWXOR_EQL;
       } else
       { l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_xor;
       }
@@ -281,7 +281,7 @@ ccdbenter("next_token_internal");
       { l->tok_max += 2, l->tok.bit = cctoken_Klogical_or;
       } else
       if(l->tok_max[1]=='=')
-      { l->tok_max += 2, l->tok.bit = cctoken_Kbitwise_or_eql;
+      { l->tok_max += 2, l->tok.bit = cctoken_kBWOR_EQL;
       } else
       { l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_or;
       }
@@ -295,7 +295,7 @@ ccdbenter("next_token_internal");
       { l->tok_max += 2, l->tok.bit = cctoken_Klogical_and;
       } else
       if(l->tok_max[1]=='=')
-      { l->tok_max += 2, l->tok.bit = cctoken_Kbitwise_and_eql;
+      { l->tok_max += 2, l->tok.bit = cctoken_kBWAND_EQL;
       } else
       { l->tok_max += 1, l->tok.bit = cctoken_Kbitwise_and;
       }
@@ -305,7 +305,7 @@ ccdbenter("next_token_internal");
     case '/':
     {
       if(l->tok_max[1]=='=')
-      { l->tok_max += 2, l->tok.bit = cctoken_Kdiv_eql;
+      { l->tok_max += 2, l->tok.bit = cctoken_kDIV_EQL;
       } else
       { l->tok_max += 1, l->tok.bit = cctoken_kDIV;
       }
@@ -315,46 +315,22 @@ ccdbenter("next_token_internal");
     case '*':
     {
       if(l->tok_max[1]=='=')
-      { l->tok_max += 2, l->tok.bit = cctoken_Kmul_eql;
+      { l->tok_max += 2, l->tok.bit = cctoken_kMUL_EQL;
       } else
       { l->tok_max += 1, l->tok.bit = cctoken_kMUL;
       }
     } break;
-    // ++
-    // +=
-    // +
+    // +=,+
     case '+':
-    {
-      // We can't produce these tokens because is up to the parser to interpret what
-      // 1++1 means, or what 1++ +1 means, otherwise the parser would have to decompose
-      // these tokens, I'd rather it compose them.
-
-      // if(l->tok_max[1]=='+')
-      // { l->tok_max += 2, l->tok.bit = cctoken_Kincrement;
-      // } else
-      if(l->tok_max[1]=='=')
-      { l->tok_max += 2, l->tok.bit = cctoken_Kadd_eql;
-      } else
-      { l->tok_max += 1, l->tok.bit = cctoken_kADD;
-      }
+    { if(l->tok_max[1]=='=')
+        l->tok_max += 2, l->tok.bit = cctoken_kADD_EQL;
+      else
+        l->tok_max += 1, l->tok.bit = cctoken_kADD;
     } break;
-    // --
-    // -=
-    // -
+    // -=,-
     case '-':
-    {
-      // We can't produce these tokens because is up to the parser to interpret what
-      // 1--1 means, or what 1-- -1 means, otherwise the parser would have to decompose
-      // these tokens, I'd rather it compose them.
-
-      // if(l->tok_max[1]=='-')
-      // { l->tok_max += 2, l->tok.bit = cctoken_Kdecrement;
-      // } else
-      if(l->tok_max[1]=='>')
-      { l->tok_max += 2, l->tok.bit = cctoken_kARROW;
-      } else
-      if(l->tok_max[1]=='=')
-      { l->tok_max += 2, l->tok.bit = cctoken_Ksub_eql;
+    { if(l->tok_max[1]=='=')
+      { l->tok_max += 2, l->tok.bit = cctoken_kSUB_EQL;
       } else
       { l->tok_max += 1, l->tok.bit = cctoken_kSUB;
       }
@@ -362,8 +338,7 @@ ccdbenter("next_token_internal");
     // ==
     // =
     case '=':
-    {
-      if(l->tok_max[1]=='=')
+    { if(l->tok_max[1]=='=')
       { l->tok_max += 2, l->tok.bit = cctoken_kTEQ;
       } else
       { l->tok_max += 1, l->tok.bit = cctoken_kASSIGN;
@@ -372,11 +347,10 @@ ccdbenter("next_token_internal");
     // !=
     // !
     case '!':
-    {
-      if(l->tok_max[1]=='=')
+    { if(l->tok_max[1]=='=')
       { l->tok_max += 2, l->tok.bit = cctoken_kFEQ;
       } else
-      { l->tok_max += 2, l->tok.bit = cctoken_Knegate;
+      { l->tok_max += 2, l->tok.bit = cctoken_kNEG;
       }
     } break;
     // >=
@@ -404,7 +378,7 @@ ccdbenter("next_token_internal");
     case '%':
     {
       if(l->tok_max[1]=='=')
-      { l->tok_max += 2, l->tok.bit = cctoken_Kmod_eql;
+      { l->tok_max += 2, l->tok.bit = cctoken_kMOD_EQL;
       } else
       { l->tok_max += 1, l->tok.bit = cctoken_Kmod;
       }

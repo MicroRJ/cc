@@ -10,7 +10,7 @@ int fib(int e)
 
 int main(int _)
 {
-	ccprintf("Hello, Sailor! %i\n",22);
+  ccprintf("Hello, Sailor! %i\n",22);
 
   int i,x,y,z,*p,q;
   char *o,*u;
@@ -23,11 +23,12 @@ int main(int _)
   ccerror();
   ccassert(1);
 
-	o="abc";
-	ccassert(o[0]==97);
-	ccassert(o[1]==98);
+  o="abc";
+  ccassert(o[0]==97);
+  ccassert(o[1]==98);
   ccassert(o[2]==99);
 
+  i=0;
   i=7;
 
   ccassert(i==7);

@@ -147,7 +147,7 @@ typedef enum cctoken_k
   cctoken_Kpositive, // +
   cctoken_Knegative, // -
   //
-  cctoken_Knegate, // !
+  cctoken_kNEG, // !
   cctoken_kDOT, // .
   cctoken_kARROW, // ->
   //
@@ -192,18 +192,18 @@ typedef enum cctoken_k
 
   // Group: assignment
   cctoken_kASSIGN,
-  cctoken_Kmul_eql,
-  cctoken_Kdiv_eql,
-  cctoken_Kmod_eql,
-  cctoken_Kadd_eql,
-  cctoken_Ksub_eql,
-  cctoken_Kbitwise_shl_eql,
-  cctoken_Kbitwise_shr_eql,
+  cctoken_kMUL_EQL,
+  cctoken_kDIV_EQL,
+  cctoken_kMOD_EQL,
+  cctoken_kADD_EQL,
+  cctoken_kSUB_EQL,
+  cctoken_kBWSL_EQL,
+  cctoken_kBWSR_EQL,
   cctoken_kGTE,
   cctoken_kLTE,
-  cctoken_Kbitwise_and_eql,
-  cctoken_Kbitwise_xor_eql,
-  cctoken_Kbitwise_or_eql,
+  cctoken_kBWAND_EQL,
+  cctoken_kBWXOR_EQL,
+  cctoken_kBWOR_EQL,
 
   cctoken_kPDE,
   cctoken_kPIN,
@@ -275,6 +275,27 @@ typedef struct ccread_t ccread_t;
 #define ccsynerr(tok,cod,fmt, ...) 0
 #define ccsynwar(tok,cod,fmt, ...) 0
 
+// Note: I'm not sure how to implement this, at the parser level, as sugar coating, or at the vm level?
+ccfunc int
+cctoken_is_assignment(cctoken_k kind)
+{
+	switch(kind)
+	{
+		case cctoken_kASSIGN:
+		case cctoken_kMUL_EQL:
+    case cctoken_kDIV_EQL:
+    case cctoken_kMOD_EQL:
+    case cctoken_kADD_EQL:
+    case cctoken_kSUB_EQL:
+    case cctoken_kBWSL_EQL:
+    case cctoken_kBWSR_EQL:
+    case cctoken_kBWAND_EQL:
+    case cctoken_kBWXOR_EQL:
+    case cctoken_kBWOR_EQL: return 1;
+	}
+
+	return 0;
+}
 
 // Todo: temporary
 ccfunc const char *
@@ -282,7 +303,6 @@ cctoken_to_string(cctoken_k kind)
 { switch(kind)
   {
     case cctoken_kINVALID:       return "invalid";
-
     case cctoken_kVOID:          return "void";
     case cctoken_kSTDC_INT:      return "int";
     case cctoken_kSTDC_LONG:     return "long";
@@ -302,7 +322,4 @@ cctoken_to_string(cctoken_k kind)
   ccassert(!"error");
   return "error";
 }
-
-
-
 #endif

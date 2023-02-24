@@ -46,7 +46,7 @@ ccread_include(ccread_t *reader, const char *name)
 ccfunc void
 ccread_all_tokens(ccread_t *reader)
 { while(ccread_next_token(reader))
-		ccread_token(reader,ccarradd(reader->buf,1));
+    ccread_token(reader,ccarradd(reader->buf,1));
 }
 
 ccfunc cctoken_t *
@@ -82,8 +82,8 @@ ccgobble(ccread_t *reader)
 {
   if(reader->min<reader->max)
   {
-  	reader->term_expl=reader->min->term_expl;
-  	reader->term_impl=reader->min->term_impl;
+    reader->term_expl=reader->min->term_expl;
+    reader->term_impl=reader->min->term_impl;
 
     return reader->min++;
   }
@@ -555,23 +555,20 @@ ccdbleave("conditional");
  * assignment-operator: one of
  *   = *= /= %= += -= <<= >>= &= ^= |=
  **/
+// Todo: ensure ltree is unary, which could never be the case ...
 ccfunc cctree_t *
 ccread_assignment(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-ccdbenter("assignment");
-  cctree_t *ltree,*rtree;
+  cctree_t *result=ccread_conditional(reader,root,mark);
 
-  ltree=ccread_conditional(reader,root,mark);
+  cctoken_t *token=ccpeep(reader);
 
-  cctoken_t *token=cceat(reader,cctoken_kASSIGN);
-
-  if(token)
-  { rtree=ccread_assignment(reader,root,mark);
-    ltree=cctree_binary(root,mark,token,ltree,rtree);
+  if(cctoken_is_assignment(token->bit))
+  { ccgobble(reader);
+    result=cctree_binary(root,mark,token,result,ccread_assignment(reader,root,mark));
   }
 
-ccdbleave("assignment");
-  return ltree;
+  return result;
 }
 /**
  * constant-expression:
@@ -928,7 +925,7 @@ ccread_type_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
     case cctoken_kSTDC_FLOAT:
     case cctoken_kSTDC_DOUBLE:
       ccgobble(reader);
-      result=cctree_new(cctree_kTYPENAME,root,mark);
+      result=cctree_new(cctree_kSPECIFIER,root,mark);
       result->sort=token->bit;
       result->loca=token->loc;
     break;

@@ -149,24 +149,20 @@ ccdbleave("stack-local-alloc");
 ccfunc ccinle ccexec_value_t
 ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
 {
-  // Todo:
-  cci64_t i;
-  const char *n;
+  cci64_t i=0;
 
   switch(opr)
-  { case cctoken_kTEQ: i=lval.constI == rval.constI, n="=="; break;
-    case cctoken_kFEQ: i=lval.constI != rval.constI, n="!="; break;
-    case cctoken_kGTN: i=lval.constI >  rval.constI, n=">";  break;
-    case cctoken_kGTE: i=lval.constI >= rval.constI, n=">="; break;
-    case cctoken_kLTN: i=lval.constI <  rval.constI, n="<";  break;
-    case cctoken_kLTE: i=lval.constI <= rval.constI, n="<="; break;
-    case cctoken_kMUL: i=lval.constI *  rval.constI, n="*";  break;
-    case cctoken_kDIV: i=lval.constI /  rval.constI, n="/";  break;
-    case cctoken_kSUB: i=lval.constI -  rval.constI, n="-";  break;
-    case cctoken_kADD: i=lval.constI +  rval.constI, n="+";  break;
+  { case cctoken_kTEQ: i=lval.constI == rval.constI; break;
+    case cctoken_kFEQ: i=lval.constI != rval.constI; break;
+    case cctoken_kGTN: i=lval.constI >  rval.constI; break;
+    case cctoken_kGTE: i=lval.constI >= rval.constI; break;
+    case cctoken_kLTN: i=lval.constI <  rval.constI; break;
+    case cctoken_kLTE: i=lval.constI <= rval.constI; break;
+    case cctoken_kMUL: i=lval.constI *  rval.constI; break;
+    case cctoken_kDIV: i=lval.constI /  rval.constI; break;
+    case cctoken_kSUB: i=lval.constI -  rval.constI; break;
+    case cctoken_kADD: i=lval.constI +  rval.constI; break;
     default:
-      i=0;
-      n=0;
       ccassert(!"error");
   }
 

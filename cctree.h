@@ -3,7 +3,7 @@
 #define _CCTREE
 
 typedef enum cctree_k
-{ cctree_kTYPENAME,
+{ cctree_kSPECIFIER,
   cctree_kSTRUCT,
   cctree_kENUM,
   cctree_kFUNCTION,

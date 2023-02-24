@@ -15,7 +15,7 @@ ccemit_include_local(
   ccassert(tree!=0);
   ccassert(tree->kind==cctree_kDECLNAME);
 
-  ccesse_t *esse=ccseer_allusion(emit->seer,tree);
+  ccesse_t *esse=ccseer_symbol(emit->seer,tree);
   ccassert(esse!=0);
 
   ccedict_t *e =is_param?
@@ -53,7 +53,7 @@ ccfunc ccvalue_t *
 ccemit_const_int(ccemit_t *emit, cci64_t value)
 { ccclassic_t classic;
   classic.asi64=value;
-  return ccemit_constant(emit,t_stdc_int,classic);
+  return ccemit_constant(emit,cctype_stdc_int,classic);
 }
 
 // Todo: wrong, get the entity....
@@ -62,7 +62,7 @@ ccemit_const_str(ccemit_t *emit, ccstr_t value)
 {
   ccclassic_t classic;
   classic.value=value;
-  return ccemit_constant(emit,t_stdc_char_ptr,classic);
+  return ccemit_constant(emit,cctype_stdc_char_ptr,classic);
 }
 
 ccfunc ccvalue_t *
@@ -74,14 +74,14 @@ ccemit_invoke_easy(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *
 
   ccassert(ltree->kind==cctree_kLITIDE);
 
-  ccesse_t *esse=ccseer_allusion(emit->seer,ltree);
+  ccesse_t *esse=ccseer_symbol(emit->seer,ltree);
   switch(esse->builtin)
   { case ccbuiltin_kCCBREAK: return ccblock_dbgbreak(block);
     case ccbuiltin_kCCERROR: return ccblock_dbgerror(block);
   }
 
 #if 0
-  cctree_t *allude=ccseer_allusion(emit->seer,tree);
+  cctree_t *allude=ccseer_symbol(emit->seer,tree);
   ccassert(allude!=0);
   ccvalue_t  *lval=ccemit_global(emit,allude->name);
   ccvalue_t **rval=ccnil;
@@ -99,29 +99,13 @@ ccemit_invoke_easy(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *
   return ccblock_invoke(block,lval,rval);
 }
 
-ccfunc int
-ccseer_variable_is_pointer(ccseer_t *seer, cctree_t *tree)
-{ if(tree->kind==cctree_kLITIDE)
-  { ccesse_t *esse=ccseer_allusion(seer,tree);
-    ccassert(esse!=0);
-    ccassert(esse->kind==ccesse_kVARIABLE);
-    return esse->type->kind==cctype_kPOINTER;
-  } else
-  if(tree->kind==cctree_kINDEX)
-  { return ccseer_variable_is_pointer(seer,tree->lval);
-  } else
-  { ccassert(!"error");
-    return 0;
-  }
-}
-
 ccfunc ccvalue_t *
 ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree, int is_lval)
 {
   ccvalue_t *result=ccnull;
   switch(tree->kind)
   { case cctree_kLITIDE:
-    { ccesse_t *esse=ccseer_allusion(emit->seer,tree);
+    { ccesse_t *esse=ccseer_symbol(emit->seer,tree);
       ccassert(esse!=0);
 
       // Todo:
@@ -171,7 +155,7 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       ccassert(tree->lval!=0);
       ccassert(tree->rval!=0);
 
-      if(tree->sort==cctoken_kASSIGN)
+      if(cctoken_is_assignment(tree->sort))
       { ccvalue_t *lval=ccemit_value(emit,procd,block,tree->lval,1);
         ccvalue_t *rval=ccemit_value(emit,procd,block,tree->rval,0);
         cctype_t  *type=ccseer_tree_type(emit->seer,tree);
@@ -349,6 +333,9 @@ ccemit_external_decl(ccemit_t *emit, ccesse_t *esse)
 
   if(esse->kind==ccesse_kFUNCTION)
   {
+  	if(!esse->tree->blob)
+  		return;
+
     ccprocd_t *p=ccmalloc_T(ccprocd_t);
     memset(p,0,sizeof(*p));
 
@@ -389,7 +376,7 @@ ccemit_translation_unit(ccemit_t *emit, ccseer_t *seer)
   emit->seer=seer;
 
   ccesse_t **tale;
-  ccarrfor(seer->entity_tale,tale)
+  ccarrfor(seer->entity_table,tale)
     ccemit_external_decl(emit,*tale);
 
   ccassert(emit->entry!=0);
