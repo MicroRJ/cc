@@ -714,7 +714,7 @@ ccread_decl_name(
       name=ccread_litide(reader,root,mark);
 
     if(name)
-      ccsynerr(reader,"'%s': unexpected idenitifer in abstract context",name->name);
+      ccsynerr(reader,"'%s': unexpected identifier in abstract context",name->name);
 
     if(ccread_continues(reader))
       result=ccread_direct_decl_name_modifier(reader,root,mark,result);
