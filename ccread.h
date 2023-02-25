@@ -25,7 +25,7 @@ typedef enum cctoken_k
   cctoken_kRSQUARE, // ']'
 
   cctoken_kCMA,   // ','
-  cctoken_Kcolon, // ':'
+  cctoken_kCOLON, // ':'
   cctoken_Kspace, // ' '
   /**
    * Group: literals.
@@ -134,15 +134,9 @@ typedef enum cctoken_k
   cctoken_Kbreak,
   cctoken_Kcontinue,
 
-  // Todo: get rid of this
-  cctoken_kDEREFERENCE, // Note: operators
-  // Todo: get rid of this
-  cctoken_kADDRESSOF,
-
   cctoken_kBWINV,
   cctoken_kLGNEG,  // !
   cctoken_kDOT,
-  cctoken_kARROW,
   cctoken_kMUL,   // Note: multiplicative
   cctoken_kDIV,
   cctoken_kMOD,
@@ -160,7 +154,8 @@ typedef enum cctoken_k
   cctoken_kLGAND,
   cctoken_kLGOR,
   cctoken_kQMRK,
-  cctoken_kASSIGN,
+
+  cctoken_kASSIGN, // Note: assignment
   cctoken_kMUL_EQL,
   cctoken_kDIV_EQL,
   cctoken_kMOD_EQL,
@@ -168,22 +163,12 @@ typedef enum cctoken_k
   cctoken_kSUB_EQL,
   cctoken_kBWSL_EQL,
   cctoken_kBWSR_EQL,
+
   cctoken_kGTE,
   cctoken_kLTE,
   cctoken_kBWAND_EQL,
   cctoken_kBWXOR_EQL,
   cctoken_kBWOR_EQL,
-  cctoken_kPDE,
-  cctoken_kPIN,
-  cctoken_Kpos_decrement,
-  cctoken_Kpos_increment,
-
-
- 	// Todo: get rid of this
-  cctoken_kCALL,
- 	// Todo: get rid of this
-  cctoken_kINDEX,
-
 } cctoken_k;
 
 typedef struct ccclassic_t

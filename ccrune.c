@@ -225,7 +225,7 @@ ccread_next_token_internal(ccread_t *l)
     { l->tok_max = ccread_readstr(l, l->tok_max);
     } break;
     case ':':
-    { ++ l->tok_max, l->tok.bit = cctoken_Kcolon;
+    { ++ l->tok_max, l->tok.bit = cctoken_kCOLON;
     } break;
     case ',':
     { ++ l->tok_max, l->tok.bit = cctoken_kCMA;

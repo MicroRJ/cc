@@ -98,71 +98,65 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
         result=ccblock_arith(block,tree->sort,lhs,rhs);
       }
     } break;
-    case cctree_kUNARY:
-    { if(tree->sort==cctoken_kDEREFERENCE)
-      {
-        cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
-        ccassert(type!=0);
+    case cctree_kDEREFERENCE:
+  	{ cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
+      ccassert(type!=0);
 
-        result=ccemit_value(emit,procd,block,tree->lval,1);
+      result=ccemit_value(emit,procd,block,tree->lval,1);
 
-        if(type->kind==cctype_kPOINTER)
-          result=ccblock_fetch(block,type,result);
-        if(!is_lval)
-          result=ccblock_fetch(block,type->type,result);
-      } else
-      if(tree->sort==cctoken_kADDRESSOF)
-      {
-        // Todo:
-        ccassert(!is_lval);
+      if(type->kind==cctype_kPOINTER)
+        result=ccblock_fetch(block,type,result);
 
-        cctype_t *type=ccseer_tree_type(emit->seer,tree);
-        result=ccblock_laddr(block,type,ccemit_lvalue(emit,procd,block,tree->lval));
-      } else
-      if(tree->sort==cctoken_kINDEX)
-      {
-        cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
-        ccassert(type!=0);
+      if(!is_lval)
+        result=ccblock_fetch(block,type->type,result);
+  	} break;
+		case cctree_kADDRESSOF:
+		{ // Todo:
+      ccassert(!is_lval);
 
-        ccvalue_t *lvalue,*rvalue;
-        lvalue=ccemit_value(emit,procd,block,tree->lval,1);
-        rvalue=ccemit_value(emit,procd,block,tree->rval,0);
+      cctype_t *type=ccseer_tree_type(emit->seer,tree);
+      result=ccblock_laddr(block,type,ccemit_lvalue(emit,procd,block,tree->lval));
+		} break;
+		case cctree_kINDEX:
+		{ cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
+      ccassert(type!=0);
 
-        // Note:
-        if(type->kind==cctype_kPOINTER)
-          lvalue=ccblock_fetch(block,type,lvalue);
+      ccvalue_t *lvalue,*rvalue;
+      lvalue=ccemit_value(emit,procd,block,tree->lval,1);
+      rvalue=ccemit_value(emit,procd,block,tree->rval,0);
 
-        result=ccblock_aaddr(block,type->type,lvalue,rvalue);
+      // Note:
+      if(type->kind==cctype_kPOINTER)
+        lvalue=ccblock_fetch(block,type,lvalue);
 
-        if(!is_lval)
-          result=ccblock_fetch(block,type->type,result);
-      } else
-      if(tree->sort==cctoken_kCALL)
-      {
-        cctree_t *ltree=tree->lval;
-        cctree_t *rtree=tree->rval;
+      result=ccblock_aaddr(block,type->type,lvalue,rvalue);
 
-        // Todo: when we key into globals by entity do this ..
-        ccassert(ltree->kind==cctree_kLITIDE);
+      if(!is_lval)
+        result=ccblock_fetch(block,type->type,result);
+		} break;
+		case cctree_kCALL:
+		{ cctree_t *ltree=tree->lval;
+      cctree_t *rtree=tree->rval;
 
-        ccesse_t *esse=ccseer_symbol(emit->seer,ltree);
+      // Todo: when we key into globals by entity do this ..
+      ccassert(ltree->kind==cctree_kLITIDE);
 
-        switch(esse->sort)
-        { case ccbuiltin_kCCBREAK: return ccblock_dbgbreak(block);
-          case ccbuiltin_kCCERROR: return ccblock_dbgerror(block);
-        }
+      ccesse_t *esse=ccseer_symbol(emit->seer,ltree);
 
-        ccvalue_t  *lval=ccemit_global(emit,ltree->name);
-        ccvalue_t **rval=ccnull;
+      switch(esse->sort)
+      { case ccbuiltin_kCCBREAK: return ccblock_dbgbreak(block);
+        case ccbuiltin_kCCERROR: return ccblock_dbgerror(block);
+      }
 
-        cctree_t *list;
-        ccarrfor(rtree,list)
-          *ccarrone(rval)=ccemit_rvalue(emit,procd,block,list);
+      ccvalue_t  *lval=ccemit_global(emit,ltree->name);
+      ccvalue_t **rval=ccnull;
 
-        result=ccblock_invoke(block,lval,rval);
-      } else
-        ccassert(!"internal");
-    } break;
+      cctree_t *list;
+      ccarrfor(rtree,list)
+        *ccarrone(rval)=ccemit_rvalue(emit,procd,block,list);
+
+      result=ccblock_invoke(block,lval,rval);
+		} break;
     case cctree_kLITINT:
     { result=ccemit_const_int(emit,tree->as_i32);
     } break;

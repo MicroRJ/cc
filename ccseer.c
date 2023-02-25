@@ -130,13 +130,80 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
 
   switch(tree->kind)
   { case cctree_kLITIDE:
-    {
-      ccesse_t *esse=ccseer_allude(seer,tree,tree->name);
+    { ccesse_t *esse=ccseer_allude(seer,tree,tree->name);
       if(!esse)
         cctraceerr("'%s': undeclared identifier",tree->name);
 
       // Care:
       result=esse->type;
+      ccseer_tether(seer,tree,result);
+    } break;
+    case cctree_kADDRESSOF:
+    { // Todo:
+      ccassert(!is_lval);
+
+      ccassert(tree->lval!=0);
+
+      result=ccseer_lvalue(seer,tree->lval);
+      // Care:
+      result=cctype_pointer_modifier(result);
+      ccseer_tether(seer,tree,result);
+    } break;
+    case cctree_kDEREFERENCE:
+    { ccassert(tree->lval!=0);
+
+      result=ccseer_value(seer,tree->lval,ccfalse);
+      if(!cctype_indirect(result))
+      {
+        // Todo:
+        char buf[256];
+        cctype_to_string(result,buf);
+
+        cctraceerr("'%s': illegal indirection",buf);
+      }
+
+      // Care:
+      result=result->type;
+      ccseer_tether(seer,tree,result);
+    } break;
+    case cctree_kCALL:
+    { ccassert(tree->lval!=0);
+
+      result=ccseer_value(seer,tree->lval,0);
+
+      if(result->kind==cctype_kFUNCTION)
+      {
+        cctree_t *rval;
+        ccarrfor(tree->rval,rval)
+          ccseer_rvalue(seer,rval);
+
+        // Care:
+        result=result->type;
+        ccseer_tether(seer,tree,result);
+      } else
+        cctracewar("not a function",0);
+    } break;
+    case cctree_kINDEX:
+    {
+      ccassert(tree->lval!=0);
+      ccassert(tree->rval!=0);
+
+      result=ccseer_value(seer,tree->lval,0);
+
+      if(!cctype_indirect(result))
+      {
+
+        // Todo: better logging
+        char buf[256];
+        cctype_to_string(result,buf);
+
+        cctraceerr("'%s': subscript requires array or pointer type",buf);
+      }
+
+      ccseer_value(seer,tree->rval,0);
+
+      // Care:
+      result=result->type;
       ccseer_tether(seer,tree,result);
     } break;
     case cctree_kBINARY:
@@ -158,7 +225,7 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
         // Todo:
         char lbuf[256];
         char rbuf[256];
-				cctype_to_string(ltype,lbuf);
+        cctype_to_string(ltype,lbuf);
         cctype_to_string(rtype,rbuf);
 
         for(;;)
@@ -192,80 +259,6 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
 
         ccseer_tether(seer,tree,result);
       }
-    } break;
-    case cctree_kUNARY:
-    {
-    	ccassert(tree->sort!=cctoken_kINVALID);
-    	ccassert(tree->lval!=0);
-
-    	if(tree->sort==cctoken_kADDRESSOF)
-      {
-        // Todo:
-        ccassert(!is_lval);
-
-        result=ccseer_value(seer,tree->lval,cctrue);
-
-        // Care:
-        result=cctype_pointer_modifier(result);
-        ccseer_tether(seer,tree,result);
-      } else
-      if(tree->sort==cctoken_kDEREFERENCE)
-      { result=ccseer_value(seer,tree->lval,ccfalse);
-
-        if(!cctype_indirect(result))
-        {
-          // Todo:
-          char buf[256];
-          cctype_to_string(result,buf);
-
-          cctraceerr("'%s': illegal indirection",buf);
-        }
-
-        // Care:
-        result=result->type;
-        ccseer_tether(seer,tree,result);
-      } else
-      if(tree->sort==cctoken_kCALL)
-	    { ccassert(tree->lval!=0);
-
-	      result=ccseer_value(seer,tree->lval,0);
-
-	      if(result->kind==cctype_kFUNCTION)
-	      {
-	        cctree_t *rval;
-	        ccarrfor(tree->rval,rval)
-	          ccseer_rvalue(seer,rval);
-
-	        // Care:
-	        result=result->type;
-	        ccseer_tether(seer,tree,result);
-	      } else
-	        cctracewar("not a function",0);
-
-	    } else
-	    if(tree->sort==cctoken_kINDEX)
-	    { ccassert(tree->lval!=0);
-	      ccassert(tree->rval!=0);
-
-	      result=ccseer_value(seer,tree->lval,0);
-
-	      if(!cctype_indirect(result))
-	      {
-
-	        // Todo: better logging
-	        char buf[256];
-	        cctype_to_string(result,buf);
-
-	        cctraceerr("'%s': subscript requires array or pointer type",buf);
-	      }
-
-	      ccseer_value(seer,tree->rval,0);
-
-	      // Care:
-	      result=result->type;
-	      ccseer_tether(seer,tree,result);
-	    } else
-        ccassert(!"internal");
     } break;
     case cctree_kLITINT:
       ccassert(!is_lval);

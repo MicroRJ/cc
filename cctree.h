@@ -25,8 +25,16 @@ typedef enum cctree_k
   cctree_kUNARY,
   cctree_kGROUP,
 
-  // cctree_kCALL,
-  // cctree_kINDEX,
+
+  // cctoken_kPDE,
+  // cctoken_kPIN,
+  // cctoken_Kpos_decrement,
+  // cctoken_Kpos_increment,
+
+  cctree_kDEREFERENCE,
+  cctree_kADDRESSOF,
+  cctree_kCALL,
+  cctree_kINDEX,
 
   cctree_kTUNIT,
   cctree_t_designator,
@@ -185,33 +193,6 @@ cctree_translation_unit()
 }
 
 ccfunc cctree_t *
-cctree_group(cctree_t *root, cci32_t mark, cctree_t *init)
-{ cctree_t *tree=cctree_new(cctree_kGROUP,root,mark);
-  tree->init=init;
-  return tree;
-}
-
-#if 0
-ccfunc cctree_t *
-cctree_call(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval, ccstr_t name)
-{ cctree_t *tree=cctree_new(cctree_kCALL,root,mark);
-  tree->lval=lval;
-  tree->rval=rval;
-  tree->name=name;
-  return tree;
-}
-
-ccfunc cctree_t *
-cctree_index(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval, ccstr_t name)
-{ cctree_t *tree=cctree_new(cctree_kINDEX,root,mark);
-  tree->lval=lval;
-  tree->rval=rval;
-  tree->name=name;
-  return tree;
-}
-#endif
-
-ccfunc cctree_t *
 cctree_block(cctree_t *root, cci32_t mark, cctree_t **list)
 { cctree_t *tree=cctree_new(cctree_kBLOCK,root,mark);
   tree->list=list;
@@ -297,11 +278,34 @@ cctree_litstr(cctree_t *root, cci32_t mark, cctoken_t *token)
 }
 
 ccfunc cctree_t *
-cctree_unary(cctree_t *root, cci32_t mark, cctoken_k kind, cctree_t *lval, cctree_t *rval)
-{ cctree_t *result=cctree_new(cctree_kUNARY,root,mark);
-  result->sort=kind;
+cctree_suffixed(cctree_t *root, cci32_t mark, cctree_k kind, cctree_t *lval, cctree_t *rval)
+{ cctree_t *result=cctree_new(kind,root,mark);
+  result->kind=kind;
   result->lval=lval;
   result->rval=rval;
+  return result;
+}
+
+ccfunc cctree_t *
+cctree_unary_ex(cctree_t *root, cci32_t mark, cctree_k kind, cctree_t *lval)
+{
+  ccassert(lval!=0);
+
+  cctree_t *result=cctree_new(kind,root,mark);
+  result->kind=kind;
+  result->lval=lval;
+  return result;
+}
+
+
+ccfunc cctree_t *
+cctree_unary(cctree_t *root, cci32_t mark, cctoken_k sort, cctree_t *lval)
+{
+  ccassert(lval!=0);
+
+  cctree_t *result=cctree_new(cctree_kUNARY,root,mark);
+  result->sort=sort;
+  result->lval=lval;
   return result;
 }
 

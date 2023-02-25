@@ -128,6 +128,13 @@ cctype_to_string(cctype_t *t, char *b)
     *b++='[';
     *b++=']';
   } else
+  if(t->kind==cctype_kFUNCTION)
+  { b=cctype_to_string(t->type,b);
+    *b++='(';
+    *b++='.';
+    *b++='.';
+    *b++=')';
+  } else
   if(t->kind==cctype_kSPECIFIER)
   {
     // Todo:
