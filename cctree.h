@@ -24,8 +24,10 @@ typedef enum cctree_k
   cctree_kBINARY,
   cctree_kUNARY,
   cctree_kGROUP,
-  cctree_kCALL,
-  cctree_kINDEX,
+
+  // cctree_kCALL,
+  // cctree_kINDEX,
+
   cctree_kTUNIT,
   cctree_t_designator,
   cctree_t_designation,
@@ -189,6 +191,7 @@ cctree_group(cctree_t *root, cci32_t mark, cctree_t *init)
   return tree;
 }
 
+#if 0
 ccfunc cctree_t *
 cctree_call(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval, ccstr_t name)
 { cctree_t *tree=cctree_new(cctree_kCALL,root,mark);
@@ -206,6 +209,7 @@ cctree_index(cctree_t *root, cci32_t mark, cctree_t *lval, cctree_t *rval, ccstr
   tree->name=name;
   return tree;
 }
+#endif
 
 ccfunc cctree_t *
 cctree_block(cctree_t *root, cci32_t mark, cctree_t **list)
@@ -264,10 +268,10 @@ cctree_decl(cctree_t *root, cci32_t mark, cctree_t *type, cctree_t **list)
 }
 
 ccfunc cctree_t *
-cctree_litide(cctree_t *root, cci32_t mark, const char *loca, ccstr_t name)
+cctree_litide(cctree_t *root, cci32_t mark, cctoken_t *token)
 { cctree_t *tree=cctree_new(cctree_kLITIDE,root,mark);
-  tree->name=name;
-  tree->loca=loca;
+  tree->name=token->str;
+  tree->as_str=token->str;
   return tree;
 }
 
@@ -293,9 +297,10 @@ cctree_litstr(cctree_t *root, cci32_t mark, cctoken_t *token)
 }
 
 ccfunc cctree_t *
-cctree_unary(cctree_t *root, cci32_t mark, cctoken_k kind, cctree_t *rval)
+cctree_unary(cctree_t *root, cci32_t mark, cctoken_k kind, cctree_t *lval, cctree_t *rval)
 { cctree_t *result=cctree_new(cctree_kUNARY,root,mark);
   result->sort=kind;
+  result->lval=lval;
   result->rval=rval;
   return result;
 }

@@ -134,8 +134,11 @@ typedef enum cctoken_k
   cctoken_Kbreak,
   cctoken_Kcontinue,
 
+  // Todo: get rid of this
   cctoken_kDEREFERENCE, // Note: operators
+  // Todo: get rid of this
   cctoken_kADDRESSOF,
+
   cctoken_kBWINV,
   cctoken_kLGNEG,  // !
   cctoken_kDOT,
@@ -174,6 +177,13 @@ typedef enum cctoken_k
   cctoken_kPIN,
   cctoken_Kpos_decrement,
   cctoken_Kpos_increment,
+
+
+ 	// Todo: get rid of this
+  cctoken_kCALL,
+ 	// Todo: get rid of this
+  cctoken_kINDEX,
+
 } cctoken_k;
 
 typedef struct ccclassic_t

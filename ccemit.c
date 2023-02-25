@@ -66,41 +66,6 @@ ccemit_const_str(ccemit_t *emit, ccstr_t value)
 }
 
 ccfunc ccvalue_t *
-ccemit_invoke_easy(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *tree)
-{
-  // Todo:
-  cctree_t *ltree=tree->lval;
-  cctree_t *rtree=tree->rval;
-
-  ccassert(ltree->kind==cctree_kLITIDE);
-
-  ccesse_t *esse=ccseer_symbol(emit->seer,ltree);
-
-  switch(esse->sort)
-  { case ccbuiltin_kCCBREAK: return ccblock_dbgbreak(block);
-    case ccbuiltin_kCCERROR: return ccblock_dbgerror(block);
-  }
-
-#if 0
-  cctree_t *allude=ccseer_symbol(emit->seer,tree);
-  ccassert(allude!=0);
-  ccvalue_t  *lval=ccemit_global(emit,allude->name);
-  ccvalue_t **rval=ccnil;
-#endif
-  ccvalue_t  *lval=ccemit_global(emit,tree->name);
-  ccvalue_t **rval=ccnil;
-
-
-  cctree_t *list;
-  ccarrfor(rtree,list)
-  {
-    *ccarrone(rval)=ccemit_rvalue(emit,func,block,list);
-  }
-
-  return ccblock_invoke(block,lval,rval);
-}
-
-ccfunc ccvalue_t *
 ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree, int is_lval)
 {
   ccvalue_t *result=ccnull;
@@ -116,46 +81,8 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       if(!is_lval)
         result=ccblock_fetch(block,esse->type,result);
     } break;
-    case cctree_kINDEX:
-    { ccassert(tree->lval!=0);
-      ccassert(tree->rval!=0);
-      // Note:
-      //
-      // int *a;
-      // a[0]=1;
-      //
-      // >> local * int[1]
-      // >> fetch a
-      // >> aaddr a, 0
-      //
-      // int a[256];
-      // a[0]=1
-      //
-      // >> local int[256]
-      // >> aaddr a, 0
-
-      cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
-      ccassert(type!=0);
-
-      ccvalue_t *lvalue,*rvalue;
-      lvalue=ccemit_value(emit,procd,block,tree->lval,1);
-      rvalue=ccemit_value(emit,procd,block,tree->rval,0);
-
-      // Note:
-      if(type->kind==cctype_kPOINTER)
-        lvalue=ccblock_fetch(block,type,lvalue);
-
-      result=ccblock_aaddr(block,type->type,lvalue,rvalue);
-
-      if(!is_lval)
-        result=ccblock_fetch(block,type->type,result);
-
-    } break;
     case cctree_kBINARY:
-    { ccassert(tree->sort!=cctoken_kINVALID);
-      ccassert(tree->lval!=0);
-      ccassert(tree->rval!=0);
-
+    {
       if(cctoken_is_assignment(tree->sort))
       { ccvalue_t *lval=ccemit_value(emit,procd,block,tree->lval,1);
         ccvalue_t *rval=ccemit_value(emit,procd,block,tree->rval,0);
@@ -172,32 +99,69 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       }
     } break;
     case cctree_kUNARY:
-    { ccassert(tree->sort!=cctoken_kINVALID);
-      ccassert(tree->rval!=0);
-
-      if(tree->sort==cctoken_kDEREFERENCE)
+    { if(tree->sort==cctoken_kDEREFERENCE)
       {
-        cctype_t *type=ccseer_tree_type(emit->seer,tree->rval);
+        cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
+        ccassert(type!=0);
 
-        result=ccemit_value(emit,procd,block,tree->rval,1);
+        result=ccemit_value(emit,procd,block,tree->lval,1);
 
         if(type->kind==cctype_kPOINTER)
           result=ccblock_fetch(block,type,result);
-
         if(!is_lval)
           result=ccblock_fetch(block,type->type,result);
       } else
       if(tree->sort==cctoken_kADDRESSOF)
-      { ccassert(!is_lval);
+      {
+        // Todo:
+        ccassert(!is_lval);
 
-        // Care:
         cctype_t *type=ccseer_tree_type(emit->seer,tree);
-        result=ccblock_laddr(block,type,ccemit_lvalue(emit,procd,block,tree->rval));
+        result=ccblock_laddr(block,type,ccemit_lvalue(emit,procd,block,tree->lval));
+      } else
+      if(tree->sort==cctoken_kINDEX)
+      {
+        cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
+        ccassert(type!=0);
+
+        ccvalue_t *lvalue,*rvalue;
+        lvalue=ccemit_value(emit,procd,block,tree->lval,1);
+        rvalue=ccemit_value(emit,procd,block,tree->rval,0);
+
+        // Note:
+        if(type->kind==cctype_kPOINTER)
+          lvalue=ccblock_fetch(block,type,lvalue);
+
+        result=ccblock_aaddr(block,type->type,lvalue,rvalue);
+
+        if(!is_lval)
+          result=ccblock_fetch(block,type->type,result);
+      } else
+      if(tree->sort==cctoken_kCALL)
+      {
+        cctree_t *ltree=tree->lval;
+        cctree_t *rtree=tree->rval;
+
+        // Todo: when we key into globals by entity do this ..
+        ccassert(ltree->kind==cctree_kLITIDE);
+
+        ccesse_t *esse=ccseer_symbol(emit->seer,ltree);
+
+        switch(esse->sort)
+        { case ccbuiltin_kCCBREAK: return ccblock_dbgbreak(block);
+          case ccbuiltin_kCCERROR: return ccblock_dbgerror(block);
+        }
+
+        ccvalue_t  *lval=ccemit_global(emit,ltree->name);
+        ccvalue_t **rval=ccnull;
+
+        cctree_t *list;
+        ccarrfor(rtree,list)
+          *ccarrone(rval)=ccemit_rvalue(emit,procd,block,list);
+
+        result=ccblock_invoke(block,lval,rval);
       } else
         ccassert(!"internal");
-    } break;
-    case cctree_kCALL:
-    { result=ccemit_invoke_easy(emit,procd,block,tree);
     } break;
     case cctree_kLITINT:
     { result=ccemit_const_int(emit,tree->as_i32);
@@ -274,14 +238,6 @@ ccemit_tree(
   { // ccblock_t *label_block=ccemit_label(irset,tree->label_name);
     // return ccblock_enter(irset,label_block);
   } else
-  if(tree->kind==cctree_kCALL)
-  {
-    return ccemit_invoke_easy(emit,func,irset,tree);
-  } else
-  if(tree->kind==cctree_kBINARY)
-  {
-    return ccemit_rvalue(emit,func,irset,tree);
-  } else
   if(tree->kind==cctree_kTERNARY)
   { ccvalue_t *cvalue=ccemit_tree(emit,func,irset,tree->init);
 
@@ -314,6 +270,9 @@ ccemit_tree(
       ccblock_label(irset,".JP-WE"));
 
     return ccnil;
+  } else
+  {
+    return ccemit_value(emit,func,irset,tree,ccfalse);
   }
 
   ccassert(!"error");

@@ -67,6 +67,7 @@ typedef struct ccemit_t
 { ccseer_t  *  seer;
 
   // Note: only functions for now!
+	// Todo: should key into these by entity ...
   ccvalue_t ** globals;
 
   ccblock_t *  current;
