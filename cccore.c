@@ -1,6 +1,27 @@
 #ifndef _CCCORE
 #define _CCCORE
 
+
+// Todo: this is trash!
+ccglobal ccthread_local ccu32_t ccxorstate32=38747;
+
+ccfunc ccinle ccu32_t
+ccxorshift32(ccu32_t *s)
+{ ccu32_t x=*s;
+  x^=x<<13;
+  x^=x>>17;
+  x^=x<<5;
+  return *s=x;
+}
+
+ccfunc ccinle ccu32_t
+ccrandi(ccu32_t l)
+{ return ccxorshift32(&ccxorstate32)%l;
+}
+
+
+
+
 // Todo: this could just be in the language...
 ccfunc ccexec_value_t
 ccassert__(ccexec_t *e, ccvalue_t *v, cci32_t n, ccexec_value_t *i)
@@ -36,7 +57,7 @@ ccmalloc__(ccexec_t *e, ccvalue_t *v, cci32_t n, ccexec_value_t *i)
   ccassert(n==1);
 
   ccexec_value_t r;
-  r.kind=ccexec_value_kADDRESS;
+  r.kind=ccexec_value_kVALID;
   r.value=ccmalloc((size_t)i[0].value);
   return r;
 }
@@ -48,7 +69,7 @@ ccrealloc__(ccexec_t *e, ccvalue_t *v, cci32_t n, ccexec_value_t *i)
   ccassert(n==2);
 
   ccexec_value_t r;
-  r.kind=ccexec_value_kADDRESS;
+  r.kind=ccexec_value_kVALID;
   r.value=ccrealloc((void *)i[0].value,(size_t)i[1].value);
   return r;
 }
@@ -59,7 +80,7 @@ ccopenfile__(ccexec_t *e, ccvalue_t *v, cci32_t n, ccexec_value_t *i)
   ccassert(n==2);
 
   ccexec_value_t r;
-  r.kind=ccexec_value_kCONSTANT;
+  r.kind=ccexec_value_kVALID;
   r.value=(void*)ccopenfile((char *)i[0].value,(char *)i[1].value);
   return r;
 }
@@ -70,7 +91,7 @@ ccpushfile__(ccexec_t *e, ccvalue_t *v, cci32_t n, ccexec_value_t *i)
   ccassert(n==4);
 
   ccexec_value_t r;
-  r.kind=ccexec_value_kCONSTANT;
+  r.kind=ccexec_value_kVALID;
   r.value=(void*)ccpushfile((void *)i[0].value,(ccu32_t)i[1].value,(ccu32_t)i[2].value,(void *)i[3].value);
   return r;
 }

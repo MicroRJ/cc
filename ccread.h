@@ -2,7 +2,7 @@
 #ifndef _CCREAD_H
 #define _CCREAD_H
 
-// Implementation based on the specs at:
+// Implementation roughly based:
 // https://learn.microsoft.com/en-us/cpp/c-language/c-language-reference
 
 typedef enum cctoken_k
@@ -188,20 +188,27 @@ typedef struct ccloca_t
   int row, col;
 } ccloca_t;
 
+typedef struct cctoken_entry_t cctoken_entry_t;
+typedef struct cctoken_entry_t
+{
+  cctoken_k  kind;
+  char      *name;
+} cctoken_entry_t;
+
+typedef struct cctoken_t cctoken_t;
 typedef struct cctoken_t
-{ cctoken_k bit;
+{ cctoken_k   kind;
 
-  const char *loc;
-
-  unsigned  term_impl: 1;
-  unsigned  term_expl: 1;
   union
-  { cci64_t asi64;
-    ccu64_t asu64;
-    ccf64_t asf64;
-    ccstr_t str;
+  { char      * name;
+    ccf64_t     real;
   };
+
+  char      * loca; // Todo: make this a legit location?
+  unsigned    term_impl: 1;
+  unsigned    term_expl: 1;
 } cctoken_t;
+
 
 typedef struct ccread_t ccread_t;
 typedef struct ccread_t
@@ -212,8 +219,9 @@ typedef struct ccread_t
 
   const char *doc_max, *doc_min;
   const char *tok_max, *tok_min;
-  cctoken_k  *tok_tbl;
-  cctoken_t   tok;
+
+  cctoken_entry_t  *tok_tbl;
+  cctoken_t         tok;
 
   cctoken_t  *buf;
   cctoken_t  *min;
@@ -270,7 +278,6 @@ cctoken_to_string(cctoken_k kind)
     case cctoken_kMSVC_INT32:    return "__int32";
     case cctoken_kMSVC_INT64:    return "__int64";
   }
-
   ccassert(!"error");
   return "error";
 }

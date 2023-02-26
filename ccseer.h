@@ -41,27 +41,54 @@ typedef enum ccesse_k
   ccesse_kVARIABLE,
 } ccesse_k;
 
-// Note: what is an actual entity?
+// Todo: document this properly...
 typedef struct ccesse_t ccesse_t;
 typedef struct ccesse_t
-{ ccesse_k       kind;
-  ccesse_sort_k  sort;
-  cctree_t     * tree;
-  cctype_t     * type;
-  const char   * name;
+{ ccesse_k        kind;
+  ccesse_sort_k   sort;
+  const char    * name;
+  cctree_t      * tree;
+  cctype_t      * type;
 } ccesse_t;
+ccfunc ccinle ccesse_t *ccesse(ccesse_k);
 
 // Todo: legit scoping
 typedef struct ccseer_t ccseer_t;
 typedef struct ccseer_t
-{
-  // Note: Maps a name to an entity
+{ // Note: Maps a name to an entity
   ccesse_t  ** entity_table;
   // Note: Maps a symbolic tree to an entity
   ccesse_t  ** symbol_table;
   // Note: Maps a tree to a type
   cctype_t  ** tether_table;
+
+  cctype_t *type_void;
+  cctype_t *type_stdc_int;
+  cctype_t *type_stdc_long;
+  cctype_t *type_stdc_short;
+  cctype_t *type_stdc_double;
+  cctype_t *type_stdc_float;
+  cctype_t *type_stdc_char;
+  cctype_t *type_stdc_bool;
+  cctype_t *type_stdc_signed;
+  cctype_t *type_stdc_unsigned;
+  cctype_t *type_msvc_int8;
+  cctype_t *type_msvc_int16;
+  cctype_t *type_msvc_int32;
+  cctype_t *type_msvc_int64;
+  cctype_t *type_void_ptr;
+  cctype_t *type_stdc_char_ptr;
 } ccseer_t;
+
+// Todo: proper allocator!
+ccfunc ccinle ccesse_t *
+ccesse(ccesse_k kind)
+{
+  ccesse_t *e=ccmalloc_T(ccesse_t);
+  memset(e,ccnull,sizeof(*e));
+  e->kind=kind;
+  return e;
+}
 
 // Todo:
 ccfunc cctype_t *

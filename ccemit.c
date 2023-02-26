@@ -2,6 +2,18 @@
 #ifndef _CCEMIT
 #define _CCEMIT
 
+ccfunc void
+ccemit_uninit(ccemit_t *emit)
+{
+  ccdlbdel(emit->globals);
+}
+
+ccfunc void
+ccemit_init(ccemit_t *emit)
+{
+  memset(emit,ccnull,sizeof(*emit));
+}
+
 ccfunc ccvalue_t *
 ccemit_lvalue(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *tree);
 
@@ -53,7 +65,7 @@ ccfunc ccvalue_t *
 ccemit_const_int(ccemit_t *emit, cci64_t value)
 { ccclassic_t classic;
   classic.asi64=value;
-  return ccemit_constant(emit,cctype_stdc_int,classic);
+  return ccemit_constant(emit,emit->seer->type_stdc_int,classic);
 }
 
 // Todo: wrong, get the entity....
@@ -62,7 +74,7 @@ ccemit_const_str(ccemit_t *emit, ccstr_t value)
 {
   ccclassic_t classic;
   classic.value=value;
-  return ccemit_constant(emit,cctype_stdc_char_ptr,classic);
+  return ccemit_constant(emit,emit->seer->type_stdc_char_ptr,classic);
 }
 
 ccfunc ccvalue_t *
@@ -70,7 +82,7 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
 {
   ccvalue_t *result=ccnull;
   switch(tree->kind)
-  { case cctree_kLITIDE:
+  { case cctree_kIDENTIFIER:
     { ccesse_t *esse=ccseer_symbol(emit->seer,tree);
       ccassert(esse!=0);
 
@@ -99,7 +111,7 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       }
     } break;
     case cctree_kDEREFERENCE:
-  	{ cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
+    { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
       ccassert(type!=0);
 
       result=ccemit_value(emit,procd,block,tree->lval,1);
@@ -109,16 +121,16 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
 
       if(!is_lval)
         result=ccblock_fetch(block,type->type,result);
-  	} break;
-		case cctree_kADDRESSOF:
-		{ // Todo:
+    } break;
+    case cctree_kADDRESSOF:
+    { // Todo:
       ccassert(!is_lval);
 
       cctype_t *type=ccseer_tree_type(emit->seer,tree);
       result=ccblock_laddr(block,type,ccemit_lvalue(emit,procd,block,tree->lval));
-		} break;
-		case cctree_kINDEX:
-		{ cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
+    } break;
+    case cctree_kINDEX:
+    { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
       ccassert(type!=0);
 
       ccvalue_t *lvalue,*rvalue;
@@ -133,13 +145,13 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
 
       if(!is_lval)
         result=ccblock_fetch(block,type->type,result);
-		} break;
-		case cctree_kCALL:
-		{ cctree_t *ltree=tree->lval;
+    } break;
+    case cctree_kCALL:
+    { cctree_t *ltree=tree->lval;
       cctree_t *rtree=tree->rval;
 
       // Todo: when we key into globals by entity do this ..
-      ccassert(ltree->kind==cctree_kLITIDE);
+      ccassert(ltree->kind==cctree_kIDENTIFIER);
 
       ccesse_t *esse=ccseer_symbol(emit->seer,ltree);
 
@@ -156,12 +168,17 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
         *ccarrone(rval)=ccemit_rvalue(emit,procd,block,list);
 
       result=ccblock_invoke(block,lval,rval);
-		} break;
-    case cctree_kLITINT:
-    { result=ccemit_const_int(emit,tree->as_i32);
     } break;
-    case cctree_kLITSTR:
-    { result=ccemit_const_str(emit,tree->as_str);
+
+    // Todo: these have already been generated...
+    case cctree_kCONSTANT:
+    { if(tree->sort==cctoken_kLITINT)
+      { result=ccemit_const_int(emit,cctree_casti64(tree));
+      } else
+      if(tree->sort==cctoken_kLITSTR)
+      { result=ccemit_const_str(emit,tree->name);
+      } else
+        ccassert(!"internal");
     } break;
   }
 
@@ -232,7 +249,7 @@ ccemit_tree(
   { // ccblock_t *label_block=ccemit_label(irset,tree->label_name);
     // return ccblock_enter(irset,label_block);
   } else
-  if(tree->kind==cctree_kTERNARY)
+  if(tree->kind==cctree_kCONDITIONAL)
   { ccvalue_t *cvalue=ccemit_tree(emit,func,irset,tree->init);
 
     ccvalue_t *j;
@@ -273,6 +290,7 @@ ccemit_tree(
   return ccnil;
 }
 
+// Todo: Temporary!
 ccfunc void
 ccemit_external_decl(ccemit_t *emit, ccesse_t *esse)
 {
@@ -291,13 +309,13 @@ ccemit_external_decl(ccemit_t *emit, ccesse_t *esse)
   if(!esse->tree->blob)
     return;
 
-
   ccassert(esse->tree!=0);
   ccassert(esse->type!=0);
   ccassert(esse->name!=0);
 
+  // Todo:
   ccprocd_t *p=ccmalloc_T(ccprocd_t);
-  memset(p,0,sizeof(*p));
+  memset(p,ccnull,sizeof(*p));
 
   p->esse=esse;
 
@@ -326,9 +344,10 @@ ccemit_external_decl(ccemit_t *emit, ccesse_t *esse)
 
   if(!strcmp(esse->tree->name,"main"))
     emit->entry=v;
-
-  cctracelog("built: %s",esse->tree->name);
 }
+
+
+
 
 ccfunc void
 ccemit_translation_unit(ccemit_t *emit, ccseer_t *seer)
@@ -339,12 +358,8 @@ ccemit_translation_unit(ccemit_t *emit, ccseer_t *seer)
   ccarrfor(seer->entity_table,tale)
     ccemit_external_decl(emit,*tale);
 
-  ccassert(emit->entry!=0);
-}
-
-ccfunc void
-ccemit_init(ccemit_t *emit)
-{
-  memset(emit,ccnil,sizeof(*emit));
+  // Todo: why would the emitter care? let the exec stage figure this out...
+  if(!emit->entry)
+    cctraceerr("'main': not found",0);
 }
 #endif

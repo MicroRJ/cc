@@ -2,22 +2,19 @@
 #ifndef _CCEMIT_VALUE
 #define _CCEMIT_VALUE
 
-typedef struct ccblock_t ccblock_t;
-typedef struct ccvalue_t ccvalue_t;
-typedef struct ccblock_t ccblock_t;
+// Todo: remove all definitions from this header file!
+
 typedef struct ccprocd_t ccprocd_t;
-typedef struct ccprocu_t ccprocu_t;
-typedef struct ccemit_t ccemit_t;
-typedef struct cctype_t cctype_t;
 
 typedef enum ccvalue_k ccvalue_k;
 typedef enum ccvalue_k
 { ccvalue_kINVALID=0,
-  ccvalue_kTARGET,
   ccvalue_kCONST,
   ccvalue_kGLOBAL,
+
   ccvalue_kPROCD,
   ccvalue_kPROCU,
+
   ccvalue_kEDICT,
 } ccvalue_k;
 
@@ -67,12 +64,13 @@ typedef struct ccemit_t
 { ccseer_t  *  seer;
 
   // Note: only functions for now!
-	// Todo: should key into these by entity ...
+  // Todo: should key into these by entity ...
   ccvalue_t ** globals;
 
   ccblock_t *  current;
   ccvalue_t *  entry;
 } ccemit_t;
+
 
 #define ccblock_store(block,...)  ccblock_add_edict(block,ccedict_store(__VA_ARGS__))
 #define ccblock_fetch(block,...)  ccblock_add_edict(block,ccedict_fetch(__VA_ARGS__))
@@ -87,6 +85,7 @@ typedef struct ccemit_t
 #define ccblock_dbgbreak(block)   ccblock_add_edict(block,ccedict_dbgbreak())
 #define ccblock_dbgerror(block)   ccblock_add_edict(block,ccedict_dbgerror())
 
+// Todo: remove!
 ccfunc ccinle ccvalue_t *
 ccvalue()
 {
@@ -95,6 +94,7 @@ ccvalue()
   return t;
 }
 
+// Todo: remove!
 ccfunc ccinle ccblock_t *
 ccblock()
 {
@@ -103,6 +103,7 @@ ccblock()
   return t;
 }
 
+// Todo: remove!
 ccfunc ccinle ccprocu_t *
 ccprocu()
 {
@@ -111,7 +112,7 @@ ccprocu()
   return t;
 }
 
-// Todo:
+// Todo: remove!
 ccfunc ccvalue_t *
 ccprocd_local(ccprocd_t *func, cctree_t *tree)
 {
@@ -120,37 +121,37 @@ ccprocd_local(ccprocd_t *func, cctree_t *tree)
   return ccnil;
 }
 
-// Note: some of these functions are beginning to rely a lot on actual trees, which is not a good idea,
-// especially for the user level api... I don't expect to user to have to create actual trees to use this, so let's gradually
-// stop using trees for hashing ...
+// Todo: hash by entity and this should take the value instead!
+ccfunc ccvalue_t *
+ccemit_include_global(ccemit_t *emit, const char *label)
+{
+  ccassert(label!=0);
+
+  ccvalue_t **v=cctblputS(emit->globals,label);
+
+  ccassert(ccerrnon() ||
+    cctraceerr("'%s': failed to include global, %s",label,ccerrstr()));
+
+  ccvalue_t *value=ccvalue(label);
+  *v=value;
+  return value;
+}
+
+// Todo: hash by entity instead
 ccfunc ccvalue_t *
 ccemit_global(ccemit_t *emit, const char *label)
 {
   ccvalue_t **v=cctblgetS(emit->globals,label);
-  if(!ccerrnon())
-  {
-    const char *errstr=ccerrstr();
-
-    cctraceerr("'%s': failed to emit global, %s",label,errstr);
-  }
-  ccassert(ccerrnon());
-
   ccvalue_t *value=*v;
-  return value;
-}
 
-ccfunc ccvalue_t *
-ccemit_include_global(ccemit_t *emit, const char *label)
-{
-  ccvalue_t **v=cctblputS(emit->globals,label);
-  ccassert(ccerrnon());
-
-  ccvalue_t *value=ccvalue(label);
-  *v=value;
+  ccassert(ccerrnon() ||
+    cctraceerr("'%s': global not found, %s",label,ccerrstr()));
 
   return value;
 }
 
+
+// Todo: remove this, it is silly...
 ccfunc ccinle void
 ccvalue_retarget(ccvalue_t *value, ccleap_t p)
 {

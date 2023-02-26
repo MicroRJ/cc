@@ -29,7 +29,6 @@
 
 // Note: suppress warnings ...
 #ifdef _MSC_VER
-# pragma warning(disable:4053)
 # pragma warning(disable:4311) // cast pointer to int
 # pragma warning(disable:4312) // cast int to pointer
 # pragma warning(disable:4706)
@@ -65,6 +64,7 @@
 typedef double ccf64_t;
 typedef float  ccf32_t;
 
+// Todo:
 #ifdef _WIN32
 typedef signed   long int cci32_t;
 typedef unsigned long int ccu32_t;
@@ -121,22 +121,12 @@ _CCASSERT(sizeof(cci16_t)==2);
 # define ccbreak __debugbreak
 #endif
 
-
-// Todo: enhance these assertions ...
+// Todo: enhance these assertions? ...
 #ifndef ccassert
 # ifdef _DEBUG
 #  define ccassert(is_true,...) do{ if(!(is_true)) { cctraceerr("assertion triggered",0); ccbreak(); } } while(0)
 # else
 #  define ccassert(is_true,...) ccnil
-# endif
-#endif
-
-// Todo: remove this ...
-#ifndef ccnotnil
-# ifdef _DEBUG
-#  define ccnotnil(val) (ccassert((val)!=ccnil),val)
-# else
-#  define ccnotnil(val) (val)
 # endif
 #endif
 
@@ -163,7 +153,6 @@ typedef enum ccfile_k
 // Note:
 typedef ccu64_t ccclocktime_t;
 
-// Note: This is a tag type for when you want to make it abundantly clear that there's metadata associated with the string ..
 typedef char *ccstr_t;
 
 // Note: used for enhancing debug data ...
@@ -186,7 +175,7 @@ typedef enum ccentry_k
   ccent_kAIT=2,
 } ccentry_k;
 
-// Note: general table entry, ideally allocated with no overhead ... but that is not the case yet ...
+// Note: val is in item count!
 typedef struct ccentry_t ccentry_t;
 typedef struct ccentry_t
 { ccentry_t * nex;
@@ -197,6 +186,7 @@ typedef struct ccentry_t
 
 // Note: dynamic length buffer ...
 // Todo: At the moment, not very well integrated ...
+// Note: val is in item count!
 typedef struct ccdlb_t ccdlb_t;
 typedef struct ccdlb_t
 { unsigned        rem_add: 1;
@@ -228,9 +218,7 @@ typedef struct ccsentry_block_t
 
 typedef struct ccsentry_t ccsentry_t;
 typedef struct ccsentry_t
-{ char head_guard[4];
-
-  const char  * marker;
+{ const char  * marker;
   ccsentry_t  * master;
 
   ccsentry_t  * slaves;
@@ -258,8 +246,6 @@ typedef struct ccsentry_t
     cci32_t pbc;
     cci32_t nbc;
   } last_metrics, metrics;
-
-  char tail_guard[4];
 } ccsentry_t;
 
 typedef struct cccolorstate_t
@@ -271,28 +257,33 @@ typedef struct cccolorstate_t
 ccfunc void *ccuserallocator_(size_t,void*);
 ccfunc void *ccinternalallocator_(size_t,void*);
 
-// Note: global error and key
-ccglobal ccthread_local ccerr_k ccerr;
+// Note: global error and entry
+ccglobal ccthread_local ccerr_k    ccerr;
+ccglobal ccthread_local ccentry_t *ccentry;
+
 ccglobal ccthread_local ccstr_t cckey;
 #define ccerrstr()    (ccerr_s[ccerr])
-#define ccerrset(err) ((ccerr=err),0)
+#define ccerrset(val) ((ccerr=val),0)
 #define ccerrnon()    ((ccerr)==ccerr_kNON)
 #define ccerrsom()    ((ccerr)!=ccerr_kNON)
 #define ccerrnit()    ((ccerr)==ccerr_kNIT)
 #define ccerrait()    ((ccerr)==ccerr_kAIT)
-#define cckeyset(key) (cckey=key)
-#define cckeyget()    (cckey)
+
+#define cckeyset(val) (ccentry->key=val)
+#define cckeyget()    (ccentry->key)
 
 // Note:
 ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
 
 ccglobal ccthread_local cccaller_t cclastcaller;
+
 #define cccall() (cclastcaller=cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC))
 
-// Note:
+// Todo: implement
 ccglobal ccthread_local ccclocktime_t ccclockfreqc;
 
 
+// Todo:
 ccglobal ccthread_local cccolorstate_t cccolorstate;
 #define cccolormove( x )  cccolorstate.v=x
 #define cccolorpush(   )  cccolorstate.s[cccolorstate.i++]=cccolorstate.v
@@ -310,15 +301,28 @@ ccglobal ccthread_local cci32_t      ccdebugnone;
 extern "C" {
 #endif
 
-#define ccstrlenS(cstr) cccast(ccu32_t,strlen(cstr)-0)
-#define ccstrlenL(lstr) cccast(ccu32_t,sizeof(lstr)-1)
+// Note: c array literal length
+#ifndef ccCarrlenL
+# define ccCarrlenL(carr) (sizeof(carr)/sizeof(carr[0]))
+#endif
+
+// Note: c string literal length
+#ifndef ccCstrlenL
+# define ccCstrlenL(clit) cccast(ccu32_t,ccCarrlenL(clit)-1)
+#endif
+
+// Note: c string length
+#ifndef ccCstrlenS
+# define ccCstrlenS(cstr) cccast(ccu32_t,strlen(cstr)-0)
+#endif
+
+// Note: default allocator
+#define ccmalloc(size)       (cccall(),ccuserallocator_(size,ccnull))
+#define ccrealloc(data,size) (cccall(),ccuserallocator_(size,data))
+#define ccfree(data)         (cccall(),ccuserallocator_(ccnil,data))
 
 #define cclva(lv) cccast(void**,ccaddr(lv))
 
-// Note: default allocator
-#define ccmalloc(size)       (cccall(),ccuserallocator_(size,ccnil))
-#define ccrealloc(data,size) (cccall(),ccuserallocator_(size, data))
-#define ccfree(data)         (cccall(),ccuserallocator_(ccnil,data))
 
 #define ccmalloc_T(T) cccast(T*,ccmalloc(sizeof(T)))
 
@@ -334,8 +338,8 @@ extern "C" {
 // Note: array
 #define ccarrdel ccdlbdel
 
-#define ccarrmax(arr) ((arr)?(ccdlbmax_(arr)/sizeof(*(arr))):(ccnil))
-#define ccarrmin(arr) ((arr)?(ccdlbmin_(arr)/sizeof(*(arr))):(ccnil))
+#define ccarrmax(arr) ((arr)?ccdlbmax_(arr):0)
+#define ccarrmin(arr) ((arr)?ccdlbmin_(arr):0)
 
 #define ccarrend_max(arr) ((arr)+ccarrmax(arr))
 #define ccarrend_min(arr) ((arr)+ccarrmin(arr))
@@ -343,57 +347,57 @@ extern "C" {
 #define ccarrend ccarrend_min
 #define ccarrlen(arr) cccast(ccu32_t,ccarrmin(arr))
 
-#define ccarrresi(ccm,num) ccdlb_arradd(cclva(ccm),sizeof(*(ccm)),num,0)
+#define ccarrresi(ccm,num) ccdlbadd(cclva(ccm),sizeof(*(ccm)),num,0)
 #define ccarrres(ccm,num) ((ccm)+ccarrresi(ccm,num))
 
-#define ccarraddi(ccm,num) ccdlb_arradd(cclva(ccm),sizeof(*(ccm)),num,num)
+#define ccarraddi(ccm,num) ccdlbadd(cclva(ccm),sizeof(*(ccm)),num,num)
 #define ccarradd(ccm,num) ((ccm)+ccarraddi(ccm,num))
 
 #define ccarrone(ccm) ccarradd(ccm,1)
-#define ccarrzro(ccm) memset(ccm,ccnil,ccdlbmax(ccm))
+#define ccarrzro(ccm) memset(ccm,ccnil,ccarrmax(ccm)*sizeof(*ccm))
 
 #define ccarrfor(arr,itr) for(itr=arr;itr<ccarrend(arr);++itr)
 
-// Todo:
+// Todo: remove?
 #define ccarrfix(ccm) ((ccm)?ccdlb_(ccm)->rem_rze=cctrue:(ccnil))
 
 // Note: table
-#define cclithsh(lit) ccstrlenL(lit),lit
-#define ccntshsh(nts) ccstrlenS(nts),nts
-#define ccptrhsh(ptr) -cccast(cci32_t,sizeof(ptr)),cccast(char*,ptr)
+#define cclithsh(lit) ccCstrlenL(lit),cccast(char*,lit)
+#define ccntshsh(nts) ccCstrlenS(nts),cccast(char*,nts)
+#define ccinthsh(ptr) -cccast(cci32_t,sizeof(ptr)),cccast(char*,ptr)
 
 // Note: these use the global error code _ccerr_
-ccfunc cci64_t ccdlb_tblget(void **, cci32_t, cci32_t, const char *);
-ccfunc cci64_t ccdlb_tblput(void **, cci32_t, cci32_t, const char *);
-ccfunc cci64_t ccdlb_tblset(void **, cci32_t, cci32_t, const char *);
+ccfunc cci64_t cctblgeti(void **, cci32_t, cci32_t, char *);
+ccfunc cci64_t cctblputi(void **, cci32_t, cci32_t, char *);
+ccfunc cci64_t cctblseti(void **, cci32_t, cci32_t, char *);
 
-// Todo: this is to be reworked ...
-#define cctblgetL(ccm,lit) ((ccm)+ccdlb_tblget(cclva(ccm),sizeof(*(ccm)),cclithsh(lit)))
-#define cctblgetS(ccm,nts) ((ccm)+ccdlb_tblget(cclva(ccm),sizeof(*(ccm)),ccntshsh(nts)))
-#define cctblgetP(ccm,ptr) ((ccm)+ccdlb_tblget(cclva(ccm),sizeof(*(ccm)),ccptrhsh(ptr)))
+// Todo: these is to be reworked ...
+#define cctblgetL(ccm,lit) ((ccm)+cctblgeti(cclva(ccm),sizeof(*(ccm)),cclithsh(lit)))
+#define cctblgetS(ccm,nts) ((ccm)+cctblgeti(cclva(ccm),sizeof(*(ccm)),ccntshsh(nts)))
+#define cctblgetP(ccm,ptr) ((ccm)+cctblgeti(cclva(ccm),sizeof(*(ccm)),ccinthsh(ptr)))
 
-#define cctblset(ccm,len,key) ((ccm)+ccdlb_tblset(cclva(ccm),sizeof(*ccm),len,key))
+#define cctblsetN(ccm,len,key) ((ccm)+cctblseti(cclva(ccm),sizeof(*ccm),len,cccast(char*,key)))
+#define cctblsetL(ccm,lit) ((ccm)+cctblseti(cclva(ccm),sizeof(*ccm),cclithsh(lit)))
+#define cctblsetS(ccm,nts) ((ccm)+cctblseti(cclva(ccm),sizeof(*ccm),ccntshsh(nts)))
+#define cctblsetP(ccm,ptr) ((ccm)+cctblseti(cclva(ccm),sizeof(*ccm),ccinthsh(ptr)))
 
-#define cctblsetL(ccm,lit) ((ccm)+ccdlb_tblset(cclva(ccm),sizeof(*ccm),cclithsh(lit)))
-#define cctblsetS(ccm,nts) ((ccm)+ccdlb_tblset(cclva(ccm),sizeof(*ccm),ccntshsh(nts)))
-#define cctblsetP(ccm,ptr) ((ccm)+ccdlb_tblset(cclva(ccm),sizeof(*ccm),ccptrhsh(ptr)))
-
-#define cctblputL(ccm,lit) ((ccm)+ccdlb_tblput(cclva(ccm),sizeof(*ccm),cclithsh(lit)))
-#define cctblputS(ccm,nts) ((ccm)+ccdlb_tblput(cclva(ccm),sizeof(*ccm),ccntshsh(nts)))
-#define cctblputP(ccm,ptr) ((ccm)+ccdlb_tblput(cclva(ccm),sizeof(*ccm),ccptrhsh(ptr)))
+#define cctblputN(ccm,len,key) ((ccm)+cctblputi(cclva(ccm),sizeof(*ccm),len,cccast(char*,key)))
+#define cctblputL(ccm,lit) ((ccm)+cctblputi(cclva(ccm),sizeof(*ccm),cclithsh(lit)))
+#define cctblputS(ccm,nts) ((ccm)+cctblputi(cclva(ccm),sizeof(*ccm),ccntshsh(nts)))
+#define cctblputP(ccm,ptr) ((ccm)+cctblputi(cclva(ccm),sizeof(*ccm),ccinthsh(ptr)))
 
 // Note: string builder
 #define ccstrdel ccarrdel
 #define ccstrmax ccarrmax
 #define ccstrmin ccarrmin
 #define ccstrlen ccarrlen
-#define ccstradd(ccm,res,com)  ((ccm)+ccdlb_arradd(cclva(ccm),sizeof(*(ccm)),res,com))
-#define ccstrcatN(ccm,len,str) ((ccm)+ccdlb_stradd(&(ccm),len+1,len+0,str))
-#define ccstrputN(ccm,len,str) ((ccm)+ccdlb_stradd(&(ccm),len+1,len+1,str))
-#define ccstrcatL(ccm,str) ccstrcatN(ccm,ccstrlenL(str),str)
-#define ccstrputL(ccm,str) ccstrputN(ccm,ccstrlenL(str),str)
-#define ccstrcatS(ccm,str) ccstrcatN(ccm,ccstrlenS(str),str)
-#define ccstrputS(ccm,str) ccstrputN(ccm,ccstrlenS(str),str)
+#define ccstraddN(ccm,res,com) ((ccm)+ccdlbadd(cclva(ccm),sizeof(*(ccm)),res,com))
+#define ccstrcatN(ccm,len,str) ((ccm)+ccstradd(&(ccm),len+1,len+0,str))
+#define ccstrputN(ccm,len,str) ((ccm)+ccstradd(&(ccm),len+1,len+1,str))
+#define ccstrcatL(ccm,str) ccstrcatN(ccm,ccCstrlenL(str),str)
+#define ccstrputL(ccm,str) ccstrputN(ccm,ccCstrlenL(str),str)
+#define ccstrcatS(ccm,str) ccstrcatN(ccm,ccCstrlenS(str),str)
+#define ccstrputS(ccm,str) ccstrputN(ccm,ccCstrlenS(str),str)
 #define ccstrcatF(ccm,fmt,...) ccstr_catf(&ccm,fmt,__VA_ARGS__)
 
 // Todo: to be removed !
@@ -416,7 +420,7 @@ ccfunc const char *ccfilename(const char *name);
 ccfunc ccinle ccclocktime_t ccclocktick();
 ccfunc ccinle ccf64_t       ccclocksecs(ccu64_t);
 
-// Note: this file api leaves much to be desired ...
+// Todo: this file api leaves much to be desired ...
 ccfunc void *   ccopenfile (const char *, const char *);
 ccfunc int      ccrealfile ( void * );
 ccfunc void     ccclosefile( void * );
@@ -431,9 +435,10 @@ ccfunc        int   ccformatex  (char *, int, const char *, ...);
 ccfunc        char *ccformat    (const char *, ...);
 
 ccfunc void cctrace_(const char *label, const char *format, ...);
-#define cctracelog(fmt,...) (cccall(),cctrace_("log",fmt,__VA_ARGS__))
-#define cctracewar(fmt,...) (cccall(),cctrace_("war",fmt,__VA_ARGS__))
-#define cctraceerr(fmt,...) (cccall(),cctrace_("err",fmt,__VA_ARGS__))
+#define cctracelog(fmt,...) (cccall(),cctrace_("log",fmt,__VA_ARGS__),0)
+#define cctracewar(fmt,...) (cccall(),cctrace_("war",fmt,__VA_ARGS__),0)
+#define cctraceerr(fmt,...) (cccall(),cctrace_("err",fmt,__VA_ARGS__),0)
+#define ccdebuglog(fmt,...) (cccall(),cctrace_("dbg",fmt,__VA_ARGS__),0)
 
 // Note:
 #include "ccsys.c"

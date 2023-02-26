@@ -11,6 +11,8 @@ int fib(int e)
 int set_to_one(int *j)
 {
   j[0]=1;
+
+  return 1;
 }
 
 int main(int _)

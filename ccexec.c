@@ -1,15 +1,35 @@
 // Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
-#ifndef _CCEXEC
-#define _CCEXEC
+#ifndef _CCEXEC_C
+#define _CCEXEC_C
 
 ccfunc cci32_t ccsizeof(cctype_t *);
 
+ccfunc int
+ccexec_init(ccexec_t *exec)
+{ memset(exec,ccnil,sizeof(*exec));
+
+  // Todo:
+  size_t stack_size=256 * 1024*1024;
+
+  exec->stack=ccmalloc(stack_size);
+  exec->stack_sze=stack_size;
+  exec->stack_idx=0;
+
+  return cctrue;
+}
+
+ccfunc void
+ccexec_uninit(ccexec_t *exec)
+{ // Todo:
+  ccfree(exec->stack);
+}
+
 // Note: allocates the register associated with this value ...
 ccfunc ccinle ccexec_value_t *
-ccload_alloc(ccexec_frame_t *frame, ccvalue_t *owner, ccexec_value_k kind)
+ccload_alloc(ccexec_frame_t *frame, ccvalue_t *owner)
 {
   ccexec_value_t *result=cctblsetP(frame->values,owner);
-  result->kind=kind;
+  result->kind=ccexec_value_kVALID;
   return result;
 }
 
@@ -17,7 +37,6 @@ ccload_alloc(ccexec_frame_t *frame, ccvalue_t *owner, ccexec_value_k kind)
 ccfunc ccexec_value_t
 ccyield(ccexec_frame_t *stack, ccvalue_t *value)
 {
-ccdbenter("stack-yield");
   ccexec_value_t *result=cctblgetP(stack->values,value);
   ccassert(ccerrnon());
 
@@ -25,11 +44,10 @@ ccdbenter("stack-yield");
     cctraceerr("value kind is invalid, did you register this value and not set its contents?",0);
 
   ccassert(result->kind!=ccexec_value_kINVALID);
-
-ccdbleave("stack-yield");
   return *result;
 }
 
+// Todo: merge this with its counter part!
 ccfunc ccexec_value_t
 ccyield_rvalue(
   ccexec_frame_t *stack, ccvalue_t *couple)
@@ -53,7 +71,7 @@ ccyield_rvalue(
     case ccvalue_kCONST:
       ccassert(couple->constant.type!=0);
       // Todo:
-      result.kind=ccexec_value_kCONSTANT;
+      result.kind=ccexec_value_kVALID;
       result.value=couple->constant.clsc.value;
     break;
     default:
@@ -64,6 +82,7 @@ ccyield_rvalue(
   return result;
 }
 
+// Todo: merge this with its counter part!
 ccfunc ccexec_value_t
 ccyield_lvalue(ccexec_frame_t *stack, ccvalue_t *value)
 {
@@ -122,7 +141,6 @@ ccfunc ccinle ccexec_value_t *
 ccstack_local_alloc(
   ccexec_t *exec, ccexec_frame_t *stack, ccvalue_t *value)
 {
-ccdbenter("stack-local-alloc");
   ccassert((value!=0));
   ccassert((value->kind==ccvalue_kEDICT),
     "cannot allocate local, expected a value of type EDICT and of subtype LOCAL or PARAM");
@@ -139,10 +157,8 @@ ccdbenter("stack-local-alloc");
   void *memory=ccstack_push_size(exec,size);
   memset(memory,ccnull,size); // Todo:
 
-  ccexec_value_t *result=ccload_alloc(stack,value,ccexec_value_kADDRESS);
+  ccexec_value_t *result=ccload_alloc(stack,value);
   result->value=memory;
-
-ccdbleave("stack-local-alloc");
   return result;
 }
 
@@ -167,7 +183,7 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
   }
 
   ccexec_value_t v;
-  v.kind  =ccexec_value_kCONSTANT;
+  v.kind  =ccexec_value_kVALID;
   v.constI=i;
   return v;
 }
@@ -180,8 +196,6 @@ ccfunc int
 ccexec_edict(
   ccexec_t *exec, ccexec_frame_t *stack, ccvalue_t *value)
 {
-ccdbenter("exec-edict");
-
   ccedict_t *edict=value->edict;
 
   int result=cctrue;
@@ -213,7 +227,7 @@ ccdbenter("exec-edict");
       char *memory=cccast(char*,lval.value);
       memory+=size*rval.constI;
 
-      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kADDRESS);
+      ccexec_value_t *saved=ccload_alloc(stack,value);
       saved->value=(void*)memory;
     } break;
     case ccedict_kLADDR:
@@ -226,7 +240,7 @@ ccdbenter("exec-edict");
       type=edict->type;
       lval=ccyield_lvalue(stack,edict->lval);
 
-      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kADDRESS);
+      ccexec_value_t *saved=ccload_alloc(stack,value);
       saved->value=lval.value;
 
     } break;
@@ -245,13 +259,11 @@ ccdbenter("exec-edict");
         ccassert(!"write access violation, nullptr");
 
       // Todo:
-      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kCONSTANT);
-      saved->kind=ccexec_value_kCONSTANT;
-      saved->constI=0;
+      ccexec_value_t *saved=ccload_alloc(stack,value);
 
       // Todo:
       cci32_t size=ccsizeof(type);
-      memcpy(&saved->constI,lval.value,size);
+      memcpy(&saved->value,lval.value,size);
 
       int BREAK;
       BREAK = 0;
@@ -280,8 +292,6 @@ ccdbenter("exec-edict");
     } break;
     case ccedict_kARITH:
     {
-ccdbenter("exec-edict-arith");
-
       ccexec_value_t lval,rval;
       cctoken_k sort;
 
@@ -291,10 +301,9 @@ ccdbenter("exec-edict-arith");
 
       ccexec_value_t val=ccexec_edict_arith(sort,lval,rval);
 
-      ccexec_value_t *saved=ccload_alloc(stack,value,ccexec_value_kCONSTANT);
+      ccexec_value_t *saved=ccload_alloc(stack,value);
       *saved=val;
 
-ccdbleave("exec-edict-arith");
     } break;
     case ccedict_kJUMP:
     { ccassert(edict->leap.block!= 0);
@@ -333,8 +342,6 @@ ccdbleave("exec-edict-arith");
     } break;
     case ccedict_kINVOKE:
     {
-ccdbenter("exec-edict-invoke");
-
       int rlen=ccarrlen(edict->blob);
 
       // Todo: proper push
@@ -346,7 +353,7 @@ ccdbenter("exec-edict-invoke");
         *rset++=ccyield_rvalue(stack,*list);
 
       // Note: save the return value ...
-      ccexec_value_t *ret=ccload_alloc(stack,value,ccexec_value_kCONSTANT);
+      ccexec_value_t *ret=ccload_alloc(stack,value);
 
       if(edict->lval->kind==ccvalue_kPROCD)
       {
@@ -362,8 +369,6 @@ ccdbenter("exec-edict-invoke");
       }
 
       ccstack_pull(exec,rlen);
-
-ccdbleave("exec-edict-invoke");
     } break;
     case ccedict_kDBGBREAK:
     {
@@ -382,8 +387,6 @@ ccdbleave("exec-edict-invoke");
 
     default: ccassert(!"error");
   }
-
-ccdbleave("exec-edict");
   return result;
 }
 
@@ -408,7 +411,6 @@ ccfunc int
 ccexec_invoke(
   ccexec_t *exec, ccvalue_t *value, ccexec_value_t *r, cci32_t l, ccexec_value_t *i)
 {
-ccdbenter("invoke");
   int result=ccfalse;
 
   ccprocd_t *procd=value->procd;
@@ -436,7 +438,6 @@ ccdbenter("invoke");
   stack.current=procd->decls;
   stack.irindex=0;
 
-ccdbenter("procd-exec");
   while(cccast(ccu32_t,stack.irindex)<ccarrlen(stack.current->edict))
   {
     ccvalue_t **it=stack.current->edict+stack.irindex;
@@ -449,13 +450,10 @@ ccdbenter("procd-exec");
       break;
     }
   }
-ccdbleave("procd-exec");
 
   ccarrdel(stack.values);
 
   *r=stack.result;
-
-ccdbleave("invoke");
   return result;
 }
 
@@ -464,40 +462,26 @@ ccdbleave("invoke");
 # define ARG 22
 #endif
 
+// Todo: rename this
 ccfunc ccexec_value_t
 ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
 {
   exec->emit=emit;
 
-  ccexec_value_t *args=ccnil;
-  ccexec_value_t *arg=ccarrone(args);
-  arg->kind   =ccexec_value_kCONSTANT;
-  arg->constI =ARG;
-
   ccexec_value_t ret;
-  ccexec_invoke(exec,emit->entry,&ret,ccarrlen(args),args);
+  memset(&ret,ccnull,sizeof(ret));
+
+  if(emit->entry!=0)
+  {
+    ccexec_value_t *args=ccnil;
+    ccexec_value_t *arg=ccarrone(args);
+    arg->kind   =ccexec_value_kVALID;
+    arg->constI =ARG;
+    ccexec_invoke(exec,emit->entry,&ret,ccarrlen(args),args);
+  } else
+    cctraceerr("missing entry function",0);
 
   return ret;
-}
-
-ccfunc int
-ccexec_init(ccexec_t *exec)
-{ memset(exec,ccnil,sizeof(*exec));
-
-  // Todo:
-  size_t stack_size=256 * 1024*1024;
-
-  exec->stack=ccmalloc(stack_size);
-  exec->stack_sze=stack_size;
-  exec->stack_idx=0;
-
-  return cctrue;
-}
-
-ccfunc void
-ccexec_uninit(ccexec_t *exec)
-{
-  ccfree(exec->stack);
 }
 
 #endif

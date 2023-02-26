@@ -2,34 +2,39 @@
 #ifndef _CCTREE
 #define _CCTREE
 
+typedef enum cctree_k cctree_k;
 typedef enum cctree_k
-{ cctree_kSPECIFIER,
+{
+  cctree_kTYPENAME,
+
   cctree_kSTRUCT,
   cctree_kENUM,
+
   cctree_kFUNCTION,
   cctree_kARRAY,
   cctree_kPOINTER,
-  cctree_kLITIDE,
-  cctree_kLITINT,
-  cctree_kLITFLO,
-  cctree_kLITSTR,
+
+  cctree_kIDENTIFIER,
+  cctree_kCONSTANT,
+
   cctree_kBLOCK,
   cctree_kLABEL,
   cctree_kRETURN,
   cctree_kGOTO,
   cctree_kWHILE,
+
   cctree_kDECLNAME,
   cctree_kDECL,
-  cctree_kTERNARY,
+
+  // Note: this is the same for ternarny conditionals, main difference is that it is not a statement unlike if ...
+  cctree_kCONDITIONAL,
+
+  // Note: i think I want to keep these for purely bitwise and logical operators, and keep others, such as '&' or '*' or '[]' or '()'
+  // as their own trees...
   cctree_kBINARY,
   cctree_kUNARY,
+
   cctree_kGROUP,
-
-
-  // cctoken_kPDE,
-  // cctoken_kPIN,
-  // cctoken_Kpos_decrement,
-  // cctoken_Kpos_increment,
 
   cctree_kDEREFERENCE,
   cctree_kADDRESSOF,
@@ -37,38 +42,10 @@ typedef enum cctree_k
   cctree_kINDEX,
 
   cctree_kTUNIT,
+
   cctree_t_designator,
   cctree_t_designation,
 } cctree_k;
-
-ccglobal const char *cctree_s[]=
-{ "kTYPENAME",
-  "kSTRUCT",
-  "kENUM",
-  "kFUNC",
-  "kARRAY",
-  "kPOINTER",
-  "kIDENTIFIER",
-  "kINTEGER",
-  "kFLOAT",
-  "kSTRING",
-  "kBLOCK",
-  "kLABEL",
-  "kRETURN",
-  "kGOTO",
-  "kWHILE",
-  "kDECLNAME",
-  "kDECL",
-  "kTERNARY",
-  "kBINARY",
-  "kUNARY",
-  "kGROUP",
-  "kCALL",
-  "kINDEX",
-  "kTUNIT",
-  "t_designator",
-  "t_designation",
-};
 
 #define cctree_mVARIADIC (0x01<<0x00)
 #define cctree_mCONSTANT (0x01<<0x01)
@@ -76,47 +53,42 @@ ccglobal const char *cctree_s[]=
 #define cctree_mRVALUE   (0x01<<0x03)
 #define cctree_mEXTERNAL (0x01<<0x04)
 
-typedef struct cctree_t cctree_t;
+#define cctree_casti64(tree) ((tree)?cccast(cci64_t,tree->name):0)
+#define cctree_castu64(tree) ((tree)?cccast(ccu64_t,tree->name):0)
+
+#define cctree_casti32(tree) cccast(cci32_t,cctree_casti64(tree))
+#define cctree_castu32(tree) cccast(ccu32_t,cctree_castu64(tree))
+
 
 // Note: slowly but surely compact this ...
+typedef struct cctree_t cctree_t;
 typedef struct cctree_t
 {
   cctree_k    kind;
 
-  const char *loca;
+  char      * name; // Note: this is also the value of a constant tree, cast it to the appropriate type ...
 
-  cctree_t   *root;
-  cci32_t     mark;
-
-  ccstr_t     name;
-  cctree_t  **list; // Todo: demote this to just *
+  char      * loca; // Todo: make this a legit location!
 
   cctoken_k   sort;
+
+  cctree_t   *root; // Todo: is this silly?
+  cci32_t     mark;
+
+  // Todo: should we demote this to just *
+  cctree_t  **list;
 
   cctree_t  * type;
   cctree_t  * size; // Note: the size constant expression `unsigned a: 1`
   cctree_t  * init;
+
+  // Todo: can we rename this to ltree and rtree?
   cctree_t  * lval;
   cctree_t  * rval;
 
-  // Note: remove this ...
+  // Note: can we remove this?
   cctree_t  * blob;
 
-  // Todo:
-  union
-  { ccstr_t as_str;
-
-    ccf64_t as_f64;
-
-    cci64_t as_i64;
-    cci32_t as_i32;
-    cci16_t as_i16;
-    cci8_t  as_i8;
-    ccu64_t as_u64;
-    ccu32_t as_u32;
-    ccu16_t as_u16;
-    ccu8_t  as_u8;
-  };
 
   // Todo: pending ...
   union
@@ -249,32 +221,18 @@ cctree_decl(cctree_t *root, cci32_t mark, cctree_t *type, cctree_t **list)
 }
 
 ccfunc cctree_t *
-cctree_litide(cctree_t *root, cci32_t mark, cctoken_t *token)
-{ cctree_t *tree=cctree_new(cctree_kLITIDE,root,mark);
-  tree->name=token->str;
-  tree->as_str=token->str;
+cctree_identifier(cctree_t *root, cci32_t mark, cctoken_t *token)
+{ cctree_t *tree=cctree_new(cctree_kIDENTIFIER,root,mark);
+  tree->name=token->name;
   return tree;
 }
 
 ccfunc cctree_t *
-cctree_litint(cctree_t *root, cci32_t mark, cctoken_t *token)
-{ cctree_t *result = cctree_new(cctree_kLITINT,root,mark);
-  result->as_i64=token->asi64;
-  return result;
-}
-
-ccfunc cctree_t *
-cctree_litflo(cctree_t *root, cci32_t mark, cctoken_t *token)
-{ cctree_t *result = cctree_new(cctree_kLITFLO,root,mark);
-  result->as_f64=token->asf64;
-  return result;
-}
-
-ccfunc cctree_t *
-cctree_litstr(cctree_t *root, cci32_t mark, cctoken_t *token)
-{ cctree_t *result = cctree_new(cctree_kLITSTR,root,mark);
-  result->as_str=token->str;
-  return result;
+cctree_constant(cctree_t *root, cci32_t mark, cctoken_t *token)
+{ cctree_t *tree=cctree_new(cctree_kCONSTANT,root,mark);
+  tree->name=token->name;
+  tree->sort=token->kind;
+  return tree;
 }
 
 ccfunc cctree_t *
@@ -312,7 +270,7 @@ cctree_unary(cctree_t *root, cci32_t mark, cctoken_k sort, cctree_t *lval)
 ccfunc cctree_t *
 cctree_binary(cctree_t *root, cci32_t mark, cctoken_t *token, cctree_t *lhs, cctree_t *rhs)
 { cctree_t *result=cctree_new(cctree_kBINARY,root,mark);
-  result->sort=token->bit;
+  result->sort=token->kind;
   result->lval=lhs;
   result->rval=rhs;
   return result;
@@ -320,7 +278,7 @@ cctree_binary(cctree_t *root, cci32_t mark, cctoken_t *token, cctree_t *lhs, cct
 
 ccfunc cctree_t *
 cctree_ternary(cctree_t *root, cci32_t mark, cctree_t *cond_tree, cctree_t *then_tree, cctree_t *else_tree)
-{ cctree_t *result=cctree_new(cctree_kTERNARY,root,mark);
+{ cctree_t *result=cctree_new(cctree_kCONDITIONAL,root,mark);
   result->init=cond_tree;
   result->lval=then_tree;
   result->rval=else_tree;
