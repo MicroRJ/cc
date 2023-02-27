@@ -120,71 +120,11 @@ cceat(ccread_t *reader, cctoken_k kind)
   return ccnull;
 }
 
-// Todo: most of the time there's a switch statement do then handle each specifier,
-// is this really necessary or is it just more overhead ...
+ccfunc cctree_t * ccread_arglist(ccread_t *reader, cctree_t *root, cci32_t mark);
+ccfunc cctree_t * ccread_expression(ccread_t *parser, cctree_t *root, cci32_t mark);
+ccfunc cctree_t * ccread_cast(ccread_t *parser, cctree_t *root, cci32_t mark);
 
-// Todo: remove, redundant ...
-ccfunc cctoken_t *
-kttc__peek_alignment_specifier(ccread_t *parser)
-{
-  cctoken_t *token = ccpeep(parser);
 
-  if(token->kind > kttc__algn_spec_0 &&
-     token->kind < kttc__algn_spec_1)
-  {
-    return token;
-  }
-  return ccnil;
-}
-
-// Todo: remove, redundant ...
-ccfunc cctoken_t *
-kttc__peek_type_qualifier(ccread_t *parser)
-{
-  cctoken_t *token = ccpeep(parser);
-
-  if(token->kind > cctype_qual_0 &&
-     token->kind < cctype_qual_1)
-  {
-    return token;
-  }
-  return ccnil;
-}
-
-// Todo: remove, redundant ...
-ccfunc cctoken_t *
-kttc__peek_storage_class(ccread_t *parser)
-{
-  cctoken_t *token = ccpeep(parser);
-
-  // if(token->kind > kttc__scls_spec_0 &&
- // token->kind < kttc__scls_spec_1)
-  // {
-  // return token;
-  // }
-  return ccnil;
-}
-
-// Todo: remove, redundant ...
-ccfunc cctoken_t *
-kttc__peek_func_specifier(ccread_t *parser)
-{
-  cctoken_t *token = ccpeep(parser);
-
-  if(token->kind > kttc__func_spec_0 &&
-     token->kind < kttc__func_spec_1)
-  {
-    return token;
-  }
-  return ccnil;
-}
-
-ccfunc cctree_t *
-ccread_arglist(ccread_t *reader, cctree_t *root, cci32_t mark);
-ccfunc cctree_t *
-ccread_expression(ccread_t *parser, cctree_t *root, cci32_t mark);
-ccfunc cctree_t *
-ccread_cast(ccread_t *parser, cctree_t *root, cci32_t mark);
 
 ccfunc ccinle cctree_t *
 ccread_identifier(ccread_t *reader, cctree_t *root, cci32_t mark)
@@ -194,8 +134,6 @@ ccread_identifier(ccread_t *reader, cctree_t *root, cci32_t mark)
   return tree;
 }
 
-// Section: EXPRESSIONS
-// https://learn.microsoft.com/en-us/cpp/c-language/summary-of-expressions
 // Todo: not complete ...
 ccfunc cctree_t *
 ccread_primary_suffix(ccread_t *reader, cctree_t *result, cctree_t *root, cci32_t mark)
@@ -232,8 +170,11 @@ ccread_primary_suffix(ccread_t *reader, cctree_t *result, cctree_t *root, cci32_
   return result;
 }
 
+// Todo: not complete ...
+// Note: merged unary and postfix into primary, will have to check the specs again to ensure
+// we're still following the grammar rules ...
 ccfunc cctree_t *
-ccread_unary(ccread_t *reader, cctree_t *root, cci32_t mark)
+ccread_primary(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
   cctree_t *result=ccnull;
 
@@ -261,14 +202,13 @@ ccread_unary(ccread_t *reader, cctree_t *root, cci32_t mark)
     case cctoken_kSIZEOF:
       ccgobble(reader);
       if(cceat(reader,cctoken_kLPAREN))
-      {
-        ccassert(!"internal");
+      { ccassert(!"internal");
 
         if(!cceat(reader,cctoken_kRPAREN))
           ccsynerr(reader,0,"expected ')'");
       } else
       {
-        result=cctree_unary_ex(root,mark,cctree_kSIZEOF,ccread_unary(reader,root,mark));
+        result=cctree_unary_ex(root,mark,cctree_kSIZEOF,ccread_primary(reader,root,mark));
       }
     break;
     case cctoken_kBWAND:
@@ -301,7 +241,7 @@ ccread_cast(ccread_t *reader, cctree_t *root, cci32_t mark)
     if(!cceat(reader,cctoken_kRPAREN))
       ccsynerr(reader,0,"expected ')'");
   } else
-    result=ccread_unary(reader,root,mark);
+    result=ccread_primary(reader,root,mark);
 
   return result;
 }
@@ -309,7 +249,7 @@ ccread_cast(ccread_t *reader, cctree_t *root, cci32_t mark)
 ccfunc cctree_t *
 ccread_multiplicative(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
-  cctree_t *result=ccread_unary(reader,root,mark);
+  cctree_t *result=ccread_primary(reader,root,mark);
 
   while(ccread_continues(reader))
   {
@@ -320,7 +260,7 @@ ccread_multiplicative(ccread_t *reader, cctree_t *root, cci32_t mark)
       case cctoken_kDIV:
       case cctoken_kMOD:
         ccgobble(reader);
-        result=cctree_binary(root,mark,token,result,ccread_unary(reader,root,mark));
+        result=cctree_binary(root,mark,token,result,ccread_primary(reader,root,mark));
       continue;
     }
 
@@ -738,7 +678,6 @@ ccread_decl_name(
   return result;
 }
 
-// Todo: MERGE THESE TWO
 ccfunc cctree_t *
 ccread_init_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 {
@@ -746,80 +685,100 @@ ccread_init_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *
 }
 
 ccfunc cctree_t *
-ccread_struct_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
-{
-  return ccread_decl_name(reader,root,mark,type,cctrue,ccfalse,cctrue);
-}
-
-
-// Todo: remove
-ccfunc cctree_t **
-ccread_struct_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
-{ cctree_t *next,**list=ccnil;
-  do
-  { next=ccread_struct_decl_name(reader,root,mark,type);
-    if(next) *ccarradd(list,1)=next;
-  } while(next!=0&&cceat(reader,cctoken_kCMA));
-  return list;
-}
-
-// Todo: remove
-ccfunc cctree_t *
-ccread_struct_decl(ccread_t *reader, cctree_t *root, cci32_t mark)
-{ cctree_t *type; cctree_t **list;
-  if(type=ccread_specifier_qualifier_list(reader,root,mark))
-  { if(list=ccread_struct_decl_name_list(reader,root,mark,type))
-    { return cctree_decl(root,mark,type,list);
-    } else ccsynerr(readerm,0,"expected declarator");
-  }
-  return ccnil;
-}
-
-ccfunc cctree_t *
 ccread_struct_or_union_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
-{ if(cceat(reader,cctoken_kSTRUCT))
+{
+  cctree_t *result=ccnull;
+
+  if(cceat(reader,cctoken_kSTRUCT))
   {
     cctree_t *name=ccread_identifier(reader,root,mark);
 
-    if(!cceat(reader, cctoken_kLCURLY))
+    if(!cceat(reader,cctoken_kLCURLY))
       ccsynerr(reader,0,"expected '{' for struct specifier");
 
-    // Todo: semicolon handling, proper root ...
-    cctree_t *next,**list=ccnil;
-    while(next=ccread_struct_decl(reader,root,mark))
-    { *ccarradd(list,1)=next;
-      if(!reader->term_expl) ccsynerr(reader,0,"expected ';'");
+    cctree_t *next,**list,*type;
+
+    next=ccnull;
+    list=ccnull;
+    type=ccnull;
+
+    while(!ccsee(reader,cctoken_kRCURLY))
+    {
+      type=ccread_specifier_qualifier_list(reader,root,mark);
+
+      do
+      {
+        next=ccread_decl_name(reader,root,mark,type,cctrue,ccfalse,cctrue);
+
+        if(next)
+          *ccarradd(list,1)=next;
+        else
+          break;
+
+        if(ccread_continues(reader))
+          ccsynerr(reader,0,"expected ';'");
+
+      } while(cceat(reader,cctoken_kCMA));
+
+      // Note: we won't strictly force this ...
+      if(ccread_continues(reader))
+        ccsynerr(reader,0,"expected ';'");
     }
 
     if(!cceat(reader, cctoken_kRCURLY))
       ccsynerr(reader,0,"expected '}' for struct specifier");
 
-    cctree_t *result=cctree_new(cctree_kSTRUCT,root,mark);
-    result->list=list;
-    result->name=cctree_name(name);
+    if(list!=0)
+    {
+      result=cctree_new(cctree_kSTRUCT,root,mark);
+      result->list=list;
+      result->name=cctree_name(name);
 
-    return result;
+    } else
+        ccsynerr(reader,0,"'%s': struct or union requires at least one member",name?name->name:"nameless-struct");
+
   } else
   if(cceat(reader, cctoken_kENUM))
   {
     ccassert(!"noimpl");
   }
-  return 0;
+  return result;
 }
-// ccfunc cci32_t
-// ccread_storage_class_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
-// {
-// }
 
-ccfunc cci32_t
-ccread_function_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
-{ if(kttc__peek_func_specifier(reader))
-  { cctoken_t *tok = ccgobble(reader);
-    (void) tok;
-    return cctrue;
+ccfunc cctree_t *
+ccread_type_specifier(ccread_t *reader)
+{
+  cctree_t *result=ccnull;
+
+  cctoken_t *token=ccpeep(reader);
+  switch(token->kind)
+  { case cctoken_kENUM:
+    case cctoken_kSTRUCT:
+      result=ccread_struct_or_union_specifier(reader,ccnull,ccnull);
+    break;
+    case cctoken_kVOID:
+    case cctoken_kMSVC_INT8:
+    case cctoken_kMSVC_INT16:
+    case cctoken_kMSVC_INT32:
+    case cctoken_kMSVC_INT64:
+    case cctoken_kSTDC_BOOL:
+    case cctoken_kSTDC_CHAR:
+    case cctoken_kSTDC_SHORT:
+    case cctoken_kSTDC_INT:
+    case cctoken_kSTDC_FLOAT:
+    case cctoken_kSTDC_DOUBLE:
+    case cctoken_kSTDC_SIGNED:
+    case cctoken_kSTDC_UNSIGNED:
+      ccgobble(reader);
+      result=cctree_new(cctree_kTYPENAME,ccnull,ccnull);
+      result->sort=token->kind;
+      result->loca=token->loca;
+    break;
   }
-  return ccfalse;
+
+  return result;
 }
+
 //
 // specifier-qualifier-list:
 //   type-specifier specifier-qualifier-list(opt)
@@ -895,8 +854,6 @@ ccread_declaration_specifiers(ccread_t *reader, cctree_t *root, cci32_t mark)
 
   cctree_t *type = ccread_specifier_qualifier_list(reader,root,mark);
 
-  ccread_function_specifier(reader,root,mark);
-
   return type;
 }
 ///////////////////////////////////////////////////////
@@ -951,24 +908,14 @@ ccread_param_type_list(ccread_t *reader, cctree_t *root, cci32_t mark)
 }
 // Section: STATEMENTS
 
-ccfunc cctree_t *ccread_block(ccread_t *reader, cctree_t *root, cci32_t mark);
-ccfunc cctree_t **ccread_statement_list(ccread_t *reader, cctree_t *root, cci32_t mark);
 ccfunc cctree_t *ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark);
 
-ccfunc cctree_t *
-ccread_block_or_single_stmt(ccread_t *reader, cctree_t *root, cci32_t mark)
-{ cctree_t *stmt=ccread_block(reader,root,mark);
-  if(!stmt) stmt=ccread_statement(reader,root,mark);
-  return stmt;
-}
-
+// Note: what if in the seer stage we created some sort of jump entity... and it would map to an
+// instruction index, instead of ...
 // cctree_t **list=ccnil;
 // if(ccread_continues(reader))
 //   list=ccread_statement_list(reader,root,mark);
 // result=cctree_label(root,mark,result,list);
-
-// Note: what if in the seer stage we created some sort of jump entity... and it would map to an
-// instruction index ...
 ccfunc cctree_t *
 ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
@@ -976,13 +923,12 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
   cctree_t *cond_tree=ccnull;
   cctree_t *then_tree=ccnull;
   cctree_t *else_tree=ccnull;
-  cctree_t *next,**list=ccnull;
 
   cctoken_t *token=ccpeep(reader);
 
   switch(token->kind)
   {
-    // Todo: how would we do this properly ...
+    // Todo: how would we do this properly, should instead we peek ahead, by token, I think we should ...
     default:
     {
       result=ccread_declaration_specifiers(reader,root,mark);
@@ -997,6 +943,9 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
       } else
       {
         result=ccread_expression(reader,root,mark);
+
+        if(!ccread_continues(reader))
+          goto leave;
       }
 
       if(result!=0 && result->kind==cctree_kIDENTIFIER)
@@ -1012,6 +961,8 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
       if(result!=0)
       {
 read_decl:
+
+        cctree_t *next,**list=ccnull;
         while(ccread_continues(reader))
         {
           next=ccread_init_decl_name(reader,root,mark,result);
@@ -1031,18 +982,26 @@ read_decl:
         }
       }
     } break;
-
     case cctoken_kLCURLY:
-      ccgobble(reader);
+    { if(!cceat(reader,cctoken_kLCURLY))
+        ccsynerr(reader,0,"expected '{'");
 
-      // Note: this is 'read_compound_statement'...
-      result=ccread_block(reader,root,mark);
+      result=cctree_block(root,mark,ccnull);
+
+      while(!ccsee(reader,cctoken_kEND) && !ccsee(reader,cctoken_kRCURLY))
+      {
+        cctree_t *next=ccread_statement(reader,result,mark);
+
+        if(!next) break;
+
+        *ccarradd(result->list,1)=next;
+      }
 
       if(!cceat(reader,cctoken_kRCURLY))
-        ccsynerr(reader, 0, "expected '}'");
-    break;
+        ccsynerr(reader,0,"expected '}'");
+    } break;
     case cctoken_kGOTO:
-      ccgobble(reader);
+    { ccgobble(reader);
 
       cctree_t *ident=ccread_identifier(reader,root,mark);
       ccassert(ident!=0); // Todo: error message
@@ -1051,18 +1010,18 @@ read_decl:
 
       if(ccread_continues(reader))
         ccsynerr(reader, 0, "expected ';'");
-    break;
+    } break;
     case cctoken_kRETURN:
-      ccgobble(reader);
+    { ccgobble(reader);
 
       result=cctree_return(root,mark,ccread_expression(reader,root,mark));
       if(!result->rval)
         ccsynerr(reader,0,"expected expression");
       if(!reader->term_expl)
         ccsynerr(reader, 0, "expected ';'");
-    break;
+    } break;
     case cctoken_kWHILE:
-      ccgobble(reader);
+    { ccgobble(reader);
 
       if(!cceat(reader,cctoken_kLPAREN))
         ccsynerr(reader,0,"expected '('");
@@ -1077,15 +1036,16 @@ read_decl:
 
       if(ccread_continues(reader))
       {
-        then_tree=ccread_block_or_single_stmt(reader,root,mark);
+        then_tree=ccread_statement(reader,root,mark);
+
         if(!then_tree)
           ccsynerr(reader,0,"expected statement");
       }
 
       result=cctree_while(root,mark,cond_tree,then_tree);
-    break;
+    } break;
     case cctoken_kIF:
-      ccgobble(reader);
+    { ccgobble(reader);
 
       if(!cceat(reader,cctoken_kLPAREN))
         ccsynerr(reader,0,"expected '('");
@@ -1099,79 +1059,23 @@ read_decl:
 
       if(ccread_continues(reader))
       {
-        then_tree=ccread_block_or_single_stmt(reader,root,mark);
+        then_tree=ccread_statement(reader,root,mark);
 
         if(!then_tree)
           ccsynerr(reader,0,"expected statement");
 
         if(cceat(reader,cctoken_kELSE))
-        { else_tree=ccread_block_or_single_stmt(reader,root,mark);
+        { else_tree=ccread_statement(reader,root,mark);
           if(!else_tree)
             ccsynerr(reader,0,"expected statement");
         }
       }
-
       result=cctree_ternary(root,mark,cond_tree,then_tree,else_tree);
-    break;
+    } break;
   }
-  // if(child=ccread_init_decl(reader,root,mark))
-  // { if(ccread_continues(reader))
-  //     ccsynerr(reader, 0, "expected ';'");
-  //   return child;
-  // } else
-  // // Note: make sure you call this last, simply because this is a rather expensive function ... not that I care ...
-  // if(child=ccread_expression(reader,root,mark))
-  // {
-  //   // Todo: better way of doing this?
-  //   if(!reader->term_expl)
-  //   {
-  //     if(child->kind==cctree_kIDENTIFIER)
-  //     {
-  //       if(cceat(reader,cctoken_kCOLON))
-  //       {
-
-  //         cctree_t **list=ccnil;
-  //         if(!reader->term_expl)
-  //         { list=ccread_statement_list(reader,root,mark);
-  //         }
-  //         child=cctree_label(root,mark,child,list);
-  //       } else
-  //         ccsynerr(reader, 0, "invalid statement, missing ':' for label statement?");
-  //     } else
-  //       ccsynerr(reader, 0, "invalid statement");
-
-  //   }
-
 leave:
   return result;
 }
-
-ccfunc cctree_t **
-ccread_statement_list(ccread_t *reader, cctree_t *root, cci32_t mark)
-{ cctree_t *next,**list=ccnil;
-  while(next=ccread_statement(reader,root,mark))
-  { *ccarradd(list,1)=next;
-    if(ccsee_end(reader)) break;
-  }
-  return list;
-}
-
-ccfunc cctree_t *
-ccread_block(ccread_t *reader, cctree_t *root, cci32_t mark)
-{ cctree_t *tree=ccnil;
-  if(cceat(reader,cctoken_kLCURLY))
-  { tree=cctree_block(root,mark,ccnil);
-    tree->list=ccread_statement_list(reader,tree,mark);
-    if(!cceat(reader,cctoken_kRCURLY))
-      ccsynerr(reader, 0, "expected '}'");
-  }
-  return tree;
-}
-
-
-
-
-// Section: TRANSLATION UNIT
 
 ccfunc cctree_t *
 ccread_external_declaration(ccread_t *reader, cctree_t *root, cci32_t mark);
@@ -1210,7 +1114,9 @@ ccread_external_declaration(ccread_t *reader, cctree_t *root, cci32_t mark)
     // Note: You can't define multiple functions within the same declaration ...
     ccassert(ccarrlen(decl->list)==1);
 
-    name->blob=ccread_block(reader,name,mark);
+    name->blob=ccread_statement(reader,name,mark);
+
+    ccassert(!name->blob || name->blob->kind==cctree_kBLOCK); // Todo: error message
 
     if(!name->blob&&!reader->term_expl) ccsynerr(reader,0,"expected ';'");
   } else

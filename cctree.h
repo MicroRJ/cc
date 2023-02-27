@@ -23,6 +23,7 @@ typedef enum cctree_k
   cctree_kGOTO,
   cctree_kWHILE,
 
+  // Todo: let's get rid of declname
   cctree_kDECLNAME,
   cctree_kDECL,
 

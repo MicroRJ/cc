@@ -110,28 +110,24 @@ ccseer_tree_to_type(ccseer_t *seer, cctree_t *tree)
     ccelem_t *list=ccnull;
 
     // Todo:
-    cctree_t **i,**v;
-    ccarrfor(tree->list,i)
-    { ccassert((*i)->kind==cctree_kDECL);
+    cctree_t **v;
+    ccarrfor(tree->list,v)
+    { cctree_t *n=*v;
+      ccassert(n->kind==cctree_kDECLNAME);
+      ccassert(n->name!=0);
+      ccassert(n->size==0); // Note: we don't support this now ...
 
-      ccarrfor((*i)->list,v)
-      { cctree_t *n=*v;
-        ccassert(n->kind==cctree_kDECLNAME);
-        ccassert(n->name!=0);
-        ccassert(n->size==0); // Note: we don't support this now ...
+      // Todo: error message...
+      ccelem_t *e=cctblputS(list,n->name);
+      ccassert(ccerrnon());
 
-        // Todo: error message...
-        ccelem_t *e=cctblputS(list,n->name);
-        ccassert(ccerrnon());
+      e->tree=n;
+      e->name=n->name;
+      e->type=ccseer_tree_to_type(seer,n->type);
+      e->slot=size;
 
-        e->tree=n;
-        e->name=n->name;
-        e->type=ccseer_tree_to_type(seer,n->type);
-        e->slot=size;
-
-        // Todo: this is terrible...
-        size+=e->type->size;
-      }
+      // Todo: this is terrible...
+      size+=e->type->size;
     }
 
     result=cctype_record(tree,list,size,tree->name);
