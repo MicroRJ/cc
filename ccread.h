@@ -19,8 +19,8 @@ typedef enum cctoken_k
 
   cctoken_kLPAREN,  // '('
   cctoken_kRPAREN,  // ')'
-  cctoken_Klcurly,  // '{'
-  cctoken_Krcurly,  // '}'
+  cctoken_kLCURLY,  // '{'
+  cctoken_kRCURLY,  // '}'
   cctoken_kLSQUARE, // '['
   cctoken_kRSQUARE, // ']'
 
@@ -121,19 +121,19 @@ typedef enum cctoken_k
 
    * ** these are reseverd keywords **
    **/
-  cctoken_Kif,
+  cctoken_kIF,
+  cctoken_kELSE,
   cctoken_Kswitch,
 
-  cctoken_Kelse,
   cctoken_Kcase,
   cctoken_Kdefault,
 
   cctoken_Kfor,
-  cctoken_Kwhile,
+  cctoken_kWHILE,
   cctoken_Kdo,
 
-  cctoken_Kgoto,
-  cctoken_Kreturn,
+  cctoken_kGOTO,
+  cctoken_kRETURN,
   cctoken_Kbreak,
   cctoken_Kcontinue,
 

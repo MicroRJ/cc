@@ -52,6 +52,51 @@ ccseer_init(ccseer_t *seer)
   ccsee_register_builtin(seer,ccbuiltin_kCCERROR,"ccerror");
 }
 
+
+// Todo:
+ccfunc ccinle ccesse_t *
+ccseer_entity(ccseer_t *seer, const char *name)
+{
+  ccassert(name!=0);
+
+  ccesse_t **holder=cctblgetS(seer->entity_table,name);
+  ccesse_t *held=ccerrnon()? *holder :0;
+
+  return held;
+}
+
+// Todo: legit scoping
+ccfunc ccinle ccesse_t *
+ccseer_symbol(ccseer_t *seer, cctree_t *tree)
+{
+  ccassert(tree!=0);
+
+  ccesse_t **holder=cctblgetP(seer->symbol_table,tree);
+  ccesse_t *held=ccerrnon()? *holder :0;
+
+  return held;
+}
+
+ccfunc cctype_t *
+ccseer_tree_type(ccseer_t *seer, cctree_t *tree)
+{
+  cctype_t **holder=cctblgetP(seer->tether_table,tree);
+  cctype_t *held=ccerrnon()? *holder :0;
+
+  ccassert(ccerrnon());
+
+  return held;
+}
+
+ccfunc void
+ccseer_tether(ccseer_t *seer, cctree_t *tree, cctype_t *type)
+{
+  cctype_t **holder=cctblputP(seer->tether_table,tree);
+  ccassert(ccerrnon());
+
+  *holder=type;
+}
+
 // Todo: not very good!
 ccfunc cctype_t *
 ccseer_tree_to_type(ccseer_t *seer, cctree_t *tree)
@@ -88,7 +133,17 @@ ccseer_tree_to_type(ccseer_t *seer, cctree_t *tree)
         size+=e->type->size;
       }
     }
+
     result=cctype_record(tree,list,size,tree->name);
+
+    if(tree->name)
+    {
+      ccesse_t *e=ccesse(ccesse_kTYPENAME);
+      e->name=tree->name;
+      e->tree=tree;
+      e->type=result;
+      ccseer_register(seer,e,tree->name);
+    }
   } else
   if(tree->kind==cctree_kARRAY)
   {
@@ -139,56 +194,21 @@ ccseer_tree_to_type(ccseer_t *seer, cctree_t *tree)
       case cctoken_kMSVC_INT32:    result=seer->type_msvc_int32; break;
       case cctoken_kMSVC_INT64:    result=seer->type_msvc_int64; break;
     }
+  } else
+  if(tree->kind==cctree_kIDENTIFIER)
+  {
+    // Todo: error message ...
+    ccesse_t *esse=ccseer_entity(seer,tree->name);
+    ccassert(esse!=0);
+    ccassert(esse->kind==ccesse_kTYPENAME);
+
+    result=esse->type;
   }
 
   ccassert(result!=0);
   return result;
 }
 
-
-// Todo:
-ccfunc ccinle ccesse_t *
-ccseer_entity(ccseer_t *seer, const char *name)
-{
-  ccassert(name!=0);
-
-  ccesse_t **holder=cctblgetS(seer->entity_table,name);
-  ccesse_t *held=ccerrnon()? *holder :0;
-
-  return held;
-}
-
-// Todo: legit scoping
-ccfunc ccinle ccesse_t *
-ccseer_symbol(ccseer_t *seer, cctree_t *tree)
-{
-  ccassert(tree!=0);
-
-  ccesse_t **holder=cctblgetP(seer->symbol_table,tree);
-  ccesse_t *held=ccerrnon()? *holder :0;
-
-  return held;
-}
-
-ccfunc cctype_t *
-ccseer_tree_type(ccseer_t *seer, cctree_t *tree)
-{
-  cctype_t **holder=cctblgetP(seer->tether_table,tree);
-  cctype_t *held=ccerrnon()? *holder :0;
-
-  ccassert(ccerrnon());
-
-  return held;
-}
-
-ccfunc void
-ccseer_tether(ccseer_t *seer, cctree_t *tree, cctype_t *type)
-{
-  cctype_t **holder=cctblputP(seer->tether_table,tree);
-  ccassert(ccerrnon());
-
-  *holder=type;
-}
 
 // Note: register an entity by name...
 ccfunc int

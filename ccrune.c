@@ -281,10 +281,10 @@ ccread_token(ccread_t *l)
     { ++ l->tok_max, l->tok.kind = cctoken_kRSQUARE;
     } break;
     case '{':
-    { ++ l->tok_max, l->tok.kind = cctoken_Klcurly;
+    { ++ l->tok_max, l->tok.kind = cctoken_kLCURLY;
     } break;
     case '}':
-    { ++ l->tok_max, l->tok.kind = cctoken_Krcurly;
+    { ++ l->tok_max, l->tok.kind = cctoken_kRCURLY;
     } break;
     case '~':
     {
@@ -521,16 +521,16 @@ ccread_register_defaults(ccread_t *reader)
   ccread_register(reader,"_Thread_local",cctoken_Kthread_local);
   ccread_register(reader,"__declspec",cctoken_Kmsvc_declspec);
 
-  ccread_register(reader,"if",cctoken_Kif);
+  ccread_register(reader,"if",cctoken_kIF);
   ccread_register(reader,"switch",cctoken_Kswitch);
-  ccread_register(reader,"else",cctoken_Kelse);
+  ccread_register(reader,"else",cctoken_kELSE);
   ccread_register(reader,"case",cctoken_Kcase);
   ccread_register(reader,"default",cctoken_Kdefault);
   ccread_register(reader,"for",cctoken_Kfor);
-  ccread_register(reader,"while",cctoken_Kwhile);
+  ccread_register(reader,"while",cctoken_kWHILE);
   ccread_register(reader,"do",cctoken_Kdo);
-  ccread_register(reader,"goto",cctoken_Kgoto);
-  ccread_register(reader,"return",cctoken_Kreturn);
+  ccread_register(reader,"goto",cctoken_kGOTO);
+  ccread_register(reader,"return",cctoken_kRETURN);
   ccread_register(reader,"break",cctoken_Kbreak);
   ccread_register(reader,"continue",cctoken_Kcontinue);
 

@@ -33,7 +33,11 @@ int main(int _)
 
   cx.name="Dayan, Rodriguez";
 
-  ccprintf("%s\n", cx.name);
+  ccprintf("%s, %i\n", cx.name, sizeof cx);
+
+  context_t cx1;
+  cx1.name="Roxela\n";
+  ccprintf("%s", cx1.name);
 
 
   int i,x,y,z,*p,q;

@@ -27,6 +27,7 @@ typedef enum cctype_k
 typedef enum ccesse_k ccesse_k;
 typedef enum ccesse_k
 { ccesse_kINVALID=0,
+  ccesse_kTYPENAME,
   ccesse_kCBINDING,
   ccesse_kFUNCTION,
   ccesse_kVARIABLE,
@@ -44,12 +45,12 @@ typedef struct ccaura_t
 // Note: entity or essential, indivisible and relatively unique, such as variables ...
 typedef struct ccesse_t ccesse_t;
 typedef struct ccesse_t
-{ const char    * name;
-  ccesse_k        kind;
+{ ccesse_k        kind;
+  const char    * name;
+  cctree_t      * tree;
   ccbuiltin_k     sort;
   cctype_t      * type;
   ccaura_t      * aura;
-  cctree_t      * tree;
 } ccesse_t;
 
 typedef struct ccelem_t ccelem_t;
