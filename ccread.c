@@ -199,37 +199,34 @@ ccread_identifier(ccread_t *reader, cctree_t *root, cci32_t mark)
 // Todo: not complete ...
 ccfunc cctree_t *
 ccread_primary_suffix(ccread_t *reader, cctree_t *result, cctree_t *root, cci32_t mark)
-{
-  while(ccread_continues(reader))
+{ while(ccread_continues(reader))
   { cctoken_t *token=ccpeep(reader);
-  	switch(token->kind)
-	  { cctree_t *i;
-	    case cctoken_kLPAREN:
-	      ccgobble(reader);
-	      i=ccread_arglist(reader,root,mark);
-	      if(!cceat(reader,cctoken_kRPAREN))
-	        ccsynerr(reader, 0, "expected ')'");
+    switch(token->kind)
+    { cctree_t *i;
+      case cctoken_kLPAREN:
+        ccgobble(reader);
+        i=ccread_arglist(reader,root,mark);
+        if(!cceat(reader,cctoken_kRPAREN))
+          ccsynerr(reader, 0, "expected ')'");
 
-	      result=cctree_suffixed(root,mark,cctree_kCALL,result,i);
-	    continue;
-	    case cctoken_kLSQUARE:
-	      ccgobble(reader);
-	      i=ccread_expression(reader,root,mark);
-	      if(!cceat(reader,cctoken_kRSQUARE))
-	        ccsynerr(reader, 0, "expected ']'");
+        result=cctree_suffixed(root,mark,cctree_kCALL,result,i);
+      continue;
+      case cctoken_kLSQUARE:
+        ccgobble(reader);
+        i=ccread_expression(reader,root,mark);
+        if(!cceat(reader,cctoken_kRSQUARE))
+          ccsynerr(reader, 0, "expected ']'");
 
-	      result=cctree_suffixed(root,mark,cctree_kINDEX,result,i);
-	    continue;
-	    case cctoken_kDOT:
-	      ccgobble(reader);
-	      i=ccread_identifier(reader,root,mark);
-	      // Todo:
-	      ccassert(i!=0);
+        result=cctree_suffixed(root,mark,cctree_kINDEX,result,i);
+      continue;
+      case cctoken_kDOT:
+        ccgobble(reader);
+        i=ccread_identifier(reader,root,mark);
+        ccassert(i!=0); // Todo: error message ...
 
-	      result=cctree_suffixed(root,mark,cctree_kSELECTOR,result,i);
-	    continue;
-	  }
-
+        result=cctree_suffixed(root,mark,cctree_kSELECTOR,result,i);
+      continue;
+    }
     break;
   }
   return result;

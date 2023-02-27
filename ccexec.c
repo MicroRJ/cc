@@ -150,10 +150,9 @@ ccstack_local_alloc(
     "cannot allocate local, expected an edict of type LOCAL or PARAM");
 
   cctype_t *type=edict->type;
-  cci32_t size=ccsizeof(type);
 
-  void *memory=ccstack_push_size(exec,size);
-  memset(memory,ccnull,size); // Todo:
+  void *memory=ccstack_push_size(exec,type->size);
+  memset(memory,ccnull,type->size); // Todo:
 
   ccexec_value_t *result=ccload_alloc(stack,value);
   result->value=memory;
@@ -220,10 +219,9 @@ ccexec_edict(
       lval=ccyield_lvalue(stack,edict->lval);
       rval=ccyield_rvalue(stack,edict->rval);
 
-      cci32_t size=ccsizeof(type);
       // Todo:
       char *memory=cccast(char*,lval.value);
-      memory+=size*rval.constI;
+      memory+=type->size*rval.constI;
 
       ccexec_value_t *saved=ccload_alloc(stack,value);
       saved->value=(void*)memory;
@@ -260,8 +258,7 @@ ccexec_edict(
       ccexec_value_t *saved=ccload_alloc(stack,value);
 
       // Todo:
-      cci32_t size=ccsizeof(type);
-      memcpy(&saved->value,lval.value,size);
+      memcpy(&saved->value,lval.value,type->size);
 
       int BREAK;
       BREAK = 0;
@@ -283,8 +280,7 @@ ccexec_edict(
         ccassert(!"write access violation, nullptr");
 
       // Todo:
-      cci32_t size=ccsizeof(type);
-      memcpy(lval.value,&rval.value,size);
+      memcpy(lval.value,&rval.value,type->size);
 
       // Todo: produce operand only if necessary and take into account the type
     } break;

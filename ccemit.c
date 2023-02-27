@@ -110,12 +110,6 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
         result=ccblock_arith(block,tree->sort,lhs,rhs);
       }
     } break;
-    case cctree_kSIZEOF:
-    { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
-      ccassert(type!=0);
-
-      result=ccemit_const_int(emit,ccsizeof(type));
-    } break;
     case cctree_kDEREFERENCE:
     { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
       ccassert(type!=0);
@@ -127,13 +121,6 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
 
       if(!is_lval)
         result=ccblock_fetch(block,type->type,result);
-    } break;
-    case cctree_kADDRESSOF:
-    { // Todo:
-      ccassert(!is_lval);
-
-      cctype_t *type=ccseer_tree_type(emit->seer,tree);
-      result=ccblock_laddr(block,type,ccemit_lvalue(emit,procd,block,tree->lval));
     } break;
     case cctree_kINDEX:
     { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
@@ -151,6 +138,43 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
 
       if(!is_lval)
         result=ccblock_fetch(block,type->type,result);
+    } break;
+    case cctree_kSELECTOR:
+    {
+      ccesse_t *esse=ccseer_entity(emit->seer,tree->lval->name);
+      ccassert(esse!=0);
+
+      cctype_t *type=ccseer_tree_type(emit->seer,tree);
+      ccassert(type!=0);
+
+      ccelem_t *elem=cctblgetS(esse->type->list,tree->rval->name);
+      ccassert(ccerrnon());
+
+      ccvalue_t *lvalue,*rvalue;
+      lvalue=ccemit_value(emit,procd,block,tree->lval,1);
+      rvalue=ccemit_const_int(emit,elem->slot);
+
+      // Note:
+      if(esse->type->kind==cctype_kPOINTER)
+        lvalue=ccblock_fetch(block,esse->type,lvalue);
+
+      result=ccblock_aaddr(block,type,lvalue,rvalue);
+
+      if(!is_lval)
+        result=ccblock_fetch(block,type,result);
+    } break;
+    case cctree_kSIZEOF:
+    { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
+      ccassert(type!=0);
+
+      result=ccemit_const_int(emit,type->size);
+    } break;
+    case cctree_kADDRESSOF:
+    { // Todo:
+      ccassert(!is_lval);
+
+      cctype_t *type=ccseer_tree_type(emit->seer,tree);
+      result=ccblock_laddr(block,type,ccemit_lvalue(emit,procd,block,tree->lval));
     } break;
     case cctree_kCALL:
     { cctree_t *ltree=tree->lval;
@@ -175,7 +199,6 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
 
       result=ccblock_invoke(block,lval,rval);
     } break;
-
     // Todo: these have already been generated...
     case cctree_kCONSTANT:
     { if(tree->sort==cctoken_kLITINT)

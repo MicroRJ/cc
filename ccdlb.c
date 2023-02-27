@@ -99,25 +99,31 @@ cctblhsh(void **ccm, cci32_t bit, int len, char *key, int create_always)
   ccassert(key!=0);
 
   ccdlb_t *dlb;
-  ccu64_t  hsh=5381;
-  ccu64_t  idx,max;
+
+  if(!*ccm)
+  {
+    if(create_always)
+    {
+      ccdlbadd(ccm,bit,1,0);
+
+      dlb=ccdlb_(*ccm);
+
+      // Todo: how should we size up the hash-table?
+      ccarradd(dlb->entries,0xff);
+      ccarrzro(dlb->entries);
+      ccarrfix(dlb->entries);
+    }
+      else return ccfalse;
+  }
+    else dlb=ccdlb_(*ccm);
+
+  ccu64_t hsh=5381;
+  ccu64_t idx,max;
 
   if(len>0)
     for(idx=0;idx<len;hsh=hsh<<5,hsh=hsh+key[idx++]);
   else
     hsh=cccast(ccu64_t,key);
-
-  if(!*ccm && create_always)
-  { ccdlbadd(ccm,bit,1,0);
-
-    dlb=ccdlb_(*ccm);
-
-    // Todo: how should we size up the hash-table?
-    ccarradd(dlb->entries,0xff);
-    ccarrzro(dlb->entries);
-    ccarrfix(dlb->entries);
-  } else
-    dlb=ccdlb_(*ccm);
 
   max=ccarrmax(dlb->entries);
 
