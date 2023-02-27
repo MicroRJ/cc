@@ -423,7 +423,7 @@ ccread_conditional(ccread_t *parser, cctree_t *root, cci32_t mark)
       rhs=ccread_conditional(parser,root,mark);
     else
       ccsynerr(parser,0,"expected ':' invalid conditional expression");
-    result=cctree_ternary(root,mark,result,lhs,rhs);
+    result=cctree_conditional(root,mark,result,lhs,rhs);
   }
   return result;
 }
@@ -490,7 +490,7 @@ ccfunc cctree_t *
 ccread_initializer(ccread_t *reader, cctree_t *root, cci32_t mark);
 
 ccfunc cctree_t *ccread_decl_spec(ccread_t *reader, cctree_t *root, cci32_t mark);
-ccfunc cctree_t *ccread_decl(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type, int, int, int);
+ccfunc cctree_t *ccread_decl(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type, int, int);
 
 #if 0
 ccfunc cctree_t *
@@ -596,7 +596,7 @@ ccread_record_spec(ccread_t *reader, cctree_t *root, cci32_t mark)
       type=ccread_decl_spec(reader,root,mark);
 
       do
-      { next=ccread_decl(reader,root,mark,type,cctrue,ccfalse,cctrue);
+      { next=ccread_decl(reader,root,mark,type,cctrue,ccfalse);
 
         if(next)
           *ccarradd(list,1)=next;
@@ -708,8 +708,7 @@ ccread_decl_modi(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *resul
 
 ccfunc cctree_t *
 ccread_decl(
-  ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *typed,
-    int allow_bitsize, int allow_initializer, int allow_name)
+  ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *typed, int allow_bitsize, int allow_initializer)
 {
   ccassert(typed!=0);
 
@@ -722,7 +721,7 @@ ccread_decl(
   if(cceat(reader,cctoken_kLPAREN))
   {
     cctree_t *envoy=cctree_clone(result);
-    result=ccread_decl(reader,root,mark,envoy,ccfalse,ccfalse,allow_name);
+    result=ccread_decl(reader,root,mark,envoy,ccfalse,ccfalse);
 
     if(!cceat(reader, cctoken_kRPAREN))
       ccsynerr(reader, 0, "expected ')'");
@@ -735,9 +734,6 @@ ccread_decl(
   {
     if(ccsee(reader,cctoken_kLITIDENT))
       name=ccread_identifier(reader,root,mark);
-
-    if(name)
-      ccsynerr(reader,"'%s': unexpected identifier in abstract context",name->name);
 
     if(ccread_continues(reader))
       result=ccread_decl_modi(reader,root,mark,result);
@@ -778,7 +774,7 @@ ccread_param_decl(ccread_t *reader, cctree_t *root, cci32_t mark)
     ccsynerr(reader,0,"unexpected '...', must be at end of function");
 
   spec=ccread_decl_spec(reader,root,mark);
-  if(spec) decl=ccread_decl(reader,root,mark,spec,ccfalse,ccfalse,cctrue);
+  if(spec) decl=ccread_decl(reader,root,mark,spec,ccfalse,ccfalse);
 
   return decl;
 }
@@ -826,7 +822,6 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
       result=ccread_expression(reader,root,mark);
     } break;
     case cctoken_kLITIDENT:
-    {
       // Note: check if this identifier could be part of a declaration...
       if(!token->term_expl)
       {
@@ -839,8 +834,6 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
           break;
         }
       }
-      // Note: fallthrough
-    }
     case cctoken_kENUM:
     case cctoken_kSTRUCT:
     case cctoken_kVOID:
@@ -876,16 +869,16 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
         type->name=token->name;
       }
 
-      if(ccread_continues(reader))
+      if(!token->term_expl)
       {
-        result=ccread_decl(reader,root,mark,type,ccfalse,cctrue,cctrue);
+        result=ccread_decl(reader,root,mark,type,ccfalse,cctrue);
 
         // Debugger helper:
         ccassert(result->name!=0);
 
         cctree_t *next=result;
         while(ccread_continues(reader) && cceat(reader,cctoken_kCMA))
-          next=next->next=ccread_decl(reader,root,mark,type,ccfalse,cctrue,cctrue);
+          next=next->next=ccread_decl(reader,root,mark,type,ccfalse,cctrue);
       }
 
     } break;
@@ -898,6 +891,9 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
       while(!ccsee(reader,cctoken_kEND) && !ccsee(reader,cctoken_kRCURLY))
       {
         cctree_t *next=ccread_statement(reader,result,mark);
+
+        if(ccread_continues(reader))
+          ccsynerr(reader, 0, "expected ';'");
 
         if(!next) break;
 
@@ -914,18 +910,14 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
       ccassert(ident!=0); // Todo: error message
 
       result=cctree_goto(root,mark,ident);
-
-      if(ccread_continues(reader))
-        ccsynerr(reader, 0, "expected ';'");
     } break;
     case cctoken_kRETURN:
     { ccgobble(reader);
 
       result=cctree_return(root,mark,ccread_expression(reader,root,mark));
+
       if(!result->rval)
         ccsynerr(reader,0,"expected expression");
-      if(!reader->term_expl)
-        ccsynerr(reader, 0, "expected ';'");
     } break;
     case cctoken_kWHILE:
     { ccgobble(reader);
@@ -944,6 +936,12 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
       if(ccread_continues(reader))
       {
         then_tree=ccread_statement(reader,root,mark);
+
+        if(then_tree->kind!=cctree_kBLOCK)
+        {
+          if(ccread_continues(reader))
+            ccsynerr(reader, 0, "expected ';'");
+        }
 
         if(!then_tree)
           ccsynerr(reader,0,"expected statement");
@@ -971,13 +969,19 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
         if(!then_tree)
           ccsynerr(reader,0,"expected statement");
 
+        if(ccread_continues(reader))
+          ccsynerr(reader, 0, "expected ';'");
+
         if(cceat(reader,cctoken_kELSE))
         { else_tree=ccread_statement(reader,root,mark);
           if(!else_tree)
             ccsynerr(reader,0,"expected statement");
+
+          if(ccread_continues(reader))
+            ccsynerr(reader, 0, "expected ';'");
         }
       }
-      result=cctree_ternary(root,mark,cond_tree,then_tree,else_tree);
+      result=cctree_conditional(root,mark,cond_tree,then_tree,else_tree);
     } break;
   }
 

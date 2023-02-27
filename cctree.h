@@ -272,7 +272,7 @@ cctree_binary(cctree_t *root, cci32_t mark, cctoken_t *token, cctree_t *lhs, cct
 }
 
 ccfunc cctree_t *
-cctree_ternary(cctree_t *root, cci32_t mark, cctree_t *cond_tree, cctree_t *then_tree, cctree_t *else_tree)
+cctree_conditional(cctree_t *root, cci32_t mark, cctree_t *cond_tree, cctree_t *then_tree, cctree_t *else_tree)
 { cctree_t *result=cctree_new(cctree_kCONDITIONAL,root,mark);
   result->init=cond_tree;
   result->lval=then_tree;

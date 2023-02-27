@@ -6,23 +6,6 @@
 # define ccrune_letter(r) (CCWITHIN(r,'a','z')||CCWITHIN(r,'A','Z')||CCWITHIN(r,'0','9')||(r)=='_')
 #endif
 
-ccfunc void ccread_next_token_internal(ccread_t *l);
-
-// Todo: you only ever do this one at the beginning of the file!
-// ccfunc cci32_t
-// ccread_next_token(ccread_t *l)
-// {
-//   do
-//   { ccread_next_token_internal(l);
-//   } while(l->tok.kind == cctoken_Kliteral_comment ||
-//           l->tok.kind == cctoken_Kspace   ||
-//           l->tok.kind == cctoken_Kendimpl ||
-//           l->tok.kind == cctoken_Kendexpl );
-//   return l->tok.kind != cctoken_kEND;
-// }
-
-
-
 // Note: #ccread_register expects a null terminated identifier string
 ccfunc ccinle void
 ccread_register(ccread_t *reader, char *s, cctoken_k k)
@@ -138,20 +121,20 @@ leave:
 
 ccfunc ccinle char *
 ccread_blank(char *r, char *e)
-{ int c;
-  for(c=*r; r<e; c=*r++)
-  { switch(c)
+{ while(r<e)
+  {
+    switch(*r)
     { case  ' ':
       case '\t':
       case '\f':
       case '\v':
       case '\b':
       case '\r':
-      case '\n': continue;
+      case '\n':  r++;
+        continue;
     }
     break;
   }
-
   return r;
 }
 

@@ -94,12 +94,13 @@ ccdbenter("main");
 
   cctest();
 
-  // sizeof(ccdebugthis);
-
 #if 1
-  const char *n="code\\lval.cc";
-  ccexec_value_t e=buildrunfile(n);
-  ccprintf("<!6'%s'!>: <!3%lli!>\n",n,e.constI);
+  const char *n[]={"code\\sizeof.cc","code\\lval.cc"};
+  for(int i=0; i<ccCarrlenL(n); ++i)
+  { ccexec_value_t e=buildrunfile(n[i]);
+    ccprintf("<!6'%s'!>: <!3%lli!>\n",n[i],e.constI);
+  }
+
 #endif
 
 ccdbleave("main");
