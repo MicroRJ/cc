@@ -281,8 +281,55 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
 
       ccseer_tether(seer,tree,result);
     } break;
+    case cctree_kINDEX:
+    { ccassert(tree->lval!=0);
+      ccassert(tree->rval!=0);
+
+      result=ccseer_value(seer,tree->lval,0);
+
+      if(!cctype_indirect(result))
+      {
+
+        // Todo: better logging
+        char buf[256];
+        cctype_to_string(result,buf);
+
+        cctraceerr("'%s': subscript requires array or pointer type",buf);
+      }
+
+      ccseer_value(seer,tree->rval,0);
+
+      // Care:
+      result=result->type;
+      ccseer_tether(seer,tree,result);
+    } break;
     case cctree_kSELECTOR:
-    {
+    { ccassert(tree->lval!=0);
+      ccassert(tree->rval!=0);
+
+      ccassert((tree->lval->kind==cctree_kIDENTIFIER)||(tree->lval->kind==cctree_kSELECTOR));
+      ccassert((tree->rval->kind==cctree_kIDENTIFIER));
+
+      cctype_t *type=ccseer_value(seer,tree->lval,0);
+
+      if(type)
+      { if(type->kind==cctype_kRECORD)
+        {
+          ccelem_t *elem=cctblgetS(type->list,tree->rval->name);
+          if(ccerrnon())
+          {
+            result=elem->type;
+            ccseer_tether(seer,tree,result);
+          } else
+            cctraceerr("'%s': is not a member of '%s'",
+                        tree->rval->name,type->name?type->name:"unknown");
+        } else
+          cctraceerr("'.%s': must have struct or union specifier",
+                      tree->rval->name);
+      }
+
+
+#if 0
       // Todo: this is temporary, this won't work for more complex `a.b.c.d` type expressions ...
       ccassert(tree->lval!=0);
       ccassert(tree->rval!=0);
@@ -311,6 +358,7 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
           cctraceerr("'.%s': must have struct or union specifier",tree->rval->name);
       } else
           cctraceerr("'%s': undeclared identifier",tree->name);
+#endif
 
     } break;
     case cctree_kSIZEOF:
@@ -369,29 +417,6 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
         ccseer_tether(seer,tree,result);
       } else
         cctracewar("not a function",0);
-    } break;
-    case cctree_kINDEX:
-    {
-      ccassert(tree->lval!=0);
-      ccassert(tree->rval!=0);
-
-      result=ccseer_value(seer,tree->lval,0);
-
-      if(!cctype_indirect(result))
-      {
-
-        // Todo: better logging
-        char buf[256];
-        cctype_to_string(result,buf);
-
-        cctraceerr("'%s': subscript requires array or pointer type",buf);
-      }
-
-      ccseer_value(seer,tree->rval,0);
-
-      // Care:
-      result=result->type;
-      ccseer_tether(seer,tree,result);
     } break;
     case cctree_kBINARY:
     { ccassert(tree->lval!=0);

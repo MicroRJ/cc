@@ -141,27 +141,32 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
     } break;
     case cctree_kSELECTOR:
     {
-      ccesse_t *esse=ccseer_entity(emit->seer,tree->lval->name);
-      ccassert(esse!=0);
-
-      cctype_t *type=ccseer_tree_type(emit->seer,tree);
+      cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
       ccassert(type!=0);
 
-      ccelem_t *elem=cctblgetS(esse->type->list,tree->rval->name);
+      ccelem_t *elem=cctblgetS(type->list,tree->rval->name);
       ccassert(ccerrnon());
 
       ccvalue_t *lvalue,*rvalue;
       lvalue=ccemit_value(emit,procd,block,tree->lval,1);
       rvalue=ccemit_const_int(emit,elem->slot);
 
-      // Note:
-      if(esse->type->kind==cctype_kPOINTER)
-        lvalue=ccblock_fetch(block,esse->type,lvalue);
+      // Todo: we assume that a selector expression could be either '->' or '.', whether the user
+      // chose the right token is not our concern, either way, if the expression is valid, which
+      // it should be if we got to this stage, we emit the proper fetch instruction, although,
+      // it might be more efficient to have a different fetch for '->' selectors, so that we don't
+      // fetch the whole struct...
+
+      if(type->kind==cctype_kPOINTER)
+        lvalue=ccblock_fetch(block,type,lvalue);
+
+      type=ccseer_tree_type(emit->seer,tree);
 
       result=ccblock_aaddr(block,type,lvalue,rvalue);
 
       if(!is_lval)
         result=ccblock_fetch(block,type,result);
+
     } break;
     case cctree_kSIZEOF:
     { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);

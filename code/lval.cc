@@ -17,11 +17,14 @@ int set_to_one(int *j)
 
 int main(int _)
 {
-  struct simple_t
-  { int a;
+  struct ab_t
+  {
+  	struct a_t
+  	{ int a;
+  	} a;
+
     int b;
   } v;
-
 
   int i,x,y,z,*p,q;
   char *o,*u;
@@ -29,10 +32,11 @@ int main(int _)
   int b[24][24];
   int c[24][24][24];
 
-  v.a=22;
-  i=v.a;
+  v.a.a=22;
+  ccassert(v.a.a==22);
 
-  ccassert(i==22);
+  v.b=22;
+  ccassert(v.b==22);
 
   ccassert(sizeof i == 4);
   ccassert(sizeof p == 8);
