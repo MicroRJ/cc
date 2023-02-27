@@ -25,7 +25,7 @@ ccemit_include_local(
   ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree, int is_param)
 {
   ccassert(tree!=0);
-  ccassert(tree->kind==cctree_kDECLNAME);
+  ccassert(tree->kind==cctree_kDECL);
 
   ccesse_t *esse=ccseer_symbol(emit->seer,tree);
   ccassert(esse!=0);
@@ -233,63 +233,55 @@ ccemit_param(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *tree)
   return ccemit_include_local(emit,func,block,tree,cctrue);
 }
 
-ccfunc ccinle ccvalue_t *
-ccemit_decl_name(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *tree)
-{
-  return ccemit_include_local(emit,func,block,tree,ccfalse);
-}
-
-ccfunc ccinle void
-ccemit_decl(ccemit_t *emit, ccprocd_t *func, ccblock_t *block, cctree_t *decl)
-{ cctree_t **list;
-  ccarrfor(decl->list,list) ccemit_decl_name(emit,func,block,*list);
-}
-
 ccfunc ccvalue_t *
 ccemit_tree(
-  ccemit_t *emit, ccprocd_t *func, ccblock_t *irset, cctree_t *tree)
+  ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree)
 {
   if(tree->kind==cctree_kDECL)
   {
-    ccemit_decl(emit,func,irset,tree);
+    cctree_t *next;
+    for(next=tree;next;next=next->next)
+    {
+      ccemit_include_local(emit,procd,block,next,ccfalse);
+    }
 
-    return ccnil;
+    return ccnull;
   } else
   if(tree->kind==cctree_kBLOCK)
   {
     cctree_t **list;
-    ccarrfor(tree->list,list) ccemit_tree(emit,func,irset,*list);
+    ccarrfor(tree->list,list) ccemit_tree(emit,procd,block,*list);
 
     return ccnil;
   } else
   if(tree->kind==cctree_kLABEL)
   {
-    // irset=ccemit_label(irset,tree->name);
-    // ccemit_treelist(emit,func,irset,tree->list);
-    // return ccblock_enter(irset,irset);
+    // block=ccemit_label(block,tree->name);
+    // ccemit_treelist(emit,procd,block,tree->list);
+    // return ccblock_enter(block,block);
   } else
   if(tree->kind==cctree_kRETURN)
   {
-    ccvalue_t *rval=ccemit_rvalue(emit,func,irset,tree->rval);
+    ccvalue_t *rval=ccemit_rvalue(emit,procd,block,tree->rval);
 
-    return ccblock_return(irset,rval);
+    return ccblock_return(block,rval);
   } else
   if(tree->kind==cctree_kGOTO)
-  { // ccblock_t *label_block=ccemit_label(irset,tree->label_name);
-    // return ccblock_enter(irset,label_block);
+  { // ccblock_t *label_block=ccemit_label(block,tree->label_name);
+    // return ccblock_enter(block,label_block);
   } else
   if(tree->kind==cctree_kCONDITIONAL)
-  { ccvalue_t *cvalue=ccemit_tree(emit,func,irset,tree->init);
+  { ccvalue_t *cvalue=ccemit_tree(emit,procd,block,tree->init);
 
     ccvalue_t *j;
-    j=ccblock_fjump(irset,ccblock_label(irset,"."),cvalue);
+    j=ccblock_fjump(block,ccblock_label(block,"."),cvalue);
 
-    if(tree->lval) ccemit_tree(emit,func,irset,tree->lval);
+    if(tree->lval) ccemit_tree(emit,procd,block,tree->lval);
 
     ccvalue_retarget(j,
-      ccblock_label(irset,".JP-E"));
+      ccblock_label(block,".JP-E"));
 
-    if(tree->rval) ccemit_tree(emit,func,irset,tree->rval);
+    if(tree->rval) ccemit_tree(emit,procd,block,tree->rval);
 
     return ccnil;
   } else
@@ -298,25 +290,25 @@ ccemit_tree(
     ccvalue_t *l,*c,*v;
     ccleap_t p;
 
-    p=ccblock_label(irset,".JP-WL");
-    v=ccemit_rvalue(emit,func,irset,tree->init);
-    c=ccblock_fjump(irset,ccblock_label(irset,"."),v);
+    p=ccblock_label(block,".JP-WL");
+    v=ccemit_rvalue(emit,procd,block,tree->init);
+    c=ccblock_fjump(block,ccblock_label(block,"."),v);
 
-    ccemit_tree(emit,func,irset,tree->lval);
+    ccemit_tree(emit,procd,block,tree->lval);
 
-    l=ccblock_jump(irset,p);
+    l=ccblock_jump(block,p);
 
     ccvalue_retarget(c,
-      ccblock_label(irset,".JP-WE"));
+      ccblock_label(block,".JP-WE"));
 
     return ccnil;
   } else
   {
-    return ccemit_value(emit,func,irset,tree,ccfalse);
+    return ccemit_value(emit,procd,block,tree,ccfalse);
   }
 
   ccassert(!"error");
-  return ccnil;
+  return ccnull;
 }
 
 // Todo: Temporary!

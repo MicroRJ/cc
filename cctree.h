@@ -23,8 +23,6 @@ typedef enum cctree_k
   cctree_kGOTO,
   cctree_kWHILE,
 
-  // Todo: let's get rid of declname
-  cctree_kDECLNAME,
   cctree_kDECL,
 
   // Note: this is the same for ternarny conditionals, main difference is that it is not a statement unlike if ...
@@ -77,6 +75,8 @@ typedef struct cctree_t
 
   cctree_t   *root; // Todo: is this silly?
   cci32_t     mark;
+
+  cctree_t   *next;
 
   // Todo: should we demote this to just *
   cctree_t  **list;
@@ -206,20 +206,12 @@ cctree_return(cctree_t *root, cci32_t mark, cctree_t *rval)
 }
 
 ccfunc cctree_t *
-cctree_decl_name(cctree_t *root, cci32_t mark, cctree_t *type, cctree_t *name, cctree_t *size, cctree_t *init)
-{ cctree_t *tree=cctree_new(cctree_kDECLNAME,root,mark);
+cctree_decl(cctree_t *root, cci32_t mark, cctree_t *type, cctree_t *name, cctree_t *size, cctree_t *init)
+{ cctree_t *tree=cctree_new(cctree_kDECL,root,mark);
   tree->type=type;
   tree->name=cctree_name(name);
   tree->size=size;
   tree->init=init;
-  return tree;
-}
-
-ccfunc cctree_t *
-cctree_decl(cctree_t *root, cci32_t mark, cctree_t *type, cctree_t **list)
-{ cctree_t *tree=cctree_new(cctree_kDECL,root,mark);
-  tree->type=type;
-  tree->list=list;
   return tree;
 }
 

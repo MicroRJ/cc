@@ -113,7 +113,7 @@ ccseer_tree_to_type(ccseer_t *seer, cctree_t *tree)
     cctree_t **v;
     ccarrfor(tree->list,v)
     { cctree_t *n=*v;
-      ccassert(n->kind==cctree_kDECLNAME);
+      ccassert(n->kind==cctree_kDECL);
       ccassert(n->name!=0);
       ccassert(n->size==0); // Note: we don't support this now ...
 
@@ -476,7 +476,7 @@ ccfunc void
 ccseer_decl_name(ccseer_t *seer, cctree_t *tree)
 {
   ccassert(tree!=0);
-  ccassert(tree->kind==cctree_kDECLNAME);
+  ccassert(tree->kind==cctree_kDECL);
   ccassert(tree->type!=0);
   ccassert(tree->name!=0);
 
@@ -543,13 +543,17 @@ ccseer_tree(ccseer_t *seer, cctree_t *tree)
       ccarrfor(tree->list,list) ccseer_tree(seer,*list);
     break;
     case cctree_kDECL:
+
       if(tree->root->kind==cctree_kTUNIT)
         ccassert(tree->mark&cctree_mEXTERNAL);
+
       if(tree->mark&cctree_mEXTERNAL)
         ccassert(tree->root->kind==cctree_kTUNIT);
 
-      // Todo: solve the base-type
-      ccarrfor(tree->list,list) ccseer_decl_name(seer,*list);
+      cctree_t *next;
+      for(next=tree;next;next=next->next)
+        ccseer_decl_name(seer,next);
+
     break;
     case cctree_kRETURN:
       if(tree->rval)
@@ -578,4 +582,5 @@ ccseer_translation_unit(ccseer_t *seer, cctree_t *tree)
   cctree_t **decl;
   ccarrfor(tree->list,decl) ccseer_tree(seer,*decl);
 }
+
 #endif
