@@ -160,12 +160,10 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       if(type->kind==cctype_kPOINTER)
         lvalue=ccblock_fetch(block,type,lvalue);
 
-      type=ccseer_tree_type(emit->seer,tree);
-
-      result=ccblock_aaddr(block,type,lvalue,rvalue);
+      result=ccblock_aaddr(block,elem->type,lvalue,rvalue);
 
       if(!is_lval)
-        result=ccblock_fetch(block,type,result);
+        result=ccblock_fetch(block,elem->type,result);
 
     } break;
     case cctree_kSIZEOF:

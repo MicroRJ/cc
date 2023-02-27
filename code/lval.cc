@@ -19,12 +19,22 @@ int main(int _)
 {
   struct ab_t
   {
-  	struct a_t
-  	{ int a;
-  	} a;
+    struct a_t
+    { int a;
+    } a;
 
     int b;
   } v;
+
+  struct context_t
+  {
+    char *name;
+  } cx;
+
+  cx.name="Dayan, Rodriguez";
+
+  ccprintf("%s\n", cx.name);
+
 
   int i,x,y,z,*p,q;
   char *o,*u;

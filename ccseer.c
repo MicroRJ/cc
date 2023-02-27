@@ -321,45 +321,10 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
             result=elem->type;
             ccseer_tether(seer,tree,result);
           } else
-            cctraceerr("'%s': is not a member of '%s'",
-                        tree->rval->name,type->name?type->name:"unknown");
+            cctraceerr("'%s': is not a member of '%s'", tree->rval->name,type->name?type->name:"unknown");
         } else
-          cctraceerr("'.%s': must have struct or union specifier",
-                      tree->rval->name);
+          cctraceerr("'.%s': must have struct or union specifier", tree->rval->name);
       }
-
-
-#if 0
-      // Todo: this is temporary, this won't work for more complex `a.b.c.d` type expressions ...
-      ccassert(tree->lval!=0);
-      ccassert(tree->rval!=0);
-
-      ccassert(tree->lval->kind==cctree_kIDENTIFIER);
-      ccassert(tree->rval->kind==cctree_kIDENTIFIER);
-
-      ccassert(tree->lval->name!=0);
-      ccassert(tree->rval->name!=0);
-
-      ccesse_t *esse=ccseer_associate(seer,tree->lval,tree->lval->name);
-      if(esse)
-      { if(esse->type->kind==cctype_kRECORD)
-        {
-          ccelem_t *elem=cctblgetS(esse->type->list,tree->rval->name);
-          if(ccerrnon())
-          {
-            result=elem->type;
-            ccseer_tether(seer,tree,result);
-
-            // Todo: this is the part that I'm not sure about...
-          } else
-            cctraceerr("'%s': is not a member of '%s'",
-              tree->rval->name,esse->type->name?esse->type->name:esse->name);
-        } else
-          cctraceerr("'.%s': must have struct or union specifier",tree->rval->name);
-      } else
-          cctraceerr("'%s': undeclared identifier",tree->name);
-#endif
-
     } break;
     case cctree_kSIZEOF:
     { // Todo:
