@@ -151,11 +151,8 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       lvalue=ccemit_value(emit,procd,block,tree->lval,1);
       rvalue=ccemit_const_int(emit,elem->slot);
 
-      // Todo: we assume that a selector expression could be either '->' or '.', whether the user
-      // chose the right token is not our concern, either way, if the expression is valid, which
-      // it should be if we got to this stage, we emit the proper fetch instruction, although,
-      // it might be more efficient to have a different fetch for '->' selectors, so that we don't
-      // fetch the whole struct...
+      // Note: A selector expression could be '->' or '.', we assume the user chose the right
+      // selector token, so we just concern ourselves here with emitting the right instruction ...
 
       if(type->kind==cctype_kPOINTER)
         lvalue=ccblock_fetch(block,type,lvalue);
