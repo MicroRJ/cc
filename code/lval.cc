@@ -17,11 +17,22 @@ int set_to_one(int *j)
 
 int main(int _)
 {
+  struct
+  { int a;
+    int b;
+  } v;
+
+  v.a=1;
+
   int i,x,y,z,*p,q;
   char *o,*u;
   int a[24];
   int b[24][24];
   int c[24][24][24];
+
+
+  ccassert(sizeof i == 4);
+  ccassert(sizeof p == 8);
 
   z=777;
 

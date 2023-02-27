@@ -2,14 +2,14 @@
 #ifndef _CCREAD_C
 #define _CCREAD_C
 
-ccfunc void ccread_hash_init(ccread_t *reader);
+ccfunc void ccread_register_defaults(ccread_t *reader);
 
 ccfunc ccinle void
 ccread_init(ccread_t *reader)
 {
   memset(reader,ccnull,sizeof(*reader));
 
-  ccread_hash_init(reader);
+  ccread_register_defaults(reader);
 }
 
 ccfunc ccinle void
@@ -45,8 +45,20 @@ ccread_include(ccread_t *reader, const char *name)
 // Todo:
 ccfunc void
 ccread_all_tokens(ccread_t *reader)
-{ while(ccread_next_token(reader))
-    ccread_token(reader,ccarradd(reader->buf,1));
+{
+  reader->tok_min=reader->tok_max;
+  reader->tok_max=ccread_blank(reader->tok_max,reader->doc_max);
+
+  for(;;)
+  {
+    ccread_token(reader);
+
+    if(reader->tok.kind!=cctoken_kEND)
+    {
+      *ccarradd(reader->buf,1)=reader->tok;
+    }
+      else break;
+  }
 }
 
 ccfunc ccinle int
@@ -175,7 +187,7 @@ ccfunc cctree_t *
 ccread_cast(ccread_t *parser, cctree_t *root, cci32_t mark);
 
 ccfunc ccinle cctree_t *
-ccread_litide(ccread_t *reader, cctree_t *root, cci32_t mark)
+ccread_identifier(ccread_t *reader, cctree_t *root, cci32_t mark)
 { cctoken_t *token=cceat(reader,cctoken_kLITIDENT);
   cctree_t *tree=ccnil;
   if(token) tree=cctree_identifier(root,mark,token);
@@ -184,32 +196,39 @@ ccread_litide(ccread_t *reader, cctree_t *root, cci32_t mark)
 
 // Section: EXPRESSIONS
 // https://learn.microsoft.com/en-us/cpp/c-language/summary-of-expressions
+// Todo: not complete ...
 ccfunc cctree_t *
-ccread_suffixed(ccread_t *reader, cctree_t *result, cctree_t *root, cci32_t mark)
+ccread_primary_suffix(ccread_t *reader, cctree_t *result, cctree_t *root, cci32_t mark)
 {
-  // Todo: ++ and --
   while(ccread_continues(reader))
-  {
-    cctoken_t *token=ccpeep(reader);
-    switch(token->kind)
-    {
-      cctree_t *i;
+  { cctoken_t *token=ccpeep(reader);
+  	switch(token->kind)
+	  { cctree_t *i;
+	    case cctoken_kLPAREN:
+	      ccgobble(reader);
+	      i=ccread_arglist(reader,root,mark);
+	      if(!cceat(reader,cctoken_kRPAREN))
+	        ccsynerr(reader, 0, "expected ')'");
 
-      case cctoken_kLPAREN:
-        ccgobble(reader);
-        i=ccread_arglist(reader,root,mark);
-        if(!cceat(reader,cctoken_kRPAREN))
-          ccsynerr(reader, 0, "expected ')'");
-        result=cctree_suffixed(root,mark,cctree_kCALL,result,i);
-      continue;
-      case cctoken_kLSQUARE:
-        ccgobble(reader);
-        i=ccread_expression(reader,root,mark);
-        if(!cceat(reader,cctoken_kRSQUARE))
-          ccsynerr(reader, 0, "expected ']'");
-        result=cctree_suffixed(root,mark,cctree_kINDEX,result,i);
-      continue;
-    }
+	      result=cctree_suffixed(root,mark,cctree_kCALL,result,i);
+	    continue;
+	    case cctoken_kLSQUARE:
+	      ccgobble(reader);
+	      i=ccread_expression(reader,root,mark);
+	      if(!cceat(reader,cctoken_kRSQUARE))
+	        ccsynerr(reader, 0, "expected ']'");
+
+	      result=cctree_suffixed(root,mark,cctree_kINDEX,result,i);
+	    continue;
+	    case cctoken_kDOT:
+	      ccgobble(reader);
+	      i=ccread_identifier(reader,root,mark);
+	      // Todo:
+	      ccassert(i!=0);
+
+	      result=cctree_suffixed(root,mark,cctree_kSELECTOR,result,i);
+	    continue;
+	  }
 
     break;
   }
@@ -226,13 +245,13 @@ ccread_unary(ccread_t *reader, cctree_t *root, cci32_t mark)
   switch(token->kind)
   { case cctoken_kLITIDENT:
       result=cctree_identifier(root,mark,ccgobble(reader));
-      result=ccread_suffixed(reader,result,root,mark);
+      result=ccread_primary_suffix(reader,result,root,mark);
     break;
     case cctoken_kLITINT:
     case cctoken_kLITFLO:
     case cctoken_kLITSTR:
       result=cctree_constant(root,mark,ccgobble(reader));
-      result=ccread_suffixed(reader,result,root,mark);
+      result=ccread_primary_suffix(reader,result,root,mark);
     break;
     case cctoken_kLPAREN:
       ccgobble(reader);
@@ -240,7 +259,20 @@ ccread_unary(ccread_t *reader, cctree_t *root, cci32_t mark)
       if(!cceat(reader,cctoken_kRPAREN))
         ccsynerr(reader,0,"expected ')'");
       result=cctree_unary_ex(root,mark,cctree_kGROUP,group);
-      result=ccread_suffixed(reader,result,root,mark);
+      result=ccread_primary_suffix(reader,result,root,mark);
+    break;
+    case cctoken_kSIZEOF:
+      ccgobble(reader);
+      if(cceat(reader,cctoken_kLPAREN))
+      {
+        ccassert(!"internal");
+
+        if(!cceat(reader,cctoken_kRPAREN))
+          ccsynerr(reader,0,"expected ')'");
+      } else
+      {
+        result=cctree_unary_ex(root,mark,cctree_kSIZEOF,ccread_unary(reader,root,mark));
+      }
     break;
     case cctoken_kBWAND:
       ccgobble(reader);
@@ -250,18 +282,11 @@ ccread_unary(ccread_t *reader, cctree_t *root, cci32_t mark)
       ccgobble(reader);
       result=cctree_unary_ex(root,mark,cctree_kDEREFERENCE,ccread_cast(reader,root,mark));
     break;
+    // Todo:
     case cctoken_kADD:
-      ccgobble(reader);
-      // if(cceat(reader,cctoken_kADD))
-      //   result=cctree_unary(root,mark,cctoken_kPIN,ccread_cast(reader,root,mark));
-      // else
-        result=cctree_unary(root,mark,cctoken_kADD,ccread_cast(reader,root,mark));
-    break;
     case cctoken_kSUB:
-      // if(cceat(reader,cctoken_kSUB))
-      //   result=cctree_unary(root,mark,cctoken_kPDE,ccread_cast(reader,root,mark));
-      // else
-        result=cctree_unary(root,mark,cctoken_kSUB,ccread_cast(reader,root,mark));
+      ccgobble(reader);
+      result=cctree_unary(root,mark,token->kind,ccread_cast(reader,root,mark));
     break;
   }
   return result;
@@ -550,7 +575,7 @@ ccread_designator(ccread_t *reader, cctree_t *root, cci32_t mark)
   } else
   if(ccsee(reader, cctoken_kDOT))
   { cctoken_t *tok = ccgobble(reader);
-    cctree_t  *cex = ccread_litide(reader,root,mark);
+    cctree_t  *cex = ccread_identifier(reader,root,mark);
     return cctree_new_designator(tok, cex);
   }
   return ccnil;
@@ -682,7 +707,7 @@ ccread_decl_name(
   } else
   {
     if(ccsee(reader,cctoken_kLITIDENT))
-      name=ccread_litide(reader,root,mark);
+      name=ccread_identifier(reader,root,mark);
 
     if(name)
       ccsynerr(reader,"'%s': unexpected identifier in abstract context",name->name);
@@ -725,9 +750,11 @@ ccread_init_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *
 
 ccfunc cctree_t *
 ccread_struct_decl_name(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
-{ return ccread_decl_name(reader,root,mark,type,cctrue,ccfalse,cctrue);
+{
+  return ccread_decl_name(reader,root,mark,type,cctrue,ccfalse,cctrue);
 }
 
+// Todo: remove
 ccfunc cctree_t **
 ccread_init_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { ccassert(root!=0);
@@ -740,6 +767,7 @@ ccread_init_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cctre
   return list;
 }
 
+// Todo: remove
 ccfunc cctree_t **
 ccread_struct_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cctree_t *type)
 { cctree_t *next,**list=ccnil;
@@ -750,6 +778,7 @@ ccread_struct_decl_name_list(ccread_t *reader, cctree_t *root, cci32_t mark, cct
   return list;
 }
 
+// Todo: remove
 ccfunc cctree_t *
 ccread_init_decl(ccread_t *reader, cctree_t *root, cci32_t mark)
 { cctree_t *type; cctree_t **list;
@@ -762,6 +791,7 @@ ccread_init_decl(ccread_t *reader, cctree_t *root, cci32_t mark)
   return ccnil;
 }
 
+// Todo: remove
 ccfunc cctree_t *
 ccread_struct_decl(ccread_t *reader, cctree_t *root, cci32_t mark)
 { cctree_t *type; cctree_t **list;
@@ -777,7 +807,7 @@ ccfunc cctree_t *
 ccread_struct_or_union_specifier(ccread_t *reader, cctree_t *root, cci32_t mark)
 { if(cceat(reader,cctoken_kSTRUCT))
   {
-    cctree_t *name=ccread_litide(reader,root,mark);
+    cctree_t *name=ccread_identifier(reader,root,mark);
 
     if(!cceat(reader, cctoken_Klcurly))
       ccsynerr(reader,0,"expected '{' for struct specifier");
@@ -960,7 +990,7 @@ ccread_block_or_single_stmt(ccread_t *reader, cctree_t *root, cci32_t mark)
   return stmt;
 }
 
-// Badger Tadger
+// Todo: speed
 ccfunc cctree_t *
 ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
 {
@@ -1007,7 +1037,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, cci32_t mark)
   } else
   if(cceat(reader,cctoken_Kgoto))
   {
-    cctree_t *ident=ccread_litide(reader,root,mark);
+    cctree_t *ident=ccread_identifier(reader,root,mark);
     if(!ident) ccsynerr(reader,0,"missing goto label identifier");
 
     child=cctree_goto(root,mark,ident);

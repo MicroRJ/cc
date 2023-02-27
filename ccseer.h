@@ -2,66 +2,82 @@
 #ifndef _CCSEER_H
 #define _CCSEER_H
 
-// Todo: sizeof
-// Todo: typeof
-typedef enum ccesse_sort_k ccesse_sort_k;
-typedef enum ccesse_sort_k
+// Note: sizeof and typeof we get in the tether table... typeof results in a type operand and
+// sizeof in a constant operand ... should we do it that way?
+typedef enum ccbuiltin_k ccbuiltin_k;
+typedef enum ccbuiltin_k
 {
   ccbuiltin_kINVALID=0,
   ccbuiltin_kCCBREAK,
   ccbuiltin_kCCERROR,
-} ccesse_sort_k;
+} ccbuiltin_k;
 
 typedef enum cctype_k cctype_k;
 typedef enum cctype_k
 { cctype_kINVALID=0,
+
+  cctype_kRECORD,
+  // Todo: rename this ...
   cctype_kSPECIFIER,
   cctype_kFUNCTION,
   cctype_kPOINTER,
   cctype_kARRAY,
 } cctype_k;
 
-typedef struct cctype_t cctype_t;
-typedef struct cctype_t
-{ cctype_k     kind;
-  cctoken_k    sort;
-  cctype_t   * type;
-  cci32_t      size;
-  cctype_t   * list;
-
-  int is_variadic;
-} cctype_t;
-
 typedef enum ccesse_k ccesse_k;
 typedef enum ccesse_k
 { ccesse_kINVALID=0,
   ccesse_kCBINDING,
-  ccesse_kTYPENAME,
   ccesse_kFUNCTION,
   ccesse_kVARIABLE,
 } ccesse_k;
 
-// Todo: document this properly...
+typedef struct cctype_t cctype_t;
+typedef struct ccesse_t ccesse_t;
+
+// Note: how do we implement scoping?
+typedef struct ccaura_t ccaura_t;
+typedef struct ccaura_t
+{ ccesse_t  ** entity_table;
+} ccaura_t;
+
+// Note: entity or essential, indivisible and relatively unique, such as variables ...
 typedef struct ccesse_t ccesse_t;
 typedef struct ccesse_t
-{ ccesse_k        kind;
-  ccesse_sort_k   sort;
-  const char    * name;
-  cctree_t      * tree;
+{ const char    * name;
+  ccesse_k        kind;
+  ccbuiltin_k     sort;
   cctype_t      * type;
+  ccaura_t      * aura;
+  cctree_t      * tree;
 } ccesse_t;
-ccfunc ccinle ccesse_t *ccesse(ccesse_k);
+
+// Note: describes the underlying layout and or format of entities ...
+typedef struct cctype_t cctype_t;
+typedef struct cctype_t
+{ const char * name;
+  cctype_k     kind;
+  cctoken_k    sort;
+  cctype_t   * type;
+  cctype_t   * list; // Note: table ...
+  cci32_t      size;
+
+  // Todo: implement...
+  unsigned is_variadic: 1;
+} cctype_t;
 
 // Todo: legit scoping
+// Note: #entity_table: Maps a "string" name to an entity
+// Note: #symbol_table: Maps a "tree" symbolic tree (identifiers) to their respective entities ...
+// Note: #tether_table: Maps a "tree" to a type ...
 typedef struct ccseer_t ccseer_t;
 typedef struct ccseer_t
-{ // Note: Maps a name to an entity
+{
   ccesse_t  ** entity_table;
-  // Note: Maps a symbolic tree to an entity
   ccesse_t  ** symbol_table;
-  // Note: Maps a tree to a type
   cctype_t  ** tether_table;
 
+  // Todo: how to actually do this properly and where to store it ...
   cctype_t *type_void;
   cctype_t *type_stdc_int;
   cctype_t *type_stdc_long;
@@ -80,6 +96,9 @@ typedef struct ccseer_t
   cctype_t *type_stdc_char_ptr;
 } ccseer_t;
 
+
+ccfunc ccinle ccesse_t *ccesse(ccesse_k);
+
 // Todo: proper allocator!
 ccfunc ccinle ccesse_t *
 ccesse(ccesse_k kind)
@@ -88,6 +107,19 @@ ccesse(ccesse_k kind)
   memset(e,ccnull,sizeof(*e));
   e->kind=kind;
   return e;
+}
+
+// Todo:
+ccfunc cctype_t *
+cctype_record(cctype_t *list, cci32_t size)
+{ cctype_t *result=ccmalloc_T(cctype_t);
+
+  result->kind=cctype_kRECORD;
+  result->sort=cctoken_kINVALID;
+  result->type=ccnull;
+  result->size=size;
+  result->list=list;
+  return result;
 }
 
 // Todo:
@@ -143,6 +175,7 @@ cctype_specifier(cci32_t size, cctoken_k sort)
   return result;
 }
 
+// Todo:
 ccfunc char *
 cctype_to_string(cctype_t *t, char *b)
 {
@@ -161,6 +194,14 @@ cctype_to_string(cctype_t *t, char *b)
     *b++='.';
     *b++='.';
     *b++=')';
+  } else
+  if(t->kind==cctype_kRECORD)
+  { *b++='s';
+    *b++='t';
+    *b++='r';
+    *b++='u';
+    *b++='c';
+    *b++='t';
   } else
   if(t->kind==cctype_kSPECIFIER)
   {

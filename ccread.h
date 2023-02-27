@@ -113,6 +113,9 @@ typedef enum cctoken_k
   cctoken_Kthread_local, // _Thread_local
   cctoken_Kmsvc_declspec, // __declspec
 
+
+  cctoken_kSIZEOF,
+
   /**
    * Group: control statements.
 
@@ -217,8 +220,8 @@ typedef struct ccread_t
   unsigned  term_impl: 1;
   unsigned  term_expl: 1;
 
-  const char *doc_max, *doc_min;
-  const char *tok_max, *tok_min;
+  char *doc_max, *doc_min;
+  char *tok_max, *tok_min;
 
   cctoken_entry_t  *tok_tbl;
   cctoken_t         tok;

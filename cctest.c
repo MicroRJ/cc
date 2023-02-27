@@ -1,10 +1,6 @@
 // Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #include "cc.c"
 
-// WHEN COME BACK:
-// Add support for 'sizeof'!
-
-
 // Todo: temporary!
 ccfunc void
 ccregister(ccseer_t *seer, ccemit_t *emit, const char *name, cctype_t *retr, ccbinding_t *binding)
@@ -15,10 +11,12 @@ ccregister(ccseer_t *seer, ccemit_t *emit, const char *name, cctype_t *retr, ccb
 
   e->kind=ccesse_kCBINDING;
   e->sort=ccbuiltin_kINVALID;
+  e->name=name;
+
   // Todo: proper modifier
   e->type=cctype_function_modifier(retr,ccnull,ccfalse);
 
-  if(ccseer_include_entity(seer,e,name))
+  if(ccseer_register(seer,e,name))
   {
     ccvalue_t *v=ccemit_include_global(emit,name);
     v->kind=ccvalue_kPROCU;
@@ -96,6 +94,8 @@ ccdbenter("main");
 
   cctest();
 
+  // sizeof(ccdebugthis);
+
 #if 1
   const char *n="code\\lval.cc";
   ccexec_value_t e=buildrunfile(n);
@@ -118,13 +118,13 @@ void cctest()
   { ccarradd(v,1)->s=h;
   }
 
-// ccdbenter("test");
+ccdbenter("test");
 
   int i,j;
   for(i=0; i<ccCarrlenL(r); r[i++][j]=0)
     for(j=0; j<ccCarrlenL(r[0])-1; r[i][j++]=h[ccrandi(ccCstrlenL(h))]);
 
-// ccdbenter("test-ccdlbputS");
+ccdbenter("test-ccdlbputS");
   _t *a=ccnull;
   for(i=0; i<ccCarrlenL(r); ++i)
   { _t *t=cctblputS(a,r[i]);
@@ -132,9 +132,9 @@ void cctest()
     t->s=cckeyget();
     ccassert(!strcmp(t->s,r[i]));
   }
-// ccdbleave("test-ccdlbputS");
+ccdbleave("test-ccdlbputS");
 
-// ccdbenter("test-ccdlbgetS");
+ccdbenter("test-ccdlbgetS");
   for(i=0; i<ccCarrlenL(r); ++i)
   { _t *t=cctblgetS(a,r[i]);
     ccassert(ccerrnon());
@@ -142,11 +142,11 @@ void cctest()
     ccassert(!strcmp(t->s,r[i]));
     ccassert(!strcmp(t->s,cckeyget()));
   }
-// ccdbleave("test-ccdlbgetS");
+ccdbleave("test-ccdlbgetS");
 
-// ccdbenter("test-ccdlbdel");
+ccdbenter("test-ccdlbdel");
   ccdlbdel(a);
-// ccdbleave("test-ccdlbdel");
+ccdbleave("test-ccdlbdel");
 
-// ccdbleave("test");
+ccdbleave("test");
 }

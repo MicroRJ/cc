@@ -2,42 +2,36 @@
 #ifndef _CCLEX
 #define _CCLEX
 
-// ** Hashing **
-
-ccfunc void
-ccread_token(ccread_t *l, cctoken_t *token)
-{ *token = l->tok;
-  memset(&l->tok,sizeof(l->tok),ccnil);
-}
+#ifndef ccrune_letter
+# define ccrune_letter(r) (CCWITHIN(r,'a','z')||CCWITHIN(r,'A','Z')||CCWITHIN(r,'0','9')||(r)=='_')
+#endif
 
 ccfunc void ccread_next_token_internal(ccread_t *l);
 
 // Todo: you only ever do this one at the beginning of the file!
-ccfunc cci32_t
-ccread_next_token(ccread_t *l)
-{
-  do
-  { ccread_next_token_internal(l);
-  } while(l->tok.kind == cctoken_Kliteral_comment ||
-          l->tok.kind == cctoken_Kspace   ||
-          l->tok.kind == cctoken_Kendimpl ||
-          l->tok.kind == cctoken_Kendexpl );
-  return l->tok.kind != cctoken_kEND;
-}
+// ccfunc cci32_t
+// ccread_next_token(ccread_t *l)
+// {
+//   do
+//   { ccread_next_token_internal(l);
+//   } while(l->tok.kind == cctoken_Kliteral_comment ||
+//           l->tok.kind == cctoken_Kspace   ||
+//           l->tok.kind == cctoken_Kendimpl ||
+//           l->tok.kind == cctoken_Kendexpl );
+//   return l->tok.kind != cctoken_kEND;
+// }
 
-#ifndef ccrune_registrable_letter
-# define ccrune_registrable_letter(r) (CCWITHIN(r,'a','z')||CCWITHIN(r,'A','Z')||CCWITHIN(r,'0','9')||r=='_')
-#endif
 
-// Note: #ccrune_register expects a null terminated identifier string
+
+// Note: #ccread_register expects a null terminated identifier string
 ccfunc ccinle void
-ccrune_register(ccread_t *reader, char *s, cctoken_k k)
+ccread_register(ccread_t *reader, char *s, cctoken_k k)
 {
   ccu64_t h=5381;
 
   int c,n;
   for(n=0;c=s[n];++n)
-  { ccassert(ccrune_registrable_letter(c));
+  { ccassert(ccrune_letter(c));
     if(c!=0)
       h=h<<5,h=h+c;
     else
@@ -49,15 +43,15 @@ ccrune_register(ccread_t *reader, char *s, cctoken_k k)
   entry->name=s;
 }
 
-// Note: #ccread_identifier has to match #ccrune_register's hashing function
-ccfunc const char *
-ccread_identifier(ccread_t *reader, const char *s)
+// Note: #ccread_token_identifier has to match #ccread_register's hashing function
+ccfunc char *
+ccread_token_identifier(ccread_t *reader, char *s)
 {
   ccu64_t h=5381;
 
   int n,c;
   for(n=0;c=s[n];++n)
-  { if(ccrune_registrable_letter(c))
+  { if(ccrune_letter(c))
       h=h<<5,h=h+c;
     else
       break;
@@ -84,8 +78,9 @@ ccread_identifier(ccread_t *reader, const char *s)
   return s+n;
 }
 
-ccfunc const char *
-ccread_readstr(ccread_t *l, const char *str)
+// Todo: speed!
+ccfunc char *
+ccread_string(ccread_t *l, char *str)
 {
   // Todo: re-use this buffer ...
   // Todo: replace this with a legit string arena ... nothing too fancy ...
@@ -141,8 +136,28 @@ leave:
 }
 
 
+ccfunc ccinle char *
+ccread_blank(char *r, char *e)
+{ int c;
+  for(c=*r; r<e; c=*r++)
+  { switch(c)
+    { case  ' ':
+      case '\t':
+      case '\f':
+      case '\v':
+      case '\b':
+      case '\r':
+      case '\n': continue;
+    }
+    break;
+  }
+
+  return r;
+}
+
+// Todo: speed!
 ccfunc void
-ccread_next_token_internal(ccread_t *l)
+ccread_token(ccread_t *l)
 {
   l->tok_min=l->tok_max;
 
@@ -241,10 +256,11 @@ ccread_next_token_internal(ccread_t *l)
     case('s'): case('t'): case('u'): case('v'): case('w'): case('x'):
     case('y'): case('z'):
     case('_'):
-    { l->tok_max = ccread_identifier(l, l->tok_max);
+    {
+      l->tok_max = ccread_token_identifier(l, l->tok_max);
     } break;
     case '"':
-    { l->tok_max = ccread_readstr(l, l->tok_max);
+    { l->tok_max = ccread_string(l, l->tok_max);
     } break;
     case ':':
     { ++ l->tok_max, l->tok.kind = cctoken_kCOLON;
@@ -412,28 +428,8 @@ ccread_next_token_internal(ccread_t *l)
       { l->tok_max += 2, l->tok.kind = cctoken_kINVALID;
       }
     } break;
-
     case '\0':
     { l->tok_max += 1, l->tok.kind = cctoken_kEND;
-    } break;
-
-    // NOTE(RJ):
-    // ; Handle trailing tokens!
-    case  ' ': case '\t': case '\f': case '\v': case '\b':
-    { l->tok_max += 1, l->tok.kind = cctoken_Kspace;
-    } break;
-    case '\r':
-    { if(l->tok_max[1] == '\n')
-      { l->tok_max += 2, l->tok.kind = cctoken_Kendimpl;
-      } else
-      { l->tok_max += 1, l->tok.kind = cctoken_Kendimpl;
-      }
-    } break;
-    case '\n':
-    { l->tok_max += 1, l->tok.kind = cctoken_Kendimpl;
-    } break;
-    case ';':
-    { l->tok_max += 1, l->tok.kind = cctoken_Kendexpl;
     } break;
   }
 
@@ -471,70 +467,72 @@ leave:;
 
 // Todo: make these keywords global!
 ccfunc void
-ccread_hash_init(ccread_t *reader)
+ccread_register_defaults(ccread_t *reader)
 {
-  ccrune_register(reader,"__asm",cctoken_Kmsvc_attr_asm);
-  ccrune_register(reader,"__based",cctoken_Kmsvc_attr_based);
-  ccrune_register(reader,"__cdecl",cctoken_Kmsvc_attr_cdecl);
-  ccrune_register(reader,"__clrcall",cctoken_Kmsvc_attr_clrcall);
-  ccrune_register(reader,"__fastcall",cctoken_Kmsvc_attr_fastcall);
-  ccrune_register(reader,"__inline",cctoken_Kmsvc_attr_inline);
-  ccrune_register(reader,"__stdcall",cctoken_Kmsvc_attr_stdcall);
-  ccrune_register(reader,"__thiscall",cctoken_Kmsvc_attr_thiscall);
-  ccrune_register(reader,"__vectorcal",cctoken_Kmsvc_attr_vectorcal);
+  ccread_register(reader,"__asm",cctoken_Kmsvc_attr_asm);
+  ccread_register(reader,"__based",cctoken_Kmsvc_attr_based);
+  ccread_register(reader,"__cdecl",cctoken_Kmsvc_attr_cdecl);
+  ccread_register(reader,"__clrcall",cctoken_Kmsvc_attr_clrcall);
+  ccread_register(reader,"__fastcall",cctoken_Kmsvc_attr_fastcall);
+  ccread_register(reader,"__inline",cctoken_Kmsvc_attr_inline);
+  ccread_register(reader,"__stdcall",cctoken_Kmsvc_attr_stdcall);
+  ccread_register(reader,"__thiscall",cctoken_Kmsvc_attr_thiscall);
+  ccread_register(reader,"__vectorcal",cctoken_Kmsvc_attr_vectorcal);
 
-  ccrune_register(reader,"_Alignof",cctoken_Kalign_of);
-  ccrune_register(reader,"_Alignas",cctoken_Kalign_as);
+  ccread_register(reader,"_Alignof",cctoken_Kalign_of);
+  ccread_register(reader,"_Alignas",cctoken_Kalign_as);
 
-  ccrune_register(reader,"const",cctoken_Kconst);
-  ccrune_register(reader,"restrict",cctoken_Krestrict);
-  ccrune_register(reader,"volatile",cctoken_Kvolatile);
+  ccread_register(reader,"const",cctoken_Kconst);
+  ccread_register(reader,"restrict",cctoken_Krestrict);
+  ccread_register(reader,"volatile",cctoken_Kvolatile);
 
-  ccrune_register(reader,"inline",cctoken_Kinline);
-  ccrune_register(reader,"_Noreturn",cctoken_Kno_return);
+  ccread_register(reader,"inline",cctoken_Kinline);
+  ccread_register(reader,"_Noreturn",cctoken_Kno_return);
 
-  ccrune_register(reader,"signed",cctoken_kSTDC_SIGNED);
-  ccrune_register(reader,"unsigned",cctoken_kSTDC_UNSIGNED);
-  ccrune_register(reader,"__int8",cctoken_kMSVC_INT8);
-  ccrune_register(reader,"__int16",cctoken_kMSVC_INT16);
-  ccrune_register(reader,"__int32",cctoken_kMSVC_INT32);
-  ccrune_register(reader,"__int64",cctoken_kMSVC_INT64);
-  ccrune_register(reader,"double",cctoken_kSTDC_DOUBLE);
-  ccrune_register(reader,"float",cctoken_kSTDC_FLOAT);
-  ccrune_register(reader,"long",cctoken_kSTDC_LONG);
-  ccrune_register(reader,"int",cctoken_kSTDC_INT);
-  ccrune_register(reader,"short",cctoken_kSTDC_SHORT);
-  ccrune_register(reader,"char",cctoken_kSTDC_CHAR);
-  ccrune_register(reader,"void",cctoken_kVOID);
-  ccrune_register(reader,"_Bool",cctoken_kSTDC_BOOL);
+  ccread_register(reader,"signed",cctoken_kSTDC_SIGNED);
+  ccread_register(reader,"unsigned",cctoken_kSTDC_UNSIGNED);
+  ccread_register(reader,"__int8",cctoken_kMSVC_INT8);
+  ccread_register(reader,"__int16",cctoken_kMSVC_INT16);
+  ccread_register(reader,"__int32",cctoken_kMSVC_INT32);
+  ccread_register(reader,"__int64",cctoken_kMSVC_INT64);
+  ccread_register(reader,"double",cctoken_kSTDC_DOUBLE);
+  ccread_register(reader,"float",cctoken_kSTDC_FLOAT);
+  ccread_register(reader,"long",cctoken_kSTDC_LONG);
+  ccread_register(reader,"int",cctoken_kSTDC_INT);
+  ccread_register(reader,"short",cctoken_kSTDC_SHORT);
+  ccread_register(reader,"char",cctoken_kSTDC_CHAR);
+  ccread_register(reader,"void",cctoken_kVOID);
+  ccread_register(reader,"_Bool",cctoken_kSTDC_BOOL);
 
-  // ccrune_register(reader,"_Complex",cctoken_Kcomplex);
-  // ccrune_register(reader,"_Atomic",cctoken_Katomic);
+  // ccread_register(reader,"_Complex",cctoken_Kcomplex);
+  // ccread_register(reader,"_Atomic",cctoken_Katomic);
 
-  ccrune_register(reader,"enum",cctoken_kENUM);
-  ccrune_register(reader,"struct",cctoken_kSTRUCT);
+  ccread_register(reader,"enum",cctoken_kENUM);
+  ccread_register(reader,"struct",cctoken_kSTRUCT);
 
-  ccrune_register(reader,"typedef",cctoken_Ktypedef);
+  ccread_register(reader,"typedef",cctoken_Ktypedef);
 
-  ccrune_register(reader,"auto",cctoken_Kauto);
-  ccrune_register(reader,"extern",cctoken_Kextern);
-  ccrune_register(reader,"register",cctoken_Kregister);
-  ccrune_register(reader,"static",cctoken_Kstatic);
-  ccrune_register(reader,"_Thread_local",cctoken_Kthread_local);
-  ccrune_register(reader,"__declspec",cctoken_Kmsvc_declspec);
+  ccread_register(reader,"sizeof",cctoken_kSIZEOF);
 
-  ccrune_register(reader,"if",cctoken_Kif);
-  ccrune_register(reader,"switch",cctoken_Kswitch);
-  ccrune_register(reader,"else",cctoken_Kelse);
-  ccrune_register(reader,"case",cctoken_Kcase);
-  ccrune_register(reader,"default",cctoken_Kdefault);
-  ccrune_register(reader,"for",cctoken_Kfor);
-  ccrune_register(reader,"while",cctoken_Kwhile);
-  ccrune_register(reader,"do",cctoken_Kdo);
-  ccrune_register(reader,"goto",cctoken_Kgoto);
-  ccrune_register(reader,"return",cctoken_Kreturn);
-  ccrune_register(reader,"break",cctoken_Kbreak);
-  ccrune_register(reader,"continue",cctoken_Kcontinue);
+  ccread_register(reader,"auto",cctoken_Kauto);
+  ccread_register(reader,"extern",cctoken_Kextern);
+  ccread_register(reader,"register",cctoken_Kregister);
+  ccread_register(reader,"static",cctoken_Kstatic);
+  ccread_register(reader,"_Thread_local",cctoken_Kthread_local);
+  ccread_register(reader,"__declspec",cctoken_Kmsvc_declspec);
+
+  ccread_register(reader,"if",cctoken_Kif);
+  ccread_register(reader,"switch",cctoken_Kswitch);
+  ccread_register(reader,"else",cctoken_Kelse);
+  ccread_register(reader,"case",cctoken_Kcase);
+  ccread_register(reader,"default",cctoken_Kdefault);
+  ccread_register(reader,"for",cctoken_Kfor);
+  ccread_register(reader,"while",cctoken_Kwhile);
+  ccread_register(reader,"do",cctoken_Kdo);
+  ccread_register(reader,"goto",cctoken_Kgoto);
+  ccread_register(reader,"return",cctoken_Kreturn);
+  ccread_register(reader,"break",cctoken_Kbreak);
+  ccread_register(reader,"continue",cctoken_Kcontinue);
 
   ccassert(ccerrnon());
 }

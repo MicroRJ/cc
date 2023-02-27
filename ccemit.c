@@ -53,7 +53,7 @@ ccemit_constant(ccemit_t *emit, cctype_t *type, ccclassic_t clsc)
 
   ccassert(type!=0);
 
-  ccvalue_t *value=ccvalue("constant");
+  ccvalue_t *value=ccvalue();
   value->kind=ccvalue_kCONST;
   value->constant.type=type;
   value->constant.clsc=clsc;
@@ -109,6 +109,12 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
         ccvalue_t *rhs=ccemit_rvalue(emit,procd,block,tree->rval);
         result=ccblock_arith(block,tree->sort,lhs,rhs);
       }
+    } break;
+    case cctree_kSIZEOF:
+    { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
+      ccassert(type!=0);
+
+      result=ccemit_const_int(emit,ccsizeof(type));
     } break;
     case cctree_kDEREFERENCE:
     { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);

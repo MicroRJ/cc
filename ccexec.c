@@ -2,8 +2,6 @@
 #ifndef _CCEXEC_C
 #define _CCEXEC_C
 
-ccfunc cci32_t ccsizeof(cctype_t *);
-
 ccfunc int
 ccexec_init(ccexec_t *exec)
 { memset(exec,ccnil,sizeof(*exec));
@@ -388,23 +386,6 @@ ccexec_edict(
     default: ccassert(!"error");
   }
   return result;
-}
-
-ccfunc cci32_t
-ccsizeof(cctype_t *type)
-{
-  ccassert(type!=0);
-  ccassert(type->size!=0);
-
-  ccassert(type->kind!=cctype_kFUNCTION);
-
-  if(type->kind==cctype_kARRAY)
-  {
-    return type->size*ccsizeof(type->type);
-  } else
-  {
-    return type->size/8;
-  }
 }
 
 ccfunc int

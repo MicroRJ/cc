@@ -7,23 +7,17 @@ typedef enum ccedict_k
 {
   ccedict_kLOCAL = 0,
   ccedict_kPARAM,
-
-  // Note: expects an addressable l-value, a variable ...
   ccedict_kLADDR,
-  // Note: expects any sort of addressable value, such as another address, a local or parameter and produces an address value...
   ccedict_kAADDR,
-
   ccedict_kSTORE,
-
-  // Note: expects any sort of addressable value, loads its contents based on the type specified and produces a non-addressable r-value...
   ccedict_kFETCH,
-
   ccedict_kARITH,
   ccedict_kJUMP,
   ccedict_kJUMPT,
   ccedict_kJUMPF,
   ccedict_kINVOKE,
   ccedict_kRETURN,
+
   ccedict_kDBGBREAK,
   ccedict_kDBGERROR,
 } ccedict_k;
@@ -53,7 +47,7 @@ typedef struct ccedict_t
 } ccedict_t;
 
 
-// Todo:
+// Todo: proper allocator ...
 ccfunc ccinle ccedict_t *
 ccedict(ccedict_k kind)
 {

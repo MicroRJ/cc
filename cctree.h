@@ -38,8 +38,10 @@ typedef enum cctree_k
 
   cctree_kDEREFERENCE,
   cctree_kADDRESSOF,
+  cctree_kSIZEOF,
   cctree_kCALL,
   cctree_kINDEX,
+  cctree_kSELECTOR,
 
   cctree_kTUNIT,
 
