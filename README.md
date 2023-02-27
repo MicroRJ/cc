@@ -10,34 +10,37 @@ in a few key areas, but due to its current state and the fact that it doesn't ev
 Some things? Very few things have been implemented, and not even proper scoping has been added yet, so you can only use a name for a declarator once in the entire file, the code that I've managed to run is under 'code/'.
 
 ``` C
-int assert(int is_true)
-{
-  if(is_true==0)
-    ccerror();
+...
+	char *mem;
+  mem=ccmalloc(24);
 
-  return 0;
-}
-int fib(int x)
-{ if(x>=2)
-  { int l=fib(x-2);
-    int r=fib(x-1);
-    return l+r;
-  }
-  return x;
-}
-int main(int a)
-{
-  int f=fib(22);
-  assert(f==17711);
-  return f;
-}
+  mem[0]=97;
+  mem[1]=98;
+  mem[2]=99;
+
+  ccprintf("Hello, %s %i, %i\n","Sailor!",3,mem[0]);
+
+  void *file;
+  file=ccopenfile("code\\hello.txt","w");
+
+  ccpushfile(file,0,3,mem);
+
+  ccbreak();
+  ccerror();
+  ccassert(1);
+
+  o="abc";
+  ccassert(o[0]==97);
+  ccassert(o[1]==98);
+  ccassert(o[2]==99);
+...
 ```
 
 #### Todo list:
 - Improve logging, rich locations...
 - Improve the debug system...
-- Keep improving the checker stage, scopes?...
-- More advanced type system...
+- Keep improving the checker stage ...
+- More advanced type system ...
 - Missing comments, integral and floating point suffixes...
 - Faster parser ...
 - Support for pp-directives, '#include', '#if' ...
