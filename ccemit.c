@@ -164,7 +164,9 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
 
     } break;
     case cctree_kSIZEOF:
-    { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
+    {
+      // Note: seer should have bound the 'sizeof' expression to the type of its operand...
+      cctype_t *type=ccseer_tree_type(emit->seer,tree);
       ccassert(type!=0);
 
       result=ccemit_const_int(emit,type->size);

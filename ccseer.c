@@ -97,114 +97,17 @@ ccseer_tether(ccseer_t *seer, cctree_t *tree, cctype_t *type)
   *holder=type;
 }
 
-// Todo: not very good!
-ccfunc cctype_t *
-ccseer_tree_to_type(ccseer_t *seer, cctree_t *tree)
-{ ccassert(tree!=0);
-
-  cctype_t *result=ccnull;
-
-  if(tree->kind==cctree_kSTRUCT)
-  {
-    cci32_t   size=0;
-    ccelem_t *list=ccnull;
-
-    // Todo:
-    cctree_t **v;
-    ccarrfor(tree->list,v)
-    { cctree_t *n=*v;
-      ccassert(n->kind==cctree_kDECL);
-      ccassert(n->name!=0);
-      ccassert(n->size==0); // Note: we don't support this now ...
-
-      // Todo: error message...
-      ccelem_t *e=cctblputS(list,n->name);
-      ccassert(ccerrnon());
-
-      e->tree=n;
-      e->name=n->name;
-      e->type=ccseer_tree_to_type(seer,n->type);
-      e->slot=size;
-
-      // Todo: this is terrible...
-      size+=e->type->size;
-    }
-
-    result=cctype_record(tree,list,size,tree->name);
-
-    if(tree->name)
-    {
-      ccesse_t *e=ccesse(ccesse_kTYPENAME);
-      e->name=tree->name;
-      e->tree=tree;
-      e->type=result;
-      ccseer_register(seer,e,tree->name);
-    }
-  } else
-  if(tree->kind==cctree_kARRAY)
-  {
-    cctype_t *type=ccseer_tree_to_type(seer,tree->type);
-
-    // Todo:
-    ccassert(tree->rval->kind==cctree_kCONSTANT);
-    ccassert(tree->rval->sort==cctoken_kLITINT);
-
-    ccseer_rvalue(seer,tree->rval);
-
-    // Todo:
-    cci32_t length=cctree_casti32(tree->rval);
-    ccassert(length!=0);
-
-    result=cctype_array_modifier(type,length*type->size);
-  } else
-  if(tree->kind==cctree_kPOINTER)
-  {
-    result=cctype_pointer_modifier(ccseer_tree_to_type(seer,tree->type));
-  } else
-  if(tree->kind==cctree_kFUNCTION)
-  { cctype_t *type=ccseer_tree_to_type(seer,tree->type);
-    cctype_t *list=ccnull;
-
-    // Todo: memory leak!
-    // cctree_t **i;
-    // ccarrfor(tree->list,i)
-    //   *ccarradd(list,1)=*ccseer_tree_to_type(seer,(*i)->type);
-
-    result=cctype_function_modifier(type,ccnull,ccfalse);
-  } else
-  if(tree->kind==cctree_kTYPENAME)
-  {
-    switch(tree->sort)
-    { case cctoken_kVOID:          result=seer->type_void; break;
-      case cctoken_kSTDC_INT:      result=seer->type_stdc_int; break;
-      case cctoken_kSTDC_LONG:     result=seer->type_stdc_long; break;
-      case cctoken_kSTDC_SHORT:    result=seer->type_stdc_short; break;
-      case cctoken_kSTDC_DOUBLE:   result=seer->type_stdc_double; break;
-      case cctoken_kSTDC_FLOAT:    result=seer->type_stdc_float; break;
-      case cctoken_kSTDC_CHAR:     result=seer->type_stdc_char; break;
-      case cctoken_kSTDC_BOOL:     result=seer->type_stdc_bool; break;
-      case cctoken_kSTDC_SIGNED:   result=seer->type_stdc_signed; break;
-      case cctoken_kSTDC_UNSIGNED: result=seer->type_stdc_unsigned; break;
-      case cctoken_kMSVC_INT8:     result=seer->type_msvc_int8; break;
-      case cctoken_kMSVC_INT16:    result=seer->type_msvc_int16; break;
-      case cctoken_kMSVC_INT32:    result=seer->type_msvc_int32; break;
-      case cctoken_kMSVC_INT64:    result=seer->type_msvc_int64; break;
-    }
-  } else
-  if(tree->kind==cctree_kIDENTIFIER)
-  {
-    // Todo: error message ...
-    ccesse_t *esse=ccseer_entity(seer,tree->name);
-    ccassert(esse!=0);
-    ccassert(esse->kind==ccesse_kTYPENAME);
-
-    result=esse->type;
+ccfunc ccinle const char *
+ccesse_string(ccesse_t *esse)
+{ switch(esse->kind)
+  { case ccesse_kINVALID:  return "invalid";
+    case ccesse_kTYPENAME: return "type-name";
+    case ccesse_kCBINDING: return "c-binding";
+    case ccesse_kFUNCTION: return "function";
+    case ccesse_kVARIABLE: return "variable";
   }
-
-  ccassert(result!=0);
-  return result;
+  return "error";
 }
-
 
 // Note: register an entity by name...
 ccfunc int
@@ -216,9 +119,8 @@ ccseer_register(ccseer_t *seer, ccesse_t *esse, const char *name)
   if(ccerrnon())
     *holder=esse;
   else
-    cctraceerr("'%s': redefinition, previous definition was '%s'", name,
-      ((held->kind==ccesse_kVARIABLE)?"data variable":
-      ((held->kind==ccesse_kFUNCTION)?"function":"unknown")));
+    cctraceerr("'%s': redefinition, previous definition was '%s'",name,
+      ccesse_string(held));
 
   ccassert(esse->kind!=0);
   ccassert(esse->name!=0);
@@ -229,6 +131,120 @@ ccseer_register(ccseer_t *seer, ccesse_t *esse, const char *name)
 
   return ccerrnon();
 }
+
+
+// Todo: not very good!
+ccfunc cctype_t *
+ccseer_typespec(ccseer_t *seer, cctree_t *tree)
+{ ccassert(tree!=0);
+
+  cctype_t *result=ccnull;
+  switch(tree->kind)
+  { case cctree_kIDENTIFIER:
+    {
+      ccesse_t *esse=ccseer_entity(seer,tree->name);
+
+      if(!esse)
+        cctraceerr("'%s': undeclared identifier",tree->name);
+
+      if(esse->kind!=ccesse_kTYPENAME)
+       cctraceerr("'%s': declaration expected type specifier, you specified %s",
+        ccesse_string(esse));
+
+      ccassert(esse!=0);
+      ccassert(esse->kind==ccesse_kTYPENAME);
+
+      result=esse->type;
+    } break;
+    case cctree_kSTRUCT:
+    { cci32_t   size=0;
+      ccelem_t *list=ccnull;
+
+      // Todo: this is terrible...
+      cctree_t **v;
+      ccarrfor(tree->list,v)
+      { cctree_t *n=*v;
+        ccassert(n->kind==cctree_kDECL);
+        ccassert(n->type!=0);
+        ccassert(n->name!=0);
+        ccassert(n->size==0); // Note: we don't support this now ...
+
+        // Todo: error message...
+        ccelem_t *e=cctblputS(list,n->name);
+        ccassert(ccerrnon());
+
+        e->tree=n;
+        e->type=ccseer_typespec(seer,n->type);
+        e->name=n->name;
+        e->slot=size;
+
+        size+=e->type->size;
+      }
+
+      result=cctype_record(tree,list,size,tree->name);
+
+      if(tree->name)
+      {
+        ccesse_t *e=ccesse(ccesse_kTYPENAME);
+        e->name=tree->name;
+        e->tree=tree;
+        e->type=result;
+        ccseer_register(seer,e,tree->name);
+      }
+    } break;
+    case cctree_kARRAY:
+    { cctype_t *type=ccseer_typespec(seer,tree->type);
+
+      // Todo:
+      ccassert(tree->rval->kind==cctree_kCONSTANT);
+      ccassert(tree->rval->sort==cctoken_kLITINT);
+
+      ccseer_rvalue(seer,tree->rval);
+
+      // Todo:
+      cci32_t length=cctree_casti32(tree->rval);
+      ccassert(length!=0);
+
+      result=cctype_array_modifier(type,length*type->size);
+    } break;
+    case cctree_kPOINTER:
+    {
+      result=cctype_pointer_modifier(ccseer_typespec(seer,tree->type));
+    } break;
+    case cctree_kFUNCTION:
+    {
+      // Todo:
+      cctype_t *type=ccseer_typespec(seer,tree->type);
+      cctype_t *list=ccnull;
+
+      result=cctype_function_modifier(type,ccnull,ccfalse);
+    } break;
+    case cctree_kTYPENAME:
+    { switch(tree->sort)
+      { case cctoken_kVOID:          result=seer->type_void;         break;
+        case cctoken_kSTDC_INT:      result=seer->type_stdc_int;     break;
+        case cctoken_kSTDC_LONG:     result=seer->type_stdc_long;    break;
+        case cctoken_kSTDC_SHORT:    result=seer->type_stdc_short;   break;
+        case cctoken_kSTDC_DOUBLE:   result=seer->type_stdc_double;  break;
+        case cctoken_kSTDC_FLOAT:    result=seer->type_stdc_float;   break;
+        case cctoken_kSTDC_CHAR:     result=seer->type_stdc_char;    break;
+        case cctoken_kSTDC_BOOL:     result=seer->type_stdc_bool;    break;
+        case cctoken_kSTDC_SIGNED:   result=seer->type_stdc_signed;  break;
+        case cctoken_kSTDC_UNSIGNED: result=seer->type_stdc_unsigned;break;
+        case cctoken_kMSVC_INT8:     result=seer->type_msvc_int8;    break;
+        case cctoken_kMSVC_INT16:    result=seer->type_msvc_int16;   break;
+        case cctoken_kMSVC_INT32:    result=seer->type_msvc_int32;   break;
+        case cctoken_kMSVC_INT64:    result=seer->type_msvc_int64;   break;
+      }
+    } break;
+  }
+
+  ccassert(result!=0);
+  return result;
+}
+
+
+
 
 ccfunc void
 ccsee_register_builtin(ccseer_t *seer, ccbuiltin_k sort, const char *name)
@@ -267,6 +283,40 @@ cctype_indirect(cctype_t *type)
   return (type->kind==cctype_kPOINTER)||(type->kind==cctype_kARRAY);
 }
 
+// Todo:
+ccfunc cctype_t *
+ccseer_typeof(ccseer_t *seer, cctree_t *tree)
+{ cctype_t *result=ccnull;
+  switch(tree->kind)
+  { case cctree_kTYPENAME:
+    case cctree_kSTRUCT:
+    case cctree_kENUM:
+    case cctree_kARRAY:
+    case cctree_kPOINTER:
+    {
+      result=ccseer_typespec(seer,tree);
+    } break;
+    case cctree_kIDENTIFIER:
+    { ccesse_t *esse=ccseer_entity(seer,tree->name);
+
+      if(!esse)
+        cctraceerr("'%s': undeclared identifier",tree->name);
+
+      if((esse->kind==ccesse_kVARIABLE) ||
+         (esse->kind==ccesse_kTYPENAME))
+      {
+        result=esse->type;
+      } else
+       cctraceerr("invalid entity for sizeof, expected type-name or variable-name",0);
+    } break;
+    default:
+    {
+      result=ccseer_value(seer,tree,ccfalse);
+    } break;
+  }
+  return result;
+}
+
 // Note: 'is_lval' meaning that it is specifically on the lhs of an assignment expression ...
 ccfunc cctype_t *
 ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
@@ -276,12 +326,12 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
   { case cctree_kIDENTIFIER:
     { ccesse_t *esse=ccseer_associate(seer,tree,tree->name);
 
-      if(!esse)
+      if(esse)
+      { result=esse->type;
+        ccseer_tether(seer,tree,result);
+      } else
         cctraceerr("'%s': undeclared identifier",tree->name);
 
-      // Care:
-      result=esse->type;
-      ccseer_tether(seer,tree,result);
     } break;
     case cctree_kCONSTANT:
     { ccassert(!is_lval);
@@ -347,10 +397,11 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
       ccassert(!is_lval);
 
       ccassert(tree->lval!=0);
-      result=ccseer_rvalue(seer,tree->lval);
 
-      // Todo: make this be size_t or something similar
-      result=seer->type_stdc_long;
+      // Note: there's a difference between sizeof() and sizeof, sizeof() works for everything but sizeof is only for expressions,
+      // this is what makes the language unambiguous... we assume the parser has done its job...
+
+      result=ccseer_typeof(seer,tree->lval);
       ccseer_tether(seer,tree,result);
     } break;
     case cctree_kADDRESSOF:
@@ -488,7 +539,7 @@ ccseer_decl_name(ccseer_t *seer, cctree_t *tree)
       { esse=ccesse(ccesse_kFUNCTION);
         esse->name=tree->name;
         esse->tree=tree;
-        esse->type=ccseer_tree_to_type(seer,tree->type);
+        esse->type=ccseer_typespec(seer,tree->type);
 
         // Todo: ensure return type is not a function or an array!
         ccseer_register(seer,esse,tree->name);
@@ -523,7 +574,7 @@ ccseer_decl_name(ccseer_t *seer, cctree_t *tree)
     ccesse_t *esse=ccesse(ccesse_kVARIABLE);
     esse->name=tree->name;
     esse->tree=tree;
-    esse->type=ccseer_tree_to_type(seer,tree->type);
+    esse->type=ccseer_typespec(seer,tree->type);
 
     if(ccseer_register(seer,esse,tree->name))
     {

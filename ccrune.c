@@ -380,6 +380,9 @@ ccread_token(ccread_t *l)
       if(l->tok_max[1]=='=')
       { l->tok_max += 2, l->tok.kind = cctoken_kGTE;
       } else
+      if(l->tok_max[1]=='>')
+      { l->tok_max += 2, l->tok.kind = cctoken_kBWSHR;
+      } else
       { l->tok_max += 1, l->tok.kind = cctoken_kGTN;
       }
     } break;
@@ -389,6 +392,9 @@ ccread_token(ccread_t *l)
     {
       if(l->tok_max[1]=='=')
       { l->tok_max += 2, l->tok.kind = cctoken_kLTE;
+      } else
+      if(l->tok_max[1]=='<')
+      { l->tok_max += 2, l->tok.kind = cctoken_kBWSHL;
       } else
       { l->tok_max += 1, l->tok.kind = cctoken_kLTN;
       }

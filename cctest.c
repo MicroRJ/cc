@@ -94,15 +94,11 @@ ccdbenter("main");
 
   cctest();
 
-#if 1
-  const char *n[]={"code\\sizeof.cc","code\\lval.cc"};
+  const char *n[]={"code\\precedence.cc","code\\xorshift.cc","code\\sizeof.cc","code\\lval.cc"};
   for(int i=0; i<ccCarrlenL(n); ++i)
   { ccexec_value_t e=buildrunfile(n[i]);
     ccprintf("<!6'%s'!>: <!3%lli!>\n",n[i],e.constI);
   }
-
-#endif
-
 ccdbleave("main");
 
 ccdebugend();

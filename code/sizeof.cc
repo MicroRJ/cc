@@ -1,6 +1,10 @@
 
 int main(int _)
 {
+	ccassert(sizeof(char)    == 1)
+	ccassert(sizeof(int)     == 4)
+	ccassert(sizeof(void *)  == 8)
+
   char  c;
   int   i;
   void *p;

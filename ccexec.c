@@ -165,7 +165,12 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
   cci64_t i=0;
 
   switch(opr)
-  { case cctoken_kTEQ: i=lval.constI == rval.constI; break;
+  {
+    case cctoken_kBWXOR: i=lval.constI ^ rval.constI; break;
+
+    case cctoken_kBWSHL: i=lval.constI << rval.constI; break;
+    case cctoken_kBWSHR: i=lval.constI >> rval.constI; break;
+    case cctoken_kTEQ: i=lval.constI == rval.constI; break;
     case cctoken_kFEQ: i=lval.constI != rval.constI; break;
     case cctoken_kGTN: i=lval.constI >  rval.constI; break;
     case cctoken_kGTE: i=lval.constI >= rval.constI; break;
