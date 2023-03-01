@@ -20,7 +20,11 @@ typedef enum cctree_k
   cctree_kLABEL,
   cctree_kRETURN,
   cctree_kGOTO,
+
+  // Todo: remove!
   cctree_kWHILE,
+
+  cctree_kITERATOR,
 
   cctree_kDECL,
 
@@ -179,6 +183,20 @@ cctree_while(cctree_t *root, cci32_t mark, cctree_t *cond_tree, cctree_t *then_t
   cctree_t *tree=cctree_new(cctree_kWHILE,root,mark);
   tree->init=cond_tree;
   tree->lval=then_tree;
+  return tree;
+}
+
+ccfunc cctree_t *
+cctree_iterator(
+  cctree_t *root, cci32_t mark, cctree_t *init_tree, cctree_t *cond_tree, cctree_t *then_tree, cctree_t *loop_tree)
+{
+  ccassert(cond_tree!=0);
+
+  cctree_t *tree=cctree_new(cctree_kITERATOR,root,mark);
+  tree->init=init_tree;
+  tree->lval=cond_tree;
+  tree->rval=then_tree;
+  tree->blob=loop_tree;
   return tree;
 }
 

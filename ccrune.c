@@ -517,7 +517,7 @@ ccread_register_defaults(ccread_t *reader)
   ccread_register(reader,"else",cctoken_kELSE);
   ccread_register(reader,"case",cctoken_Kcase);
   ccread_register(reader,"default",cctoken_Kdefault);
-  ccread_register(reader,"for",cctoken_Kfor);
+  ccread_register(reader,"for",cctoken_kFOR);
   ccread_register(reader,"while",cctoken_kWHILE);
   ccread_register(reader,"do",cctoken_Kdo);
   ccread_register(reader,"goto",cctoken_kGOTO);

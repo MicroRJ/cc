@@ -293,6 +293,24 @@ ccemit_tree(
 
     return ccnil;
   } else
+  if(tree->kind==cctree_kITERATOR)
+  {
+    // Todo:
+    ccassert(tree->init!=0);
+    ccassert(tree->lval!=0);
+    ccassert(tree->rval!=0);
+    ccassert(tree->blob!=0);
+    ccvalue_t *l,*c,*v;
+    ccleap_t p;
+    v=ccemit_tree(emit,procd,block,tree->init);
+    p=ccblock_label(block,".JP-FL");
+    v=ccemit_value(emit,procd,block,tree->lval,ccfalse);
+    c=ccblock_fjump(block,tree,ccblock_label(block,"."),v);
+    ccemit_tree(emit,procd,block,tree->blob);
+    ccemit_tree(emit,procd,block,tree->rval);
+    l=ccblock_jump(block,tree,p);
+    ccvalue_retarget(c,ccblock_label(block,".JP-FE"));
+  } else
   if(tree->kind==cctree_kWHILE)
   {
     ccvalue_t *l,*c,*v;
@@ -307,14 +325,11 @@ ccemit_tree(
     l=ccblock_jump(block,tree,p);
 
     ccvalue_retarget(c,ccblock_label(block,".JP-WE"));
-
-    return ccnil;
   } else
   {
     result=ccemit_value(emit,procd,block,tree,ccfalse);
   }
 
-  ccassert(result!=0);
   return result;
 }
 

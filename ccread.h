@@ -128,7 +128,7 @@ typedef enum cctoken_k
   cctoken_Kcase,
   cctoken_Kdefault,
 
-  cctoken_Kfor,
+  cctoken_kFOR,
   cctoken_kWHILE,
   cctoken_Kdo,
 

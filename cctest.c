@@ -95,7 +95,7 @@ ccdbenter("main");
   cctest();
 
   const char *n[]={
-    "code\\array.cc","code\\ccprintf.cc","code\\precedence.cc","code\\sizeof.cc","code\\fib.cc"};
+    "code\\iterator.cc","code\\array.cc","code\\ccprintf.cc","code\\precedence.cc","code\\sizeof.cc","code\\fib.cc"};
   for(int i=0; i<ccCarrlenL(n); ++i)
   { ccexec_value_t e=buildrunfile(n[i]);
     ccprintf("<!6'%s'!>: <!3%lli!>\n",n[i],e.constI);

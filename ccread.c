@@ -776,10 +776,14 @@ ccread_param_type_list(ccread_t *reader, cctree_t *root, int mark)
 }
 
 ccfunc cctree_t *
-ccread_statement(ccread_t *reader, cctree_t *root, int mark)
+ccread_statement(
+  ccread_t *reader, cctree_t *root, int mark,
+  // Note: is this the best way to do things?
+  int is_init_statement)
 {
   cctree_t *result=ccnull;
 
+  cctree_t *init_tree=ccnull;
   cctree_t *cond_tree=ccnull;
   cctree_t *then_tree=ccnull;
   cctree_t *else_tree=ccnull;
@@ -795,6 +799,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, int mark)
     {
       result=ccread_expression(reader,root,mark);
     } break;
+
     case cctoken_kLITIDENT:
       // Note: check if this identifier could be part of a declaration...
       if(!token->term_expl)
@@ -864,7 +869,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, int mark)
 
       while(!ccsee(reader,cctoken_kEND) && !ccsee(reader,cctoken_kRCURLY))
       {
-        cctree_t *next=ccread_statement(reader,result,mark);
+        cctree_t *next=ccread_statement(reader,result,mark,ccfalse);
 
         if(ccread_continues(reader))
           ccsynerr(reader, 0, "expected ';'");
@@ -893,6 +898,39 @@ ccread_statement(ccread_t *reader, cctree_t *root, int mark)
       if(!result->rval)
         ccsynerr(reader,0,"expected expression");
     } break;
+    case cctoken_kFOR:
+    { token=ccgobble(reader);
+      ccassert(!strcmp(token->name,"for"));
+
+      if(!cceat(reader,cctoken_kLPAREN))
+        ccsynerr(reader,0,"expected '('");
+
+      // Todo: this is temporary until we know what to do about ';'
+      init_tree=ccread_statement(reader,root,mark,cctrue);
+      if(ccread_continues(reader)) ccsynerr(reader, 0, "expected ';'");
+      ccassert(!ccread_continues(reader));
+
+      cond_tree=ccread_expression(reader,root,mark);
+      if(ccread_continues(reader)) ccsynerr(reader, 0, "expected ';'");
+      ccassert(!ccread_continues(reader));
+
+      else_tree=ccread_expression(reader,root,mark);
+
+      if(!cceat(reader,cctoken_kRPAREN))
+        ccsynerr(reader,0,"expected ')'");
+
+      if(ccread_continues(reader))
+      { then_tree=ccread_statement(reader,root,mark,ccfalse);
+
+        if(then_tree->kind!=cctree_kBLOCK)
+        {
+          if(ccread_continues(reader))
+            ccsynerr(reader, 0, "expected ';'");
+        }
+      }
+
+      result=cctree_iterator(root,mark,init_tree,cond_tree,else_tree,then_tree);
+    } break;
     case cctoken_kWHILE:
     { ccgobble(reader);
 
@@ -909,7 +947,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, int mark)
 
       if(ccread_continues(reader))
       {
-        then_tree=ccread_statement(reader,root,mark);
+        then_tree=ccread_statement(reader,root,mark,ccfalse);
 
         if(then_tree->kind!=cctree_kBLOCK)
         {
@@ -938,7 +976,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, int mark)
 
       if(ccread_continues(reader))
       {
-        then_tree=ccread_statement(reader,root,mark);
+        then_tree=ccread_statement(reader,root,mark,ccfalse);
 
         if(!then_tree)
           ccsynerr(reader,0,"expected statement");
@@ -947,7 +985,7 @@ ccread_statement(ccread_t *reader, cctree_t *root, int mark)
           ccsynerr(reader, 0, "expected ';'");
 
         if(cceat(reader,cctoken_kELSE))
-        { else_tree=ccread_statement(reader,root,mark);
+        { else_tree=ccread_statement(reader,root,mark,ccfalse);
           if(!else_tree)
             ccsynerr(reader,0,"expected statement");
 
@@ -980,7 +1018,7 @@ ccread_translation_unit(ccread_t *reader)
 ccfunc cctree_t *
 ccread_external_declaration(ccread_t *reader, cctree_t *root, int mark)
 {
-  cctree_t *decl=ccread_statement(reader,root,mark|cctree_mEXTERNAL);
+  cctree_t *decl=ccread_statement(reader,root,mark|cctree_mEXTERNAL,ccfalse);
 
   if(!decl)
     return ccnull;
@@ -997,7 +1035,7 @@ ccread_external_declaration(ccread_t *reader, cctree_t *root, int mark)
     // Note: You can't define multiple functions within the same declaration ...
     ccassert(decl->next==0);
 
-    decl->blob=ccread_statement(reader,decl,mark);
+    decl->blob=ccread_statement(reader,decl,mark,ccfalse);
 
     ccassert(!decl->blob || decl->blob->kind==cctree_kBLOCK); // Todo: error messages
 

@@ -590,21 +590,23 @@ ccseer_tree(ccseer_t *seer, cctree_t *tree)
       ccarrfor(tree->list,list) ccseer_tree(seer,*list);
     break;
     case cctree_kDECL:
-
       if(tree->root->kind==cctree_kTUNIT)
         ccassert(tree->mark&cctree_mEXTERNAL);
-
       if(tree->mark&cctree_mEXTERNAL)
         ccassert(tree->root->kind==cctree_kTUNIT);
-
       cctree_t *next;
       for(next=tree;next;next=next->next)
         ccseer_decl_name(seer,next);
-
     break;
     case cctree_kRETURN:
       if(tree->rval)
         ccseer_rvalue(seer,tree->rval);
+    break;
+    case cctree_kITERATOR:
+      if(tree->init) ccseer_tree(seer,tree->init);
+      if(tree->lval) ccseer_value(seer,tree->lval,ccfalse);
+      if(tree->rval) ccseer_value(seer,tree->rval,ccfalse);
+      if(tree->blob) ccseer_tree(seer,tree->blob);
     break;
     case cctree_kWHILE:
       ccseer_rvalue(seer,tree->init);

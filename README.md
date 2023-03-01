@@ -11,7 +11,7 @@ Some things? Very few things have been implemented, and not even proper scoping 
 
 ``` C
 ...
-	char *mem;
+  char *mem;
   mem=ccmalloc(24);
 
   mem[0]=97;
