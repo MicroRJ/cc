@@ -552,12 +552,32 @@ ccfunc void
 ccseer_tree(ccseer_t *seer, cctree_t *tree)
 {
   switch(tree->kind)
-  {
-    case cctree_kBLOCK:
-    {
-      cctree_t **list;
+  { case cctree_kBLOCK:
+    { cctree_t **list;
       ccarrfor(tree->list,list) ccseer_tree(seer,*list);
     } break;
+    case cctree_kRETURN:
+      if(tree->rval)
+        ccseer_rvalue(seer,tree->rval);
+    break;
+    case cctree_kITERATOR:
+      if(tree->init) ccseer_tree(seer,tree->init);
+      if(tree->lval) ccseer_value(seer,tree->lval,ccfalse);
+      if(tree->rval) ccseer_value(seer,tree->rval,ccfalse);
+      if(tree->blob) ccseer_tree(seer,tree->blob);
+    break;
+    case cctree_kWHILE:
+      ccseer_rvalue(seer,tree->init);
+      ccseer_tree(seer,tree->lval);
+    break;
+    case cctree_kCONDITIONAL:
+      ccseer_rvalue(seer,tree->init);
+      if(tree->lval) ccseer_tree(seer,tree->lval);
+      if(tree->rval) ccseer_tree(seer,tree->rval);
+    break;
+    default:
+      ccseer_rvalue(seer,tree);
+    break;
     case cctree_kDECL:
     {
       cctree_t *next;
@@ -611,9 +631,6 @@ ccseer_tree(ccseer_t *seer, cctree_t *tree)
               cctraceerr("'%s': local function definitions are illegal", next->name);
         } else
         {
-          // Todo: remove this ...
-          ccassert(!(next->mark&cctree_mEXTERNAL));
-
           ccesse_t *esse=ccesse(ccesse_kVARIABLE);
           esse->name=next->name;
           esse->tree=next;
@@ -634,28 +651,7 @@ ccseer_tree(ccseer_t *seer, cctree_t *tree)
         }
       }
     } break;
-    case cctree_kRETURN:
-      if(tree->rval)
-        ccseer_rvalue(seer,tree->rval);
-    break;
-    case cctree_kITERATOR:
-      if(tree->init) ccseer_tree(seer,tree->init);
-      if(tree->lval) ccseer_value(seer,tree->lval,ccfalse);
-      if(tree->rval) ccseer_value(seer,tree->rval,ccfalse);
-      if(tree->blob) ccseer_tree(seer,tree->blob);
-    break;
-    case cctree_kWHILE:
-      ccseer_rvalue(seer,tree->init);
-      ccseer_tree(seer,tree->lval);
-    break;
-    case cctree_kCONDITIONAL:
-      ccseer_rvalue(seer,tree->init);
-      if(tree->lval) ccseer_tree(seer,tree->lval);
-      if(tree->rval) ccseer_tree(seer,tree->rval);
-    break;
-    default:
-      ccseer_rvalue(seer,tree);
-    break;
+
   }
 }
 

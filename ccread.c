@@ -561,9 +561,17 @@ ccread_type_spec(ccread_t *reader)
 
   cctoken_t *token=ccpeep(reader);
   switch(token->kind)
-  { case cctoken_kENUM:
+  {
+    case cctoken_kENUM:
     case cctoken_kSTRUCT:
       result=ccread_record_spec(reader,ccnull,ccnull);
+    break;
+    // Todo: figure out what we want to do with this...
+    case cctoken_kLITIDENT:
+      ccgobble(reader);
+      result=cctree_new(cctree_kIDENTIFIER,ccnull,ccnull);
+      result->name=token->name;
+      result->loca=token->loca;
     break;
     case cctoken_kVOID:
     case cctoken_kMSVC_INT8:
@@ -746,16 +754,16 @@ ccread_decl(
 ccfunc cctree_t *
 ccread_param_decl(ccread_t *reader, cctree_t *root, int mark)
 {
-  cctree_t *spec=ccnil;
-  cctree_t *decl=ccnil;
+  cctree_t *result=ccnull;
 
-  if(ccsee(reader,cctoken_Kliteral_ellipsis))
-    ccsynerr(reader,0,"unexpected '...', must be at end of function");
+  if(!ccsee(reader,cctoken_Kliteral_ellipsis))
+  {
+    result=ccread_decl_spec(reader,root,mark);
+    if(result)
+      result=ccread_decl(reader,root,mark,result,ccfalse,ccfalse);
+  }
 
-  spec=ccread_decl_spec(reader,root,mark);
-  if(spec) decl=ccread_decl(reader,root,mark,spec,ccfalse,ccfalse);
-
-  return decl;
+  return result;
 }
 
 ccfunc cctree_t **
@@ -834,6 +842,7 @@ ccread_statement(
          (token->kind==cctoken_kENUM))
       {
         type=ccread_record_spec(reader,root,mark);
+
       } else
       {
         ccgobble(reader);
@@ -848,7 +857,7 @@ ccread_statement(
         type->name=token->name;
       }
 
-      if(!token->term_expl)
+      if(ccread_continues(reader))
       {
         result=ccread_decl(reader,root,mark,type,ccfalse,cctrue);
 
@@ -1037,7 +1046,7 @@ ccread_external_declaration(ccread_t *reader, cctree_t *root, int mark)
 
     if(ccread_continues(reader))
     {
-    	decl->blob=ccread_statement(reader,decl,mark,ccfalse);
+      decl->blob=ccread_statement(reader,decl,mark,ccfalse);
     }
 
     ccassert(!decl->blob || decl->blob->kind==cctree_kBLOCK); // Todo: error messages

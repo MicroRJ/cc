@@ -159,7 +159,8 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       if(type->kind==cctype_kPOINTER)
         lvalue=ccblock_fetch(block,tree,type,lvalue);
 
-      result=ccblock_aaddr(block,tree,elem->type,lvalue,rvalue);
+      // Todo: should we use a specific instruction for this?
+      result=ccblock_aaddr(block,tree,emit->seer->type_stdc_char,lvalue,rvalue);
 
       if(!is_lval)
         result=ccblock_fetch(block,tree,elem->type,result);

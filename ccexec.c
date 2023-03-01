@@ -208,7 +208,7 @@ ccexec_edict(
       ccassert(edict->lval!=0);
       ccassert(edict->rval!=0);
 
-      cctype_t *type=edict->type;;
+      cctype_t *type=edict->type;
       ccexec_value_t lval=ccexec_yield(stack,edict->lval,cctrue);
       ccexec_value_t rval=ccexec_yield(stack,edict->rval,ccfalse);
 
