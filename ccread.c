@@ -761,7 +761,7 @@ ccread_param_decl(ccread_t *reader, cctree_t *root, int mark)
 ccfunc cctree_t **
 ccread_param_decl_list(ccread_t *reader, cctree_t *root, int mark)
 { cctree_t *next,**list=ccnil;
-  while(next=ccread_param_decl(reader,root,mark))
+  while(next=ccread_param_decl(reader,root,mark&~cctree_mEXTERNAL))
   { *ccarradd(list,1)=next;
     if(!cceat(reader,cctoken_kCMA)) break;
   }
@@ -1035,7 +1035,10 @@ ccread_external_declaration(ccread_t *reader, cctree_t *root, int mark)
     // Note: You can't define multiple functions within the same declaration ...
     ccassert(decl->next==0);
 
-    decl->blob=ccread_statement(reader,decl,mark,ccfalse);
+    if(ccread_continues(reader))
+    {
+    	decl->blob=ccread_statement(reader,decl,mark,ccfalse);
+    }
 
     ccassert(!decl->blob || decl->blob->kind==cctree_kBLOCK); // Todo: error messages
 

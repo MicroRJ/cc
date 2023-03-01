@@ -29,6 +29,9 @@ typedef struct ccexec_frame_t
 { ccprocd_t      * procedure;
   ccblock_t      * current;
   cci32_t          irindex;
+
+  // Note: instead of storing all the values, only store the necessary ones when a new frame is pushed and
+  // keep the hash-table at the super level...
   ccexec_value_t * values;
   ccexec_value_t   result;
 } ccexec_frame_t;

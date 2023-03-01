@@ -437,11 +437,12 @@ ccfunc ccinle char *ccformatv   (const char *, va_list);
 ccfunc        int   ccformatex  (char *, int, const char *, ...);
 ccfunc        char *ccformat    (const char *, ...);
 
-ccfunc void cctrace_(const char *label, const char *format, ...);
-#define cctracelog(fmt,...) (cccall(),cctrace_("log",fmt,__VA_ARGS__),0)
-#define cctracewar(fmt,...) (cccall(),cctrace_("war",fmt,__VA_ARGS__),0)
-#define cctraceerr(fmt,...) (cccall(),cctrace_("err",fmt,__VA_ARGS__),0)
-#define ccdebuglog(fmt,...) (cccall(),cctrace_("dbg",fmt,__VA_ARGS__),0)
+ccfunc void cctrace_(cccaller_t caller, const char *label, const char *format, ...);
+
+#define cctracelog(fmt,...) (cctrace_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),"log",fmt,__VA_ARGS__),0)
+#define cctracewar(fmt,...) (cctrace_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),"war",fmt,__VA_ARGS__),0)
+#define cctraceerr(fmt,...) (cctrace_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),"err",fmt,__VA_ARGS__),0)
+#define ccdebuglog(fmt,...) (cctrace_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),"dbg",fmt,__VA_ARGS__),0)
 
 // Note:
 #include "ccsys.c"
@@ -465,6 +466,7 @@ typedef struct ccexec_value_t ccexec_value_t;
 
 #include "ccread.h"
 #include "cctree.h"
+#include "cctype.h"
 #include "ccseer.h"
 
 #include "ccedict.h"

@@ -1,5 +1,8 @@
 
 int
+xorshift32(char *p);
+
+int
 xorshift32(int *p)
 {
   int q = *p;

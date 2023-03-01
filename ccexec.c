@@ -22,9 +22,9 @@ ccexec_uninit(ccexec_t *exec)
   ccfree(exec->stack);
 }
 
-// Note: allocates the register associated with this value ...
+// Note: allocates a register for this value ...
 ccfunc ccinle ccexec_value_t *
-ccload_alloc(ccexec_frame_t *frame, ccvalue_t *owner)
+ccexec_register(ccexec_frame_t *frame, ccvalue_t *owner)
 {
   ccexec_value_t *result=cctblsetP(frame->values,owner);
   result->kind=ccexec_value_kVALID;
@@ -33,74 +33,56 @@ ccload_alloc(ccexec_frame_t *frame, ccvalue_t *owner)
 
 // Note: reads from the associated register ...
 ccfunc ccexec_value_t
-ccyield(ccexec_frame_t *stack, ccvalue_t *value)
+ccexec_yield(ccexec_frame_t *stack, ccvalue_t *value, int is_lval)
 {
-  ccexec_value_t *result=cctblgetP(stack->values,value);
-  ccassert(ccerrnon());
+  ccassert(stack!=0);
+  ccassert(value!=0);
 
-  if((result->kind==ccexec_value_kINVALID))
-    cctraceerr("value kind is invalid, did you register this value and not set its contents?",0);
-
-  ccassert(result->kind!=ccexec_value_kINVALID);
-  return *result;
-}
-
-// Todo: merge this with its counter part!
-ccfunc ccexec_value_t
-ccyield_rvalue(
-  ccexec_frame_t *stack, ccvalue_t *couple)
-{
   ccexec_value_t result;
   memset(&result,ccnull,sizeof(result));
 
-  switch(couple->kind)
+  switch(value->kind)
   { case ccvalue_kEDICT:
-    { switch(couple->edict->kind)
-      { case ccedict_kFETCH:
-        case ccedict_kARITH:
-        case ccedict_kINVOKE:
-        case ccedict_kLADDR:
-        // case ccedict_kAADDR: FETCH
-          result=ccyield(stack,couple);
+    { result=*cctblgetP(stack->values,value);
+
+      ccassert(ccerrnon() ||
+        cctraceerr("invalid value, did you register this value?",0));
+
+      ccassert(result.kind!=ccexec_value_kINVALID ||
+        cctraceerr("invalid value, did you register this value and not set its contents?",0));
+
+      switch(value->edict->kind)
+      {
+        case ccedict_kPARAM:
+        case ccedict_kLOCAL: ccassert(is_lval);
         break;
-        default: ccassert(!"error");
+
+        case ccedict_kINVOKE:
+        case ccedict_kARITH:
+        case ccedict_kLADDR: ccassert(!is_lval);
+        break;
+
+        case ccedict_kAADDR:
+        case ccedict_kFETCH:
+        break;
+
+        default:
+          ccassert(!"error");
       }
     } break;
     case ccvalue_kCONST:
-      ccassert(couple->constant.type!=0);
+      ccassert(value->constant.type!=0);
       // Todo:
       result.kind=ccexec_value_kVALID;
-      result.value=couple->constant.clsc.value;
+      result.value=value->constant.clsc.value;
+
+      ccassert(!is_lval);
     break;
+
     default:
       ccassert(!"error");
   }
 
-  ccassert(result.kind!=ccexec_value_kINVALID);
-  return result;
-}
-
-// Todo: merge this with its counter part!
-ccfunc ccexec_value_t
-ccyield_lvalue(ccexec_frame_t *stack, ccvalue_t *value)
-{
-  ccexec_value_t result;
-  memset(&result,ccnull,sizeof(result));
-
-  ccassert(value!=0);
-  ccassert(value->kind==ccvalue_kEDICT);
-
-  switch(value->edict->kind)
-  { case ccedict_kLOCAL:
-    case ccedict_kPARAM:
-    case ccedict_kAADDR:
-    case ccedict_kFETCH:
-      result=ccyield(stack,value);
-    break;
-    default: ccassert(!"error");
-  }
-
-  ccassert(result.kind!=ccexec_value_kINVALID);
   return result;
 }
 
@@ -154,7 +136,7 @@ ccstack_local_alloc(
   void *memory=ccstack_push_size(exec,type->size);
   memset(memory,ccnull,type->size); // Todo:
 
-  ccexec_value_t *result=ccload_alloc(stack,value);
+  ccexec_value_t *result=ccexec_register(stack,value);
   result->value=memory;
   return result;
 }
@@ -215,7 +197,7 @@ ccexec_edict(
     // Note: this is simply to ensure we've set the parameters ...
     case ccedict_kPARAM:
     {
-      ccyield(stack,value);
+      ccexec_yield(stack,value,cctrue);
     } break;
     case ccedict_kLOCAL:
     {
@@ -226,31 +208,25 @@ ccexec_edict(
       ccassert(edict->lval!=0);
       ccassert(edict->rval!=0);
 
-      cctype_t *type;
-      ccexec_value_t lval,rval;
-
-      type=edict->type;
-      lval=ccyield_lvalue(stack,edict->lval);
-      rval=ccyield_rvalue(stack,edict->rval);
+      cctype_t *type=edict->type;;
+      ccexec_value_t lval=ccexec_yield(stack,edict->lval,cctrue);
+      ccexec_value_t rval=ccexec_yield(stack,edict->rval,ccfalse);
 
       // Todo:
       char *memory=cccast(char*,lval.value);
       memory+=type->size*rval.constI;
 
-      ccexec_value_t *saved=ccload_alloc(stack,value);
+      ccexec_value_t *saved=ccexec_register(stack,value);
       saved->value=(void*)memory;
     } break;
     case ccedict_kLADDR:
     { ccassert(edict->type!=0);
       ccassert(edict->lval!=0);
 
-      cctype_t *type;
-      ccexec_value_t lval;
+      cctype_t *type=edict->type;
+      ccexec_value_t lval=ccexec_yield(stack,edict->lval,cctrue);
 
-      type=edict->type;
-      lval=ccyield_lvalue(stack,edict->lval);
-
-      ccexec_value_t *saved=ccload_alloc(stack,value);
+      ccexec_value_t *saved=ccexec_register(stack,value);
       saved->value=lval.value;
 
     } break;
@@ -259,23 +235,17 @@ ccexec_edict(
       ccassert(edict->type!=0);
       ccassert(edict->lval!=0);
 
-      cctype_t *type;
-      ccexec_value_t lval;
-
-      type=edict->type;
-      lval=ccyield_lvalue(stack,edict->lval);
+      cctype_t *type=edict->type;
+      ccexec_value_t lval=ccexec_yield(stack,edict->lval,cctrue);
 
       if(!lval.value)
         ccassert(!"write access violation, nullptr");
 
       // Todo:
-      ccexec_value_t *saved=ccload_alloc(stack,value);
+      ccexec_value_t *saved=ccexec_register(stack,value);
 
       // Todo:
       memcpy(&saved->value,lval.value,type->size);
-
-      int BREAK;
-      BREAK = 0;
     } break;
     case ccedict_kSTORE:
     {
@@ -283,12 +253,9 @@ ccexec_edict(
       ccassert(edict->lval!=0);
       ccassert(edict->rval!=0);
 
-      cctype_t *type;
-      ccexec_value_t lval,rval;
-
-      type=edict->type;
-      lval=ccyield_lvalue(stack,edict->lval);
-      rval=ccyield_rvalue(stack,edict->rval);
+      cctype_t *type=edict->type;
+      ccexec_value_t lval=ccexec_yield(stack,edict->lval,cctrue);
+      ccexec_value_t rval=ccexec_yield(stack,edict->rval,ccfalse);
 
       if(!lval.value)
         ccassert(!"write access violation, nullptr");
@@ -300,16 +267,13 @@ ccexec_edict(
     } break;
     case ccedict_kARITH:
     {
-      ccexec_value_t lval,rval;
-      cctoken_k sort;
-
-      sort=edict->sort;
-      lval=ccyield_rvalue(stack,edict->lval);
-      rval=ccyield_rvalue(stack,edict->rval);
+      cctoken_k sort=edict->sort;
+      ccexec_value_t lval=ccexec_yield(stack,edict->lval,ccfalse);
+      ccexec_value_t rval=ccexec_yield(stack,edict->rval,ccfalse);
 
       ccexec_value_t val=ccexec_edict_arith(sort,lval,rval);
 
-      ccexec_value_t *saved=ccload_alloc(stack,value);
+      ccexec_value_t *saved=ccexec_register(stack,value);
       *saved=val;
 
     } break;
@@ -325,7 +289,7 @@ ccexec_edict(
       ccassert(edict->leap.block!= 0);
       ccassert(edict->leap.index!=-1);
 
-      ccexec_value_t rval=ccyield_rvalue(stack,edict->rval);
+      ccexec_value_t rval=ccexec_yield(stack,edict->rval,ccfalse);
       if(!rval.constI)
       { stack->current=edict->leap.block;
         stack->irindex=edict->leap.index;
@@ -336,7 +300,7 @@ ccexec_edict(
       ccassert(edict->leap.block!= 0);
       ccassert(edict->leap.index!=-1);
 
-      ccexec_value_t rval=ccyield_rvalue(stack,edict->rval);
+      ccexec_value_t rval=ccexec_yield(stack,edict->rval,ccfalse);
 
       if(rval.constI)
       { stack->current=edict->leap.block;
@@ -345,12 +309,14 @@ ccexec_edict(
     } break;
     case ccedict_kRETURN:
     {
-      stack->result=ccyield_rvalue(stack,edict->rval);
+      stack->result=ccexec_yield(stack,edict->rval,ccfalse);
       result=ccfalse;
     } break;
     case ccedict_kINVOKE:
     {
       int rlen=ccarrlen(edict->blob);
+
+      // TODO: WHEN COME BACK REMOVE ALL THIS, THERE'S NO NEED FOR IT!
 
       // Todo: proper push
       ccexec_value_t *rval=ccstack_push(exec,rlen);
@@ -358,10 +324,10 @@ ccexec_edict(
 
       ccvalue_t **list;
       ccarrfor(edict->blob,list)
-        *rset++=ccyield_rvalue(stack,*list);
+        *rset++=ccexec_yield(stack,*list,ccfalse);
 
       // Note: save the return value ...
-      ccexec_value_t *ret=ccload_alloc(stack,value);
+      ccexec_value_t *ret=ccexec_register(stack,value);
 
       if(edict->lval->kind==ccvalue_kPROCD)
       {
@@ -411,7 +377,8 @@ ccexec_invoke(
 
   // Todo: let's not use our actual stack ...
   ccexec_frame_t stack;
-  memset(&stack,ccnil,sizeof(stack));
+  memset(&stack,ccnull,sizeof(stack));
+
   stack.procedure=procd;
 
   cctree_t *type=procd->esse->tree->type;

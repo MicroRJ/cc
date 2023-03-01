@@ -445,10 +445,8 @@ ccoutnl(const char *string)
 }
 
 ccfunc void
-cctrace_(const char *label, const char *format, ...)
+cctrace_(cccaller_t caller, const char *label, const char *format, ...)
 {
-  cccaller_t caller=cclastcaller;
-
   va_list vli;
   va_start(vli,format);
 
