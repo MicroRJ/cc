@@ -92,10 +92,6 @@ int main(int _)
 
   ccpushfile(file,0,3,mem);
 
-  ccbreak();
-  ccerror();
-  ccassert(1);
-
   o="abc";
   ccassert(o[0]==97);
   ccassert(o[1]==98);

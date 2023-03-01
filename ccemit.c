@@ -31,8 +31,8 @@ ccemit_include_local(
   ccassert(esse!=0);
 
   ccedict_t *e =is_param?
-    ccedict_param(esse->type):
-    ccedict_local(esse->type);
+    ccedict_param(tree,esse->type):
+    ccedict_local(tree,esse->type);
 
   ccvalue_t  *i=ccblock_add_edict(procd->decls,e);
   ccvalue_t **v=cctblputP(procd->local,tree);
@@ -40,7 +40,8 @@ ccemit_include_local(
   *v=i;
 
   if(tree->init)
-    ccblock_store(block,esse->type,i,ccemit_rvalue(emit,procd,block,tree->init));
+    ccblock_store(block,tree->init,esse->type,i,
+      ccemit_rvalue(emit,procd,block,tree->init));
 
   return i;
 }
@@ -86,12 +87,12 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
     { ccesse_t *esse=ccseer_symbol(emit->seer,tree);
       ccassert(esse!=0);
 
-      // Todo:
+      // Todo: lookup by entity instead ...
       result=ccprocd_local(procd,esse->tree);
       ccassert(result!=0);
 
       if(!is_lval)
-        result=ccblock_fetch(block,esse->type,result);
+        result=ccblock_fetch(block,tree,esse->type,result);
     } break;
     case cctree_kBINARY:
     {
@@ -99,7 +100,7 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       { ccvalue_t *lval=ccemit_value(emit,procd,block,tree->lval,1);
         ccvalue_t *rval=ccemit_value(emit,procd,block,tree->rval,0);
         cctype_t  *type=ccseer_tree_type(emit->seer,tree);
-        result=ccblock_store(block,type,lval,rval);
+        result=ccblock_store(block,tree,type,lval,rval);
       } else
       if(tree->sort==cctoken_kCMA)
       { ccemit_rvalue(emit,procd,block,tree->lval);
@@ -107,7 +108,7 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       } else
       { ccvalue_t *lhs=ccemit_rvalue(emit,procd,block,tree->lval);
         ccvalue_t *rhs=ccemit_rvalue(emit,procd,block,tree->rval);
-        result=ccblock_arith(block,tree->sort,lhs,rhs);
+        result=ccblock_arith(block,tree,tree->sort,lhs,rhs);
       }
     } break;
     case cctree_kDEREFERENCE:
@@ -117,13 +118,14 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       result=ccemit_value(emit,procd,block,tree->lval,1);
 
       if(type->kind==cctype_kPOINTER)
-        result=ccblock_fetch(block,type,result);
+        result=ccblock_fetch(block,tree,type,result);
 
       if(!is_lval)
-        result=ccblock_fetch(block,type->type,result);
+        result=ccblock_fetch(block,tree,type->type,result);
     } break;
     case cctree_kINDEX:
-    { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
+    {
+      cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
       ccassert(type!=0);
 
       ccvalue_t *lvalue,*rvalue;
@@ -132,12 +134,12 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
 
       // Note:
       if(type->kind==cctype_kPOINTER)
-        lvalue=ccblock_fetch(block,type,lvalue);
+        lvalue=ccblock_fetch(block,tree,type,lvalue);
 
-      result=ccblock_aaddr(block,type->type,lvalue,rvalue);
+      result=ccblock_aaddr(block,tree,type->type,lvalue,rvalue);
 
       if(!is_lval)
-        result=ccblock_fetch(block,type->type,result);
+        result=ccblock_fetch(block,tree,type->type,result);
     } break;
     case cctree_kSELECTOR:
     {
@@ -155,12 +157,12 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       // selector token, so we just concern ourselves here with emitting the right instruction ...
 
       if(type->kind==cctype_kPOINTER)
-        lvalue=ccblock_fetch(block,type,lvalue);
+        lvalue=ccblock_fetch(block,tree,type,lvalue);
 
-      result=ccblock_aaddr(block,elem->type,lvalue,rvalue);
+      result=ccblock_aaddr(block,tree,elem->type,lvalue,rvalue);
 
       if(!is_lval)
-        result=ccblock_fetch(block,elem->type,result);
+        result=ccblock_fetch(block,tree,elem->type,result);
 
     } break;
     case cctree_kSIZEOF:
@@ -176,7 +178,7 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       ccassert(!is_lval);
 
       cctype_t *type=ccseer_tree_type(emit->seer,tree);
-      result=ccblock_laddr(block,type,ccemit_lvalue(emit,procd,block,tree->lval));
+      result=ccblock_laddr(block,tree,type,ccemit_lvalue(emit,procd,block,tree->lval));
     } break;
     case cctree_kCALL:
     { cctree_t *ltree=tree->lval;
@@ -188,8 +190,8 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       ccesse_t *esse=ccseer_symbol(emit->seer,ltree);
 
       switch(esse->sort)
-      { case ccbuiltin_kCCBREAK: return ccblock_dbgbreak(block);
-        case ccbuiltin_kCCERROR: return ccblock_dbgerror(block);
+      { case ccbuiltin_kCCBREAK: return ccblock_dbgbreak(block,tree);
+        case ccbuiltin_kCCERROR: return ccblock_dbgerror(block,tree);
       }
 
       ccvalue_t  *lval=ccemit_global(emit,ltree->name);
@@ -199,7 +201,7 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       ccarrfor(rtree,list)
         *ccarrone(rval)=ccemit_rvalue(emit,procd,block,list);
 
-      result=ccblock_invoke(block,lval,rval);
+      result=ccblock_invoke(block,tree,lval,rval);
     } break;
     // Todo: these have already been generated...
     case cctree_kCONSTANT:
@@ -207,7 +209,9 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       { result=ccemit_const_int(emit,cctree_casti64(tree));
       } else
       if(tree->sort==cctoken_kLITSTR)
-      { result=ccemit_const_str(emit,tree->name);
+      {
+        ccassert(tree->name!=0);
+        result=ccemit_const_str(emit,tree->name);
       } else
         ccassert(!"internal");
     } break;
@@ -239,6 +243,7 @@ ccfunc ccvalue_t *
 ccemit_tree(
   ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree)
 {
+  ccvalue_t *result=ccnull;
   if(tree->kind==cctree_kDECL)
   {
     cctree_t *next;
@@ -266,7 +271,7 @@ ccemit_tree(
   {
     ccvalue_t *rval=ccemit_rvalue(emit,procd,block,tree->rval);
 
-    return ccblock_return(block,rval);
+    return ccblock_return(block,tree,rval);
   } else
   if(tree->kind==cctree_kGOTO)
   { // ccblock_t *label_block=ccemit_label(block,tree->label_name);
@@ -276,9 +281,10 @@ ccemit_tree(
   { ccvalue_t *cvalue=ccemit_tree(emit,procd,block,tree->init);
 
     ccvalue_t *j;
-    j=ccblock_fjump(block,ccblock_label(block,"."),cvalue);
+    j=ccblock_fjump(block,tree,ccblock_label(block,"."),cvalue);
 
-    if(tree->lval) ccemit_tree(emit,procd,block,tree->lval);
+    if(tree->lval)
+      ccemit_tree(emit,procd,block,tree->lval);
 
     ccvalue_retarget(j,
       ccblock_label(block,".JP-E"));
@@ -294,23 +300,22 @@ ccemit_tree(
 
     p=ccblock_label(block,".JP-WL");
     v=ccemit_rvalue(emit,procd,block,tree->init);
-    c=ccblock_fjump(block,ccblock_label(block,"."),v);
+    c=ccblock_fjump(block,tree,ccblock_label(block,"."),v);
 
     ccemit_tree(emit,procd,block,tree->lval);
 
-    l=ccblock_jump(block,p);
+    l=ccblock_jump(block,tree,p);
 
-    ccvalue_retarget(c,
-      ccblock_label(block,".JP-WE"));
+    ccvalue_retarget(c,ccblock_label(block,".JP-WE"));
 
     return ccnil;
   } else
   {
-    return ccemit_value(emit,procd,block,tree,ccfalse);
+    result=ccemit_value(emit,procd,block,tree,ccfalse);
   }
 
-  ccassert(!"error");
-  return ccnull;
+  ccassert(result!=0);
+  return result;
 }
 
 // Todo: Temporary!
@@ -363,9 +368,9 @@ ccemit_external_decl(ccemit_t *emit, ccesse_t *esse)
   ccarrfor(esse->tree->blob->list,list)
     ccemit_tree(emit,p,emit->current,*list);
 
-  ccblock_jump(p->decls,ccblock_label_ex(p->enter,0,".E"));
+  ccblock_jump(p->decls,esse->tree,ccblock_label_ex(p->enter,0,".E"));
 
-  if(!strcmp(esse->tree->name,"main"))
+  if(!strcmp(esse->name,"main"))
     emit->entry=v;
 }
 

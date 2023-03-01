@@ -82,8 +82,8 @@ typedef struct ccemit_t
 #define ccblock_jump(block,...)   ccblock_add_edict(block,ccedict_jump(__VA_ARGS__))
 #define ccblock_fjump(block,...)  ccblock_add_edict(block,ccedict_fjump(__VA_ARGS__))
 #define ccblock_tjump(block,...)  ccblock_add_edict(block,ccedict_tjump(__VA_ARGS__))
-#define ccblock_dbgbreak(block)   ccblock_add_edict(block,ccedict_dbgbreak())
-#define ccblock_dbgerror(block)   ccblock_add_edict(block,ccedict_dbgerror())
+#define ccblock_dbgbreak(block,...)   ccblock_add_edict(block,ccedict_dbgbreak(__VA_ARGS__))
+#define ccblock_dbgerror(block,...)   ccblock_add_edict(block,ccedict_dbgerror(__VA_ARGS__))
 
 // Todo: remove!
 ccfunc ccinle ccvalue_t *

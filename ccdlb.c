@@ -202,7 +202,7 @@ ccstradd(char **ccm, cci64_t res, cci64_t com, const char *mem)
 
   cci64_t result=ccdlbadd(cccast(void**,ccm),sizeof(char),res,com);
 
-  char *cur=*ccm+res;
+  char *cur=*ccm+result;
 
   memcpy(cur,mem,res-1);
   cur[res-1]=0;

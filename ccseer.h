@@ -36,12 +36,6 @@ typedef enum ccesse_k
 typedef struct cctype_t cctype_t;
 typedef struct ccesse_t ccesse_t;
 
-// Note: how do we implement scoping?
-typedef struct ccaura_t ccaura_t;
-typedef struct ccaura_t
-{ ccesse_t  ** entity_table;
-} ccaura_t;
-
 // Note: entity or essential, indivisible and relatively unique, such as variables ...
 typedef struct ccesse_t ccesse_t;
 typedef struct ccesse_t
@@ -50,7 +44,6 @@ typedef struct ccesse_t
   cctree_t      * tree;
   ccbuiltin_k     sort;
   cctype_t      * type;
-  ccaura_t      * aura;
 } ccesse_t;
 
 typedef struct ccelem_t ccelem_t;

@@ -63,59 +63,61 @@ ccread_token_identifier(ccread_t *reader, char *s)
 
 // Todo: speed!
 ccfunc char *
-ccread_string(ccread_t *l, char *str)
+ccread_string(ccread_t *reader, char *s)
 {
-  // Todo: re-use this buffer ...
-  // Todo: replace this with a legit string arena ... nothing too fancy ...
-  l->tok.kind=cctoken_kLITSTR_INVALID;
-  l->tok.name=ccnull;
+  reader->tok.kind=cctoken_kLITSTR_INVALID;
+  reader->tok.name=ccnull;
 
-  char end=*str++;
+  char  e=*s++;
 
-  char *cur;
-  unsigned int res,com;
-  for(res=0x20,com=0;cur=ccstraddN(l->tok.name,res,0);res+=0x20)
+  char *c;
+
+  for(;;)
   {
-    for(;com<res;++com)
-    {
-      if(*str==end)
-      { * cur++=0;
-          str++;
-          com++; // Note: account for the null terminator
+    if(*s==e)
+    { c=ccstraddN(reader->tok.name,1,1);
 
-        l->tok.kind=cctoken_kLITSTR;
-        ccstraddN(l->tok.name,0,com);
-        goto leave;
-      } else
-      if(*str=='\\')
-      { switch(str[1])
-        { case '\\': *cur++='\\'; break;
-          case '\'': *cur++='\''; break;
-          case '"':  *cur++='"' ; break;
-          case 't':  *cur++='\t'; break;
-          case 'f':  *cur++='\f'; break;
-          case 'n':  *cur++='\n'; break;
-          case 'r':  *cur++='\r'; break;
-          // TODO(RJ):
-          // ; Octal constants!
-          case '0': *cur++='\0'; break;
-          // TODO(RJ):
-          // ; Hex constants!
-          case 'x':
-          case 'X': *cur++='\0'; break;
-          // TODO(RJ):
-          // ; Unicode constants!
-          case 'u': *cur++='\0'; break;
-          // TODO(RJ):
-          // ; Error reporting!
-          default:  *cur++='\0'; break;
-        }
-        str+=2;
-      } else *cur++=*str++;
+      *c=0;
+
+      s++;
+
+      reader->tok.kind=cctoken_kLITSTR;
+      break;
+    } else
+    if(*s=='\\')
+    { // Todo: speed
+      c=ccstraddN(reader->tok.name,1,1);
+
+      switch(s[1])
+      { case '\\': *c=s[1]='\\'; break;
+        case '\'': *c=s[1]='\''; break;
+        case '"':  *c=s[1]='"' ; break;
+        case 't':  *c=s[1]='\t'; break;
+        case 'f':  *c=s[1]='\f'; break;
+        case 'n':  *c=s[1]='\n'; break;
+        case 'r':  *c=s[1]='\r'; break;
+        // TODO(RJ):
+        // ; Octal constants!
+        case '0': *c=s[1]='\0'; break;
+        // TODO(RJ):
+        // ; Hex constants!
+        case 'x':
+        case 'X': *c=s[1]='\0'; break;
+        // TODO(RJ):
+        // ; Unicode constants!
+        case 'u': *c=s[1]='\0'; break;
+        // TODO(RJ):
+        // ; Error reporting!
+        default:  *c=s[1]='\0'; break;
+      }
+      s+=2;
+    } else
+    { // Todo: speed
+      c=ccstraddN(reader->tok.name,1,1);
+      *c=*s++;
     }
   }
-leave:
-  return str;
+  return s;
 }
 
 

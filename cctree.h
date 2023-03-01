@@ -6,15 +6,14 @@ typedef enum cctree_k cctree_k;
 typedef enum cctree_k
 {
   cctree_kTYPENAME,
-
   cctree_kSTRUCT,
   cctree_kENUM,
-
   cctree_kFUNCTION,
   cctree_kARRAY,
   cctree_kPOINTER,
 
   cctree_kIDENTIFIER,
+
   cctree_kCONSTANT,
 
   cctree_kBLOCK,
@@ -97,13 +96,13 @@ typedef struct cctree_t
   union
   { struct
     { cctoken_t   token;
-      cctree_t  * expr; // <-- either a const expression or an identifier.
-      cctree_t  * next; // <-- part of the designator list.
+      cctree_t  * expr;
+      cctree_t  * next;
     } designator;
     struct
     { cctree_t  * list;
       cctree_t  * init;
-      cctree_t  * next; // <-- if part of an initializer list.
+      cctree_t  * next;
     } designation;
   };
 } cctree_t;
@@ -308,6 +307,62 @@ cctree_new_designation(cctree_t *list, cctree_t *init)
   return ccnil;
 }
 #endif
+
+ccfunc char *
+cctree_string(cctree_t *tree, char **stringer)
+{
+  ccassert(tree!=0);
+
+  char *buffer=stringer?*stringer:ccnull;
+
+  switch(tree->kind)
+  {
+    case cctree_kCONSTANT:
+      if(tree->sort==cctoken_kLITINT)
+        ccstrcatS(buffer,ccformat("%lli",cctree_casti64(tree)));
+      else
+      if(tree->sort==cctoken_kLITSTR)
+        ccstrcatS(buffer,tree->name);
+      else
+      ccassert(!"error");
+    break;
+    case cctree_kSTRUCT:
+      ccstrcatL(buffer,"struct");
+    break;
+    case cctree_kENUM:
+      ccstrcatL(buffer,"enum");
+    break;
+    case cctree_kIDENTIFIER:
+    case cctree_kTYPENAME:
+      ccstrcatS(buffer,tree->name);
+    break;
+    case cctree_kFUNCTION:
+      cctree_string(tree->type,&buffer);
+      ccstrcatL(buffer,"(..)");
+    break;
+    case cctree_kARRAY:
+      ccstrcatL(buffer,"[");
+        cctree_string(tree->rval,&buffer);
+      ccstrcatL(buffer,"]");
+      cctree_string(tree->type,&buffer);
+    break;
+    case cctree_kPOINTER:
+      ccstrcatL(buffer,"*");
+      cctree_string(tree->type,&buffer);
+    break;
+
+    case cctree_kINDEX:
+      cctree_string(tree->lval,&buffer);
+      ccstrcatL(buffer,"[");
+        cctree_string(tree->rval,&buffer);
+      ccstrcatL(buffer,"]");
+    break;
+  }
+
+  if(stringer) *stringer=buffer;
+
+  return buffer;
+}
 
 
 #endif

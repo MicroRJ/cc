@@ -392,12 +392,15 @@ ccfunc cci64_t cctblseti(void **, cci32_t, cci32_t, char *);
 #define ccstrmin ccarrmin
 #define ccstrlen ccarrlen
 #define ccstraddN(ccm,res,com) ((ccm)+ccdlbadd(cclva(ccm),sizeof(*(ccm)),res,com))
+
 #define ccstrcatN(ccm,len,str) ((ccm)+ccstradd(&(ccm),len+1,len+0,str))
-#define ccstrputN(ccm,len,str) ((ccm)+ccstradd(&(ccm),len+1,len+1,str))
 #define ccstrcatL(ccm,str) ccstrcatN(ccm,ccCstrlenL(str),str)
-#define ccstrputL(ccm,str) ccstrputN(ccm,ccCstrlenL(str),str)
 #define ccstrcatS(ccm,str) ccstrcatN(ccm,ccCstrlenS(str),str)
+
+#define ccstrputN(ccm,len,str) ((ccm)+ccstradd(&(ccm),len+1,len+1,str))
+#define ccstrputL(ccm,str) ccstrputN(ccm,ccCstrlenL(str),str)
 #define ccstrputS(ccm,str) ccstrputN(ccm,ccCstrlenS(str),str)
+
 #define ccstrcatF(ccm,fmt,...) ccstr_catf(&ccm,fmt,__VA_ARGS__)
 
 // Todo: to be removed !

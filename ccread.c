@@ -135,9 +135,12 @@ ccread_identifier(ccread_t *reader, cctree_t *root, int mark)
 }
 
 // Todo: not complete ...
+
+// TODO: FIX THIS
 ccfunc cctree_t *
-ccread_primary_suffix(ccread_t *reader, cctree_t *result, cctree_t *root, int mark)
-{ while(ccread_continues(reader))
+ccread_primary_suffix(ccread_t *reader, cctree_t *root, int mark, cctree_t *result)
+{
+  while(ccread_continues(reader))
   { cctoken_t *token=ccpeep(reader);
     switch(token->kind)
     { cctree_t *i;
@@ -146,7 +149,6 @@ ccread_primary_suffix(ccread_t *reader, cctree_t *result, cctree_t *root, int ma
         i=ccread_arglist(reader,root,mark);
         if(!cceat(reader,cctoken_kRPAREN))
           ccsynerr(reader, 0, "expected ')'");
-
         result=cctree_suffixed(root,mark,cctree_kCALL,result,i);
       continue;
       case cctoken_kLSQUARE:
@@ -154,18 +156,15 @@ ccread_primary_suffix(ccread_t *reader, cctree_t *result, cctree_t *root, int ma
         i=ccread_expression(reader,root,mark);
         if(!cceat(reader,cctoken_kRSQUARE))
           ccsynerr(reader, 0, "expected ']'");
-
         result=cctree_suffixed(root,mark,cctree_kINDEX,result,i);
       continue;
       case cctoken_kDOT:
         ccgobble(reader);
         i=ccread_identifier(reader,root,mark);
         ccassert(i!=0); // Todo: error message ...
-
         result=cctree_suffixed(root,mark,cctree_kSELECTOR,result,i);
       continue;
-    }
-    break;
+    } break;
   }
   return result;
 }
@@ -183,13 +182,13 @@ ccread_primary(ccread_t *reader, cctree_t *root, int mark)
   switch(token->kind)
   { case cctoken_kLITIDENT:
       result=cctree_identifier(root,mark,ccgobble(reader));
-      result=ccread_primary_suffix(reader,result,root,mark);
+      result=ccread_primary_suffix(reader,root,mark,result);
     break;
     case cctoken_kLITINT:
     case cctoken_kLITFLO:
     case cctoken_kLITSTR:
       result=cctree_constant(root,mark,ccgobble(reader));
-      result=ccread_primary_suffix(reader,result,root,mark);
+      result=ccread_primary_suffix(reader,root,mark,result);
     break;
     case cctoken_kLPAREN:
       ccgobble(reader);
@@ -197,7 +196,7 @@ ccread_primary(ccread_t *reader, cctree_t *root, int mark)
       if(!cceat(reader,cctoken_kRPAREN))
         ccsynerr(reader,0,"expected ')'");
       result=cctree_unary_ex(root,mark,cctree_kGROUP,group);
-      result=ccread_primary_suffix(reader,result,root,mark);
+      result=ccread_primary_suffix(reader,root,mark,result);
     break;
     case cctoken_kSIZEOF:
       ccgobble(reader);
@@ -226,6 +225,13 @@ ccread_primary(ccread_t *reader, cctree_t *root, int mark)
       result=cctree_unary(root,mark,token->kind,ccread_cast(reader,root,mark));
     break;
   }
+
+  // Debugger helper:
+  if(result!=0)
+  {
+    result->loca=token->loca;
+  }
+
   return result;
 }
 
@@ -574,6 +580,7 @@ ccread_type_spec(ccread_t *reader)
     case cctoken_kSTDC_UNSIGNED:
       ccgobble(reader);
       result=cctree_new(cctree_kTYPENAME,ccnull,ccnull);
+      result->name=token->name;
       result->sort=token->kind;
       result->loca=token->loca;
     break;
@@ -585,9 +592,8 @@ ccread_type_spec(ccread_t *reader)
 ccfunc cctree_t *
 ccread_affixed_modifiers(ccread_t *reader, cctree_t *root, int mark, cctree_t *result)
 {
-  while(ccread_continues(reader))
-  {
-    cctoken_t *token=ccpeep(reader);
+  if(ccread_continues(reader))
+  { cctoken_t *token=ccpeep(reader);
     switch(token->kind)
     { case cctoken_kLPAREN:
       { ccgobble(reader);
@@ -596,8 +602,9 @@ ccread_affixed_modifiers(ccread_t *reader, cctree_t *root, int mark, cctree_t *r
         if(!cceat(reader,cctoken_kRPAREN))
           ccsynerr(reader,0,"expected ')'");
 
-        result=cctree_function_modifier(result,list);
-      } continue;
+        cctree_t *modifier=ccread_affixed_modifiers(reader,root,mark,result);
+        result=cctree_function_modifier(modifier,list);
+      } break;
       case cctoken_kLSQUARE:
       { ccgobble(reader);
 
@@ -605,13 +612,11 @@ ccread_affixed_modifiers(ccread_t *reader, cctree_t *root, int mark, cctree_t *r
         if(!cceat(reader,cctoken_kRSQUARE))
           ccsynerr(reader,0,"expected ']'");
 
-        result=cctree_array_modifier(result,rval);
-      } continue;
+        cctree_t *modifier=ccread_affixed_modifiers(reader,root,mark,result);
+        result=cctree_array_modifier(modifier,rval);
+      } break;
     }
-
-    break;
   }
-
   return result;
 }
 
@@ -731,6 +736,9 @@ ccread_decl(
       }
     }
   }
+
+
+
 
   return result;
 }

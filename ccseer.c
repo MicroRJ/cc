@@ -243,9 +243,6 @@ ccseer_typespec(ccseer_t *seer, cctree_t *tree)
   return result;
 }
 
-
-
-
 ccfunc void
 ccsee_register_builtin(ccseer_t *seer, ccbuiltin_k sort, const char *name)
 {
@@ -260,7 +257,6 @@ ccsee_register_builtin(ccseer_t *seer, ccbuiltin_k sort, const char *name)
   ccassert(i!=0);(void)i;
 }
 
-// Todo: legit scoping
 ccfunc ccesse_t *
 ccseer_associate(ccseer_t *seer, cctree_t *tree, const char *name)
 { ccesse_t **holder=cctblgetS(seer->entity_table,name);

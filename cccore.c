@@ -2,21 +2,23 @@
 #define _CCCORE
 
 
-// Todo: this is trash!
-ccglobal ccthread_local ccu32_t ccxorstate32=38747;
-
 ccfunc ccinle ccu32_t
-ccxorshift32(ccu32_t *s)
-{ ccu32_t x=*s;
-  x^=x<<13;
-  x^=x>>17;
-  x^=x<<5;
-  return *s=x;
+ccxorshift32(ccu32_t *p)
+{
+	ccu32_t q = *p;
+	q = q ^ q << 13;
+	q = q ^ q >> 17;
+	q = q ^ q << 5;
+	return *p=q;
 }
 
 ccfunc ccinle ccu32_t
 ccrandi(ccu32_t l)
-{ return ccxorshift32(&ccxorstate32)%l;
+{
+	// Todo: this is trash!
+	ccglobal ccthread_local ccu32_t ccxorstate32=38747;
+
+	return ccxorshift32(&ccxorstate32)%l;
 }
 
 

@@ -176,10 +176,11 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
     case cctoken_kGTE: i=lval.constI >= rval.constI; break;
     case cctoken_kLTN: i=lval.constI <  rval.constI; break;
     case cctoken_kLTE: i=lval.constI <= rval.constI; break;
-    case cctoken_kMUL: i=lval.constI *  rval.constI; break;
-    case cctoken_kDIV: i=lval.constI /  rval.constI; break;
     case cctoken_kSUB: i=lval.constI -  rval.constI; break;
     case cctoken_kADD: i=lval.constI +  rval.constI; break;
+    case cctoken_kMUL: i=lval.constI *  rval.constI; break;
+    case cctoken_kDIV: i=lval.constI /  rval.constI; break;
+    case cctoken_kMOD: i=lval.constI %  rval.constI; break;
     default:
       ccassert(!"error");
   }
@@ -199,8 +200,16 @@ ccexec_edict(
   ccexec_t *exec, ccexec_frame_t *stack, ccvalue_t *value)
 {
   ccedict_t *edict=value->edict;
+  ccassert(edict->kind!=0);
+  ccassert(edict->tree!=0);
 
   int result=cctrue;
+
+  if(exec->break_next)
+    ccbreak();
+
+  exec->break_next=ccfalse;
+
   switch(edict->kind)
   {
     // Note: this is simply to ensure we've set the parameters ...
@@ -371,7 +380,10 @@ ccexec_edict(
     } break;
     case ccedict_kDBGBREAK:
     {
-      cctracelog("called: break",0);
+      cctracelog("called: break, breaking on next intruction...",0);
+
+      exec->break_next=cctrue;
+
 #ifndef _DEVELOPER
       ccbreak();
 #endif

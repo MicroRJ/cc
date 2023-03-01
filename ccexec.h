@@ -40,5 +40,8 @@ typedef struct ccexec_t
   void     * stack;
   cci64_t    stack_sze;
   cci64_t    stack_idx;
+
+  int break_next;
 } ccexec_t;
+
 #endif
