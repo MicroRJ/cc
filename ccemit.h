@@ -49,14 +49,20 @@ typedef struct ccblock_t
 { ccvalue_t  * *edict;
 } ccblock_t;
 
+// Note:
 typedef struct ccprocd_t ccprocd_t;
 typedef struct ccprocd_t
 { ccesse_t   *esse;
+
+
   ccvalue_t **local;
   ccblock_t **block;
   ccblock_t  *decls;
   ccblock_t  *enter;
   ccblock_t  *leave;
+
+  // Todo:
+  ccvalue_t **param;
 } ccprocd_t;
 
 typedef struct ccemit_t ccemit_t;

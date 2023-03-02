@@ -213,10 +213,10 @@ ccexec_edict(
       lval=ccstack_local_alloc(exec,stack,value);
 
       // Todo:
-      // ccdebuglog("%p LOCAL: [%s] %p{%s}; %s",
-      //   value,cctype_string(edict->type,ccnull),
-      //   lval.value,cctype_string(lval.type,ccnull),
-      //   cctree_string(edict->tree,ccnull));
+      ccdebuglog("%p LOCAL: [%s] %p{%s}; %s",
+        value,cctype_string(edict->type,ccnull),
+        lval.value,cctype_string(lval.type,ccnull),
+        cctree_string(edict->tree,ccnull));
     } break;
     case ccedict_kAADDR:
     { ccassert(edict->type!=0);
@@ -429,15 +429,13 @@ ccexec_invoke(
 
   // Todo: remove this please
   ccesse_t **list=procd->esse->list;
-  ccassert(ccarrlen(list)==l);
 
-  ccesse_t **e;
-  ccarrfor(list,e)
-  { ccvalue_t *v=ccprocd_local(procd,*e);
-    ccexec_value_t x=ccstack_local_alloc(exec,&stack,v);
-    // Todo: dedicated 'store' ...
-    cci64_t int_value=i->constI;
-    ccdref(cccast(cci64_t*,x.value))=int_value;
+  ccassert(ccarrlen(procd->param)==l);
+
+  ccvalue_t **p;
+  ccarrfor(procd->param,p)
+  { ccexec_value_t x=ccstack_local_alloc(exec,&stack,*p);
+    memcpy(x.value,&i->value,8); // Todo:
     i++;
   }
 

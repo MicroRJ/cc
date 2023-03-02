@@ -56,6 +56,9 @@ typedef struct ccseer_t
   // Note: we could recycle all these tables for the entire compilation step...
   ccesse_t  ** entity_table;
   ccesse_t  ** symbol_table;
+
+  // Note: I think we just have have to make seer emit entities for everything, including
+  // constants...
   cctype_t  ** tether_table;
 
   // Todo: how to actually do this properly and where to store it and what types

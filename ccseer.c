@@ -379,6 +379,7 @@ ccseer_typecheck(ccseer_t *seer, cctype_t *ltype, cctype_t *rtype)
 
   return result;
 }
+
 // Note: 'is_lval' meaning that it is specifically on the lhs of an assignment expression ...
 ccfunc cctype_t *
 ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
@@ -430,10 +431,9 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
     { ccassert(tree->lval!=0);
       ccassert(tree->rval!=0);
 
-
       cctype_t *type=ccseer_value(seer,tree->lval,0);
 
-      // Todo: how do we do this properly?
+      // Todo: how do we do this properly, should ccseer_value return an entity instead?
       ccesse_t *esse=ccseer_symbol(seer,tree->lval);
 
       ccassert(esse->type==type);
@@ -453,16 +453,6 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
           } else
             cctraceerr("'%s': is not a member of '%s'",
               tree->rval->name,esse->name?esse->name:"unknown");
-
-#if 0
-          ccelem_t *elem=cctblgetS(type->list,tree->rval->name);
-          if(ccerrnon())
-          {
-            result=elem->type;
-            ccseer_tether(seer,tree,result);
-          } else
-            cctraceerr("'%s': is not a member of '%s'", tree->rval->name,type->name?type->name:"unknown");
-#endif
         } else
           cctraceerr("'.%s': must have struct or union specifier", tree->rval->name);
       }
@@ -473,10 +463,15 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
 
       ccassert(tree->lval!=0);
 
-      // Note: there's a difference between sizeof() and sizeof, sizeof() works for everything but sizeof is only for expressions,
-      // this is what makes the language unambiguous... we assume the parser has done its job...
+      // Note: there's a difference between sizeof() and sizeof.
+      // Sizeof() works for everything but sizeof is only for expressions, this is what makes the language unambiguous...
+      // We assume the parser has done its job...
 
       result=ccseer_typeof(seer,tree->lval);
+      ccseer_tether(seer,tree->lval,result);
+
+      // Todo:
+      result=seer->type_stdc_int;
       ccseer_tether(seer,tree,result);
     } break;
     case cctree_kADDRESSOF:

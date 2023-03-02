@@ -12,6 +12,7 @@ struct person_t
 
 int passbyvalue(person_t v)
 {
+  ccprintf("person: %s %s, %i\n", v.name.name, v.name.last, v.age);
 }
 
 int main(int _)
@@ -22,5 +23,8 @@ int main(int _)
   p.age=19;
   ccprintf("person: %s %s, %i\n", p.name.name, p.name.last, p.age);
 
+  passbyvalue(p);
+
   ccassert(sizeof p == 24);
+
 }

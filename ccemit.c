@@ -25,12 +25,14 @@ ccfunc ccvalue_t *
 ccemit_include_local(
   ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, ccesse_t *esse, int is_param)
 {
-  ccassert(esse!=0);
 
+  ccassert(esse!=0);
+  ccassert(esse->kind==ccesse_kVARIABLE);
 
   ccedict_t *e=is_param?
     ccedict_param(esse->tree,esse->type):
     ccedict_local(esse->tree,esse->type);
+
 
   ccvalue_t **v=cctblputP(procd->local,esse);
   ccassert(ccerrnon());
@@ -38,8 +40,12 @@ ccemit_include_local(
   ccvalue_t *i=ccblock_add_edict(procd->decls,e);
   *v=i;
 
-  ccdebuglog("'%s': included local {%s}, local %p",
-    ccesse_name_string(esse,ccnull),cctree_string(esse->tree,ccnull),i);
+  if(is_param)
+  {
+    ccvalue_t **p=ccarradd(procd->param,1);
+    *p=i;
+  }
+
   return i;
 }
 
@@ -75,56 +81,99 @@ ccemit_const_str(ccemit_t *emit, ccstr_t value)
   return ccemit_constant(emit,emit->seer->type_stdc_char_ptr,classic);
 }
 
+ccfunc void
+ccemit_record_argument(
+  ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, ccesse_t *esse, ccvalue_t ***i)
+{
+  ccassert(esse!=0);
+  ccassert(esse->type!=0);
+  ccassert(esse->type->kind==cctype_kRECORD);
+
+  ccesse_t **x;
+  ccarrfor(esse->list,x)
+  {
+    cctype_t *type=(*x)->type;
+    // Note:
+    if(type->kind==cctype_kRECORD)
+    {
+      ccemit_record_argument(emit,procd,block,*x,i);
+    } else
+    {
+      ccvalue_t **local=cctblgetP(procd->local,*x);
+      ccassert(local!=0);
+
+      ccvalue_t **y=ccarradd(*i,1);
+
+      *y=ccblock_fetch(block,esse->tree,type,*local);
+    }
+  }
+}
+
 ccfunc ccvalue_t *
-ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree, int is_lval)
+ccemit_value(
+  ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree, int is_lval);
+
+ccfunc ccvalue_t **
+ccemit_arguments(
+  ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *list)
+{
+  ccvalue_t **result=ccnull;
+
+  cctree_t *tree;
+  ccarrfor(list,tree)
+  {
+    cctype_t *type=ccseer_tree_type(emit->seer,tree);
+    ccassert(type!=0);
+
+    // Note: since we can't just pass in a structure, we iterate over each implicit
+    // variable entity part of the parent structure typed entity and pass it in
+    // as ordered and individual arguments. Is this nonsense or this somewhat close
+    // to what a legit compiler would do?
+    if(type->kind==cctype_kRECORD)
+    {
+      // Todo: support constants, which are not symbols or just make seer output entities...
+      ccesse_t *esse=ccseer_symbol(emit->seer,tree);
+      ccassert(esse!=0);
+
+      ccassert(esse->type==type);
+
+      ccemit_record_argument(emit,procd,block,esse,&result);
+
+    } else
+    {
+      ccvalue_t *v=ccemit_value(emit,procd,block,tree,ccfalse);
+      ccvalue_t **y=ccarradd(result,1);
+      *y=v;
+    }
+  }
+  return result;
+}
+
+ccfunc ccvalue_t *
+ccemit_value(
+  ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree, int is_lval)
 {
   ccvalue_t *result=ccnull;
   switch(tree->kind)
   { case cctree_kSELECTOR:
     case cctree_kIDENTIFIER:
-    { ccesse_t *esse=ccseer_symbol(emit->seer,tree);
+    {
+      ccesse_t *esse=ccseer_symbol(emit->seer,tree);
       ccassert(esse!=0);
 
       ccvalue_t **local=cctblgetP(procd->local,esse);
-      ccassert(local!=0);
+      ccassert(ccerrnon());
 
       result=*local;
 
-      // Note: debugger helper...
-      ccdebuglog("'%s': symbol from tree {%s}, local %p",
-        ccesse_name_string(esse,ccnull),cctree_string(tree,ccnull),result);
+      // Todo: we should not even handle these guys
+      if(esse->type->kind!=cctype_kRECORD)
+      {
+        if(!is_lval)
+          result=ccblock_fetch(block,tree,esse->type,result);
+      }
 
-      if(!is_lval)
-        result=ccblock_fetch(block,tree,esse->type,result);
     } break;
-#if 0
-    case cctree_kSELECTOR:
-    {
-      cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
-      ccassert(type!=0);
-
-      ccelem_t *elem=cctblgetS(type->list,tree->rval->name);
-      ccassert(ccerrnon());
-
-      ccvalue_t *lvalue,*rvalue;
-      lvalue=ccemit_value(emit,procd,block,tree->lval,1);
-      rvalue=ccemit_const_int(emit,elem->slot);
-
-      // Note: A selector expression could be '->' or '.', we assume the user chose the right
-      // selector token, so we just concern ourselves here with emitting the right instruction ...
-
-      if(type->kind==cctype_kPOINTER)
-        lvalue=ccblock_fetch(block,tree,type,lvalue);
-
-      // Todo: should we use a specific instruction for this or should all instructions be raw byte offsets??
-      // Todo: or, should we get rid of the struct concept itself from here and consider all these as new
-      // entities each time...
-      result=ccblock_aaddr(block,tree,emit->seer->type_stdc_char,lvalue,rvalue);
-
-      if(!is_lval)
-        result=ccblock_fetch(block,tree,elem->type,result);
-    } break;
-#endif
     case cctree_kBINARY:
     {
       if(cctoken_is_assignment(tree->sort))
@@ -174,8 +223,7 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
     } break;
     case cctree_kSIZEOF:
     {
-      // Note: seer should have bound the 'sizeof' expression to the type of its operand...
-      cctype_t *type=ccseer_tree_type(emit->seer,tree);
+      cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
       ccassert(type!=0);
 
       result=ccemit_const_int(emit,type->size);
@@ -197,18 +245,20 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       ccesse_t *esse=ccseer_symbol(emit->seer,ltree);
 
       switch(esse->sort)
-      { case ccbuiltin_kCCBREAK: return ccblock_dbgbreak(block,tree);
-        case ccbuiltin_kCCERROR: return ccblock_dbgerror(block,tree);
+      { case ccbuiltin_kCCBREAK: result=ccblock_dbgbreak(block,tree);
+        case ccbuiltin_kCCERROR: result=ccblock_dbgerror(block,tree);
+        default:
+        {
+          // Todo: query by entity instead....
+          ccvalue_t *c=ccemit_global(emit,ltree->name);
+          ccassert(c!=0);
+
+          ccvalue_t **i=ccemit_arguments(emit,procd,block,rtree);
+
+          result=ccblock_invoke(block,tree,c,i);
+        } break;
       }
 
-      ccvalue_t  *lval=ccemit_global(emit,ltree->name);
-      ccvalue_t **rval=ccnull;
-
-      cctree_t *list;
-      ccarrfor(rtree,list)
-        *ccarrone(rval)=ccemit_rvalue(emit,procd,block,list);
-
-      result=ccblock_invoke(block,tree,lval,rval);
     } break;
     // Todo: these have already been generated...
     case cctree_kCONSTANT:
@@ -240,9 +290,10 @@ ccemit_lvalue(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree
   return ccemit_value(emit,procd,block,tree,1);
 }
 
-
-ccfunc ccvalue_t *
-ccemit_implicit_decl(
+// Note: we don't actually emit the record itself but each of its implicit variable
+// entities... to access these we use selector trees...
+ccfunc ccinle void
+ccemit_record_local(
   ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, ccesse_t *esse, int is_param)
 {
   ccassert(esse!=0);
@@ -259,39 +310,41 @@ ccemit_implicit_decl(
   if(esse->type->kind==cctype_kRECORD)
   { ccesse_t **e;
     ccarrfor(esse->list,e)
-      ccemit_implicit_decl(emit,procd,block,*e,is_param);
+      ccemit_record_local(emit,procd,block,*e,is_param);
+  } else
+  {
+    ccvalue_t *local=ccemit_include_local(emit,procd,block,esse,is_param);
+    ccassert(local!=0);
   }
-
-  ccvalue_t *local=ccemit_include_local(emit,procd,block,esse,is_param);
-  ccassert(local!=0);
-
-  return local;
 }
 
 
-ccfunc ccvalue_t *
+ccfunc void
 ccemit_decl(
   ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree, int is_param)
 {
   ccesse_t *esse=ccseer_symbol(emit->seer,tree);
 
+  // Note: we don't have record locals, we emit each implicit variable entity instead...
+  // we use a different function for additional safety...
   if(esse->type->kind==cctype_kRECORD)
-  { ccesse_t **e;
+  {
+    ccesse_t **e;
     ccarrfor(esse->list,e)
-      ccemit_implicit_decl(emit,procd,block,*e,is_param);
+      ccemit_record_local(emit,procd,block,*e,is_param);
+
+  } else
+  {
+    ccvalue_t *local=ccemit_include_local(emit,procd,block,esse,is_param);
+    ccassert(local!=0);
+
+    if(tree->init)
+    { ccvalue_t *init=ccemit_rvalue(emit,procd,block,tree->init);
+      ccassert(init!=0);
+
+      ccblock_store(block,tree,esse->type,local,init);
+    }
   }
-
-  ccvalue_t *local=ccemit_include_local(emit,procd,block,esse,is_param);
-  ccassert(local!=0);
-
-  if(tree->init)
-  { ccvalue_t *init=ccemit_rvalue(emit,procd,block,tree->init);
-    ccassert(init!=0);
-
-    ccblock_store(block,tree,esse->type,local,init);
-  }
-
-  return local;
 }
 
 // Todo: make the seer output all locals per function to avoid having to
