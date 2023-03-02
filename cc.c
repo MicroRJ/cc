@@ -175,10 +175,10 @@ typedef enum ccentry_k
   ccent_kAIT=2,
 } ccentry_k;
 
-// Note: val is in item count!
 typedef struct ccentry_t ccentry_t;
 typedef struct ccentry_t
-{ ccentry_t * nex;
+{ cccaller_t  caller;
+  ccentry_t * nex;
   cci32_t     len;
   char      * key;
   size_t      val;
@@ -371,6 +371,14 @@ ccfunc cci64_t cctblgeti(void **, cci32_t, cci32_t, char *);
 ccfunc cci64_t cctblputi(void **, cci32_t, cci32_t, char *);
 ccfunc cci64_t cctblseti(void **, cci32_t, cci32_t, char *);
 
+
+#define cctblgeti(...) cctblgeti_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),__VA_ARGS__)
+#define cctblputi(...) cctblputi_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),__VA_ARGS__)
+#define cctblseti(...) cctblseti_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),__VA_ARGS__)
+
+#define cctblputi_ex(caller,...) cctblputi_(caller,__VA_ARGS__)
+
+
 // Todo: these is to be reworked ...
 #define cctblgetL(ccm,lit) ((ccm)+cctblgeti(cclva(ccm),sizeof(*(ccm)),cclithsh(lit)))
 #define cctblgetS(ccm,nts) ((ccm)+cctblgeti(cclva(ccm),sizeof(*(ccm)),ccntshsh(nts)))
@@ -385,6 +393,9 @@ ccfunc cci64_t cctblseti(void **, cci32_t, cci32_t, char *);
 #define cctblputL(ccm,lit) ((ccm)+cctblputi(cclva(ccm),sizeof(*ccm),cclithsh(lit)))
 #define cctblputS(ccm,nts) ((ccm)+cctblputi(cclva(ccm),sizeof(*ccm),ccntshsh(nts)))
 #define cctblputP(ccm,ptr) ((ccm)+cctblputi(cclva(ccm),sizeof(*ccm),ccinthsh(ptr)))
+
+#define cctblputP_ex(caller,ccm,ptr) ((ccm)+cctblputi_ex(caller,cclva(ccm),sizeof(*ccm),ccinthsh(ptr)))
+
 
 // Note: string builder
 #define ccstrdel ccarrdel
@@ -438,11 +449,18 @@ ccfunc        int   ccformatex  (char *, int, const char *, ...);
 ccfunc        char *ccformat    (const char *, ...);
 
 ccfunc void cctrace_(cccaller_t caller, const char *label, const char *format, ...);
+#define cctrace(label,fmt,...) (cctrace_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),label,fmt,__VA_ARGS__),0)
 
-#define cctracelog(fmt,...) (cctrace_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),"log",fmt,__VA_ARGS__),0)
-#define cctracewar(fmt,...) (cctrace_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),"war",fmt,__VA_ARGS__),0)
-#define cctraceerr(fmt,...) (cctrace_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),"err",fmt,__VA_ARGS__),0)
-#define ccdebuglog(fmt,...) (cctrace_(cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC),"dbg",fmt,__VA_ARGS__),0)
+#define cctracelog(fmt,...) (cctrace("log",fmt,__VA_ARGS__),0)
+#define cctracewar(fmt,...) (cctrace("war",fmt,__VA_ARGS__),0)
+#define cctraceerr(fmt,...) (cctrace("err",fmt,__VA_ARGS__),0)
+#define ccdebuglog(fmt,...) (cctrace("dbg",fmt,__VA_ARGS__),0)
+
+#ifdef _CCEXECLOG
+# define ccexeclog(fmt,...) (cctrace("exec",fmt,__VA_ARGS__),0)
+#else
+# define ccexeclog(fmt,...) (0)
+#endif
 
 // Note:
 #include "ccsys.c"
@@ -480,9 +498,6 @@ typedef struct ccexec_value_t ccexec_value_t;
 #include "ccemit.c"
 #include "ccexec.c"
 #include "cccore.c"
-
-// #include "ccemit-c.c"
-
 
 #ifdef _MSC_VER
 # ifndef _DEVELOPER

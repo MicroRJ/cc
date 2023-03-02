@@ -92,8 +92,9 @@ ccdlbadd(void **ccm, cci32_t isze, cci64_t rsze, cci64_t csze)
 }
 
 // Todo: does this use a good hashing function for strings?
+// Todo: remove caller when not in debug mode!
 ccfunc int
-cctblhsh(void **ccm, cci32_t bit, int len, char *key, int create_always)
+cctblhsh_(cccaller_t caller, void **ccm, cci32_t bit, int len, char *key, int create_always)
 {
   ccassert(len!=0);
   ccassert(key!=0);
@@ -152,6 +153,8 @@ cctblhsh(void **ccm, cci32_t bit, int len, char *key, int create_always)
     if(ccentry->key)
       ccentry=ccentry->nex=ccmalloc_T(ccentry_t);
 
+    ccentry->caller=caller;
+
     cci64_t val=ccdlbadd(ccm,bit,1,1);
 
     // Todo: remove this from here!
@@ -167,29 +170,35 @@ cctblhsh(void **ccm, cci32_t bit, int len, char *key, int create_always)
   return ccfalse;
 }
 
+// Todo: remove caller in release mode!
 ccfunc cci64_t
-cctblgeti(void **ccm, cci32_t isze, cci32_t len, char *key)
+cctblgeti_(cccaller_t caller, void **ccm, cci32_t isze, cci32_t len, char *key)
 { ccassert(ccm!=0);
   ccerrset(ccerr_kNIT);
-  if(cctblhsh(ccm,isze,len,key,ccfalse))
+  if(cctblhsh_(caller,ccm,isze,len,key,ccfalse))
     ccerrset(ccerr_kNON);
   return ccentry? ccentry->val :ccnull;
 }
 
+// Todo: remove caller in release mode!
 ccfunc cci64_t
-cctblputi(void **ccm, cci32_t isze, cci32_t len, char *key)
+cctblputi_(cccaller_t caller, void **ccm, cci32_t isze, cci32_t len, char *key)
 { ccassert(ccm!=0);
   ccerrset(ccerr_kAIT);
-  if(!cctblhsh(ccm,isze,len,key,cctrue))
+  if(cctblhsh_(caller,ccm,isze,len,key,cctrue))
+  { cctrace_(caller,"war","already in table, added by %s[%i]::%s()",
+      ccfilename(ccentry->caller.file),ccentry->caller.line,ccentry->caller.func);
+  } else
     ccerrset(ccerr_kNON);
   return ccentry? ccentry->val :ccnull;
 }
 
+// Todo: remove caller in release mode!
 ccfunc cci64_t
-cctblseti(void **ccm, cci32_t isze, cci32_t len, char *key)
+cctblseti_(cccaller_t caller, void **ccm, cci32_t isze, cci32_t len, char *key)
 { ccassert(ccm!=0);
   ccerrset(ccerr_kNON);
-  cctblhsh(ccm,isze,len,key,cctrue);
+  cctblhsh_(caller,ccm,isze,len,key,cctrue);
   return ccentry? ccentry->val :ccnull;
 }
 

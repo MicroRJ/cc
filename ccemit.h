@@ -16,6 +16,8 @@ typedef enum ccvalue_k
   ccvalue_kPROCU,
 
   ccvalue_kEDICT,
+
+  ccvalue_kENTITY,
 } ccvalue_k;
 
 typedef struct ccconstant_t ccconstant_t;
@@ -37,7 +39,9 @@ typedef struct ccvalue_t
 { ccvalue_k       kind;
 
   ccunion
-  { ccedict_t     * edict;
+  { ccesse_t      * entity;
+
+    ccedict_t     * edict;
     ccprocd_t     * procd;
     ccprocu_t     * procu;
     ccconstant_t    constant;

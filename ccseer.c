@@ -304,6 +304,7 @@ ccseer_typeof(ccseer_t *seer, cctree_t *tree)
     case cctree_kPOINTER:
     {
       result=ccseer_typespec(seer,tree);
+      ccseer_tether(seer,tree,result);
     } break;
     case cctree_kIDENTIFIER:
     { ccesse_t *esse=ccseer_entity(seer,tree->name);
@@ -315,6 +316,7 @@ ccseer_typeof(ccseer_t *seer, cctree_t *tree)
          (esse->kind==ccesse_kTYPENAME))
       {
         result=esse->type;
+        ccseer_tether(seer,tree,result);
       } else
        cctraceerr("invalid entity for sizeof, expected type-name or variable-name",0);
     } break;
@@ -467,8 +469,7 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
       // Sizeof() works for everything but sizeof is only for expressions, this is what makes the language unambiguous...
       // We assume the parser has done its job...
 
-      result=ccseer_typeof(seer,tree->lval);
-      ccseer_tether(seer,tree->lval,result);
+      ccseer_typeof(seer,tree->lval);
 
       // Todo:
       result=seer->type_stdc_int;

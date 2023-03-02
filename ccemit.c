@@ -25,25 +25,61 @@ ccfunc ccvalue_t *
 ccemit_include_local(
   ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, ccesse_t *esse, int is_param)
 {
+  cccaller_t caller=cclastcaller;
 
   ccassert(esse!=0);
   ccassert(esse->kind==ccesse_kVARIABLE);
 
-  ccedict_t *e=is_param?
+
+  if(esse->type->kind==cctype_kRECORD)
+  {
+    // Note: we don't actually emit the record itself as a local instruction but instead
+    // we emit each of its implicit variable entities... to access these we use selector trees...
+
+    cccall();
+    ccesse_t **c;
+    ccarrfor(esse->list,c)
+      ccemit_include_local(emit,procd,block,*c,is_param);
+  }
+
+  // Note: we still add the record though to the locals array for use to query later...
+  ccedict_t *x=is_param?
     ccedict_param(esse->tree,esse->type):
     ccedict_local(esse->tree,esse->type);
 
+  ccvalue_t **v=cctblputP_ex(caller,procd->local,esse);
+  ccassert(ccerrnon() ||
+    cctraceerr("'%s': already in table, %s",
+      ccesse_name_string(esse,ccnull), cctree_string(esse->tree,ccnull)));
 
-  ccvalue_t **v=cctblputP(procd->local,esse);
-  ccassert(ccerrnon());
-
-  ccvalue_t *i=ccblock_add_edict(procd->decls,e);
-  *v=i;
-
-  if(is_param)
+  ccvalue_t *i;
+  if(esse->type->kind!=cctype_kRECORD)
   {
-    ccvalue_t **p=ccarradd(procd->param,1);
-    *p=i;
+    i=ccblock_add_edict(procd->decls,x);
+    *v=i;
+
+    if(is_param)
+    {
+      ccvalue_t **p=ccarradd(procd->param,1);
+      *p=i;
+    }
+
+    if(esse->tree->init)
+    {
+      ccvalue_t *init=ccemit_rvalue(emit,procd,block,esse->tree->init);
+      ccassert(init!=0);
+
+      ccblock_store(block,esse->tree,esse->type,i,init);
+    }
+  } else
+  {
+    i=ccvalue();
+    i->kind=ccvalue_kENTITY;
+    i->entity=esse;
+    *v=i;
+
+    // Note: we don't support this now...
+    ccassert(!esse->tree->init);
   }
 
   return i;
@@ -166,12 +202,12 @@ ccemit_value(
 
       result=*local;
 
-      // Todo: we should not even handle these guys
-      if(esse->type->kind!=cctype_kRECORD)
-      {
-        if(!is_lval)
-          result=ccblock_fetch(block,tree,esse->type,result);
-      }
+      // ccassert(esse->type->kind!=cctype_kRECORD);
+
+      if(!is_lval)
+        result=ccblock_fetch(block,tree,esse->type,result);
+
+      ccassert(result!=0);
 
     } break;
     case cctree_kBINARY:
@@ -290,62 +326,6 @@ ccemit_lvalue(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree
   return ccemit_value(emit,procd,block,tree,1);
 }
 
-// Note: we don't actually emit the record itself but each of its implicit variable
-// entities... to access these we use selector trees...
-ccfunc ccinle void
-ccemit_record_local(
-  ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, ccesse_t *esse, int is_param)
-{
-  ccassert(esse!=0);
-  ccassert(esse->kind==ccesse_kVARIABLE);
-
-  ccassert(esse->root!=0);
-  ccassert(esse->root->kind==ccesse_kVARIABLE);
-
-  ccassert(esse->tree!=0);
-
-  ccassert(!esse->tree->init);
-  ccassert(!esse->tree->next);
-
-  if(esse->type->kind==cctype_kRECORD)
-  { ccesse_t **e;
-    ccarrfor(esse->list,e)
-      ccemit_record_local(emit,procd,block,*e,is_param);
-  } else
-  {
-    ccvalue_t *local=ccemit_include_local(emit,procd,block,esse,is_param);
-    ccassert(local!=0);
-  }
-}
-
-
-ccfunc void
-ccemit_decl(
-  ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree, int is_param)
-{
-  ccesse_t *esse=ccseer_symbol(emit->seer,tree);
-
-  // Note: we don't have record locals, we emit each implicit variable entity instead...
-  // we use a different function for additional safety...
-  if(esse->type->kind==cctype_kRECORD)
-  {
-    ccesse_t **e;
-    ccarrfor(esse->list,e)
-      ccemit_record_local(emit,procd,block,*e,is_param);
-
-  } else
-  {
-    ccvalue_t *local=ccemit_include_local(emit,procd,block,esse,is_param);
-    ccassert(local!=0);
-
-    if(tree->init)
-    { ccvalue_t *init=ccemit_rvalue(emit,procd,block,tree->init);
-      ccassert(init!=0);
-
-      ccblock_store(block,tree,esse->type,local,init);
-    }
-  }
-}
 
 // Todo: make the seer output all locals per function to avoid having to
 // rely on the tree so much?
@@ -360,7 +340,13 @@ ccemit_tree(
   { case cctree_kDECL:
     { cctree_t *n;
       for(n=tree;n;n=n->next)
-        ccemit_decl(emit,procd,block,n,is_param);
+      {
+        ccesse_t *e=ccseer_symbol(emit->seer,n);
+        ccassert(e!=0);
+
+        cccall();
+        ccemit_include_local(emit,procd,block,e,is_param);
+      }
     } break;
     case cctree_kBLOCK:
     { cctree_t **list;
@@ -484,9 +470,6 @@ ccemit_external_decl(ccemit_t *emit, ccesse_t *esse)
   if(!strcmp(esse->name,"main"))
     emit->entry=v;
 }
-
-
-
 
 ccfunc void
 ccemit_translation_unit(ccemit_t *emit, ccseer_t *seer)

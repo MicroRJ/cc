@@ -202,20 +202,25 @@ ccexec_edict(
 
   switch(edict->kind)
   {
-    // Note: this is simply to ensure we've set the parameters ...
+    // Todo: switch this expression of in debug mode?
     case ccedict_kPARAM:
-    {
-      ccexec_yield(stack,value,cctrue);
+    { // Note: this is simply to ensure we've set the parameter ...
+      ccexec_value_t v=ccexec_yield(stack,value,cctrue);
+      (void)v;
+
+      ccexeclog("%p PARAM: [%s] %p{%s}; %s",
+        value,cctype_string(edict->type,ccnull),
+        v.value,cctype_string(v.type,ccnull),
+        cctree_string(edict->tree,ccnull));
     } break;
     case ccedict_kLOCAL:
-    {
-      ccexec_value_t lval;
-      lval=ccstack_local_alloc(exec,stack,value);
+    { ccexec_value_t v=ccstack_local_alloc(exec,stack,value);
+      (void)v;
 
       // Todo:
-      ccdebuglog("%p LOCAL: [%s] %p{%s}; %s",
+      ccexeclog("%p LOCAL: [%s] %p{%s}; %s",
         value,cctype_string(edict->type,ccnull),
-        lval.value,cctype_string(lval.type,ccnull),
+        v.value,cctype_string(v.type,ccnull),
         cctree_string(edict->tree,ccnull));
     } break;
     case ccedict_kAADDR:
@@ -259,21 +264,11 @@ ccexec_edict(
       if(!lval.value)
         ccassert(!"write access violation, nullptr");
 
+      ccassert(type->kind!=cctype_kRECORD);
+
       // Todo:
       ccexec_value_t *saved=ccexec_register(stack,value,type);
-
-      // Todo: how would we make this more robust, values of values? In reality, I wouldn't want
-      // to have the notion of a struct at the vm level, but that would require a slightly more
-      // advanced front-end...
-      if(type->kind==cctype_kRECORD)
-      { saved->value=ccstack_push_size(exec,type->size);
-        ccassert(saved->value!=0);
-
-        memcpy(saved->value,lval.value,type->size);
-      } else
-      {
-        memcpy(&saved->value,lval.value,type->size);
-      }
+      memcpy(&saved->value,lval.value,type->size);
 
       // Todo:
       // ccdebuglog("%p FETCH: [%s] %p{%s}; %s",
@@ -287,10 +282,6 @@ ccexec_edict(
       ccassert(edict->lval!=0);
       ccassert(edict->rval!=0);
 
-      ccassert(
-        (edict->tree->kind==cctree_kDECL)||
-        (edict->tree->kind==cctree_kBINARY));
-
       cctype_t *type=edict->type;
       ccexec_value_t lval=ccexec_yield(stack,edict->lval,cctrue);
       ccexec_value_t rval=ccexec_yield(stack,edict->rval,ccfalse);
@@ -298,11 +289,9 @@ ccexec_edict(
       if(!lval.value)
         ccassert(!"write access violation, nullptr");
 
-      // Todo:
-      if(type->kind==cctype_kRECORD)
-        memcpy(lval.value,rval.value,type->size);
-      else
-        memcpy(lval.value,&rval.value,type->size);
+      ccassert(type->kind!=cctype_kRECORD);
+
+      memcpy(lval.value,&rval.value,type->size);
 
       // Todo: produce operand
 
@@ -434,8 +423,10 @@ ccexec_invoke(
 
   ccvalue_t **p;
   ccarrfor(procd->param,p)
-  { ccexec_value_t x=ccstack_local_alloc(exec,&stack,*p);
-    memcpy(x.value,&i->value,8); // Todo:
+  { ccassert(i->kind==ccexec_value_kVALID);
+    // Todo:
+    ccexec_value_t x=ccstack_local_alloc(exec,&stack,*p);
+    memcpy(x.value,&i->value,sizeof(i->value)); // Todo:
     i++;
   }
 
