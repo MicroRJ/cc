@@ -22,19 +22,16 @@ typedef enum ccesse_k
   ccesse_kVARIABLE,
 } ccesse_k;
 
-typedef struct ccesse_t ccesse_t;
-
 // Note: entity or essential, indivisible and relatively unique, such as variables ...
 typedef struct ccesse_t ccesse_t;
 typedef struct ccesse_t
 { ccesse_k        kind;
   const char    * name;
+  ccesse_t      * root;
+  cctype_t      * type;
   cctree_t      * tree;
   ccbuiltin_k     sort;
-  cctype_t      * type;
-
-  // Todo: is there a better way of doing this ...
-  ccesse_t ** list;
+  ccesse_t     ** list; // Todo: is there a better way of doing this ...
 } ccesse_t;
 
 // Todo: legit scoping
@@ -92,6 +89,36 @@ ccesse(ccesse_k kind)
   memset(e,ccnull,sizeof(*e));
   e->kind=kind;
   return e;
+}
+
+ccfunc ccinle const char *
+ccesse_kind_string(ccesse_t *esse)
+{ switch(esse->kind)
+  { case ccesse_kINVALID:  return "invalid";
+    case ccesse_kTYPENAME: return "type-name";
+    case ccesse_kCBINDING: return "c-binding";
+    case ccesse_kFUNCTION: return "function";
+    case ccesse_kVARIABLE: return "variable";
+  }
+  return "error";
+}
+
+ccfunc char *
+ccesse_name_string(ccesse_t *esse, char **stringer)
+{
+  char *buffer=stringer?*stringer:ccnull;
+
+  if(esse->root)
+  {
+    ccesse_name_string(esse->root,&buffer);
+    ccstrcatL(buffer,".");
+  }
+
+  ccstrcatS(buffer,esse->name);
+
+  if(stringer) *stringer=buffer;
+
+  return buffer;
 }
 
 

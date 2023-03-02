@@ -54,7 +54,8 @@ ccexec_yield(ccexec_frame_t *stack, ccvalue_t *value, int is_lval)
     { result=*cctblgetP(stack->values,value);
 
       ccassert(ccerrnon() ||
-        cctraceerr("invalid value, did you register this value?",0));
+        cctraceerr("invalid value, did you register this value? ;%s",
+          cctree_string(value->edict->tree,ccnull)));
 
       ccassert(result.kind!=ccexec_value_kINVALID ||
         cctraceerr("invalid value, did you register this value and not set its contents?",0));

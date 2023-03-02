@@ -45,10 +45,11 @@ typedef struct ccedict_t
   ccvalue_t *  rval;
   ccvalue_t ** blob;
   ccleap_t     leap;
+
   // Todo:
   int is_zero_init;
 
-  // Todo: should each edict have a flag that indicates whether to produce a value or not? implement!
+  // Todo: each edict should have a flag that indicates whether to produce a value or not. Implement!
   int yield;
 } ccedict_t;
 

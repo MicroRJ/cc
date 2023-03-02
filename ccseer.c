@@ -71,10 +71,12 @@ ccseer_symbol(ccseer_t *seer, cctree_t *tree)
 {
   ccassert(tree!=0);
 
-  ccesse_t **holder=cctblgetP(seer->symbol_table,tree);
-  ccesse_t *held=ccerrnon()? *holder :0;
+  ccesse_t **e=cctblgetP(seer->symbol_table,tree);
 
-  return held;
+  ccassert(ccerrnon() ||
+   cctraceerr("'%s': symbol not found", cctree_string(tree,ccnull)));
+
+  return *e;
 }
 
 ccfunc cctype_t *
@@ -114,18 +116,6 @@ ccseer_associate(ccseer_t *seer, cctree_t *tree, const char *name)
   return ccerrnon()? held :0;
 }
 
-ccfunc ccinle const char *
-ccesse_string(ccesse_t *esse)
-{ switch(esse->kind)
-  { case ccesse_kINVALID:  return "invalid";
-    case ccesse_kTYPENAME: return "type-name";
-    case ccesse_kCBINDING: return "c-binding";
-    case ccesse_kFUNCTION: return "function";
-    case ccesse_kVARIABLE: return "variable";
-  }
-  return "error";
-}
-
 // Note: register an entity by name...
 // Todo: legit scoping...
 ccfunc int
@@ -138,7 +128,7 @@ ccseer_register(ccseer_t *seer, ccesse_t *esse, const char *name)
     *holder=esse;
   else
     cctraceerr("'%s': redefinition, previous definition was '%s'",name,
-      ccesse_string(held));
+      ccesse_kind_string(held));
 
   ccassert(esse->kind!=0);
   ccassert(esse->name!=0);
@@ -181,7 +171,7 @@ ccseer_typespec(ccseer_t *seer, cctree_t *tree)
 
       if(esse->kind!=ccesse_kTYPENAME)
        cctraceerr("'%s': declaration expected type specifier, you specified %s",
-        ccesse_string(esse));
+        ccesse_kind_string(esse));
 
       ccassert(esse!=0);
       ccassert(esse->kind==ccesse_kTYPENAME);
@@ -219,6 +209,7 @@ ccseer_typespec(ccseer_t *seer, cctree_t *tree)
 
       result=cctype_record(tree,list,size,tree->name);
 
+      // Todo: we shouldn't do this here...
       if(tree->name)
       {
         ccesse_t *e=ccesse(ccesse_kTYPENAME);
@@ -439,18 +430,17 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
     { ccassert(tree->lval!=0);
       ccassert(tree->rval!=0);
 
+
       cctype_t *type=ccseer_value(seer,tree->lval,0);
 
-      if(type)
-      { if(type->kind==cctype_kRECORD)
-        {
-          // Todo: how do we do this properly?
-          ccesse_t *esse=ccseer_entity(seer,tree->lval->name);
-          ccassert(esse!=0);
+      // Todo: how do we do this properly?
+      ccesse_t *esse=ccseer_symbol(seer,tree->lval);
 
-          ccesse_t **e=cctblgetS(esse->list,tree->rval->name);
-          ccassert(ccerrnon());
+      ccassert(esse->type==type);
 
+      if(ccerrnon())
+      { if(esse->type->kind==cctype_kRECORD)
+        { ccesse_t **e=cctblgetS(esse->list,tree->rval->name);
           if(ccerrnon())
           {
             result=(*e)->type;
@@ -460,9 +450,9 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
             ccassert(ccerrnon());
 
             *k=(*e);
-
           } else
-            cctraceerr("'%s': is not a member of '%s'", tree->rval->name,type->name?type->name:"unknown");
+            cctraceerr("'%s': is not a member of '%s'",
+              tree->rval->name,esse->name?esse->name:"unknown");
 
 #if 0
           ccelem_t *elem=cctblgetS(type->list,tree->rval->name);
@@ -569,11 +559,16 @@ ccseer_rvalue(ccseer_t *seer, cctree_t *tree)
   return ccseer_value(seer,tree,ccfalse);
 }
 
-// Note: recursive...
 ccfunc ccesse_t *
-ccseer_implicit_decl(ccseer_t *seer, ccelem_t *elem)
+ccseer_implicit_decl(ccseer_t *seer, ccesse_t *root, ccelem_t *elem)
 {
+  // Note: creates implicit entities, these are never registered under any lookup scope nor associated
+  // with any tree yet...
+  // Note: the selector tree will trigger a look-up by name under the parent struct-typed
+  // variable entity and associate the selector tree with the implicit entity...
+
   ccesse_t *result=ccesse(ccesse_kVARIABLE);
+  result->root=root;
   result->name=elem->name;
   result->tree=elem->tree;
   result->type=elem->type;
@@ -586,7 +581,10 @@ ccseer_implicit_decl(ccseer_t *seer, ccelem_t *elem)
       ccesse_t **i=cctblputS(result->list,e->name);
       ccassert(ccerrnon());
 
-      *i=ccseer_implicit_decl(seer,e);
+      ccesse_t *v=ccseer_implicit_decl(seer,result,e);
+      ccassert(v!=0);
+
+      *i=v;
     }
   }
 
@@ -598,41 +596,37 @@ ccseer_decl(ccseer_t *seer, cctree_t *tree)
 {
   cctype_t *type=ccseer_typespec(seer,tree->type);
 
-  ccesse_t *esse=ccesse(ccesse_kVARIABLE);
-  esse->name=tree->name;
-  esse->tree=tree;
-  esse->type=type;
+  ccesse_t *result=ccesse(ccesse_kVARIABLE);
+  result->name=tree->name;
+  result->tree=tree;
+  result->type=type;
 
-  // Note: create implicit entities, these are never registered under any
-  // lookup scope nor associated with any tree yet...
   if(type->kind==cctype_kRECORD)
   {
-    ccelem_t *elem;
-    ccarrfor(type->list,elem)
+    ccelem_t *e;
+    ccarrfor(type->list,e)
     {
-      ccesse_t **i=cctblputS(esse->list,elem->name);
+      ccesse_t **i=cctblputS(result->list,e->name);
       ccassert(ccerrnon());
 
-      *i=ccseer_implicit_decl(seer,elem);
-
-      ccdebuglog("implicit entity %s::%s",esse->name,elem->name);
+      *i=ccseer_implicit_decl(seer,result,e);
     }
   }
 
-  if(ccseer_register(seer,esse,tree->name))
+  if(ccseer_register(seer,result,tree->name))
   {
     ccseer_associate(seer,tree,tree->name);
-    ccseer_tether(seer,tree,esse->type);
+    ccseer_tether(seer,tree,result->type);
 
     if(tree->init)
     {
       cctype_t *value=ccseer_rvalue(seer,tree->init);
 
-      ccseer_typecheck(seer,esse->type,value);
+      ccseer_typecheck(seer,result->type,value);
     }
   }
 
-  return esse;
+  return result;
 }
 
 ccfunc void
@@ -706,6 +700,9 @@ ccseer_tree(ccseer_t *seer, cctree_t *tree)
             }
           }
 
+          // Todo: do we need to do this at definition time necessarily? I guess
+          // type-checking would include the name of the parameter too for named
+          // arguments... but by that time we won't need nor support pre-declarations...
           if(next->blob)
           {
             // Todo:

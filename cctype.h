@@ -34,7 +34,8 @@ typedef struct cctype_t
   cctoken_k    sort;
   cctree_t   * tree;
   cctype_t   * type;
-  // Note: remove the table, use plain array ...
+  // Todo: Make this is a plain array instead, hash-table look-ups are only done at the entity level,
+  // this makes it convenient for type-checking though...
   ccelem_t   * list;
   cci32_t      size;
 
