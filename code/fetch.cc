@@ -10,12 +10,12 @@ struct ccstruct_t
 int printstruct_(ccstruct_t *_s)
 {
   ccstruct_t s=*_s;
-  ccprintf("a := %i, b := %i, c := %i\n", s.a, s.b, s.c);
+  ccprintf("pointer: a := %i, b := %i, c := %i\n", s.a, s.b, s.c);
 }
 
 int printstruct(ccstruct_t h)
 {
-  ccprintf("a := %i, b := %i, c := %i\n", h.a, h.b, h.c);
+  ccprintf("value: a := %i, b := %i, c := %i\n", h.a, h.b, h.c);
 }
 
 
@@ -40,11 +40,6 @@ int main(int _)
   ccassert(v.a==777);
   ccassert(v.b==888);
   ccassert(v.c==999);
-
-  int i;
-  i=777;
-
-  ccassert(i==777);
 
   ccassert(sizeof v == 12);
   ccassert(sizeof v.a == 4);

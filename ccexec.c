@@ -182,7 +182,7 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
 
 ccfunc int
 ccexec_invoke(
-  ccexec_t *, ccvalue_t *, ccexec_value_t *, cci32_t, ccexec_value_t *);
+  ccexec_t *, ccvalue_t *, ccexec_value_t *, ccu32_t, ccexec_value_t *);
 
 ccfunc int
 ccexec_edict(
@@ -227,11 +227,8 @@ ccexec_edict(
       ccexec_value_t rval=ccexec_yield(stack,edict->rval,ccfalse);
 
       // Todo:
-      char *memory=cccast(char*,lval.value);
-      memory+=type->size*rval.constI;
-
       ccexec_value_t *saved=ccexec_register(stack,value,type);
-      saved->value=(void*)memory;
+      saved->value=lval.value+type->size*rval.constI;
 
       // ccdebuglog("%p ADDDR: [%s] %p{%s}, %i; %s",
       //   value,cctype_string(type,ccnull),
@@ -381,7 +378,7 @@ ccexec_edict(
       {
         // Note: should not have to check this, just fail ...
         if(!ccexec_invoke(exec,edict->lval,ret,rlen,rval))
-          cctraceerr("internal",0);
+          cctraceerr("no return value specified",0);
 
       } else
       if(edict->lval->kind==ccvalue_kPROCU)
@@ -417,7 +414,7 @@ ccexec_edict(
 
 ccfunc int
 ccexec_invoke(
-  ccexec_t *exec, ccvalue_t *value, ccexec_value_t *r, cci32_t l, ccexec_value_t *i)
+  ccexec_t *exec, ccvalue_t *value, ccexec_value_t *r, ccu32_t l, ccexec_value_t *i)
 {
   int result=ccfalse;
 
@@ -429,18 +426,17 @@ ccexec_invoke(
 
   stack.procedure=procd;
 
-  cctree_t *type=procd->esse->tree->type;
-  ccassert((int)ccarrlen(type->list)==l);
+  // Todo: remove this please
+  ccesse_t **list=procd->esse->list;
+  ccassert(ccarrlen(list)==l);
 
-  cctree_t **ltree;
-  ccarrfor(type->list,ltree)
-  { ccvalue_t *lparam=ccprocd_local(procd,*ltree);
-    ccexec_value_t lvalue=ccstack_local_alloc(exec,&stack,lparam);
-
+  ccesse_t **e;
+  ccarrfor(list,e)
+  { ccvalue_t *v=ccprocd_local(procd,*e);
+    ccexec_value_t x=ccstack_local_alloc(exec,&stack,v);
     // Todo: dedicated 'store' ...
-
     cci64_t int_value=i->constI;
-    ccdref(cccast(cci64_t*,lvalue.value))=int_value;
+    ccdref(cccast(cci64_t*,x.value))=int_value;
     i++;
   }
 

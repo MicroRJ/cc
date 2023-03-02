@@ -112,13 +112,13 @@ ccprocu()
   return t;
 }
 
-// Todo: remove!
 ccfunc ccvalue_t *
-ccprocd_local(ccprocd_t *func, cctree_t *tree)
+ccprocd_local(ccprocd_t *procd, ccesse_t *esse)
 {
-  ccvalue_t **v=cctblgetP(func->local,tree);
-  if(ccerrnon()) return *v;
-  return ccnil;
+  ccvalue_t **v=cctblgetP(procd->local,esse);
+  ccassert(ccerrnon());
+
+  return *v;
 }
 
 // Todo: hash by entity and this should take the value instead!

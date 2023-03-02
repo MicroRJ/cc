@@ -32,22 +32,25 @@ typedef struct ccesse_t
   cctree_t      * tree;
   ccbuiltin_k     sort;
   cctype_t      * type;
+
+  // Todo: is there a better way of doing this ...
+  ccesse_t ** list;
 } ccesse_t;
 
 // Todo: legit scoping
 // Note: #entity_table: Map of named entities, use "string"...
-// Note: #symbol_table: Map of named or implict entities, use symbolic tree...
+// Note: #symbol_table: Map of named or implicit entities, use symbolic tree...
 // Note: #tether_table: Map of type info for each tree...
 typedef struct ccseer_t ccseer_t;
 typedef struct ccseer_t
 {
   // Todo: I think that this is going to be key in getting rid of structs entirely.
   // We have the concept of an entity which is a named variable, but we could extend that definition
-  // to allow for implicit entites, member variables, which are still unique.
+  // to allow for implicit entities, member variables, which are still unique.
   // We can use the symbol table along with selector trees to find them.
   // The idea is that you have this hierarchy of memory operands, in which
   // member variables are simply relative offsets, but they are also entities...
-  // Since entities are allocated on the stack in the order in which they appear in, memory operations
+  // Since struct typed entities are orderly allocated on the stack, memory operations
   // such as de-referencing or copying a struct typed variable should still work fine and be
   // as simple as it was before.
   // The first step towards that would be having a more robust and cleaner front-end..

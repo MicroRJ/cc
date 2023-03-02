@@ -207,8 +207,10 @@ ccseer_typespec(ccseer_t *seer, cctree_t *tree)
         ccelem_t *e=cctblputS(list,n->name);
         ccassert(ccerrnon());
 
+        cctype_t *t=ccseer_typespec(seer,n->type);
+
         e->tree=n;
-        e->type=ccseer_typespec(seer,n->type);
+        e->type=t;
         e->name=n->name;
         e->slot=size;
 
@@ -437,14 +439,32 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
     { ccassert(tree->lval!=0);
       ccassert(tree->rval!=0);
 
-      ccassert((tree->lval->kind==cctree_kIDENTIFIER)||(tree->lval->kind==cctree_kSELECTOR));
-      ccassert((tree->rval->kind==cctree_kIDENTIFIER));
-
       cctype_t *type=ccseer_value(seer,tree->lval,0);
 
       if(type)
       { if(type->kind==cctype_kRECORD)
         {
+          // Todo: how do we do this properly?
+          ccesse_t *esse=ccseer_entity(seer,tree->lval->name);
+          ccassert(esse!=0);
+
+          ccesse_t **e=cctblgetS(esse->list,tree->rval->name);
+          ccassert(ccerrnon());
+
+          if(ccerrnon())
+          {
+            result=(*e)->type;
+            ccseer_tether(seer,tree,result);
+
+            ccesse_t **k=cctblputP(seer->symbol_table,tree);
+            ccassert(ccerrnon());
+
+            *k=(*e);
+
+          } else
+            cctraceerr("'%s': is not a member of '%s'", tree->rval->name,type->name?type->name:"unknown");
+
+#if 0
           ccelem_t *elem=cctblgetS(type->list,tree->rval->name);
           if(ccerrnon())
           {
@@ -452,6 +472,7 @@ ccseer_value(ccseer_t *seer, cctree_t *tree, cci32_t is_lval)
             ccseer_tether(seer,tree,result);
           } else
             cctraceerr("'%s': is not a member of '%s'", tree->rval->name,type->name?type->name:"unknown");
+#endif
         } else
           cctraceerr("'.%s': must have struct or union specifier", tree->rval->name);
       }
@@ -548,6 +569,72 @@ ccseer_rvalue(ccseer_t *seer, cctree_t *tree)
   return ccseer_value(seer,tree,ccfalse);
 }
 
+// Note: recursive...
+ccfunc ccesse_t *
+ccseer_implicit_decl(ccseer_t *seer, ccelem_t *elem)
+{
+  ccesse_t *result=ccesse(ccesse_kVARIABLE);
+  result->name=elem->name;
+  result->tree=elem->tree;
+  result->type=elem->type;
+
+  if(elem->type->kind==cctype_kRECORD)
+  {
+    ccelem_t *e;
+    ccarrfor(elem->type->list,e)
+    {
+      ccesse_t **i=cctblputS(result->list,e->name);
+      ccassert(ccerrnon());
+
+      *i=ccseer_implicit_decl(seer,e);
+    }
+  }
+
+  return result;
+}
+
+ccfunc ccesse_t *
+ccseer_decl(ccseer_t *seer, cctree_t *tree)
+{
+  cctype_t *type=ccseer_typespec(seer,tree->type);
+
+  ccesse_t *esse=ccesse(ccesse_kVARIABLE);
+  esse->name=tree->name;
+  esse->tree=tree;
+  esse->type=type;
+
+  // Note: create implicit entities, these are never registered under any
+  // lookup scope nor associated with any tree yet...
+  if(type->kind==cctype_kRECORD)
+  {
+    ccelem_t *elem;
+    ccarrfor(type->list,elem)
+    {
+      ccesse_t **i=cctblputS(esse->list,elem->name);
+      ccassert(ccerrnon());
+
+      *i=ccseer_implicit_decl(seer,elem);
+
+      ccdebuglog("implicit entity %s::%s",esse->name,elem->name);
+    }
+  }
+
+  if(ccseer_register(seer,esse,tree->name))
+  {
+    ccseer_associate(seer,tree,tree->name);
+    ccseer_tether(seer,tree,esse->type);
+
+    if(tree->init)
+    {
+      cctype_t *value=ccseer_rvalue(seer,tree->init);
+
+      ccseer_typecheck(seer,esse->type,value);
+    }
+  }
+
+  return esse;
+}
+
 ccfunc void
 ccseer_tree(ccseer_t *seer, cctree_t *tree)
 {
@@ -587,68 +674,58 @@ ccseer_tree(ccseer_t *seer, cctree_t *tree)
         ccassert(next->type!=0);
         ccassert(next->name!=0);
 
-        // Todo: is this proper enough?
-        if(next->type->kind==cctree_kFUNCTION)
-        { if(next->mark&cctree_mEXTERNAL)
-          {
-            ccesse_t *esse=ccseer_entity(seer,next->name);
-
-            if(!esse)
-            {
-              esse=ccesse(ccesse_kFUNCTION);
-              esse->tree=next;
-              esse->name=next->name;
-              esse->type=ccseer_typespec(seer,tree->type);
-              // Todo: ensure return type is not a function or an array!
-
-              ccseer_register(seer,esse,next->name);
-            } else
-            {
-              // Todo: leak!
-              cctype_t *type=ccseer_typespec(seer,tree->type);
-
-              ccseer_typecheck(seer,esse->type,type);
-
-              // Todo: better debug info
-              if(esse->tree->blob && tree->blob)
-              {
-                cctraceerr("%s: already has a body", next->name);
-              }
-            }
-
-            if(next->blob)
-            {
-              esse->tree=next;
-
-              cctree_t **i;
-              ccarrfor(next->type->list,i)
-                ccseer_tree(seer,*i);
-
-              ccarrfor(next->blob->list,i)
-                ccseer_tree(seer,*i);
-            }
-          } else
-              cctraceerr("'%s': local function definitions are illegal", next->name);
-        } else
+        if(next->type->kind!=cctree_kFUNCTION)
         {
-          ccesse_t *esse=ccesse(ccesse_kVARIABLE);
-          esse->name=next->name;
-          esse->tree=next;
-          esse->type=ccseer_typespec(seer,next->type);
+          ccseer_decl(seer,next);
+        } else
+        // Todo: is this proper enough?
+        if(next->mark&cctree_mEXTERNAL)
+        {
+          ccesse_t *esse=ccseer_entity(seer,next->name);
 
-          if(ccseer_register(seer,esse,next->name))
+          if(!esse)
           {
-            ccseer_associate(seer,next,next->name);
-            ccseer_tether(seer,next,esse->type);
+            esse=ccesse(ccesse_kFUNCTION);
+            esse->tree=next;
+            esse->name=next->name;
+            esse->type=ccseer_typespec(seer,tree->type);
+            // Todo: ensure return type is not a function or an array!
 
-            if(next->init)
+            ccseer_register(seer,esse,next->name);
+          } else
+          {
+            // Todo: leak!
+            cctype_t *type=ccseer_typespec(seer,tree->type);
+
+            ccseer_typecheck(seer,esse->type,type);
+
+            // Todo: better debug info
+            if(esse->tree->blob && tree->blob)
             {
-              cctype_t *value=ccseer_rvalue(seer,next->init);
-
-              ccseer_typecheck(seer,esse->type,value);
+              cctraceerr("%s: already has a body", next->name);
             }
           }
-        }
+
+          if(next->blob)
+          {
+            // Todo:
+            esse->tree=next;
+
+            cctree_t **i;
+            ccarrfor(next->type->list,i)
+            {
+              ccesse_t *e=ccseer_decl(seer,*i);
+              ccassert(e!=0);
+
+              *ccarradd(esse->list,1)=e;
+            }
+
+            ccarrfor(next->blob->list,i)
+              ccseer_tree(seer,*i);
+          }
+        } else
+          cctraceerr("'%s': local function definitions are illegal", next->name);
+
       }
     } break;
 

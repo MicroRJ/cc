@@ -34,7 +34,8 @@ typedef struct cctype_t
   cctoken_k    sort;
   cctree_t   * tree;
   cctype_t   * type;
-  ccelem_t   * list; // Note: table, use tree as key, must be decl-name ...
+  // Note: remove the table, use plain array ...
+  ccelem_t   * list;
   cci32_t      size;
 
   // Todo: implement...
@@ -123,7 +124,7 @@ cctype_specifier(cci32_t size, cctoken_k sort)
 ccfunc char *
 cctype_string(cctype_t *type, char **stringer)
 {
-	if(!type) return "null";
+  if(!type) return "null";
 
   char *buffer=stringer?*stringer:ccnull;
 

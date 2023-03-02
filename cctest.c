@@ -94,11 +94,11 @@ ccdbenter("main");
 
   cctest();
 
-  // "code\\struct.cc","code\\pointer.cc","code\\iterator.cc","code\\array.cc",
-  // "code\\ccprintf.cc","code\\precedence.cc","code\\sizeof.cc","code\\fib.cc"
+  // const char *n[]={
+  // 	"code\\fetch.cc","code\\struct.cc","code\\pointer.cc","code\\iterator.cc","code\\array.cc",
+  // 	"code\\ccprintf.cc","code\\precedence.cc","code\\sizeof.cc","code\\fib.cc"};
 
-  const char *n[]={
-  	"code\\fetch.cc"};
+	const char *n[]={"code\\struct.cc"};
 
   for(int i=0; i<ccCarrlenL(n); ++i)
   { ccexec_value_t e=buildrunfile(n[i]);
