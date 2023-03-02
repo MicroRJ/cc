@@ -15,8 +15,11 @@ typedef struct ccexec_value_t
 { // Todo: probably add some more metadata here for easier debugging!
   ccexec_value_k kind;
 
+  // Note: this is for debugging, we don't use for anything else at all...
+  cctype_t      *type;
+
   union
-  { void    * value;
+  { char    * value;
     cci64_t   constI;
     ccu64_t   constU;
     ccf64_t   constR;

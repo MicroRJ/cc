@@ -2,6 +2,13 @@
 #ifndef _CCEXEC_C
 #define _CCEXEC_C
 
+struct ccstruct_t
+{
+  int a;
+  int b;
+  int c;
+} _t;
+
 ccfunc int
 ccexec_init(ccexec_t *exec)
 { memset(exec,ccnil,sizeof(*exec));
@@ -24,10 +31,11 @@ ccexec_uninit(ccexec_t *exec)
 
 // Note: allocates a register for this value ...
 ccfunc ccinle ccexec_value_t *
-ccexec_register(ccexec_frame_t *frame, ccvalue_t *owner)
+ccexec_register(ccexec_frame_t *frame, ccvalue_t *owner, cctype_t *type)
 {
   ccexec_value_t *result=cctblsetP(frame->values,owner);
   result->kind=ccexec_value_kVALID;
+  result->type=type;
   return result;
 }
 
@@ -117,7 +125,7 @@ ccstack_push(
   return (ccexec_value_t *)ccstack_push_size(exec,length*sizeof(ccexec_value_t));
 }
 
-ccfunc ccinle ccexec_value_t *
+ccfunc ccinle ccexec_value_t
 ccstack_local_alloc(
   ccexec_t *exec, ccexec_frame_t *stack, ccvalue_t *value)
 {
@@ -131,14 +139,12 @@ ccstack_local_alloc(
   ccassert((edict->kind==ccedict_kLOCAL)||(edict->kind==ccedict_kPARAM),
     "cannot allocate local, expected an edict of type LOCAL or PARAM");
 
-  cctype_t *type=edict->type;
+  void *memory=ccstack_push_size(exec,edict->type->size);
+  memset(memory,ccnull,edict->type->size); // Todo:
 
-  void *memory=ccstack_push_size(exec,type->size);
-  memset(memory,ccnull,type->size); // Todo:
-
-  ccexec_value_t *result=ccexec_register(stack,value);
+  ccexec_value_t *result=ccexec_register(stack,value,edict->type);
   result->value=memory;
-  return result;
+  return *result;
 }
 
 ccfunc ccinle ccexec_value_t
@@ -167,6 +173,7 @@ ccexec_edict_arith(cctoken_k opr, ccexec_value_t lval, ccexec_value_t rval)
       ccassert(!"error");
   }
 
+  // Todo:
   ccexec_value_t v;
   v.kind  =ccexec_value_kVALID;
   v.constI=i;
@@ -201,7 +208,14 @@ ccexec_edict(
     } break;
     case ccedict_kLOCAL:
     {
-      ccstack_local_alloc(exec,stack,value);
+      ccexec_value_t lval;
+      lval=ccstack_local_alloc(exec,stack,value);
+
+      // Todo:
+      // ccdebuglog("%p LOCAL: [%s] %p{%s}; %s",
+      //   value,cctype_string(edict->type,ccnull),
+      //   lval.value,cctype_string(lval.type,ccnull),
+      //   cctree_string(edict->tree,ccnull));
     } break;
     case ccedict_kAADDR:
     { ccassert(edict->type!=0);
@@ -216,8 +230,14 @@ ccexec_edict(
       char *memory=cccast(char*,lval.value);
       memory+=type->size*rval.constI;
 
-      ccexec_value_t *saved=ccexec_register(stack,value);
+      ccexec_value_t *saved=ccexec_register(stack,value,type);
       saved->value=(void*)memory;
+
+      // ccdebuglog("%p ADDDR: [%s] %p{%s}, %i; %s",
+      //   value,cctype_string(type,ccnull),
+      //   lval.value,cctype_string(lval.type,ccnull),
+      //   cccast(cci32_t,rval.value),
+      //   cctree_string(edict->tree,ccnull));
     } break;
     case ccedict_kLADDR:
     { ccassert(edict->type!=0);
@@ -226,7 +246,7 @@ ccexec_edict(
       cctype_t *type=edict->type;
       ccexec_value_t lval=ccexec_yield(stack,edict->lval,cctrue);
 
-      ccexec_value_t *saved=ccexec_register(stack,value);
+      ccexec_value_t *saved=ccexec_register(stack,value,type);
       saved->value=lval.value;
 
     } break;
@@ -242,16 +262,36 @@ ccexec_edict(
         ccassert(!"write access violation, nullptr");
 
       // Todo:
-      ccexec_value_t *saved=ccexec_register(stack,value);
+      ccexec_value_t *saved=ccexec_register(stack,value,type);
+
+      // Todo: how would we make this more robust, values of values? In reality, I wouldn't want
+      // to have the notion of a struct at the vm level, but that would require a slightly more
+      // advanced front-end...
+      if(type->kind==cctype_kRECORD)
+      { saved->value=ccstack_push_size(exec,type->size);
+        ccassert(saved->value!=0);
+
+        memcpy(saved->value,lval.value,type->size);
+      } else
+      {
+        memcpy(&saved->value,lval.value,type->size);
+      }
 
       // Todo:
-      memcpy(&saved->value,lval.value,type->size);
+      // ccdebuglog("%p FETCH: [%s] %p{%s}; %s",
+      //   value,cctype_string(type,ccnull),
+      //   lval.value,cctype_string(lval.type,ccnull),
+      //   cctree_string(edict->tree,ccnull));
     } break;
     case ccedict_kSTORE:
     {
       ccassert(edict->type!=0);
       ccassert(edict->lval!=0);
       ccassert(edict->rval!=0);
+
+      ccassert(
+        (edict->tree->kind==cctree_kDECL)||
+        (edict->tree->kind==cctree_kBINARY));
 
       cctype_t *type=edict->type;
       ccexec_value_t lval=ccexec_yield(stack,edict->lval,cctrue);
@@ -261,9 +301,19 @@ ccexec_edict(
         ccassert(!"write access violation, nullptr");
 
       // Todo:
-      memcpy(lval.value,&rval.value,type->size);
+      if(type->kind==cctype_kRECORD)
+        memcpy(lval.value,rval.value,type->size);
+      else
+        memcpy(lval.value,&rval.value,type->size);
 
-      // Todo: produce operand only if necessary and take into account the type
+      // Todo: produce operand
+
+      // Todo:
+      // ccdebuglog("%p STORE: [%s] %p{%s}, %p{%s}; %s",
+      //     value,cctype_string(type,ccnull),
+      //     lval.value,cctype_string(lval.type,ccnull),
+      //     rval.value,cctype_string(rval.type,ccnull),
+      //     cctree_string(edict->tree,ccnull));
     } break;
     case ccedict_kARITH:
     {
@@ -273,7 +323,7 @@ ccexec_edict(
 
       ccexec_value_t val=ccexec_edict_arith(sort,lval,rval);
 
-      ccexec_value_t *saved=ccexec_register(stack,value);
+      ccexec_value_t *saved=ccexec_register(stack,value,ccnull);
       *saved=val;
 
     } break;
@@ -316,8 +366,6 @@ ccexec_edict(
     {
       int rlen=ccarrlen(edict->blob);
 
-      // TODO: WHEN COME BACK REMOVE ALL THIS, THERE'S NO NEED FOR IT!
-
       // Todo: proper push
       ccexec_value_t *rval=ccstack_push(exec,rlen);
       ccexec_value_t *rset=rval;
@@ -327,7 +375,7 @@ ccexec_edict(
         *rset++=ccexec_yield(stack,*list,ccfalse);
 
       // Note: save the return value ...
-      ccexec_value_t *ret=ccexec_register(stack,value);
+      ccexec_value_t *ret=ccexec_register(stack,value,ccnull);
 
       if(edict->lval->kind==ccvalue_kPROCD)
       {
@@ -387,12 +435,12 @@ ccexec_invoke(
   cctree_t **ltree;
   ccarrfor(type->list,ltree)
   { ccvalue_t *lparam=ccprocd_local(procd,*ltree);
-    ccexec_value_t *lvalue=ccstack_local_alloc(exec,&stack,lparam);
+    ccexec_value_t lvalue=ccstack_local_alloc(exec,&stack,lparam);
 
     // Todo: dedicated 'store' ...
 
     cci64_t int_value=i->constI;
-    ccdref(cccast(cci64_t*,lvalue->value))=int_value;
+    ccdref(cccast(cci64_t*,lvalue.value))=int_value;
     i++;
   }
 

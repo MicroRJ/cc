@@ -123,6 +123,8 @@ cctype_specifier(cci32_t size, cctoken_k sort)
 ccfunc char *
 cctype_string(cctype_t *type, char **stringer)
 {
+	if(!type) return "null";
+
   char *buffer=stringer?*stringer:ccnull;
 
   if(type->kind==cctype_kPOINTER)

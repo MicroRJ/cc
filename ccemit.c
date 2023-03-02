@@ -40,9 +40,10 @@ ccemit_include_local(
   *v=i;
 
   if(tree->init)
-    ccblock_store(block,tree->init,esse->type,i,
+  {
+    ccblock_store(block,tree,esse->type,i,
       ccemit_rvalue(emit,procd,block,tree->init));
-
+  }
   return i;
 }
 
@@ -115,7 +116,7 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
     { cctype_t *type=ccseer_tree_type(emit->seer,tree->lval);
       ccassert(type!=0);
 
-      result=ccemit_value(emit,procd,block,tree->lval,1);
+      result=ccemit_value(emit,procd,block,tree->lval,cctrue);
 
       if(type->kind==cctype_kPOINTER)
         result=ccblock_fetch(block,tree,type,result);
@@ -159,7 +160,9 @@ ccemit_value(ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, cctree_t *tree,
       if(type->kind==cctype_kPOINTER)
         lvalue=ccblock_fetch(block,tree,type,lvalue);
 
-      // Todo: should we use a specific instruction for this?
+      // Todo: should we use a specific instruction for this or should all instructions be raw byte offsets??
+      // Todo: or, should we get rid of the struct concept itself from here and consider all these as new
+      // entities each time...
       result=ccblock_aaddr(block,tree,emit->seer->type_stdc_char,lvalue,rvalue);
 
       if(!is_lval)

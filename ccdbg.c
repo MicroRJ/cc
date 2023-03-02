@@ -455,7 +455,7 @@ cctrace_(cccaller_t caller, const char *label, const char *format, ...)
 
   int rem=sizeof(buf)-len;
   ccformatex(buf+len,rem,"%s: %s[%i] %s() %s\n",
-    label,caller.file,caller.line,caller.func,buf);
+    label,ccfilename(caller.file),caller.line,caller.func,buf);
 
   ccout(buf+len);
 

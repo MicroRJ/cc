@@ -2,18 +2,37 @@
 struct person_t
 { char  *name;
   char  *last_name;
-  int age;
+  int    age;
+  int    pad;
 } ___;
+
+int printint(int *i)
+{
+  int _i=*i;
+  ccprintf("%i\n",_i);
+}
+
+int printperson(person_t *_p)
+{
+  person_t p=*_p;
+
+  ccprintf("%s %s, %i", p.name, p.last_name, p.age);
+
+  return 1;
+}
 
 int main(int _)
 {
-
   person_t person;
+
   person.name="Dayan";
   person.last_name="Rodriguez";
+  person.age=19;
+  person.age=19;
 
-  ccassert(sizeof(person) == 20);
-  ccassert(sizeof(person_t) == 20);
+  person_t *pointer=&person;
+  printperson(pointer);
 
-  ccprintf("%s %s, %i\n", person.name, person.last_name, person.age);
+  int l=777;
+  printint(&l);
 }

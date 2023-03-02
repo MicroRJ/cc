@@ -344,6 +344,23 @@ cctree_string(cctree_t *tree, char **stringer)
       else
       ccassert(!"error");
     break;
+    case cctree_kDECL:
+      ccstrcatF(buffer,"%s: ",tree->name);
+      cctree_string(tree->type,&buffer);
+    break;
+    case cctree_kSELECTOR:
+    	cctree_string(tree->lval,&buffer);
+      ccstrcatL(buffer,".");
+      cctree_string(tree->rval,&buffer);
+    break;
+    case cctree_kBINARY:
+      if(tree->sort==cctoken_kASSIGN)
+      {
+        cctree_string(tree->lval,&buffer);
+        ccstrcatL(buffer,"=");
+        cctree_string(tree->rval,&buffer);
+      }
+    break;
     case cctree_kSTRUCT:
       ccstrcatL(buffer,"struct");
     break;
@@ -364,11 +381,18 @@ cctree_string(cctree_t *tree, char **stringer)
       ccstrcatL(buffer,"]");
       cctree_string(tree->type,&buffer);
     break;
+    case cctree_kADDRESSOF:
+      ccstrcatL(buffer,"&");
+      cctree_string(tree->lval,&buffer);
+    break;
+    case cctree_kDEREFERENCE:
+      ccstrcatL(buffer,"*");
+      cctree_string(tree->lval,&buffer);
+    break;
     case cctree_kPOINTER:
       ccstrcatL(buffer,"*");
       cctree_string(tree->type,&buffer);
     break;
-
     case cctree_kINDEX:
       cctree_string(tree->lval,&buffer);
       ccstrcatL(buffer,"[");
