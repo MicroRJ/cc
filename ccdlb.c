@@ -238,5 +238,4 @@ ccstr_catf(char **ccm, const char *fmt, ...)
   return res;
 }
 
-
 #endif

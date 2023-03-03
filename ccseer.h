@@ -2,8 +2,45 @@
 #ifndef _CCSEER_H
 #define _CCSEER_H
 
-// Note: sizeof and typeof we get in the tether table... typeof results in a type operand and
-// sizeof in a constant operand ... should we do it that way?
+// Note: Implicit entities as a means for getting rid of structs entirely:
+// We have the concept of an entity or esse, amongst the many things we'd picture an entity
+// to be, is a named or explicit variable, and we can further extend that definition to allow
+// for implicit entities, entities that are not necessarily named but rather implicitly included
+// when you include an explicit entity, so you end up with this hierarchy of entities...
+//
+// struct _t { int b, c; } a;
+// 'a' is an explicit entity, and 'b' and 'c' are implicit and do not collide with any other names outside
+// the scope of the struct itself...
+//
+// Using this system we simplify the emitter stage since struct-typed variables act as a pseudo namespaces...
+//
+// Note: Downside of implicit entities:
+// My biggest oversight was thinking that it would work just fine in the case of pointers too,
+// since entities, explicit or implicit, are allocated on the stack in order, memory operations
+// such as de-referencing or copying should still work fine and be as simple as they were before.
+// Even though this is true, it does not make for a good 'value' system and it isn't as simple.
+//
+// struct _t { int b, c; };
+// _t  a;
+// _t *b;
+// _t *c;
+//
+// b=&a;
+// a=*b;
+// b=c;
+//
+// '&a': is pretty much an impossible operation, first, what does that even mean, are we getting the address
+// of each entity? clearly no, that isn't how things would work, we have to instead get the address of where
+// the value 'a' resides, but what IS 'a'? 'a' is undefined, there's no such thing as 'a', there's only
+// 'a::b' and 'a::c'. Now, you could ask for the address of the first member of 'a', which is possible
+// but that doesn't fix the next problem.
+//
+// '*b': is pretty much also, an impossible operation since 'b' is undefined, there's only 'b::b' and 'b::c'.
+//
+// In summary, the problem is that you need some sort of tangible value to reference and operate on, but there's
+// none.
+//
+//
 typedef enum ccbuiltin_k ccbuiltin_k;
 typedef enum ccbuiltin_k
 {
@@ -41,18 +78,6 @@ typedef struct ccesse_t
 typedef struct ccseer_t ccseer_t;
 typedef struct ccseer_t
 {
-  // Todo: I think that this is going to be key in getting rid of structs entirely.
-  // We have the concept of an entity which is a named variable, but we could extend that definition
-  // to allow for implicit entities, member variables, which are still unique.
-  // We can use the symbol table along with selector trees to find them.
-  // The idea is that you have this hierarchy of memory operands, in which
-  // member variables are simply relative offsets, but they are also entities...
-  // Since struct typed entities are orderly allocated on the stack, memory operations
-  // such as de-referencing or copying a struct typed variable should still work fine and be
-  // as simple as it was before.
-  // The first step towards that would be having a more robust and cleaner front-end..
-  //
-
   // Note: we could recycle all these tables for the entire compilation step...
   ccesse_t  ** entity_table;
   ccesse_t  ** symbol_table;
