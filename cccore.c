@@ -60,7 +60,7 @@ ccmalloc__(ccexec_t *e, ccvalue_t *v, cci32_t n, ccexec_value_t *i)
 
   ccexec_value_t r;
   r.kind=ccexec_value_kVALID;
-  r.value=ccmalloc((size_t)i[0].value);
+  r.value=(char*)ccmalloc((size_t)i[0].value);
   return r;
 }
 
@@ -72,7 +72,7 @@ ccrealloc__(ccexec_t *e, ccvalue_t *v, cci32_t n, ccexec_value_t *i)
 
   ccexec_value_t r;
   r.kind=ccexec_value_kVALID;
-  r.value=ccrealloc((void *)i[0].value,(size_t)i[1].value);
+  r.value=(char*)ccrealloc((void *)i[0].value,(size_t)i[1].value);
   return r;
 }
 
@@ -83,7 +83,7 @@ ccopenfile__(ccexec_t *e, ccvalue_t *v, cci32_t n, ccexec_value_t *i)
 
   ccexec_value_t r;
   r.kind=ccexec_value_kVALID;
-  r.value=(void*)ccopenfile((char *)i[0].value,(char *)i[1].value);
+  r.value=(char*)ccopenfile((char *)i[0].value,(char *)i[1].value);
   return r;
 }
 
@@ -94,7 +94,7 @@ ccpushfile__(ccexec_t *e, ccvalue_t *v, cci32_t n, ccexec_value_t *i)
 
   ccexec_value_t r;
   r.kind=ccexec_value_kVALID;
-  r.value=(void*)ccpushfile((void *)i[0].value,(ccu32_t)i[1].value,(ccu32_t)i[2].value,(void *)i[3].value);
+  r.value=(char*)ccpushfile((void *)i[0].value,(ccu32_t)i[1].value,(ccu32_t)i[2].value,(void *)i[3].value);
   return r;
 }
 

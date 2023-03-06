@@ -144,7 +144,7 @@ ccstack_local_alloc(
   memset(memory,ccnull,edict->type->size); // Todo:
 
   ccexec_value_t *result=ccexec_register(stack,value,edict->type);
-  result->value=memory;
+  result->value=(char*)memory;
   return *result;
 }
 

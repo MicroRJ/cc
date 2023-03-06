@@ -27,7 +27,7 @@ ccread_include(ccread_t *reader, const char *name)
 {
   ccu32_t size=0;
   void *file=ccopenfile(name,"r");
-  char *data=ccpullfile(file,0,&size);
+  char *data=(char*)ccpullfile(file,0,&size);
   ccclosefile(file);
 
   reader->doc_max=data+size;
@@ -191,13 +191,14 @@ ccread_primary(ccread_t *reader, cctree_t *root, int mark)
       result=ccread_primary_suffix(reader,root,mark,result);
     break;
     case cctoken_kLPAREN:
-      ccgobble(reader);
+    {
+    	ccgobble(reader);
       cctree_t *group=ccread_expression(reader,root,mark);
       if(!cceat(reader,cctoken_kRPAREN))
         ccsynerr(reader,0,"expected ')'");
       result=cctree_unary_ex(root,mark,cctree_kGROUP,group);
       result=ccread_primary_suffix(reader,root,mark,result);
-    break;
+    } break;
     case cctoken_kSIZEOF:
       ccgobble(reader);
       if(cceat(reader,cctoken_kLPAREN))

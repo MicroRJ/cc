@@ -1,20 +1,33 @@
 // Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
-#ifndef _CC
-#define _CC
+#ifndef _CC_C
+#define _CC_C
+
+#define _CCVERSION 1000
 
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 #include <malloc.h>
 #include <memory.h>
 #include <string.h>
+
+#include <immintrin.h>
+#include <emmintrin.h>
+#include <intrin.h>
+
+#include <math.h>
+
+#define STB_SPRINTF_IMPLEMENTATION
+#include "stb_sprintf.h"
 
 #if defined(_DEBUG) || defined(DEBUG) || defined(DBG)
 # define _CCDEBUG
 #endif
 
-#define STB_SPRINTF_IMPLEMENTATION
-#include "stb_sprintf.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define _CCGUID __COUNTER__
 #define _CCFILE __FILE__
@@ -29,8 +42,11 @@
 
 // Note: suppress warnings ...
 #ifdef _MSC_VER
+# pragma warning(disable:4018) // signed unsigned mismatch
+# pragma warning(disable:4101) // not referenced local variable
 # pragma warning(disable:4311) // cast pointer to int
 # pragma warning(disable:4312) // cast int to pointer
+# pragma warning(disable:4302) // w'type cast': truncation from 'char *' to 'ccu32_t'
 # pragma warning(disable:4706)
 #ifdef _DEVELOPER
 # pragma warning(disable:4189)
@@ -130,7 +146,7 @@ _CCASSERT(sizeof(cci16_t)==2);
 # endif
 #endif
 
-// Note: some necessary error codes ... this is only used for the dlb api because I couldn't find another way ...
+// Note: some necessary error codes ...
 typedef enum ccerr_k
 {
   ccerr_kNON=0,
@@ -143,12 +159,6 @@ ccglobal const char *ccerr_s[]=
   "not in table",
   "already in table",
 };
-
-typedef enum ccfile_k
-{
-  ccfile_kREAD  = 1,
-  ccfile_kWRITE = 2,
-} ccfile_k;
 
 // Note:
 typedef ccu64_t ccclocktime_t;
@@ -261,7 +271,6 @@ ccfunc void *ccinternalallocator_(size_t,void*);
 ccglobal ccthread_local ccerr_k    ccerr;
 ccglobal ccthread_local ccentry_t *ccentry;
 
-ccglobal ccthread_local ccstr_t cckey;
 #define ccerrstr()    (ccerr_s[ccerr])
 #define ccerrset(val) ((ccerr=val),0)
 #define ccerrnon()    ((ccerr)==ccerr_kNON)
@@ -275,6 +284,9 @@ ccglobal ccthread_local ccstr_t cckey;
 // Note:
 ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
 
+// ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
+
+// Todo: remove this!
 ccglobal ccthread_local cccaller_t cclastcaller;
 
 #define cccall() (cclastcaller=cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC))
@@ -296,10 +308,6 @@ ccglobal ccthread_local ccallocator_t *ccallocator=ccuserallocator_;
 ccglobal ccthread_local ccsentry_t   ccdebugroot;
 ccglobal ccthread_local ccsentry_t  *ccdebugthis;
 ccglobal ccthread_local cci32_t      ccdebugnone;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 // Note: c array literal length
 #ifndef ccCarrlenL

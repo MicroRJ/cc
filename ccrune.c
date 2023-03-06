@@ -49,13 +49,13 @@ ccread_token_identifier(ccread_t *reader, char *s)
     name=e->name;
   } else
   { kind=e->kind=cctoken_kLITIDENT;
-    name=e->name=ccmalloc(n+1);
+    name=e->name=(char*)ccmalloc(n+1);
 
     memcpy(name,s,n);
     name[n]=0;
   }
 
-  reader->tok.kind=kind;
+  reader->tok.kind=(cctoken_k)kind; // Note: cpp
   reader->tok.name=name;
 
   return s+n;

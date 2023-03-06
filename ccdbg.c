@@ -56,8 +56,6 @@ cccaller(int guid, const char *file, int line, const char *func)
   return t;
 }
 
-#ifdef _HARD_DEBUG
-
 // Todo: REMOVE
 ccfunc ccsentry_t *
 ccdebug_()
@@ -318,6 +316,18 @@ ccfunc void *ccuserallocator_(size_t size,void *data)
 ccfunc void
 ccini()
 {
+  // HWND consoleWnd=GetConsoleWindow();
+  // if(consoleWnd)
+  // {
+  //   DWORD dwProcessId;
+  //   GetWindowThreadProcessId(consoleWnd,&dwProcessId);
+  //   if(GetWindowThreadProcessId(consoleWnd, &dwProcessId))
+  //   {
+  //     ccdebuglog("otherwise allocate console",0);
+  //   }
+  // }
+
+
   ccdebugthis=&ccdebugroot;
 
   cccolormove(7);
@@ -416,7 +426,6 @@ ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker)
 
   return sentry->master;
 }
-#endif
 
 ccfunc void
 ccdebugend()
@@ -431,7 +440,7 @@ ccdebugend()
 ccfunc void
 ccout(const char *string)
 {
-#if defined(_DEBUG) && defined(_WIN32)
+#if defined(_CCDEBUG) && defined(_WIN32)
   OutputDebugStringA(string);
 #endif
   printf(string);

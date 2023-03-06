@@ -16,6 +16,9 @@
 // # define _NO_CRT_STDIO_INLINE
 // #endif
 #include <windows.h>
+#include <winuser.h>
+
+#pragma comment(lib,"User32")
 #endif
 
 ccfunc const char *

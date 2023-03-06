@@ -2,6 +2,24 @@
 #ifndef _CCCOLOR
 #define _CCCOLOR
 
+#define CCFG_BLACK        "<!0"
+#define CCFG_BLUE         "<!1"
+#define CCFG_GREEN        "<!2"
+#define CCFG_CYAN         "<!3"
+#define CCFG_RED          "<!4"
+#define CCFG_MAGENTA      "<!5"
+#define CCFG_BROWN        "<!6"
+#define CCFG_LIGHTGRAY    "<!7"
+#define CCFG_GRAY         "<!8"
+#define CCFG_LIGHTBLUE    "<!9"
+#define CCFG_LIGHTGREEN   "<!0"
+#define CCFG_LIGHTCYAN    "<!1"
+#define CCFG_LIGHTRED     "<!2"
+#define CCFG_LIGHTMAGENTA "<!3"
+#define CCFG_YELLOW       "<!4"
+#define CCFG_WHITE        "<!F"
+#define CCEND             "!>"
+
 // Todo: actually setup the color table properly ...
 // CONSOLE_SCREEN_BUFFER_INFOEX e={sizeof(e)};
 // if(GetConsoleScreenBufferInfoEx(h,&e))
@@ -24,6 +42,7 @@ ccprintf(const char *r, ...)
 #define cccolorwval(   )  (cci16_t) va_arg(vli,cci32_t)
 #define cccolorcval(   )  (char   ) va_arg(vli,char   )
 
+  // --- Todo: remove this from here!
   HANDLE h=GetStdHandle(STD_OUTPUT_HANDLE);
 
 

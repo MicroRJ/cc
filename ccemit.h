@@ -142,7 +142,7 @@ ccemit_include_global(ccemit_t *emit, const char *label)
   ccassert(ccerrnon() ||
     cctraceerr("'%s': failed to include global, %s",label,ccerrstr()));
 
-  ccvalue_t *value=ccvalue(label);
+  ccvalue_t *value=ccvalue();
   *v=value;
   return value;
 }

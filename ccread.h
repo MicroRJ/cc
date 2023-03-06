@@ -200,7 +200,7 @@ typedef struct cctoken_entry_t
 
 typedef struct cctoken_t cctoken_t;
 typedef struct cctoken_t
-{ cctoken_k   kind;
+{ cctoken_k   kind; // Todo:
 
   union
   { char      * name;

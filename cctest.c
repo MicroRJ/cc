@@ -90,17 +90,17 @@ int main(int argc, char **argv)
 // Todo:
 ccdebugnone=ccfalse;
 ccini();
-ccdbenter("main");
 
+ccdbenter("main");
   cctest();
 
   const char *n[]={
-  	"code\\fetch.cc","code\\struct.cc","code\\pointer.cc","code\\iterator.cc","code\\array.cc",
-  	"code\\ccprintf.cc","code\\precedence.cc","code\\sizeof.cc","code\\fib.cc"};
+    "code\\fetch.cc","code\\struct.cc","code\\pointer.cc","code\\iterator.cc","code\\array.cc",
+    "code\\ccprintf.cc","code\\precedence.cc","code\\sizeof.cc","code\\fib.cc"};
 
   for(int i=0; i<ccCarrlenL(n); ++i)
   { ccexec_value_t e=buildrunfile(n[i]);
-    ccprintf("<!6'%s'!>: <!3%lli!>\n",n[i],e.constI);
+    ccprintf(CCFG_BROWN "'%s'!>: " CCFG_LIGHTBLUE"%lli!>\n",n[i],e.constI);
   }
 ccdbleave("main");
 
@@ -115,8 +115,9 @@ void cctest()
 
   _t *v=ccnull;
   for(int i=0; i<256; ++i)
-  { ccarradd(v,1)->s=h;
-  }
+    ccarradd(v,1)->s=h;
+
+  ccarrdel(v);
 
 ccdbenter("test");
 
