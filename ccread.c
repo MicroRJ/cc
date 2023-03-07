@@ -680,6 +680,8 @@ ccread_type_name(
 ccfunc cctree_t *
 ccread_decl_spec(ccread_t *reader, cctree_t *root, int mark)
 {
+	(void)mark;
+
   cctree_t *type=ccread_type_spec(reader);
   return type;
 }

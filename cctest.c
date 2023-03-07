@@ -1,5 +1,6 @@
 // Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #include "cc.c"
+#include "ccemit-c.c"
 
 // Todo: temporary!
 ccfunc void
@@ -94,6 +95,7 @@ ccini();
 ccdbenter("main");
   cctest();
 
+
   const char *n[]={
     "code\\fetch.cc","code\\struct.cc","code\\pointer.cc","code\\iterator.cc","code\\array.cc",
     "code\\ccprintf.cc","code\\precedence.cc","code\\sizeof.cc","code\\fib.cc"};
@@ -103,6 +105,8 @@ ccdbenter("main");
     ccprintf(CCFG_BROWN "'%s'!>: " CCFG_LIGHTBLUE"%lli!>\n",n[i],e.constI);
   }
 ccdbleave("main");
+
+  ccemitC();
 
 ccdebugend();
 }

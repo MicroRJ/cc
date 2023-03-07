@@ -4,8 +4,6 @@
 
 // Note: this is just a mess of stuff that I have to organize ...
 
-
-
 // Todo: remove this from here!
 ccfunc ccinle int
 ccformatvex(char *buf, int len, const char * fmt, va_list vli)
@@ -69,7 +67,7 @@ ccdebug_()
 }
 
 ccfunc ccinle ccf64_t
-ccclockperc(ccclocktime_t total, ccclocktime_t local)
+ccclockperc(ccclocktick_t total, ccclocktick_t local)
 {
   return 100.0 * ( cccast(ccf64_t,local) /
                    cccast(ccf64_t,total) );
@@ -100,7 +98,7 @@ ccbytecountreadable(cci64_t b, ccf64_t *f)
 #include "cccolor.c"
 
 ccfunc void
-ccsentry_block_check(ccallocator_t *allocator, ccsentry_block_t *block)
+ccsentry_block_check(ccallocator_t *allocator, ccward_t *block)
 { for(int i=0; i<4; ++i)
     ccassert(block->head_guard[i]==ccnull ||
       cctraceerr("corrupted heap block, head guard breached",0));
@@ -124,7 +122,7 @@ ccsentry_block_check(ccallocator_t *allocator, ccsentry_block_t *block)
 }
 
 
-ccfunc void *ccinternalallocator_(size_t size,void *data)
+ccfunc void *ccinternalallocator_(cccaller_t caller, size_t size,void *data)
 { if(size)
   { if(data)
       return realloc(data,size);
@@ -188,7 +186,7 @@ ccdebugdump()
   cctracelog("Debug Dump: ",0);
 
   // Note: this is dumb!
-  ccclocktime_t t=0;
+  ccclocktick_t t=0;
 
   ccdebugroot.caller=cccall();
   ccdebugroot.marker="root-master";
@@ -202,8 +200,8 @@ ccdebugdump()
 
   int freed_count=0;
 
-  ccsentry_block_t *f;
-  for(ccsentry_block_t *i=ccdebugroot.block_list;i;freed_count++)
+  ccward_t *f;
+  for(ccward_t *i=ccdebugroot.block_list;i;freed_count++)
   {
     f=i;
     i=i->prev;
@@ -215,8 +213,8 @@ ccdebugdump()
 }
 
 
-ccfunc ccsentry_block_t *
-ccsentry_remblock(ccsentry_t *sentry, ccsentry_block_t *block)
+ccfunc ccward_t *
+ccsentry_remblock(ccsentry_t *sentry, ccward_t *block)
 { ccassert(block->sentry==ccdebugthis);
 
   if(block->prev) block->prev->next=block->next;
@@ -229,8 +227,8 @@ ccsentry_remblock(ccsentry_t *sentry, ccsentry_block_t *block)
   return block;
 }
 
-ccfunc ccsentry_block_t *
-ccsentry_addblock(ccsentry_t *sentry, ccsentry_block_t *block)
+ccfunc ccward_t *
+ccsentry_addblock(ccsentry_t *sentry, ccward_t *block)
 {
   if(sentry->block_list)
   { block->prev=sentry->block_list;
@@ -243,17 +241,15 @@ ccsentry_addblock(ccsentry_t *sentry, ccsentry_block_t *block)
 
 
 
-ccfunc void *ccuserallocator_(size_t size,void *data)
+ccfunc void *ccuserallocator_(cccaller_t caller, size_t size,void *data)
 {
-  cccaller_t caller=cclastcaller;
-
-  ccsentry_block_t *block=ccnull;
+  ccward_t *block=ccnull;
   if(!size)
   {
     if(data)
     {
       ccsentry_t *sentry=ccdebug();
-      block=(ccsentry_block_t*)data-1;
+      block=(ccward_t*)data-1;
       ccsentry_block_check(ccuserallocator_,block);
 
       if(block->prev) block->prev->next=block->next;
@@ -274,12 +270,12 @@ ccfunc void *ccuserallocator_(size_t size,void *data)
   { if(data)
     {
       ccsentry_t *debug=ccdebug();
-      block=(ccsentry_block_t*)data-1;
+      block=(ccward_t*)data-1;
       ccsentry_block_check(ccuserallocator_,block);
 
       debug->metrics.nm+=block->size;
 
-      block=(ccsentry_block_t*)realloc(block,sizeof(*block)+size);
+      block=(ccward_t*)realloc(block,sizeof(*block)+size);
       block->caller=caller;
       block->size=size;
 
@@ -293,7 +289,7 @@ ccfunc void *ccuserallocator_(size_t size,void *data)
     } else
     {
       ccsentry_t *debug=ccdebug();
-      block=(ccsentry_block_t*)malloc(sizeof(*block)+size);
+      block=(ccward_t*)malloc(sizeof(*block)+size);
       memset(block,ccnil,sizeof(*block));
       block->allocator=ccuserallocator_;
       block->caller=caller;
@@ -415,9 +411,9 @@ ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker)
   sentry->last_metrics.nbc=sentry->metrics.nbc;
 
   // Note:
-  ccsentry_block_t *block;
+  ccward_t *block;
   for(block=sentry->block_list;block;)
-  { ccsentry_block_t *remove=block;
+  { ccward_t *remove=block;
     block=block->prev;
 
     // Todo: are you silly? you don't have to "remove" each block, you're given them all off anyways ...

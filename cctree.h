@@ -135,7 +135,7 @@ cctree_clone(cctree_t *tree)
   return result;
 }
 
-ccfunc ccstr_t
+ccfunc char *
 cctree_name(cctree_t *name)
 {
   return name?name->name:0;

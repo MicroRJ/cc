@@ -2,340 +2,259 @@
 #ifndef _CCEMIT_C
 #define _CCEMIT_C
 
-// Note: do not pay attention to this file
+// Note: this is just a test file to see how one would go about generating code
+// for another programming language...
 
-typedef enum
-{ kttcc_declspec_signed,
-  kttcc_declspec_unsigned,
-  kttcc_declspec_host,
-  kttcc_declspec_float,
-} kttcc_declspec;
-typedef enum
-{
-  kttcc_typekind_nil=0,
-  kttcc_typekind_mmx,
-  kttcc_typekind_var,
-  kttcc_typekind_fix,
-  kttcc_typekind_vec,
-  kttcc_typekind_ptr,
-  kttcc_typekind_ref,
-  kttcc_typekind_arr,
-} kttcc_typekind;
-typedef struct kttcc_type
-{ kttcc_typekind typekind;
-  kttcc_declspec declspec;
-  int            bitlen_max;
-  int            bitlen_min;
-  int            bitlen;
-  int            length;
-  kttcc_type *   element;
-} kttcc_type;
+typedef enum ccemitC_class_k ccemitC_class_k;
+typedef enum ccemitC_class_k
+{ ccemitC_kSIGNED=0,
+  ccemitC_kUNSIGNED=1,
+  ccemitC_kHOST=2,
+  ccemitC_kFLOAT=3,
+  ccemitC_kPOINTER,
+  ccemitC_kARRAY,
+  ccemitC_kSTRUCT,
+  ccemitC_kVECTOR,
+  ccemitC_kFUNCTION,
+  ccemitC_kOPERATOR,
+  ccemitC_kTYPENAME,
+} ccemitC_class_k;
 
-kttcc_type *gen_type(kttcc_typekind k)
-{
-  kttcc_type *type=(kttcc_type *)ccmalloc(sizeof(*type));
+typedef enum ccemitC_operator_k ccemitC_operator_k;
+typedef enum ccemitC_operator_k
+{ ccemitC_kMUL,
+  ccemitC_kDIV,
+  ccemitC_kADD,
+  ccemitC_kSUB,
+} ccemitC_operator_k;
 
-  type->typekind=k;
-  type->element=type;
+typedef struct ccemitC_class_t ccemitC_class_t;
+typedef struct ccemitC_class_t
+{ ccemitC_class_k           kind;
+  int                       size;
+  struct ccemitC_class_t *  type;
+  struct ccemitC_class_t ** list;
+  const char              * name;
+  ccemitC_operator_k        sort;
+} ccemitC_class_t;
 
-  return type;
-}
 
-kttcc_type *gen_vectype(kttcc_type *t, int length)
-{
-  kttcc_type *type=gen_type(kttcc_typekind_vec);
+static const char *op[]={"*","/","+","-"};
 
-  type->element=t;
-  type->length=length;
-
-  return type;
-}
-
-kttcc_type *gen_ptrtype(kttcc_type *t)
-{
-  kttcc_type *type=gen_type(kttcc_typekind_ptr);
-
-  type->element=t;
-
-  return type;
-}
-
-kttcc_type *gen_vartype(kttcc_declspec d,int i,int a)
-{
-  kttcc_type *type=gen_type(kttcc_typekind_var);
-
-  type->declspec=d;
-  type->bitlen_min=i;
-  type->bitlen_max=a;
-
-  return type;
-}
-
-kttcc_type *gen_fixtype(kttcc_declspec d,int b)
-{
-  kttcc_type *type=gen_type(kttcc_typekind_fix);
-
-  type->declspec=d;
-  type->bitlen=b;
-
-  return type;
-}
-
-static const char  vn[]={'r','a','b','c','d','e','f','g','h','i'};
 static const char  pf[]={'i','u','c','f'};
-static const char  fn[]={'x','y','z','w'};
 static const char *fm[]={"i","lli","c","f"};
+static const char *pn[]={"a","b","c","d"};
+static const char *vn[]={"r","a","b","c","d","e"};
+static const char *fn[]={"x","y","z","w"};
 
-const int gen_typename_ex(kttcc_type *t, char *buf, int len)
+void ccemitC_decl(char **out, ccemitC_class_t *t, const char *name);
+
+void ccemitC_typename(char **out, ccemitC_class_t *c)
 {
-  if(t->typekind==kttcc_typekind_fix)
-  {
-    return ccformatex(buf,len,"%c%i",pf[t->declspec],t->bitlen);
-  } else
-  if(t->typekind==kttcc_typekind_mmx)
-  {
-    return ccformatex(buf,len,"%c%i_%i",pf[t->declspec],t->bitlen_max,t->bitlen_min);
-  } else
-  if(t->typekind==kttcc_typekind_vec)
-  {
-    int p=gen_typename_ex(t->element,buf,len);
-    return ccformatex(buf+p,len-p,"x%i",t->length);
-  } else
-  {
-    return 0;
-  }
-}
+  if(c->kind==ccemitC_kFUNCTION)
+  { ccassert(c->type!=0);
 
-const char *gen_typename(kttcc_type *t)
-{
-  static char buf[0x20];
-  gen_typename_ex(t,buf,0x20);
-  return buf;
-}
-
-void emit_typename(char **out, kttcc_type *t)
-{
-  ccstr_catf(out,"%s",gen_typename(t));
-}
-
-void emit_modifier(char **out, kttcc_typekind modifier)
-{
-  if(modifier==kttcc_typekind_ptr) ccstr_catf(out,"*");
-  if(modifier==kttcc_typekind_ref) ccstr_catf(out,"&");
-  if(modifier==kttcc_typekind_arr) ccstr_catf(out,"[]");
-}
-
-void emit_vardecl_ex(char **out, kttcc_type *t, kttcc_typekind override_modifier, char name)
-{
-  ccstr_catf(out,"%s ",gen_typename(t));
-
-  if((override_modifier==kttcc_typekind_ptr) ||
-     (override_modifier==kttcc_typekind_ref))
-  {
-    emit_modifier(out,override_modifier);
-  } else
-  for(;;)
-  { if((t->typekind==kttcc_typekind_ptr) ||
-       (t->typekind==kttcc_typekind_ref))
-    {
-      emit_modifier(out,t->typekind);
-    } else break;
-  }
-
-  ccstr_catf(out,"%c",name);
-
-  if((override_modifier==kttcc_typekind_arr))
-  {
-    emit_modifier(out,override_modifier);
-  } else
-  for(;;)
-  {
-    if((t->typekind==kttcc_typekind_arr))
-    {
-      emit_modifier(out,t->typekind);
-    } else break;
-  }
-}
-
-void emit_vardecl(char **out, kttcc_type *t, char name)
-{
-  emit_vardecl_ex(out,t,kttcc_typekind_nil,name);
-}
-
-void emit_fundecl(char **out, kttcc_type *t, int l, kttcc_type *r, char *n)
-{
-  ccstr_catf(out,"static ");
-  if(r)
-  { emit_typename(out,r);
-  } else
-  { ccstr_catf(out,"void");
-  }
-  ccstr_catf(out,"\r\n%s",n);
-
-  ccstr_catf(out,"(");
-  for(int i=0;i<l;++i)
-  { if(i) ccstr_catf(out,",");
-    emit_vardecl(out,t,fn[i]);
-  }
-  ccstr_catf(out,")");
-
-}
-
-
-void genmake(char **out, kttcc_type *t)
-{
-  emit_fundecl(out,t->element,t->length,t,
-    ccformat("%sm",gen_typename(t)));
-
-  ccstr_catf(out,"\r\n");
-  ccstr_catf(out,"{ ");
-
-  emit_vardecl(out,t,'r');
-  ccstr_catf(out,";");
-
-  for(int i=0;i<t->length;++i)
-  { ccstr_catf(out,"\r\n  r.%c=%c;",fn[i],fn[i]);
-  }
-
-  ccstr_catf(out,"\r\n  return r;\r\n");
-  ccstr_catf(out,"}\r\n");
-}
-
-void emit_vecoprari(char **out, kttcc_type *t, const char *opr)
-{
-  ccstr_catf(out,"static %s operator %s (", gen_typename(t), opr);
-
-  if(strlen(opr)==2 && opr[1]=='=')
-  {
-    emit_vardecl_ex(out,t,kttcc_typekind_ref,'a');
-  } else
-  {
-    emit_vardecl(out,t,'a');
-  }
-
-  ccstr_catf(out,",");
-  emit_vardecl(out,t,'b');
-
-  ccstr_catf(out,")\r\n");
-
-  ccstr_catf(out,"{ ");
-  emit_vardecl(out,t,'r');
-  ccstr_catf(out,";");
-
-  for(int i=0;i<t->length;++i)
-  { ccstr_catf(out,"\r\n  r.%c=a.%c%cb.%c;",fn[i],fn[i],opr[0],fn[i]);
-  }
-  ccstr_catf(out,"\r\n  return r;\r\n");
-  ccstr_catf(out,"}\r\n");
-}
-
-#if 0
-void gentostring(char **out, kttcc_type *t)
-{
-  ccstr_catf(out,"static const char *");
-  ccstr_catf(out,"\r\n");
-  emit_typename(out,t);
-  ccstr_catf(out,"tos(");
-  emit_vardecl(out,t,'a');
-  ccstr_catf(out,")\r\n");
-  ccstr_catf(out,"{ return ccformat(\"");
-  for(int i=0;i<cc;++i)
-  { ccstr_catf(out,".%c:%%i",fn[i]);
-  }
-  ccstr_catf(out,"\"");
-
-  for(int i=0;i<cc;++i)
-  { ccstr_catf(out,",a.%c",fn[i]);
-  }
-  ccstr_catf(out,");");
-
-  ccstr_catf(out,"\r\n}\r\n");
-}
-void genoperdot(char **out, kttcc_type t,int bl,int cc)
-{
-  ccstr_catf(out,"static ");
-  emit_typename(out,t);
-  ccstr_catf(out,"\r\n");
-  emit_typename(out,t);
-  ccstr_catf(out,"dot(");
-  emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'a');
-  ccstr_catf(out,",");
-  emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'b');
-  ccstr_catf(out,")\r\n");
-  ccstr_catf(out,"{ ");
-  ccstr_catf(out,"return ");
-  for(int i=0;i<cc;++i)
-  { if(i) ccstr_catf(out,"+");
-    ccstr_catf(out,"(a.%c*b.%c)",fn[i],fn[i]);
-  }
-  ccstr_catf(out,";\r\n}\r\n");
-}
-void genoperrel(char **out, kttcc_type t,int bl,int cc,const char *opr)
-{
-  ccstr_catf(out,"static i32\r\noperator %s (", opr);
-  emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'a');
-  ccstr_catf(out,",");
-  emit_vardecl(out,t,bl,cc,kttcc_typekind_fix,'b');
-  ccstr_catf(out,")\r\n");
-  ccstr_catf(out,"{ ");
-
-  ccstr_catf(out,"return ");
-
-  for(int i=0;i<cc;++i)
-  { if(i) ccstr_catf(out,"&&");
-    ccstr_catf(out,"(a.%c%sb.%c)",fn[i],opr,fn[i]);
-  }
-  ccstr_catf(out,";");
-  ccstr_catf(out,"\r\n}\r\n");
-}
-
-#endif
-void emit_vectype(char **out, kttcc_type *t)
-{
-  if(t->typekind==kttcc_typekind_vec)
-  { ccstr_catf(out,"typedef struct ");
-    emit_typename(out,t);
-    ccstr_catf(out,"\r\n");
-    ccstr_catf(out,"{");
-    for(int i=0;i<t->length;++i)
-    { ccstr_catf(out,"\r\n  ");
-      emit_vardecl(out,t->element,fn[i]);
-      ccstr_catf(out,";");
+    ccemitC_typename(out,c->type);
+    ccstrcatL(*out,"(");
+    for(int i=0;i<ccarrlen(c->list);++i)
+    { if(i) ccstrcatL(*out,",");
+      ccemitC_typename(out,c->list[i]);
     }
-    ccstr_catf(out,"\r\n");
-    ccstr_catf(out,"} ");
-    emit_typename(out,t);
-    ccstr_catf(out,";\r\n");
-  }
+    ccstrcatL(*out,")");
+  } else
+  if(c->kind==ccemitC_kPOINTER)
+  { ccemitC_typename(out,c->type);
+    ccstrcatL(*out,"*");
+  } else
+  if(c->kind==ccemitC_kARRAY)
+  { ccemitC_typename(out,c->type);
+    ccstrcatF(*out,"[%i]",c->size/c->type->size);
+  } else
+  if(c->kind==ccemitC_kSTRUCT)
+  { ccassert(!"error");
+  } else
+  if(c->kind==ccemitC_kVECTOR)
+  { ccassert(c->type!=0);
 
-  genmake(out,t);
-  emit_vecoprari(out,t,"*");emit_vecoprari(out,t,"*=");
-  emit_vecoprari(out,t,"/");emit_vecoprari(out,t,"/=");
-  emit_vecoprari(out,t,"+");emit_vecoprari(out,t,"+=");
-  emit_vecoprari(out,t,"-");emit_vecoprari(out,t,"-=");
-#if 0
-  genoperrel(out,t,bl,cc,"==");genoperrel(out,t,bl,cc,"!=");
-  genoperrel(out,t,bl,cc,"<=");genoperrel(out,t,bl,cc,">=");
-  if(t.declspec==kttcc_declspec_float)
-  { genoperdot(out,t,bl,cc);
-  }
-  gentostring(out,t,bl,cc);
-#endif
+    ccstrcatL(*out,"struct {");
+    for(int i=0;i<c->size/c->type->size;++i)
+    { ccemitC_decl(out,c->type,fn[i]);
+      ccstrcatL(*out,";");
+    }
+    ccstrcatL(*out,"}");
+  } else
+  if(c->kind==ccemitC_kSIGNED||c->kind==ccemitC_kUNSIGNED||c->kind==ccemitC_kFLOAT)
+  { ccstrcatF(*out,"%c%i",pf[c->kind],c->size*8);
+  } else
+  if(c->kind==ccemitC_kTYPENAME)
+  { ccstrcatS(*out,c->name);
+  } else
+    ccassert(!"error");
 }
 
-void emit_type(char **out, const kttcc_type *t)
+void ccemitC_decl(char **out, ccemitC_class_t *c, const char *name)
 {
-  if(t->typekind==kttcc_typekind_var)
-  {
-    for(int i=t->bitlen_min;i<=t->bitlen_max;i<<=1)
-    { kttcc_type *fix;
-      fix=gen_fixtype(t->declspec,i);
+  ccassert(name!=0);
 
-      emit_vectype(out,gen_vectype(fix,2));
-      emit_vectype(out,gen_vectype(fix,3));
-      emit_vectype(out,gen_vectype(fix,4));
+  if(c->kind==ccemitC_kFUNCTION)
+  { ccassert(c->type!=0);
+
+    ccemitC_typename(out,c->type);
+
+    ccstrcatF(*out," %s",name);
+
+    ccstrcatL(*out,"(");
+    for(int i=0;i<ccarrlen(c->list);++i)
+    { if(i) ccstrcatL(*out,",");
+      ccemitC_decl(out,c->list[i],pn[i]);
+    }
+    ccstrcatL(*out,")");
+
+  } else
+  if(c->kind==ccemitC_kVECTOR)
+  { ccassert(c->type!=0);
+
+    ccstrcatF(*out,"struct %s\r\n{",name);
+    for(int i=0;i<c->size/c->type->size;++i)
+    { ccstrcatL(*out,"\r\n  ");
+      ccemitC_decl(out,c->type,fn[i]);
+      ccstrcatL(*out,";");
+    }
+    ccstrcatL(*out,"\r\n}");
+  } else
+  if(c->kind==ccemitC_kSTRUCT)
+  { ccassert(!"error");
+  } else
+  if(c->kind==ccemitC_kPOINTER)
+  { ccstrcatL(*out,"*");
+    ccemitC_decl(out,c->type,name);
+  } else
+  if(c->kind==ccemitC_kARRAY)
+  { ccemitC_decl(out,c->type,name);
+    ccstrcatF(*out,"[%i]",c->size/c->type->size);
+  } else
+  if(c->kind==ccemitC_kSIGNED||c->kind==ccemitC_kUNSIGNED||c->kind==ccemitC_kFLOAT)
+  { ccstrcatF(*out,"%c%i %s",pf[c->kind],c->size*8, name);
+  } else
+  if(c->kind==ccemitC_kTYPENAME)
+  { ccstrcatF(*out,"%s %s",c->name,name);
+  } else
+    ccassert(!"error");
+}
+
+void ccemitC_typedef(char **out, ccemitC_class_t *c, char *name)
+{
+  ccstrcatL(*out,"typedef ");
+  ccemitC_decl(out,c,name);
+  ccstrcatF(*out," %s;\r\n",name);
+}
+
+void ccemitC_vector_operator_predecl(char **out, ccemitC_class_t *v, cctoken_k sort, char *name)
+{
+  ccemitC_class_t **list=ccnull;
+  *ccarradd(list,1)=v;
+  *ccarradd(list,1)=v;
+
+  ccemitC_class_t c=(ccemitC_class_t){ccemitC_kFUNCTION,2,v,list};
+  ccemitC_decl(out,&c,name);
+  ccstrcatL(*out,";\r\n");
+}
+
+void ccemitC_vector_operator(char **out, ccemitC_class_t *n, cctoken_k sort, char *name)
+{
+  ccemitC_class_t **list=ccnull;
+  *ccarradd(list,1)=n;
+  *ccarradd(list,1)=n;
+
+  // operator * (f32x2 a, f32x2 b)
+  ccemitC_class_t c=(ccemitC_class_t){ccemitC_kFUNCTION,2,n,list};
+  ccemitC_decl(out,&c,name);
+
+  ccstrcatL(*out,"\r\n{");
+  ccstrcatL(*out,"\r\n");
+
+  ccemitC_decl(out,n,vn[0]);
+  ccstrcatL(*out,";\r\n");
+
+  ccemitC_class_t *v=n->type;
+  for(int i=0;i<v->size/v->type->size;++i)
+  {
+    ccstrcatF(*out,"%s.%s=%s.%s+%s.%s;\r\n",
+      vn[0],fn[i], pn[0],fn[i],pn[1],fn[i]);
+  }
+
+  ccstrcatF(*out,"return %s;",vn[0]);
+
+  ccstrcatL(*out,"\r\n}");
+  ccstrcatL(*out,"\r\n");
+}
+
+void ccemitC()
+{
+  char *out=ccnull;
+
+  ccemitC_class_t classic[]=
+  { (ccemitC_class_t){ccemitC_kUNSIGNED,1},
+    (ccemitC_class_t){ccemitC_kUNSIGNED,2},
+    (ccemitC_class_t){ccemitC_kUNSIGNED,4},
+    (ccemitC_class_t){ccemitC_kUNSIGNED,8},
+    (ccemitC_class_t){ccemitC_kSIGNED,1},
+    (ccemitC_class_t){ccemitC_kSIGNED,2},
+    (ccemitC_class_t){ccemitC_kSIGNED,4},
+    (ccemitC_class_t){ccemitC_kSIGNED,8},
+    (ccemitC_class_t){ccemitC_kFLOAT,4},
+    (ccemitC_class_t){ccemitC_kFLOAT,8},
+  };
+
+  ccemitC_class_t operator[]=
+  { (ccemitC_class_t){ccemitC_kOPERATOR,0,0,0,"mul",ccemitC_kMUL},
+    (ccemitC_class_t){ccemitC_kOPERATOR,0,0,0,"div",ccemitC_kDIV},
+    (ccemitC_class_t){ccemitC_kOPERATOR,0,0,0,"add",ccemitC_kADD},
+    (ccemitC_class_t){ccemitC_kOPERATOR,0,0,0,"sub",ccemitC_kSUB},
+  };
+
+  ccarray(ccemitC_class_t) vectors=ccnull;
+
+  for(int i=0; i<ccCarrlenL(classic); ++i)
+  {
+    ccemitC_class_t *c=classic+i;
+
+    for(int n=2; n<=4; ++n)
+    {
+      char name[0x10];
+      ccformatex(name,sizeof(name),"%c%ix%i",pf[c->kind],c->size*8,n);
+
+      ccemitC_class_t *v=ccmalloc_T(ccemitC_class_t);
+      v->kind=ccemitC_kVECTOR;
+      v->size=c->size*n;
+      v->type=c;
+
+      ccemitC_typedef(&out,v,name);
+
+      ccemitC_class_t t=(ccemitC_class_t){ccemitC_kTYPENAME,0,v,0,name};
+      *ccarradd(vectors,1)=t;
+
+      for(int o=0; o<ccCarrlenL(operator); ++o)
+      {
+        ccemitC_class_t r=operator[o];
+        ccemitC_vector_operator_predecl(&out,&t,r.sort,ccformat("%s%s",name,r.name));
+      }
     }
   }
 
+  ccemitC_class_t *vector;
+  ccarrfor(vectors,vector)
+  {
+    for(int o=0; o<ccCarrlenL(operator); ++o)
+    {
+      ccemitC_class_t r=operator[o];
+      ccemitC_vector_operator(&out,vector,r.sort,ccformat("%s%s",vector->name,r.name));
+    }
+  }
+
+  void *file=ccopenfile("code\\generated\\ccvector.c","w");
+  ccpushfile(file,0,ccstrlen(out),out);
+  ccclosefile(file);
 }
+
 #endif

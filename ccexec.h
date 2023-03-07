@@ -16,7 +16,7 @@ typedef struct ccexec_value_t
   ccexec_value_k kind;
 
   // Note: this is for debugging, we don't use for anything else at all...
-  cctype_t      *type;
+  cctype_t  * type;
 
   union
   { char    * value;

@@ -1,4 +1,3 @@
-
 int
 xorshift32(char *p);
 
@@ -12,7 +11,6 @@ xorshift32(int *p)
   *p=q;
   return q;
 }
-
 
 int randi(int *randi_s, int randi_l)
 {
@@ -53,5 +51,4 @@ int main(int _)
     s=&array[j];
     ccprintf("array contents[%i]: %s\n",j,s);
   }
-
 }

@@ -469,7 +469,7 @@ ccexec_translation_unit(ccexec_t *exec, ccemit_t *emit)
   if(emit->entry!=0)
   {
     ccexec_value_t *args=ccnil;
-    ccexec_value_t *arg=ccarrone(args);
+    ccexec_value_t *arg=ccarradd(args,1);
     arg->kind   =ccexec_value_kVALID;
     arg->constI =ARG;
     ccexec_invoke(exec,emit->entry,&ret,ccarrlen(args),args);

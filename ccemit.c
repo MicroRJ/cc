@@ -25,8 +25,6 @@ ccfunc ccvalue_t *
 ccemit_include_local(
   ccemit_t *emit, ccprocd_t *procd, ccblock_t *block, ccesse_t *esse, int is_param)
 {
-  cccaller_t caller=cclastcaller;
-
   ccassert(esse!=0);
   ccassert(esse->kind==ccesse_kVARIABLE);
 
@@ -47,7 +45,8 @@ ccemit_include_local(
     ccedict_param(esse->tree,esse->type):
     ccedict_local(esse->tree,esse->type);
 
-  ccvalue_t **v=cctblputP_ex(caller,procd->local,esse);
+  ccvalue_t **v=cctblputP(procd->local,esse);
+
   ccassert(ccerrnon() ||
     cctraceerr("'%s': already in table, %s",
       ccesse_name_string(esse,ccnull), cctree_string(esse->tree,ccnull)));
