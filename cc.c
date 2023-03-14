@@ -5,13 +5,15 @@
 // https://github.com/MicroRJ/cc
 //
 // Public domain stb style c utilities:
+// - standardized basic types
 // - dynamic length buffer with builtin hash-table
-// - memory checker with leak detection
+// - malloc wrapper with leak detection
 // - timing utilities
-// - introspection utilities
+// - file utilities
+// - cc-lang
 //
-// Still piecing everything together, trying to not add
-// too many things here, I don't want this ever to become a huge file.
+// Still piecing everything together, trying not to add too many things here,
+// enough for just about every basic program.
 #ifndef _CC_C
 #define _CC_C 1
 
@@ -58,6 +60,10 @@
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#ifndef _CC_STATIC_MEMORY
+# define _CC_STATIC_MEMORY 0x1000
 #endif
 
 #if defined(_DEBUG) || defined(DEBUG) || defined(DBG)
@@ -135,15 +141,6 @@ _CCASSERT(sizeof(cci32_t)==4);
 _CCASSERT(sizeof(ccu16_t)==2);
 _CCASSERT(sizeof(cci16_t)==2);
 
-typedef void **ccvala_t;
-
-#define cccast(T,mem) ((T)(mem))
-#define ccvala(v) cccast(ccvala_t,&(v))
-
-// Todo: remove these!
-#define ccaddr(mem)   (&(mem))
-#define ccdref(mem)   (*(mem))
-
 // Note: c array literal length
 #ifndef ccCarrlenL
 # define ccCarrlenL(carr) (sizeof(carr)/sizeof(carr[0]))
@@ -159,15 +156,25 @@ typedef void **ccvala_t;
 # define ccCstrlenS(cstr) cccast(ccu32_t,strlen(cstr)-0)
 #endif
 
-// Note: some necessary error codes ...
-typedef enum ccerr_k
-{
-  ccerr_kNON=0,
-  ccerr_kNIT,
-  ccerr_kAIT,
-} ccerr_k;
+typedef void **ccvala_t;
 
-ccglobal const char *ccerr_s[]=
+#define cccast(T,mem) ((T)(mem))
+#define ccvala(v) cccast(ccvala_t,&(v))
+
+// Todo: remove these!
+#define ccaddr(mem)   (&(mem))
+#define ccdref(mem)   (*(mem))
+
+
+// Note: some necessary error codes ...
+typedef enum ccerror_k
+{
+  ccerror_kNON=0,
+  ccerror_kNIT,
+  ccerror_kAIT,
+} ccerror_k;
+
+ccglobal const char *ccerror_ks[]=
 { "none",
   "not in table",
   "already in table",
@@ -230,7 +237,6 @@ typedef struct ccsentry_t
   ccsentry_t   * slaves;
   cci32_t        level;
   cccaller_t     caller;
-  ccward_t     * block_list;
   cci32_t        enter_count;
   cci32_t        leave_count;
   ccclocktick_t  start_time_in_ticks;
@@ -245,16 +251,66 @@ typedef struct ccsentry_t
   } last_metrics, metrics;
 } ccsentry_t;
 
-// -- Todo: broaden this, should be console state or something!
-typedef struct cccolorstate_t cccolorstate_t;
-typedef struct cccolorstate_t
-{ cci16_t  s[0x10];
-  cci16_t  i;
-  cci16_t  v;
-} cccolorstate_t;
+struct
+{ ccerror_k  error;
+  ccentry_t *entry;
+
+  ccward_t  *wards;
+
+  ccallocator_t *allocator_stack[0x10];
+  int            allocator_index;
+  ccallocator_t *allocator;
+
+  cci16_t color_stack[0x10];
+  cci16_t color_index;
+  cci16_t color_value;
+
+  char static_memory[_CC_STATIC_MEMORY];
+  int  static_cursor;
+
+  void *console;
+
+  ccclocktick_t clock_seconds_in_ticks;
+
+  ccsentry_t   debug_root;
+	ccsentry_t  *debug_this;
+	cci32_t      debug_none;
+} ccglobal ccthread_local cc;
+
+ccfunc void ccinit();
+
+#define ccerrset(x) ((cc.error=x),0)
+#define ccerrnon()  (cc.error==ccerror_kNON)
+#define ccerrstr()  (ccerror_ks[cc.error])
+#define cckeyget()  ((cc.entry)?(cc.entry->key):ccnull)
+
+// -- Todo: not sure of this is the best API for this sort of stuff!
+#define ccpush_allocator( ) cc.allocator_stack[cc.allocator_index++]=cc.allocator
+#define ccpull_allocator( ) cc.allocator=cc.allocator_stack[--cc.allocator_index]
+#define ccmove_allocator(x) cc.allocator=x
+
+// Todo:
+#define ccmove_color( x )  cc.color_value=x
+#define ccpush_color(   )  cc.color_stack[cc.color_index++]=cc.color_value
+#define ccload_color(   )  cc.color_value=cc.color_stack[--cc.color_index]
 
 #define cctrue  cccast(cci32_t,1)
 #define ccfalse cccast(cci32_t,0)
+
+ccfunc ccinle int   ccformatvex (char *,int,const char *,va_list);
+ccfunc ccinle char *ccformatv   (const char *, va_list);
+ccfunc        int   ccformatex  (char *, int, const char *, ...);
+ccfunc        char *ccformat    (const char *, ...);
+
+ccfunc ccinle ccclocktick_t ccclocktick();
+ccfunc ccinle ccf64_t       ccclocksecs(ccu64_t);
+
+ccfunc void *   ccopenfile (const char *, const char *);
+ccfunc int      ccrealfile ( void * );
+ccfunc void     ccclosefile( void * );
+ccfunc void   * ccpullfile ( void *, ccu32_t, ccu32_t *     );
+ccfunc ccu32_t  ccpushfile ( void *, ccu32_t, ccu32_t,void *);
+ccfunc ccu32_t  ccfilesize ( void * );
 
 // Todo: hmm...
 #define ccnil  0
@@ -277,35 +333,11 @@ typedef struct cccolorstate_t
 ccfunc ccinle cccaller_t cccaller(int guid, const char *file, int line, const char *func);
 #define cccall() (cccaller(__COUNTER__,_CCFILE,_CCLINE,_CCFUNC))
 
-// Todo:
-ccglobal ccthread_local cccolorstate_t cccolorstate;
-#define cccolormove( x )  cccolorstate.v=x
-#define cccolorpush(   )  cccolorstate.s[cccolorstate.i++]=cccolorstate.v
-#define cccolorload(   )  cccolorstate.v=cccolorstate.s[--cccolorstate.i]
-
-// Todo: allocator stack or remove ...
-ccglobal ccthread_local ccallocator_t *ccallocator=ccuserallocator_;
-
-// Todo:
-ccglobal ccthread_local ccsentry_t   ccdebugroot;
-ccglobal ccthread_local ccsentry_t  *ccdebugthis;
-ccglobal ccthread_local cci32_t      ccdebugnone;
-
 // Note: default allocator
 #define ccmalloc(size)       (ccuserallocator_(cccall(),size,ccnull))
 #define ccrealloc(data,size) (ccuserallocator_(cccall(),size,data))
 #define ccfree(data)         (ccuserallocator_(cccall(),ccnil,data))
 #define ccmalloc_T(T) cccast(T*,ccmalloc(sizeof(T)))
-
-// -- Note: dynamic length buffer and hash-table utilities
-
-ccglobal ccthread_local ccerr_k    ccerr;
-ccglobal ccthread_local ccentry_t *ccentry;
-
-#define ccerrstr()    (ccerr_s[ccerr])
-#define ccerrset(val) ((ccerr=val),0)
-#define ccerrnon()    ((ccerr)==ccerr_kNON)
-#define cckeyget()    ((ccentry)?(ccentry->key):ccnull)
 
 // -- Todo: figure out how we're going to do the caller thing...
 
@@ -368,7 +400,7 @@ ccfunc cci64_t ccstrcatiF_(char **, const char *, ...);
 #define ccntshsh(nts) ccCstrlenS(nts),cccast(char*,nts)
 #define ccinthsh(ptr) -cccast(cci32_t,sizeof(ptr)),cccast(char*,ptr)
 
-// Note: these use the global error code _ccerr_
+// Note: these use the global error code _ccerror_k
 ccfunc cci64_t cctblgeti(void **, cci32_t, cci32_t, char *);
 ccfunc cci64_t cctblputi(void **, cci32_t, cci32_t, char *);
 ccfunc cci64_t cctblseti(void **, cci32_t, cci32_t, char *);
@@ -410,32 +442,16 @@ ccfunc cci64_t cctblseti(void **, cci32_t, cci32_t, char *);
 
 #define ccstrcatF(arr,fmt,...) ccstrcatiF_(&arr,fmt,__VA_ARGS__)
 
-ccfunc ccinle int   ccformatvex (char *,int,const char *,va_list);
-ccfunc ccinle char *ccformatv   (const char *, va_list);
-ccfunc        int   ccformatex  (char *, int, const char *, ...);
-ccfunc        char *ccformat    (const char *, ...);
-
-ccfunc ccinle ccclocktick_t ccclocktick();
-ccfunc ccinle ccf64_t       ccclocksecs(ccu64_t);
-
-ccfunc void *   ccopenfile (const char *, const char *);
-ccfunc int      ccrealfile ( void * );
-ccfunc void     ccclosefile( void * );
-ccfunc void   * ccpullfile ( void *, ccu32_t, ccu32_t *     );
-ccfunc ccu32_t  ccpushfile ( void *, ccu32_t, ccu32_t,void *);
-ccfunc ccu32_t  ccfilesize ( void * );
-
-// Todo: to be removed !
-ccfunc ccinle ccsentry_t *ccdebug_();
-
-// Todo: remove!
-#define ccdebug() ccdebug_()
-
 ccfunc ccsentry_t * ccsentry_enter(cccaller_t caller, ccsentry_t *master, const char *marker);
 ccfunc ccsentry_t * ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker);
 
-#define ccdbenter(marker) (ccdebugthis=ccsentry_enter(cccall(),ccdebugthis,marker))
-#define ccdbleave(marker) (ccdebugthis=ccsentry_leave(cccall(),ccdebugthis,marker))
+#ifdef _CCDEBUG
+# define ccdbenter(marker) (cc.debug_this=ccsentry_enter(cccall(),cc.debug_this,marker))
+# define ccdbleave(marker) (cc.debug_this=ccsentry_leave(cccall(),cc.debug_this,marker))
+#else
+# define ccdbenter(marker) (0)
+# define ccdbleave(marker) (0)
+#endif
 
 ccfunc const char *ccfilename(const char *name);
 
@@ -452,18 +468,116 @@ ccfunc void cctrace_(cccaller_t caller, const char *label, const char *format, .
 # define ccexeclog(fmt,...) (0)
 #endif
 
+// Todo: this is not complete!
+ccfunc void ccprintf(const char *fmt, ...);
+
 // Note:
 #include "ccsys.c"
 #include "ccdbg.c"
 
 #ifdef _DEVELOPER
-#undef malloc
-#define malloc DO_NOT_USE_MALLOC
-#undef realloc
-#define realloc DO_NOT_USE_REALLOC
-#undef free
-#define free DO_NOT_USE_FREE
+# undef malloc
+#  define malloc DO_NOT_USE_MALLOC
+# undef realloc
+#  define realloc DO_NOT_USE_REALLOC
+# undef free
+#  define free DO_NOT_USE_FREE
 #endif
+
+///////////////////////
+// Implementation
+///////////////////////
+
+// Todo: can we get rid of this? or at-least make it optional?
+ccfunc void
+ccinit()
+{
+  cc.debug_this=&cc.debug_root;
+  cc.console=(void*)GetStdHandle(STD_OUTPUT_HANDLE);
+
+	ccmove_allocator(ccuserallocator_);
+  ccmove_color(7);
+
+#ifdef _WIN32
+  LARGE_INTEGER l;
+  QueryPerformanceFrequency(&l);
+  cc.clock_seconds_in_ticks=l.QuadPart;
+#endif
+}
+
+ccfunc ccinle ccclocktick_t
+ccclocktick()
+{
+#ifdef _WIN32
+	LARGE_INTEGER l;
+  QueryPerformanceCounter(&l);
+  return l.QuadPart;
+#endif
+}
+
+ccfunc ccinle void
+ccout(const char *string)
+{
+#if defined(_WIN32) && defined(_CCDEBUG)
+  OutputDebugStringA(string);
+#endif
+  printf(string);
+}
+
+ccfunc ccinle ccf64_t
+ccclocksecs(ccclocktick_t t)
+{
+	return t/(ccf64_t)cc.clock_seconds_in_ticks;
+}
+
+ccfunc ccinle int
+ccformatvex(char *buf, int len, const char * fmt, va_list vli)
+{
+  return stbsp_vsnprintf(buf,len,fmt,vli);
+}
+
+ccfunc ccinle char *
+ccformatv(const char *fmt, va_list vli)
+{ int length=ccformatvex(ccnull,ccnull,fmt,vli);
+  int static_length=ccCarrlenL(cc.static_memory);
+  if(cc.static_cursor+length>=static_length)
+    cc.static_cursor=0;
+  char *string=cc.static_memory+cc.static_cursor;
+  ccformatvex(string,static_length-cc.static_cursor,fmt,vli);
+  cc.static_cursor+=length;
+  return string;
+}
+
+ccfunc int
+ccformatex(char *buf, int len, const char * fmt, ...)
+{ va_list vli;
+  va_start(vli,fmt);
+  int res=ccformatvex(buf,len,fmt,vli);
+  va_end(vli);
+  return res;
+}
+
+ccfunc char *
+ccformat(const char * fmt, ...)
+{ va_list vli;
+  va_start(vli,fmt);
+  char *res=ccformatv(fmt,vli);
+  va_end(vli);
+  return res;
+}
+
+ccfunc void
+cctrace_(cccaller_t caller, const char *label, const char *format, ...)
+{
+  va_list vli;
+  va_start(vli,format);
+
+  ccout(
+	  ccformat("%s: %s[%i] %s() %s\n",
+	    label,ccfilename(caller.file),caller.line,caller.func,ccformatv(format,vli)));
+
+  va_end(vli);
+}
 
 // Todo:
 ccfunc void
@@ -515,7 +629,7 @@ ccdlbadd_(ccvala_t vala, cci32_t isze, cci64_t rsze, cci64_t csze)
     ccassert(!rem_add);
   } else
   { dlb=ccnull;
-    allocator=ccallocator;
+    allocator=cc.allocator;
     sze_max=0;
     sze_min=0;
     rem_rze=0;
@@ -589,29 +703,29 @@ cctblhsh_(cccaller_t caller, void **ccm, cci32_t bit, int len, char *key, int cr
 
   idx=hsh%max;
 
-  ccentry=dlb->entries+idx;
+  cc.entry=dlb->entries+idx;
 
-  while(ccentry->key)
-  { if(ccentry->len==len)
+  while(cc.entry->key)
+  { if(cc.entry->len==len)
     { if(len>0)
-      { if(!memcmp(ccentry->key,key,len))
+      { if(!memcmp(cc.entry->key,key,len))
           return cctrue;
       } else
-      { if(ccentry->key==key)
+      { if(cc.entry->key==key)
           return cctrue;
       }
     }
-    if(!ccentry->nex)
+    if(!cc.entry->nex)
       break;
-    ccentry=ccentry->nex;
+    cc.entry=cc.entry->nex;
   }
 
   if(create_always)
   {
-    if(ccentry->key)
-      ccentry=ccentry->nex=ccmalloc_T(ccentry_t);
+    if(cc.entry->key)
+      cc.entry=cc.entry->nex=ccmalloc_T(ccentry_t);
 
-    ccentry->caller=caller;
+    cc.entry->caller=caller;
 
     cci64_t val=ccdlbadd_(ccm,bit,1,1);
 
@@ -619,10 +733,10 @@ cctblhsh_(cccaller_t caller, void **ccm, cci32_t bit, int len, char *key, int cr
     memset(cccast(char*,*ccm)+val*bit,ccnull,bit);
 
     // Todo:
-    ccentry->nex=ccnull;
-    ccentry->len=len;
-    ccentry->key=key;
-    ccentry->val=val;
+    cc.entry->nex=ccnull;
+    cc.entry->len=len;
+    cc.entry->key=key;
+    cc.entry->val=val;
   }
 
   return ccfalse;
@@ -632,32 +746,33 @@ cctblhsh_(cccaller_t caller, void **ccm, cci32_t bit, int len, char *key, int cr
 ccfunc cci64_t
 cctblgeti_(cccaller_t caller, void **ccm, cci32_t isze, cci32_t len, char *key)
 { ccassert(ccm!=0);
-  ccerrset(ccerr_kNIT);
+  ccerrset(ccerror_kNIT);
   if(cctblhsh_(caller,ccm,isze,len,key,ccfalse))
-    ccerrset(ccerr_kNON);
-  return ccentry? ccentry->val :ccnull;
+    ccerrset(ccerror_kNON);
+  return cc.entry? cc.entry->val :ccnull;
 }
 
 // Todo: remove caller in release mode!
 ccfunc cci64_t
 cctblputi_(cccaller_t caller, void **ccm, cci32_t isze, cci32_t len, char *key)
 { ccassert(ccm!=0);
-  ccerrset(ccerr_kAIT);
+  ccerrset(ccerror_kAIT);
   if(cctblhsh_(caller,ccm,isze,len,key,cctrue))
   { cctrace_(caller,"war","already in table, added by %s[%i]::%s()",
-      ccfilename(ccentry->caller.file),ccentry->caller.line,ccentry->caller.func);
+      ccfilename(cc.entry->caller.file),cc.entry->caller.line,cc.entry->caller.func);
   } else
-    ccerrset(ccerr_kNON);
-  return ccentry? ccentry->val :ccnull;
+    ccerrset(ccerror_kNON);
+  return cc.entry? cc.entry->val :ccnull;
 }
 
 // Todo: remove caller in release mode!
 ccfunc cci64_t
 cctblseti_(cccaller_t caller, void **ccm, cci32_t isze, cci32_t len, char *key)
 { ccassert(ccm!=0);
-  ccerrset(ccerr_kNON);
+  ccerrset(ccerror_kNON);
   cctblhsh_(caller,ccm,isze,len,key,cctrue);
-  return ccentry? ccentry->val :ccnull;
+
+  return cc.entry? cc.entry->val :ccnull;
 }
 
 ccfunc cci64_t
@@ -677,7 +792,6 @@ ccstraddi_(char **ccm, cci64_t res, cci64_t com, const char *mem)
   return result;
 }
 
-
 // Todo: remove from here?
 ccfunc cci64_t
 ccstrcatiV_(char **ccm, const char *fmt, va_list vli)
@@ -695,6 +809,112 @@ ccstrcatiF_(char **ccm, const char *fmt, ...)
   cci64_t res=ccstrcatiV_(ccm,fmt,vli);
   va_end(vli);
   return res;
+}
+
+// Todo: this is not the best way to do things!
+#define CCFG_BLACK        "<!0"
+#define CCFG_BLUE         "<!1"
+#define CCFG_GREEN        "<!2"
+#define CCFG_CYAN         "<!3"
+#define CCFG_RED          "<!4"
+#define CCFG_MAGENTA      "<!5"
+#define CCFG_BROWN        "<!6"
+#define CCFG_LIGHTGRAY    "<!7"
+#define CCFG_GRAY         "<!8"
+#define CCFG_LIGHTBLUE    "<!9"
+#define CCFG_LIGHTGREEN   "<!0"
+#define CCFG_LIGHTCYAN    "<!1"
+#define CCFG_LIGHTRED     "<!2"
+#define CCFG_LIGHTMAGENTA "<!3"
+#define CCFG_YELLOW       "<!4"
+#define CCFG_WHITE        "<!F"
+#define CCEND             "!>"
+
+// Todo: actually setup the color table properly ...
+// CONSOLE_SCREEN_BUFFER_INFOEX e={sizeof(e)};
+// if(GetConsoleScreenBufferInfoEx(h,&e))
+// { SetConsoleScreenBufferInfoEx(h,&e);
+// }
+
+// Todo: this is absolute crap! modify stb's...
+ccfunc void
+ccprintf(const char *r, ...)
+{
+  va_list vli;
+  va_start(vli,r);
+
+#define cccolornext( l )  r+=l,c=*r
+#define cccolorpval(   )  (void  *) va_arg(vli,void  *)
+#define cccolorsval(   )  (char  *) va_arg(vli,char  *)
+#define cccolorlval(   )  (cci64_t) va_arg(vli,cci64_t)
+#define cccolorival(   )  (cci32_t) va_arg(vli,cci32_t)
+#define cccolorfval(   )  (ccf64_t) va_arg(vli,ccf64_t)
+#define cccolorwval(   )  (cci16_t) va_arg(vli,cci32_t)
+#define cccolorcval(   )  (char   ) va_arg(vli,char   )
+
+  char c;
+  for(;c=*r;c)
+  {
+    for(; (c!='\0')&&(c!='%') &&
+         !(c=='<'&&r[1]=='!') &&
+         !(c=='!'&&r[1]=='>'); cccolornext(1)) printf("%c",c);
+
+    if(c=='<')
+    { cccolornext(2);
+      if(CCWITHIN(c,'0','9'))
+        ccpush_color(),ccmove_color(0x00+c-'0'),cccolornext(1);
+      else
+      if(CCWITHIN(c,'A','F'))
+        ccpush_color(),ccmove_color(0x0A+c-'A'),cccolornext(1);
+      else
+      if(CCWITHIN(c,'a','f'))
+        ccpush_color(),ccmove_color(0x0A+c-'a'),cccolornext(1);
+      else
+      if(c=='%'&&r[1]=='i')
+        ccpush_color(),ccmove_color(cccolorwval()),cccolornext(2);
+      else
+        ccassert(!"error");
+    } else
+    if(c=='!')
+    { ccload_color(),cccolornext(2);
+    } else
+    if(c=='%')
+    { cccolornext(1);
+      if(c=='%')
+        printf("%%"),cccolornext(1);
+      else
+      if(c=='i')
+        printf("%i",cccolorival()),cccolornext(1);
+      else
+      if(c=='f')
+        printf("%f",cccolorfval()),cccolornext(1);
+      else
+      if(c=='s')
+        printf("%s",cccolorsval()),cccolornext(1);
+      else
+      if(c=='c')
+        printf("%c",cccolorcval()),cccolornext(1);
+      else
+      if(c=='p')
+        printf("%p",cccolorpval()),cccolornext(1);
+      else
+      { if(c=='l'&&r[1]=='l'&&r[2]=='i')
+          printf("%lli",cccolorlval()),cccolornext(3);
+        else
+        if(c=='l'&&r[1]=='l'&&r[2]=='u')
+          printf("%llu",cccolorlval()),cccolornext(3);
+        else
+          ccassert(!"error");
+      }
+    } else
+    if(c=='\0')
+      break;
+
+#ifdef _WIN32
+    SetConsoleTextAttribute((HANDLE)cc.console,cc.color_value);
+#endif
+  }
+  va_end(vli);
 }
 
 // Note:

@@ -89,12 +89,11 @@ void cctest();
 int main(int argc, char **argv)
 {
 // Todo:
-ccdebugnone=ccfalse;
-ccini();
+cc.debug_none=ccfalse;
+ccinit();
 
 ccdbenter("main");
   cctest();
-
 
   const char *n[]={
     "code\\fetch.cc","code\\struct.cc","code\\pointer.cc","code\\iterator.cc","code\\array.cc",

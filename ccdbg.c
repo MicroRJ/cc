@@ -5,43 +5,6 @@
 // Note: this is just a mess of stuff that I have to organize ...
 
 // Todo: remove this from here!
-ccfunc ccinle int
-ccformatvex(char *buf, int len, const char * fmt, va_list vli)
-{
-  return stbsp_vsnprintf(buf,len,fmt,vli);
-}
-
-ccfunc ccinle char *
-ccformatv(const char * fmt, va_list vli)
-{
-  ccglobal ccthread_local char buf[0xff];
-
-  ccformatvex(buf,0xff,fmt,vli);
-
-  return buf;
-}
-
-ccfunc int
-ccformatex(char *buf, int len, const char * fmt, ...)
-{
-  va_list vli;
-  va_start(vli,fmt);
-  int res=ccformatvex(buf,len,fmt,vli);
-  va_end(vli);
-
-  return res;
-}
-
-ccfunc char *
-ccformat(const char * fmt, ...)
-{
-  va_list vli;
-  va_start(vli,fmt);
-  char *res=ccformatv(fmt,vli);
-  va_end(vli);
-
-  return res;
-}
 
 ccfunc ccinle cccaller_t
 cccaller(int guid, const char *file, int line, const char *func)
@@ -52,18 +15,6 @@ cccaller(int guid, const char *file, int line, const char *func)
   t.line=line;
   t.func=func;
   return t;
-}
-
-// Todo: REMOVE
-ccfunc ccsentry_t *
-ccdebug_()
-{ ccglobal ccsentry_t dummy;
-  dummy.marker="dummy";
-  if(ccdebugnone) return &dummy;
-
-  ccassert(ccdebugthis!=ccnull);
-
-  return ccdebugthis;
 }
 
 ccfunc ccinle ccf64_t
@@ -98,7 +49,7 @@ ccbytecountreadable(cci64_t b, ccf64_t *f)
 #include "cccolor.c"
 
 ccfunc void
-ccsentry_block_check(ccallocator_t *allocator, ccward_t *block)
+cccheck_ward(ccallocator_t *allocator, ccward_t *block)
 { for(int i=0; i<4; ++i)
     ccassert(block->head_guard[i]==ccnull ||
       cctraceerr("corrupted heap block, head guard breached",0));
@@ -111,8 +62,8 @@ ccsentry_block_check(ccallocator_t *allocator, ccward_t *block)
 
   ccassert(block->allocator==allocator);
 
-  ccassert(!block->prev||block->prev->sentry==block->sentry);
-  ccassert(!block->next||block->next->sentry==block->sentry);
+  // ccassert(!block->prev||block->prev->sentry==block->sentry);
+  // ccassert(!block->next||block->next->sentry==block->sentry);
 
   ccassert(!block->prev||block->prev->next==block);
   ccassert(!block->next||block->next->prev==block);
@@ -121,9 +72,10 @@ ccsentry_block_check(ccallocator_t *allocator, ccward_t *block)
   ccassert(!block->prev||block->prev!=block);
 }
 
-
 ccfunc void *ccinternalallocator_(cccaller_t caller, size_t size,void *data)
-{ if(size)
+{ (void)caller;
+
+	if(size)
   { if(data)
       return realloc(data,size);
     else
@@ -183,25 +135,26 @@ ccsentry_report(
 ccfunc ccinle void
 ccdebugdump()
 {
+#if 1
   cctracelog("Debug Dump: ",0);
 
   // Note: this is dumb!
   ccclocktick_t t=0;
 
-  ccdebugroot.caller=cccall();
-  ccdebugroot.marker="root-master";
+  cc.debug_root.caller=cccall();
+  cc.debug_root.marker="root-master";
   ccsentry_t *s;
-  ccarrfor(ccdebugroot.slaves,s) t+=s->total_time_in_ticks;
-  ccdebugroot.total_time_in_ticks=t;
+  ccarrfor(cc.debug_root.slaves,s) t+=s->total_time_in_ticks;
+  cc.debug_root.total_time_in_ticks=t;
 
-  ccsentry_report(ccnil,&ccdebugroot,&ccdebugroot);
+  ccsentry_report(ccnil,&cc.debug_root,&cc.debug_root);
 
-  ccdebugnone=cctrue;
+  cc.debug_none=cctrue;
 
   int freed_count=0;
 
   ccward_t *f;
-  for(ccward_t *i=ccdebugroot.block_list;i;freed_count++)
+  for(ccward_t *i=cc.wards;i;freed_count++)
   {
     f=i;
     i=i->prev;
@@ -210,148 +163,105 @@ ccdebugdump()
   }
 
   cctracelog("freed %i block(s) for you", freed_count);
+#endif
 }
-
-
-ccfunc ccward_t *
-ccsentry_remblock(ccsentry_t *sentry, ccward_t *block)
-{ ccassert(block->sentry==ccdebugthis);
-
-  if(block->prev) block->prev->next=block->next;
-  if(block->next) block->next->prev=block->prev;
-  else sentry->block_list=block->prev;
-
-  block->prev=ccnull;
-  block->next=ccnull;
-
-  return block;
-}
-
-ccfunc ccward_t *
-ccsentry_addblock(ccsentry_t *sentry, ccward_t *block)
-{
-  if(sentry->block_list)
-  { block->prev=sentry->block_list;
-    sentry->block_list->next=block;
-  }
-  sentry->block_list=block;
-  block->sentry=sentry;
-  return block;
-}
-
-
 
 ccfunc void *ccuserallocator_(cccaller_t caller, size_t size,void *data)
 {
-  ccward_t *block=ccnull;
+  ccward_t *ward=ccnull;
   if(!size)
   {
     if(data)
     {
-      ccsentry_t *sentry=ccdebug();
-      block=(ccward_t*)data-1;
-      ccsentry_block_check(ccuserallocator_,block);
+      ccsentry_t *sentry=cc.debug_this;
+      ward=(ccward_t*)data-1;
+      cccheck_ward(ccuserallocator_,ward);
 
-      if(block->prev) block->prev->next=block->next;
-      if(block->next) block->next->prev=block->prev;
-      else block->sentry->block_list=block->prev;
+      if(ward->prev) ward->prev->next=ward->next;
+      if(ward->next) ward->next->prev=ward->prev;
+      else cc.wards=ward->prev;
 
       sentry->metrics.nbc++;
-
       sentry->metrics.nma++;
-      sentry->metrics.nm+=block->size;
+      sentry->metrics.nm+=ward->size;
 
       // Note: just in case?
-      block->next=ccnull;
-      block->prev=ccnull;
-      free(block);
+      ward->next=ccnull;
+      ward->prev=ccnull;
+      free(ward);
     }
   } else
   { if(data)
     {
-      ccsentry_t *debug=ccdebug();
-      block=(ccward_t*)data-1;
-      ccsentry_block_check(ccuserallocator_,block);
+      ward=(ccward_t*)data-1;
+      cccheck_ward(ccuserallocator_,ward);
 
-      debug->metrics.nm+=block->size;
+      cc.debug_this->metrics.nm+=ward->size;
 
-      block=(ccward_t*)realloc(block,sizeof(*block)+size);
-      block->caller=caller;
-      block->size=size;
+      ward=(ccward_t*)realloc(ward,sizeof(*ward)+size);
+      ward->caller=caller;
+      ward->size=size;
 
-      if(block->prev) block->prev->next=block;
-      if(block->next) block->next->prev=block;
-      else block->sentry->block_list=block;
+      if(ward->prev) ward->prev->next=ward;
+      if(ward->next) ward->next->prev=ward;
+      else cc.wards=ward;
 
-      debug->metrics.pma++;
-      debug->metrics.nma++;
-      debug->metrics.pm+=size;
+      cc.debug_this->metrics.pma++;
+      cc.debug_this->metrics.nma++;
+      cc.debug_this->metrics.pm+=size;
     } else
     {
-      ccsentry_t *debug=ccdebug();
-      block=(ccward_t*)malloc(sizeof(*block)+size);
-      memset(block,ccnil,sizeof(*block));
-      block->allocator=ccuserallocator_;
-      block->caller=caller;
-      block->master=debug;
-      block->sentry=debug;
-      block->size=size;
-      ccsentry_addblock(debug,block);
+      ward=(ccward_t*)malloc(sizeof(*ward)+size);
+      memset(ward,ccnull,sizeof(*ward));
 
-      ccsentry_block_check(ccuserallocator_,block);
+      ward->allocator=ccuserallocator_;
+      ward->caller=caller;
+      ward->master=cc.debug_this;
+      ward->sentry=cc.debug_this;
+      ward->size=size;
 
-      debug->metrics.pbc++;
-      debug->metrics.pma++;
-      debug->metrics.pm+=size;
+      if(cc.wards)
+		  { ward->prev=cc.wards;
+		    cc.wards->next=ward;
+		  }
+		  cc.wards=ward;
+		  ward->sentry=cc.debug_this;
+
+      cccheck_ward(ccuserallocator_,ward);
+
+      cc.debug_this->metrics.pbc++;
+      cc.debug_this->metrics.pma++;
+      cc.debug_this->metrics.pm+=size;
     }
   }
-  return block+1;
-}
-
-// Todo:
-ccfunc void
-ccini()
-{
-  // HWND consoleWnd=GetConsoleWindow();
-  // if(consoleWnd)
-  // {
-  //   DWORD dwProcessId;
-  //   GetWindowThreadProcessId(consoleWnd,&dwProcessId);
-  //   if(GetWindowThreadProcessId(consoleWnd, &dwProcessId))
-  //   {
-  //     ccdebuglog("otherwise allocate console",0);
-  //   }
-  // }
-
-
-  ccdebugthis=&ccdebugroot;
-
-  cccolormove(7);
+  return ward+1;
 }
 
 ccfunc ccsentry_t *
 ccsentry_enter(cccaller_t caller, ccsentry_t *master, const char *marker)
-{ if(ccdebugnone) return master;
+{
+	if(cc.debug_none) return master;
 
   // Note: this is a recursive function ...
   if(caller.guid==master->caller.guid)
   {
-    ccassert(ccdebugthis==master);
+    ccassert(cc.debug_this==master);
 
     master->enter_count++;
     return master;
   }
 
-  ccallocator_t *a=ccallocator;
-  int d=ccdebugnone;
+  ccpush_allocator();
+  ccmove_allocator(ccinternalallocator_);
 
-  ccdebugnone=cctrue;
-  ccallocator=ccinternalallocator_;
+  int d=cc.debug_none;
+  cc.debug_none=cctrue;
 
   ccsentry_t *sentry=cctblsetP(master->slaves,cccast(cci64_t,1+caller.guid));
 
-  ccdebugnone=d;
-  ccallocator=a;
+  cc.debug_none=d;
+
+  ccpull_allocator();
 
   if(!sentry->enter_count++)
   { ccassert(sentry!=ccnil);
@@ -376,7 +286,7 @@ ccsentry_enter(cccaller_t caller, ccsentry_t *master, const char *marker)
 ccfunc ccsentry_t *
 ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker)
 {
-  if(ccdebugnone) return sentry;
+  if(cc.debug_none) return sentry;
 
   ccassert(sentry!=0);
 
@@ -410,61 +320,15 @@ ccsentry_leave(cccaller_t caller, ccsentry_t *sentry, const char *marker)
   sentry->last_metrics.pbc=sentry->metrics.pbc;
   sentry->last_metrics.nbc=sentry->metrics.nbc;
 
-  // Note:
-  ccward_t *block;
-  for(block=sentry->block_list;block;)
-  { ccward_t *remove=block;
-    block=block->prev;
-
-    // Todo: are you silly? you don't have to "remove" each block, you're given them all off anyways ...
-    ccsentry_addblock(sentry->master,ccsentry_remblock(sentry,remove));
-  }
-
   return sentry->master;
 }
 
 ccfunc void
 ccdebugend()
 {
-  if(ccdebugnone) return;
+  if(cc.debug_none) return;
 
-  ccassert(ccdebugthis==&ccdebugroot);
+  ccassert(cc.debug_this==&cc.debug_root);
   ccdebugdump();
 }
-
-
-ccfunc void
-ccout(const char *string)
-{
-#if defined(_CCDEBUG) && defined(_WIN32)
-  OutputDebugStringA(string);
-#endif
-  printf(string);
-}
-
-ccfunc void
-ccoutnl(const char *string)
-{
-  ccout(string);
-  ccout("\r\n");
-}
-
-ccfunc void
-cctrace_(cccaller_t caller, const char *label, const char *format, ...)
-{
-  va_list vli;
-  va_start(vli,format);
-
-  ccglobal ccthread_local char buf[0xfff];
-  int len=1+ccformatvex(buf,0xff,format,vli);
-
-  int rem=sizeof(buf)-len;
-  ccformatex(buf+len,rem,"%s: %s[%i] %s() %s\n",
-    label,ccfilename(caller.file),caller.line,caller.func,buf);
-
-  ccout(buf+len);
-
-  va_end(vli);
-}
-
 #endif

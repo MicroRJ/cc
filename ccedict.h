@@ -1,4 +1,3 @@
-
 // Copyright(C) J. Dayan Rodriguez, 2022,2023 All rights reserved.
 #ifndef _CCEDICT
 #define _CCEDICT
