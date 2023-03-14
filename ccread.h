@@ -238,13 +238,13 @@ typedef struct ccread_t ccread_t;
 #define ccsynerr(tok,cod,fmt, ...) 0
 #define ccsynwar(tok,cod,fmt, ...) 0
 
-// Note: I'm not sure how to implement this, at the parser level, as sugar coating, or at the vm level?
 ccfunc int
 cctoken_is_assignment(cctoken_k kind)
 {
   switch(kind)
   {
     case cctoken_kASSIGN:
+		// Note: I'm not sure how to implement these, at the parser level, as sugar coating, or at the vm level?
     case cctoken_kMUL_EQL:
     case cctoken_kDIV_EQL:
     case cctoken_kMOD_EQL:
@@ -284,4 +284,5 @@ cctoken_to_string(cctoken_k kind)
   ccassert(!"error");
   return "error";
 }
+
 #endif

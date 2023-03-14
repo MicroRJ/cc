@@ -192,7 +192,7 @@ ccread_primary(ccread_t *reader, cctree_t *root, int mark)
     break;
     case cctoken_kLPAREN:
     {
-    	ccgobble(reader);
+      ccgobble(reader);
       cctree_t *group=ccread_expression(reader,root,mark);
       if(!cceat(reader,cctoken_kRPAREN))
         ccsynerr(reader,0,"expected ')'");
@@ -680,7 +680,7 @@ ccread_type_name(
 ccfunc cctree_t *
 ccread_decl_spec(ccread_t *reader, cctree_t *root, int mark)
 {
-	(void)mark;
+  (void)mark;
 
   cctree_t *type=ccread_type_spec(reader);
   return type;
@@ -701,14 +701,15 @@ ccread_decl(
 
   if(cceat(reader,cctoken_kLPAREN))
   {
-    cctree_t *envoy=cctree_clone(result);
-    result=ccread_decl(reader,root,mark,envoy,ccfalse,ccfalse);
+    // Todo: you don't have to clone the tree
+    cctree_t *decoy=cctree_clone(result);
+    result=ccread_decl(reader,root,mark,decoy,ccfalse,ccfalse);
 
     if(!cceat(reader,cctoken_kRPAREN))
       ccsynerr(reader,0,"expected ')'");
 
     cctree_t *dummy=ccread_affixed_modifiers(reader,root,mark,typed);
-    *envoy=*dummy;
+    *decoy=*dummy;
     cctree_del(dummy);
 
   } else
@@ -747,10 +748,6 @@ ccread_decl(
       }
     }
   }
-
-
-
-
   return result;
 }
 

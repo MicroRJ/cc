@@ -45,9 +45,6 @@ ccbytecountreadable(cci64_t b, ccf64_t *f)
   }
 }
 
-// Todo: dude, what is this mess
-#include "cccolor.c"
-
 ccfunc void
 cccheck_ward(ccallocator_t *allocator, ccward_t *block)
 { for(int i=0; i<4; ++i)
